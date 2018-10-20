@@ -3,7 +3,7 @@ const snekfetch = require('snekfetch');
 
 module.exports = {
     name: 'fortune',
-    cooldown: 5,
+    cooldown: 10,
     description: 'Returnes random fortune cookie',
     async execute(message, args) {
         const response = await snekfetch.get('http://yerkee.com/api/fortune');
