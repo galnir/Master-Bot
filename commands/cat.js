@@ -1,4 +1,3 @@
-const got = require('got');
 const snekfetch = require('snekfetch');
 
 module.exports = {

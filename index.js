@@ -1,5 +1,4 @@
 const fs = require('fs');
-const got = require('got');
 const Discord = require('discord.js');
 const {
 	prefix,
