@@ -10,6 +10,10 @@
   "author": "nir",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.4.2"
+    "discord.js": "^11.4.2",
+    "ffmpeg-binaries": "^4.0.0",
+    "node-opus": "^0.3.0",
+    "simple-youtube-api": "^5.0.2",
+    "ytdl-core": "^0.27.0"
   }
 }

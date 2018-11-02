@@ -3,17 +3,15 @@ const snekfetch = require('snekfetch');
 const { giphyAPI } = require('../config.json');
 
 module.exports = {
-  name: "gif",
-  cooldown: 5,
-  description: "query a gif from giphy",
-  async execute(message, args) {
+  name: "animegif",
+  cooldown: 3,
+  description: "query a random anime gif from giphy",
+  async execute(message) {
     try {
-      if (args.length < 1)
-        return message.channel.send("Add an argument and try again");
       const response = await snekfetch.get(
-        `https://api.giphy.com/v1/gifs/search?api_key=${giphyAPI}&q=${args}&limit=25&offset=0&rating=G&lang=en`
+        `https://api.giphy.com/v1/gifs/random?api_key=${giphyAPI}&tag=anime&rating=r`
       );
-      message.channel.send(response.body.data[0].url);
+      message.channel.send(response.body.data.url);
       /*
             const embed = new Discord.RichEmbed()
             .setURL(response.body.data[0].url)
@@ -23,7 +21,7 @@ module.exports = {
       // embed is commented out because for some reason discord wont display gifs if set as images even tho it worked in the past
     } catch (err) {
       console.error(err);
-      message.channel.send("Failed to find a gif that matched your query");
+      message.channel.send("Failed to find a gif :slight_frown:");
     }
   }
 };
