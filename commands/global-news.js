@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const snekfetch = require('snekfetch');
+const fetch = require('node-fetch');
 const { newsAPI } = require('../config.json');
 
 module.exports = {
@@ -9,12 +9,13 @@ module.exports = {
     "Latest headlines from Reuters, beware that cooldown is higher here",
   async execute(message) {
     try {
-      const response = await snekfetch.get(
+      const response = await fetch(
         `https://newsapi.org/v2/top-headlines?sources=reuters&apiKey=${newsAPI}`
       );
-      const articleArr = response.body.articles;
+      const json = await response.json();
+      const articleArr = json.articles;
       let processArticle = article => {
-        const embed = new Discord.RichEmbed()
+        const embed = new Discord.MessageEmbed()
           .setColor("#FF4F00")
           .setTitle(article.title)
           .setURL(article.url)
@@ -36,6 +37,7 @@ module.exports = {
       console.error(err);
       message.channel.send("Something failed along the way");
     }
+    
   }
 };
 

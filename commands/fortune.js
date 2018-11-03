@@ -1,16 +1,17 @@
 const Discord = require('discord.js');
-const snekfetch = require('snekfetch');
+const fetch = require('node-fetch');
 
 module.exports = {
   name: "fortune",
   cooldown: 10,
   description: "Returnes random fortune cookie",
   async execute(message, args) {
-    const response = await snekfetch.get("http://yerkee.com/api/fortune");
-    const embed = new Discord.RichEmbed()
+    const res = await fetch("http://yerkee.com/api/fortune");
+    const json = await res.json();
+    const embed = new Discord.MessageEmbed()
       .setColor("RANDOM")
       .setTitle("Fortune Cookie")
-      .setDescription(response.body.fortune);
+      .setDescription(json.fortune);
     message.channel.send(embed);
   }
 };

@@ -1,4 +1,4 @@
-const snekfetch = require("snekfetch");
+const fetch = require('node-fetch');
 
 module.exports = {
   name: "cat",
@@ -6,7 +6,7 @@ module.exports = {
   description: "random cat image!",
   async execute(message, args) {
     try {
-      const { body } = await snekfetch.get("https://aws.random.cat/meow");
+      const { body } = await fetch("https://aws.random.cat/meow");
       message.channel.send(body.file);
     } catch (err) {
       message.channel.send("Request to find a kitty failed :(");

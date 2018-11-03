@@ -1,6 +1,7 @@
-
-const snekfetch = require('snekfetch');
-const { giphyAPI } = require('../config.json');
+const fetch = require('node-fetch');
+const {
+  giphyAPI
+} = require('../config.json');
 
 module.exports = {
   name: "gintama",
@@ -8,10 +9,8 @@ module.exports = {
   description: "query a random gintama gif from giphy",
   async execute(message) {
     try {
-      const response = await snekfetch.get(
-        `https://api.giphy.com/v1/gifs/random?api_key=${giphyAPI}&tag=gintama&rating=r`
-      );
-      message.channel.send(response.body.data.url);
+      await fetch(`https://api.giphy.com/v1/gifs/random?api_key=${giphyAPI}&tag=gintama&rating=r`).then(res => res.json())
+        .then(json => message.channel.send(json.data.url));
       /*
             const embed = new Discord.RichEmbed()
             .setURL(response.body.data[0].url)
