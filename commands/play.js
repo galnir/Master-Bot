@@ -57,7 +57,7 @@ module.exports = {
 
       try {
         var response = await message.channel.awaitMessages(msg => msg.content > 0 && msg.content < 6, {
-          maxMatches: 1,
+          max: 1,
           time: 10000,
           errors: ['time']
         });
