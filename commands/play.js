@@ -42,7 +42,12 @@ module.exports = {
         vidNameArr.push('exit');
         const embed = new Discord.MessageEmbed()
           .setColor('#e9f931')
-          .addField(vidNameArr);
+          .addField('Song 1',vidNameArr[0])
+          .addField('Song 2',vidNameArr[1])
+          .addField('Song 3',vidNameArr[2])
+          .addField('Song 4',vidNameArr[3])
+          .addField('Song 5',vidNameArr[4])
+          .addField('Exit','exit')
         message.channel.send({
           embed
         });
@@ -50,7 +55,7 @@ module.exports = {
         var response = await message.channel.awaitMessages(msg => msg.content > 0 && msg.content < 6, {
           max: 1,
           maxProcessed: 2,
-          time: 10000,
+          time: 100000,
           errors: ['time']
         });
       } catch (error) {
