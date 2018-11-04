@@ -15,8 +15,10 @@ for (const file of commandFiles) {
   client.commands.set(command.name, command);
 }
 
-client.on("ready", () => {
+client.on("ready", async () => {
   console.log("Ready!");
+  await client.user.setActivity('!help for commands', 'WATCHING');
+  
 });
 
 client.on("message", async message => {

@@ -26,12 +26,10 @@ module.exports = {
     if (!args) return message.reply('Please provide a song name, url or id');
     const query = args.join(' ');
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
-
       playSong(query);
     } else {
       // console.log(message.guild.id) // ignore this log 
       // * end case 1
-
       try {
         var videos = await youtube.searchVideos(query, 5);
         let vidNameArr = [];
@@ -40,24 +38,18 @@ module.exports = {
           //console.log(videos[i].title);
           vidNameArr.push(`${j}: ${videos[i].title}`);
           j++
-
         }
         vidNameArr.push('exit');
         const embed = new Discord.MessageEmbed()
           .setColor('#e9f931')
-          .addField(vidNameArr)
+          .addField(vidNameArr);
         message.channel.send({
           embed
         });
-
-      } catch (error) {
-        console.error(error);
-        return message.channel.send('Something went wrong when searching the video you requested');
-      }
-
       try {
         var response = await message.channel.awaitMessages(msg => msg.content > 0 && msg.content < 6, {
           max: 1,
+          maxProcessed: 2,
           time: 10000,
           errors: ['time']
         });
@@ -65,7 +57,7 @@ module.exports = {
         console.error(error);
         return message.channel.send('Please try again and enter a number between 1-5 or exit');
       }
-
+      // console.log(Array.from(response));
       const videoIndex = parseInt(response.first().content);
       var proccessedURL;
       try {
@@ -78,7 +70,11 @@ module.exports = {
       }
       playSong(proccessedURL);
 
+    } catch (error) {
+      console.error(error);
+      return message.channel.send('Something went wrong when searching the video you requested');
     }
+  }
 
 
 
