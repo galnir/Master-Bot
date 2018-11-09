@@ -1,11 +1,11 @@
-const Discord = require('discord.js');
-const fetch = require('node-fetch');
+const Discord = require("discord.js");
+const fetch = require("node-fetch");
 
 module.exports = {
   name: "fortune",
   cooldown: 10,
   description: "Returnes random fortune cookie",
-  async execute(message, args) {
+  async execute(message) {
     const res = await fetch("http://yerkee.com/api/fortune");
     const json = await res.json();
     const embed = new Discord.MessageEmbed()
