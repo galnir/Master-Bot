@@ -27,9 +27,24 @@ module.exports = {
     if (!args) return message.reply("Please provide a song name or a full url");
     // end initial check
 
-    const query = args.join(" ");
+    let query = args.join(" ");
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
-      return playSong(query, voiceChannel, message);
+      let id;
+      let vidTitle;
+      let url = query;
+      try {
+        query = query
+          .replace(/(>|<)/gi, "")
+          .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+        id = query[2].split(/[^0-9a-z_\-]/i);
+        id = id[0];
+        let video = await youtube.getVideoByID(id);
+        vidTitle = video.title;
+      } catch {
+        return message.channel.send("Something went wrong, please try later");
+      }
+
+      return playSong(url, voiceChannel, message, vidTitle);
     }
 
     try {
@@ -51,7 +66,6 @@ module.exports = {
         .addField("Song 5", vidNameArr[4])
         .addField("Exit", "exit");
       var songEmbed = await message.channel.send({ embed });
-      // console.log(queue.get(message.guild.id));
       try {
         var response = await message.channel.awaitMessages(
           (msg => msg.content > 0 && msg.content < 6) || msg.content === "exit",
@@ -112,8 +126,9 @@ function playSong(url, voiceChannel, message, videoTitle) {
           );
         })
         .on("finish", () => {
-          return message.channel.send("song ended");
+          return message.channel.send("song ended"); // only here for testing
         })
+        //.on("speaking", value => {})
         .on("error", e => {
           return console.log(e);
         });
