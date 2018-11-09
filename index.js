@@ -17,14 +17,14 @@ for (const file of commandFiles) {
 
 client.on("ready", async () => {
   console.log("Ready!");
-  await client.user.setActivity('!help for commands', 'WATCHING');
-  
+  await client.user.setActivity("!help for commands", "WATCHING");
 });
 
 client.on("message", async message => {
   process.on("unhandledRejection", error =>
     console.error("Uncaught Promise Rejection", error)
   );
+  message.guild.voiceConnection.disconnect();
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const args = message.content.slice(prefix.length).split(/ +/);

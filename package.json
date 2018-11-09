@@ -15,5 +15,8 @@
     "node-opus": "^0.3.0",
     "simple-youtube-api": "^5.0.2",
     "ytdl-core": "^0.27.0"
+  },
+  "devDependencies": {
+    "prettier": "^1.14.3"
   }
 }
