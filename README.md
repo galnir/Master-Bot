@@ -23,3 +23,7 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 [Get a news api key here](https://newsapi.org/)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+
+### Contributing
+
+Fork it and submit a pull request!
