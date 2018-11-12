@@ -4,8 +4,6 @@ const ytdl = require("ytdl-core");
 const { youtubeAPI } = require("../config.json");
 const youtube = new Youtube(youtubeAPI);
 
-const queue = new Map();
-
 module.exports = {
   name: "play",
   cooldown: 5,
@@ -13,6 +11,9 @@ module.exports = {
   async execute(message, args) {
     // initial checking
     if (!message.guild) return;
+    if (!message.member.hasPermission("MANAGE_MESSAGES"))
+      // ^ only for testing will be removed when the music bot is complete
+      return message.channel.send("No permission!");
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply("Join a channel and try again");
     const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -24,7 +25,9 @@ module.exports = {
     if (!permissions.has("SPEAK")) {
       return message.channel.send(`I don't have permission to speak`);
     }
-    if (!args) return message.reply("Please provide a song name or a full url");
+    if (!args) {
+      return message.reply("Please provide a song name or a full url");
+    }
     // end initial check
 
     let query = args.join(" ");
@@ -115,12 +118,13 @@ function playSong(url, voiceChannel, message, videoTitle) {
       const dispatcher = connection
         .play(
           ytdl(url, {
-            filter: "audioonly",
             volume: 1,
-            passes: 5
+            quality: "highestaudio",
+            highWaterMark: 1024 * 1024 * 10
           })
         )
         .on("start", () => {
+          module.exports.dispatcher = dispatcher;
           return message.channel.send(
             `:musical_note: Now playing: ${videoTitle} :musical_note:`
           );

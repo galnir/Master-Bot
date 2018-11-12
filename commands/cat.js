@@ -10,7 +10,7 @@ module.exports = {
       message.channel.send(body.file);
     } catch (err) {
       message.channel.send("Request to find a kitty failed :(");
-      return Promise.reject(new Error(400));
+      console.error(err);
     }
   }
 };

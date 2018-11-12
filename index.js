@@ -24,7 +24,7 @@ client.on("message", async message => {
   process.on("unhandledRejection", error =>
     console.error("Uncaught Promise Rejection", error)
   );
-  message.guild.voiceConnection.disconnect();
+
   if (!message.content.startsWith(prefix) || message.author.bot) return;
 
   const args = message.content.slice(prefix.length).split(/ +/);
