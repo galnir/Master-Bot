@@ -1,8 +1,8 @@
 module.exports = {
-  name: "whomademe",
+  name: "who-made-me",
   cooldown: 5,
-  description: "Description about the bot maker",
+  description: "Who is the developer",
   execute(message) {
-    message.channel.send("Made by @hyperzone with :heart:");
+    message.channel.send("Made by @hyperzone#1185 with :heart:");
   }
 };
