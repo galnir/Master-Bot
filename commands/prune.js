@@ -1,6 +1,6 @@
 module.exports = {
   name: "prune",
-  cooldown: 20,
+  cooldown: 10,
   description: "Prune up to 99 messages.",
   execute(message, args) {
     if (!message.member.hasPermission("MANAGE_MESSAGES"))
