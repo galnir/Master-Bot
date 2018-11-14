@@ -4,6 +4,9 @@ const ytdl = require("ytdl-core");
 const { youtubeAPI } = require("../config.json");
 const youtube = new Youtube(youtubeAPI);
 
+var queue = [];
+var isPlaying;
+
 module.exports = {
   name: "play",
   cooldown: 5,
@@ -35,6 +38,7 @@ module.exports = {
       let id;
       let vidTitle;
       let url = query;
+      let song;
       try {
         query = query
           .replace(/(>|<)/gi, "")
@@ -43,11 +47,17 @@ module.exports = {
         id = id[0];
         let video = await youtube.getVideoByID(id);
         vidTitle = video.title;
+
+        song = {
+          url: url,
+          title: vidTitle,
+          voiceChannel: voiceChannel
+        };
+        queue.push(song);
       } catch {
         return message.channel.send("Something went wrong, please try later");
       }
-
-      return playSong(url, voiceChannel, message, vidTitle);
+      return playSong(queue, message);
     }
 
     try {
@@ -71,7 +81,7 @@ module.exports = {
       var songEmbed = await message.channel.send({ embed });
       try {
         var response = await message.channel.awaitMessages(
-          (msg => msg.content > 0 && msg.content < 6) || msg.content === "exit",
+          msg => (msg.content > 0 && msg.content < 6) || msg.content === "exit",
           {
             max: 1,
             maxProcessed: 1,
@@ -79,7 +89,7 @@ module.exports = {
             errors: ["time"]
           }
         );
-      } catch {
+      } catch (error) {
         console.error(error);
         deleteEmbed(songEmbed);
         return message.channel.send(
@@ -98,8 +108,27 @@ module.exports = {
       }
       const proccessedURL = `https://www.youtube.com/watch?v=${video.raw.id}`;
       var vidTitle = video.title;
-      deleteEmbed(songEmbed);
-      playSong(proccessedURL, voiceChannel, message, vidTitle);
+
+      try {
+        let song = {
+          url: proccessedURL,
+          title: vidTitle,
+          voiceChannel: voiceChannel
+        };
+        queue.push(song);
+        if (isPlaying == false || typeof isPlaying == "undefined") {
+          isPlaying = true;
+          deleteEmbed(songEmbed);
+          playSong(queue, message);
+        } else if (isPlaying == true) {
+          deleteEmbed(songEmbed);
+          return message.channel.send(`${song.title} added to queue`);
+        }
+      } catch (error) {
+        deleteEmbed(songEmbed);
+        console.error(error);
+        return message.reply("queue process gone wrong");
+      }
     } catch {
       if (songEmbed) {
         deleteEmbed(songEmbed);
@@ -111,13 +140,13 @@ module.exports = {
   }
 };
 
-function playSong(url, voiceChannel, message, videoTitle) {
-  voiceChannel
+function playSong(queue, message) {
+  queue[0].voiceChannel
     .join()
     .then(connection => {
       const dispatcher = connection
         .play(
-          ytdl(url, {
+          ytdl(queue[0].url, {
             volume: 1,
             quality: "highestaudio",
             highWaterMark: 1024 * 1024 * 10
@@ -126,11 +155,21 @@ function playSong(url, voiceChannel, message, videoTitle) {
         .on("start", () => {
           module.exports.dispatcher = dispatcher;
           return message.channel.send(
-            `:musical_note: Now playing: ${videoTitle} :musical_note:`
+            `:musical_note: Now playing: ${queue[0].title} :musical_note:`
           );
         })
         .on("finish", () => {
-          return message.channel.send("song ended"); // only here for testing
+          queue.shift();
+          if (queue.length > 1) {
+            message.channel.send(
+              "Song ended" // only here for testing will be removed when the dev is done
+            );
+            return playSong(queue, message);
+          } else {
+            return message.channel.send(
+              "Song ended" // only here for testing will be removed when the dev is done
+            );
+          }
         })
         //.on("speaking", value => {})
         .on("error", e => {
