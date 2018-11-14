@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { tenorAPI } = require("../config.json");
 
 module.exports = {
   name: "cat",
@@ -6,8 +7,11 @@ module.exports = {
   description: "random cat image!",
   async execute(message) {
     try {
-      const { body } = await fetch("https://aws.random.cat/meow");
-      message.channel.send(body.file);
+      await fetch(
+        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`
+      )
+        .then(res => res.json())
+        .then(json => message.channel.send(json.results[0].url));
     } catch (err) {
       message.channel.send("Request to find a kitty failed :(");
       console.error(err);

@@ -2,13 +2,13 @@ const fetch = require("node-fetch");
 const { tenorAPI } = require("../config.json");
 
 module.exports = {
-  name: "animegif",
+  name: "jojo",
   cooldown: 3,
-  description: "query a random anime gif from giphy",
+  description: "query a random jojo gif from giphy",
   async execute(message) {
     try {
       await fetch(
-        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=anime&limit=1`
+        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`
       )
         .then(res => res.json())
         .then(json => message.channel.send(json.results[0].url));

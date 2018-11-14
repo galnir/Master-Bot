@@ -1,7 +1,5 @@
-const fetch = require('node-fetch');
-const {
-  giphyAPI
-} = require('../config.json');
+const fetch = require("node-fetch");
+const { tenorAPI } = require("../config.json");
 
 module.exports = {
   name: "gintama",
@@ -9,8 +7,11 @@ module.exports = {
   description: "query a random gintama gif from giphy",
   async execute(message) {
     try {
-      await fetch(`https://api.giphy.com/v1/gifs/random?api_key=${giphyAPI}&tag=gintama&rating=r`).then(res => res.json())
-        .then(json => message.channel.send(json.data.url));
+      await fetch(
+        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`
+      )
+        .then(res => res.json())
+        .then(json => message.channel.send(json.results[0].url));
       /*
             const embed = new Discord.RichEmbed()
             .setURL(response.body.data[0].url)
