@@ -18,7 +18,7 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 
 ### Resources
-[Get a giphy api key here](https://developers.giphy.com/)
+[Get a tenor api key here](https://tenor.com/developer/keyregistration)
 
 [Get a news api key here](https://newsapi.org/)
 
