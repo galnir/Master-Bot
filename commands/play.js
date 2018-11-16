@@ -6,7 +6,6 @@ const youtube = new Youtube(youtubeAPI);
 
 var queue = [];
 var isPlaying;
-
 module.exports = {
   name: "play",
   cooldown: 5,
@@ -160,12 +159,13 @@ function playSong(queue, message) {
         })
         .on("finish", () => {
           queue.shift();
-          if (queue.length > 1) {
+          if (queue.length >= 1) {
             message.channel.send(
               "Song ended" // only here for testing will be removed when the dev is done
             );
             return playSong(queue, message);
           } else {
+            isPlaying = false;
             return message.channel.send(
               "Song ended" // only here for testing will be removed when the dev is done
             );
