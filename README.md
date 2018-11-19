@@ -29,3 +29,8 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
+
+### Tasks
+- [ ] Improve code quality
+- [ ] Add new features
+
