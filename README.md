@@ -1,4 +1,5 @@
 # A discord bot made with JavaScript and the discord.js library
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com) 
 
 ### Installing the dependencies
 ``` npm i```
