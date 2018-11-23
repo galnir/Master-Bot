@@ -53,7 +53,8 @@ module.exports = {
           voiceChannel: voiceChannel
         };
         queue.push(song);
-      } catch {
+      } catch (err) {
+        console.error(err);
         return message.channel.send("Something went wrong, please try later");
       }
       return playSong(queue, message);
@@ -88,8 +89,8 @@ module.exports = {
             errors: ["time"]
           }
         );
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         deleteEmbed(songEmbed);
         return message.channel.send(
           "Please try again and enter a number between 1 and 5 or exit"
@@ -99,7 +100,8 @@ module.exports = {
       const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-      } catch {
+      } catch (err) {
+        console.error(err);
         deleteEmbed(songEmbed);
         return message.channel.send(
           "An error has occured when trying to get the video ID from youtube"
@@ -123,12 +125,13 @@ module.exports = {
           deleteEmbed(songEmbed);
           return message.channel.send(`${song.title} added to queue`);
         }
-      } catch (error) {
+      } catch (err) {
+        console.error(err);
         deleteEmbed(songEmbed);
-        console.error(error);
         return message.reply("queue process gone wrong");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       if (songEmbed) {
         deleteEmbed(songEmbed);
       }
@@ -184,7 +187,7 @@ function playSong(queue, message) {
 function deleteEmbed(embed) {
   try {
     embed.delete();
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 }
