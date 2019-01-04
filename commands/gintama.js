@@ -1,17 +1,40 @@
-const fetch = require("node-fetch");
-const { tenorAPI } = require("../config.json");
-
+// const fetch = require("node-fetch");
+// const { tenorAPI } = require("../config.json");
+const fs = require("fs");
 module.exports = {
   name: "gintama",
   cooldown: 3,
-  description: "query a random gintama gif from giphy",
-  async execute(message) {
+  description: "query a random gintama gif from tenor",
+  execute(message) {
     try {
+      const linkArray = fs
+        .readFileSync("giflinks/gintamalinks.txt", "utf8")
+        .split("\n");
+      const link = linkArray[Math.floor(Math.random() * linkArray.length)];
+      message.channel.send(link);
+
+      /*
+      I changed the command from calling the tenor api each time someone
+      uses the !gintama command for 2 main reasons:
+      
+      1. The tenor api doesn't always respond with a valid gintama gif, sometimes
+      it responds with a wrong gif.
+      2. Instead of waiting for the api we can just pick a random link from
+      the gintamalinks file so the response is faster.
+
+      You can still use the old method, it's commented out down below, and
+      don't forget to uncomment the require for node-fetch and tenorAPI above
+      and make add the 'async' keyword before execute
+      */
+
+      /*
       await fetch(
         `https://api.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`
       )
         .then(res => res.json())
         .then(json => message.channel.send(json.results[0].url));
+      */
+
       /*
             const embed = new Discord.RichEmbed()
             .setURL(response.body.data[0].url)
