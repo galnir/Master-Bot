@@ -1,13 +1,15 @@
 // const fetch = require("node-fetch");
 // const { tenorAPI } = require("../config.json");
-var fs = require("fs");
+const fs = require("fs");
 module.exports = {
   name: "jojo",
   cooldown: 3,
   description: "query a random jojo gif from tenor",
   execute(message) {
     try {
-      const linkArray = fs.readFileSync("jojolinks.txt", "utf8").split("\n");
+      const linkArray = fs
+        .readFileSync("giflinks/jojolinks.txt", "utf8")
+        .split("\n");
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
       message.channel.send(link);
 
