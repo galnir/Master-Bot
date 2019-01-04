@@ -17,6 +17,38 @@ Make a config.json file in the root directory of the project and add:
 ```
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems, if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below. Moreover, the music command is still under development, so it might break.
 
+### Commands
+* Music commands: 
+
+!play - the bot joins your channel and plays music from youtube, either add a url after '!play' or a song name and choose from the provided list
+```
+!play Darude - Sandstorm
+!play https://www.youtube.com/watch?v=y6120QOlsfU
+```
+!pause
+
+!resume
+
+!skip
+
+* Gif commands: 
+
+!gif - query a gif
+```
+!gif labrador
+```
+
+!animegif - random anime gif
+
+!gintama - random gintama gif
+
+!jojo - random jojo gif
+
+!cat
+
+* News command:
+
+!global-news - latest headlines from reuters, you can change the news source to [whatever news source you want](https://newsapi.org/sources), just change the source in line 13 in global-news.js or ynet-news.js
 
 ### Resources
 [Get a tenor api key here](https://tenor.com/developer/keyregistration)
@@ -24,6 +56,10 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 [Get a news api key here](https://newsapi.org/)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+
+* Other commands:
+
+You also have other commands like kick, ban, fortune cookie, etc..
 
 ### Contributing
 
