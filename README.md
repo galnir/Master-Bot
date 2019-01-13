@@ -55,6 +55,8 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 [Get a news api key here](https://newsapi.org/)
 
+[How to get a youtube api key](https://developers.google.com/youtube/v3/getting-started)
+
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
 * Other commands:
