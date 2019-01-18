@@ -6,9 +6,6 @@ module.exports = {
   description: "Skips the currently playing song, if one is playing",
   execute(message) {
     if (!message.guild) return;
-    if (!message.member.hasPermission("MANAGE_MESSAGES"))
-      // ^ only for testing will be removed when the music bot is complete
-      return message.channel.send("No permission!");
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply("Join a channel and try again");
 

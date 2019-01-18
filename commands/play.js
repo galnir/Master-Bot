@@ -13,9 +13,6 @@ module.exports = {
   async execute(message, args) {
     // initial checking
     if (!message.guild) return;
-    if (!message.member.hasPermission("MANAGE_MESSAGES"))
-      // ^ only for testing will be removed when the music bot is complete
-      return message.channel.send("No permission!");
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply("Join a channel and try again");
     const permissions = voiceChannel.permissionsFor(message.client.user);
@@ -163,18 +160,11 @@ function playSong(queue, message) {
         .on("finish", () => {
           queue.shift();
           if (queue.length >= 1) {
-            message.channel.send(
-              "Song ended" // only here for testing will be removed when the dev is done
-            );
             return playSong(queue, message);
           } else {
             isPlaying = false;
-            return message.channel.send(
-              "Song ended" // only here for testing will be removed when the dev is done
-            );
           }
         })
-        //.on("speaking", value => {})
         .on("error", e => {
           return console.log(e);
         });
