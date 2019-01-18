@@ -8,7 +8,7 @@ module.exports = {
   execute(message) {
     try {
       const linkArray = fs
-        .readFileSync("giflinks/gintamalinks.txt", "utf8")
+        .readFileSync("resources/gintamalinks.txt", "utf8")
         .split("\n");
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
       message.channel.send(link);
