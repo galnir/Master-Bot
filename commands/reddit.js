@@ -2,24 +2,36 @@ const Discord = require("discord.js");
 const fetch = require("node-fetch");
 
 module.exports = {
-  name: "reddit",
+  name: "test",
   cooldown: 0,
-  description: "Gives you the top 5 reddit posts for the day",
-  async execute(message) {
+  description:
+    "Get the 5 top posts for any subreddit you request or leave blank to get top posts for r/all",
+  async execute(message, args) {
+    console.log(args);
     try {
-      await fetch("https://www.reddit.com/r/all/top/.json?limit=5&t=day")
-        .then(res => res.json())
-        .then(json => {
-          const dataArr = json.data.children;
-          for (let i = 0; i < dataArr.length; i++) {
-            message.channel.send(embedPost(dataArr[i].data));
-          }
-        });
+      if (!args) {
+        await fetch("https://www.reddit.com/r/all/top/.json?limit=5&t=day")
+          .then(res => res.json())
+          .then(json => {
+            const dataArr = json.data.children;
+            for (let i = 0; i < dataArr.length; i++) {
+              message.channel.send(embedPost(dataArr[i].data));
+            }
+          });
+      } else {
+        await fetch(`https://www.reddit.com/r/${args}/top/.json?limit=5&t=day`)
+          .then(res => res.json())
+          .then(json => {
+            const dataArr = json.data.children;
+            for (let i = 0; i < dataArr.length; i++) {
+              message.channel.send(embedPost(dataArr[i].data));
+            }
+          });
+      }
     } catch (e) {
-      message.reply("Something went wrong :frowning: ");
+      message.reply("The subreddit you asked for was not found");
       // console.log(e);
     }
-
     // returns an embed that is ready to be sent
     function embedPost(data) {
       return new Discord.MessageEmbed()
