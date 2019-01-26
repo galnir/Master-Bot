@@ -1,6 +1,6 @@
-const Discord = require('discord.js');
-const fetch = require('node-fetch');
-const { newsAPI } = require('../config.json');
+const Discord = require("discord.js");
+const fetch = require("node-fetch");
+const { newsAPI } = require("../config.json");
 
 module.exports = {
   name: "ynet-news",
@@ -10,9 +10,9 @@ module.exports = {
   async execute(message) {
     try {
       const response = await fetch(
-        `https://newsapi.org/v2/top-headlines?sources=ynet&apiKey=${newsAPI}`
+        `https://newsapi.org/v2/top-headlines?sources=ynet&pageSize=5&apiKey=${newsAPI}`
       );
-      const json = await response.json()
+      const json = await response.json();
       let articleArr = json.articles;
       let processArticle = article => {
         let embed = new Discord.MessageEmbed()
@@ -40,4 +40,4 @@ module.exports = {
   }
 };
 
-// The news api is powered by NewsAPI.org! 
+// The news api is powered by NewsAPI.org!

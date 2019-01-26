@@ -1,6 +1,6 @@
-const Discord = require('discord.js');
-const fetch = require('node-fetch');
-const { newsAPI } = require('../config.json');
+const Discord = require("discord.js");
+const fetch = require("node-fetch");
+const { newsAPI } = require("../config.json");
 
 module.exports = {
   name: "global-news",
@@ -10,7 +10,7 @@ module.exports = {
   async execute(message) {
     try {
       const response = await fetch(
-        `https://newsapi.org/v2/top-headlines?sources=reuters&apiKey=${newsAPI}`
+        `https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=5&apiKey=${newsAPI}`
       );
       const json = await response.json();
       const articleArr = json.articles;
@@ -37,7 +37,6 @@ module.exports = {
       console.error(err);
       message.channel.send("Something failed along the way");
     }
-    
   }
 };
 
