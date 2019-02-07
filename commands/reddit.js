@@ -2,13 +2,14 @@ const Discord = require("discord.js");
 const fetch = require("node-fetch");
 
 module.exports = {
-  name: "test",
-  cooldown: 0,
+  name: "reddit",
+  cooldown: 5,
   description:
-    "Get the 5 top posts for any subreddit you request or leave blank to get top posts for r/all",
+    "Gives you the top 5 reddit posts for the day(no nsfw subreddits)",
   async execute(message, args) {
-    console.log(args);
+    //console.log(args);
     try {
+      // user provides no args
       if (!args) {
         await fetch("https://www.reddit.com/r/all/top/.json?limit=5&t=day")
           .then(res => res.json())
@@ -18,13 +19,18 @@ module.exports = {
               message.channel.send(embedPost(dataArr[i].data));
             }
           });
+        // user provides args
       } else {
         await fetch(`https://www.reddit.com/r/${args}/top/.json?limit=5&t=day`)
           .then(res => res.json())
           .then(json => {
             const dataArr = json.data.children;
             for (let i = 0; i < dataArr.length; i++) {
-              message.channel.send(embedPost(dataArr[i].data));
+              if (dataArr[i].data.over_18 === true) {
+                message.channel.send(":no_entry: nsfw :no_entry:");
+              } else {
+                message.channel.send(embedPost(dataArr[i].data));
+              }
             }
           });
       }
