@@ -16,7 +16,8 @@ Make a config.json file in the root directory of the project and add:
   "token": "Your-Bot-Token",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "youtubeAPI": "youtube-api-key"
+  "youtubeAPI": "youtube-api-key",
+  "yandexAPI": 'yandex-api-key"
 }
 ```
 
