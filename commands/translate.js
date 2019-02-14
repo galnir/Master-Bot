@@ -1,3 +1,4 @@
+const Discord = require("discord.js");
 const fetch = require("node-fetch");
 const { yandexAPI } = require("../config.json");
 
@@ -16,6 +17,7 @@ module.exports = {
     // I'm using encodeURI() because of a TypeError that is happening with some languages
     try {
       await fetch(
+        // Powered by Yandex.Translate http://translate.yandex.com/
         `https://translate.yandex.net/api/v1.5/tr.json/detect?key=${yandexAPI}&text=${encodeURI(
           text
         )}`
@@ -32,21 +34,29 @@ module.exports = {
     }
     if (!lang) return message.reply("Provide characters only!");
 
-    let translatedText;
-
     try {
       await fetch(
+        // Powered by Yandex.Translate http://translate.yandex.com/
         `https://translate.yandex.net/api/v1.5/tr.json/translate?key=${yandexAPI}&text=${encodeURI(
           text
         )}&lang=${lang + "-" + "en"}`
       )
         .then(res => res.json())
         .then(json => {
-          translatedText = json.text[0];
+          message.channel.send(embedTranslation(json.text[0]));
         });
     } catch (e) {
       console.error(e);
       message.channel.send("Something went wrong when trying to translate");
+    }
+
+    function embedTranslation(text) {
+      return new Discord.MessageEmbed()
+        .setColor("#FF0000")
+        .setTitle("Yandex Translate")
+        .setURL("http://translate.yandex.com/")
+        .setDescription(text)
+        .setFooter("Powered by Yandex.Translate");
     }
   }
 };
