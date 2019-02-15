@@ -64,6 +64,10 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 !translate 'your-text-here' - You can translate any text from any language to English(more languages will be added)
 
+- Reddit command:
+
+!reddit 'subreddit-name' - Get the 5 top posts of any non-nsfw subreddit or leave blank for r/all
+
 ### Resources
 
 [Get a Tenor API key here](https://tenor.com/developer/keyregistration)
