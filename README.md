@@ -60,6 +60,10 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 !global-news - latest headlines from reuters, you can change the news source to [whatever news source you want](https://newsapi.org/sources), just change the source in line 13 in global-news.js or ynet-news.js
 
+- Translate command:
+
+!translate 'your-text-here' - You can translate any text from any language to English(more languages will be added)
+
 ### Resources
 
 [Get a Tenor API key here](https://tenor.com/developer/keyregistration)
