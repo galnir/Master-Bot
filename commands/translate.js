@@ -28,7 +28,7 @@ module.exports = {
         });
     } catch (e) {
       console.error(e);
-      message.channel.send(
+      return message.channel.send(
         "Something went wrong when trying to detect language"
       );
     }
@@ -43,11 +43,13 @@ module.exports = {
       )
         .then(res => res.json())
         .then(json => {
-          message.channel.send(embedTranslation(json.text[0]));
+          return message.channel.send(embedTranslation(json.text[0]));
         });
     } catch (e) {
       console.error(e);
-      message.channel.send("Something went wrong when trying to translate");
+      return message.channel.send(
+        "Something went wrong when trying to translate"
+      );
     }
 
     function embedTranslation(text) {
