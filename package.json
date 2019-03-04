@@ -13,7 +13,7 @@
   "dependencies": {
     "discord.js": "github:discordjs/discord.js#master",
     "discord.js-commando": "github:discordjs/Commando",
-    "ffmpeg-binaries": "^4.0.0",
+    "ffmpeg-static": "^2.4.0",
     "node-opus": "^0.3.1",
     "simple-youtube-api": "^5.1.1",
     "ytdl-core": "^0.27.1"
