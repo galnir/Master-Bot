@@ -1,35 +1,35 @@
-const Discord = require("discord.js");
-const Youtube = require("simple-youtube-api");
-const ytdl = require("ytdl-core");
-const { youtubeAPI } = require("../config.json");
+const Discord = require('discord.js');
+const Youtube = require('simple-youtube-api');
+const ytdl = require('ytdl-core');
+const { youtubeAPI } = require('../config.json');
 const youtube = new Youtube(youtubeAPI);
 
 var queue = [];
 var isPlaying;
 module.exports = {
-  name: "play",
+  name: 'play',
   cooldown: 5,
-  description: "Plays selected music from youtube",
+  description: 'Plays selected music from youtube',
   async execute(message, args) {
     // initial checking
     if (!message.guild) return;
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply("Join a channel and try again");
+    if (!voiceChannel) return message.reply('Join a channel and try again');
     const permissions = voiceChannel.permissionsFor(message.client.user);
-    if (!permissions.has("CONNECT")) {
+    if (!permissions.has('CONNECT')) {
       return message.channel.send(
         `I don't have permission to connect to your voice channel`
       );
     }
-    if (!permissions.has("SPEAK")) {
+    if (!permissions.has('SPEAK')) {
       return message.channel.send(`I don't have permission to speak`);
     }
     if (!args) {
-      return message.reply("Please provide a song name or a full url");
+      return message.reply('Please provide a song name or a full url');
     }
     // end initial check
 
-    let query = args.join(" ");
+    let query = args.join(' ');
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
       let id;
       let vidTitle;
@@ -37,7 +37,7 @@ module.exports = {
       let song;
       try {
         query = query
-          .replace(/(>|<)/gi, "")
+          .replace(/(>|<)/gi, '')
           .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
         id = query[2].split(/[^0-9a-z_\-]/i);
         id = id[0];
@@ -52,7 +52,7 @@ module.exports = {
         queue.push(song);
       } catch (err) {
         console.error(err);
-        return message.channel.send("Something went wrong, please try later");
+        return message.channel.send('Something went wrong, please try later');
       }
       return playSong(queue, message);
     }
@@ -65,35 +65,35 @@ module.exports = {
         vidNameArr.push(`${j}: ${videos[i].title}`);
         j++;
       }
-      vidNameArr.push("exit");
+      vidNameArr.push('exit');
       const embed = new Discord.MessageEmbed()
-        .setColor("#e9f931")
-        .setTitle("Choose a song by commenting a number between 1 and 5")
-        .addField("Song 1", vidNameArr[0])
-        .addField("Song 2", vidNameArr[1])
-        .addField("Song 3", vidNameArr[2])
-        .addField("Song 4", vidNameArr[3])
-        .addField("Song 5", vidNameArr[4])
-        .addField("Exit", "exit");
+        .setColor('#e9f931')
+        .setTitle('Choose a song by commenting a number between 1 and 5')
+        .addField('Song 1', vidNameArr[0])
+        .addField('Song 2', vidNameArr[1])
+        .addField('Song 3', vidNameArr[2])
+        .addField('Song 4', vidNameArr[3])
+        .addField('Song 5', vidNameArr[4])
+        .addField('Exit', 'exit');
       var songEmbed = await message.channel.send({ embed });
       try {
         var response = await message.channel.awaitMessages(
-          msg => (msg.content > 0 && msg.content < 6) || msg.content === "exit",
+          msg => (msg.content > 0 && msg.content < 6) || msg.content === 'exit',
           {
             max: 1,
             maxProcessed: 1,
             time: 60000,
-            errors: ["time"]
+            errors: ['time']
           }
         );
       } catch (err) {
         console.error(err);
         deleteEmbed(songEmbed);
         return message.channel.send(
-          "Please try again and enter a number between 1 and 5 or exit"
+          'Please try again and enter a number between 1 and 5 or exit'
         );
       }
-      if (response.first().content === "exit") return;
+      if (response.first().content === 'exit') return;
       const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
@@ -101,7 +101,7 @@ module.exports = {
         console.error(err);
         deleteEmbed(songEmbed);
         return message.channel.send(
-          "An error has occured when trying to get the video ID from youtube"
+          'An error has occured when trying to get the video ID from youtube'
         );
       }
       const proccessedURL = `https://www.youtube.com/watch?v=${video.raw.id}`;
@@ -114,7 +114,7 @@ module.exports = {
           voiceChannel: voiceChannel
         };
         queue.push(song);
-        if (isPlaying == false || typeof isPlaying == "undefined") {
+        if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
           deleteEmbed(songEmbed);
           playSong(queue, message);
@@ -125,7 +125,7 @@ module.exports = {
       } catch (err) {
         console.error(err);
         deleteEmbed(songEmbed);
-        return message.reply("queue process gone wrong");
+        return message.reply('queue process gone wrong');
       }
     } catch (err) {
       console.error(err);
@@ -133,7 +133,7 @@ module.exports = {
         deleteEmbed(songEmbed);
       }
       return message.channel.send(
-        "Something went wrong with searching the video you requested :("
+        'Something went wrong with searching the video you requested :('
       );
     }
   }
@@ -147,17 +147,17 @@ function playSong(queue, message) {
         .play(
           ytdl(queue[0].url, {
             volume: 0.5,
-            quality: "highestaudio",
+            quality: 'highestaudio',
             highWaterMark: 1024 * 1024 * 10
           })
         )
-        .on("start", () => {
+        .on('start', () => {
           module.exports.dispatcher = dispatcher;
           return message.channel.send(
             `:musical_note: Now playing: ${queue[0].title} :musical_note:`
           );
         })
-        .on("finish", () => {
+        .on('finish', () => {
           queue.shift();
           if (queue.length >= 1) {
             return playSong(queue, message);
@@ -165,7 +165,7 @@ function playSong(queue, message) {
             isPlaying = false;
           }
         })
-        .on("error", e => {
+        .on('error', e => {
           return console.log(e);
         });
     })
