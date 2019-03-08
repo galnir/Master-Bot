@@ -13,32 +13,12 @@ module.exports = {
         'Please provide something to translate and to what language'
       );
     const text = args.join(' ');
-    let lang;
     // I'm using encodeURI() because of a TypeError that is happening with some languages
-    fetch(
-      // Powered by Yandex.Translate http://translate.yandex.com/
-      `https://translate.yandex.net/api/v1.5/tr.json/detect?key=${yandexAPI}&text=${encodeURI(
-        text
-      )}`
-    )
-      .then(res => res.json())
-      .then(json => {
-        lang = json.lang;
-      })
-      .catch(e => {
-        console.error(e);
-        return message.channel.send(
-          'Something went wrong when trying to detect language'
-        );
-      });
-
-    if (!lang) return message.reply('Provide characters only!');
-
     fetch(
       // Powered by Yandex.Translate http://translate.yandex.com/
       `https://translate.yandex.net/api/v1.5/tr.json/translate?key=${yandexAPI}&text=${encodeURI(
         text
-      )}&lang=${lang + '-' + 'en'}`
+      )}&lang=${'en'}`
     )
       .then(res => res.json())
       .then(json => {
