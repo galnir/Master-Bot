@@ -25,14 +25,14 @@ module.exports = class KickCommand extends Command {
     });
   }
 
-  run(message, { userToKick, reason }) {
-    if (message.guild.member(userToKick).hasPermission('MANAGE_MESSAGES')) {
-      return message.say('This user is too important to be kicked!');
-    }
-    message.guild
-      .member(userToKick)
+  run(message, { reason }) {
+    const user = message.mentions.members.first();
+    user
       .kick(reason)
-      .then(user => message.say(`${user} was kicked`));
-    return;
+      .then(() => message.say(`Kicked ${user} reason: ${reason}`))
+      .catch(e => {
+        message.say('Something went wrong when trying to kick this user');
+        return console.error(e);
+      });
   }
 };
