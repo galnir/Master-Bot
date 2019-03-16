@@ -56,9 +56,9 @@ module.exports = class PlayCommand extends Command {
         vidTitle = video.title;
 
         song = {
-          url: url,
+          url,
           title: vidTitle,
-          voiceChannel: voiceChannel
+          voiceChannel
         };
         queue.push(song);
       } catch (err) {
@@ -122,7 +122,7 @@ module.exports = class PlayCommand extends Command {
         let song = {
           url: proccessedURL,
           title: vidTitle,
-          voiceChannel: voiceChannel
+          voiceChannel
         };
         queue.push(song);
         if (isPlaying == false || typeof isPlaying == 'undefined') {
