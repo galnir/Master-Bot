@@ -53,6 +53,8 @@ module.exports = class PlayCommand extends Command {
         id = query[2].split(/[^0-9a-z_\-]/i);
         id = id[0];
         let video = await youtube.getVideoByID(id);
+        if (video.raw.snippet.liveBroadcastContent === 'live')
+          return message.say("I don't support live streams!");
         vidTitle = video.title;
 
         song = {
@@ -108,6 +110,8 @@ module.exports = class PlayCommand extends Command {
       const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
+        if (video.raw.snippet.liveBroadcastContent === 'live')
+          return message.say("I don't support live streams!");
       } catch (err) {
         console.error(err);
         deleteEmbed(songEmbed);
