@@ -1,16 +1,16 @@
-const { RichEmbed } = require("discord.js");
-const fetch = require("node-fetch");
-const { newsAPI } = require("../../config.json");
-const { Command } = require("discord.js-commando");
+const { MessageEmbed } = require('discord.js');
+const fetch = require('node-fetch');
+const { newsAPI } = require('../../config.json');
+const { Command } = require('discord.js-commando');
 
 module.exports = class GlobalNewsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: "global-news",
-      aliases: ["world-news", "reuters"],
-      group: "other",
-      memberName: "global-news",
-      description: "Replies with the 5 latest global news headlines",
+      name: 'global-news',
+      aliases: ['world-news', 'reuters'],
+      group: 'other',
+      memberName: 'global-news',
+      description: 'Replies with the 5 latest global news headlines',
       throttling: {
         usages: 2,
         duration: 10
@@ -26,15 +26,15 @@ module.exports = class GlobalNewsCommand extends Command {
       const json = await response.json();
       const articleArr = json.articles;
       let processArticle = article => {
-        const embed = new RichEmbed()
-          .setColor("#FF4F00")
+        const embed = new MessageEmbed()
+          .setColor('#FF4F00')
           .setTitle(article.title)
           .setURL(article.url)
           .setAuthor(article.author)
           .setDescription(article.description)
           .setThumbnail(article.urlToImage)
           .setTimestamp(article.publishedAt)
-          .setFooter("---------------------------------");
+          .setFooter('---------------------------------');
         return embed;
       };
       async function processArray(array) {
@@ -45,7 +45,7 @@ module.exports = class GlobalNewsCommand extends Command {
       }
       await processArray(articleArr);
     } catch (e) {
-      message.say("Something failed along the way");
+      message.say('Something failed along the way');
       return console.error(e);
     }
   }

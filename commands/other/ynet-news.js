@@ -1,16 +1,16 @@
-const { RichEmbed } = require("discord.js");
-const { newsAPI } = require("../../config.json");
-const { Command } = require("discord.js-commando");
-const fetch = require("node-fetch");
+const { MessageEmbed } = require('discord.js');
+const { newsAPI } = require('../../config.json');
+const { Command } = require('discord.js-commando');
+const fetch = require('node-fetch');
 
 module.exports = class YnetNewsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: "ynet-news",
-      aliases: ["israel-news", "ynet"],
-      group: "other",
-      memberName: "ynet-news",
-      description: "Replies with the 5 latest israeli news headlines",
+      name: 'ynet-news',
+      aliases: ['israel-news', 'ynet'],
+      group: 'other',
+      memberName: 'ynet-news',
+      description: 'Replies with the 5 latest israeli news headlines',
       throttling: {
         usages: 2,
         duration: 10
@@ -26,15 +26,15 @@ module.exports = class YnetNewsCommand extends Command {
       const json = await response.json();
       let articleArr = json.articles;
       let processArticle = article => {
-        let embed = new RichEmbed()
-          .setColor("#BA160C")
+        let embed = new MessageEmbed()
+          .setColor('#BA160C')
           .setTitle(article.title)
           .setURL(article.url)
           .setAuthor(article.author)
           .setDescription(article.description)
           .setThumbnail(article.urlToImage)
           .setTimestamp(article.publishedAt)
-          .setFooter("---------------------------------");
+          .setFooter('---------------------------------');
         return embed;
       };
       async function processArray(array) {
@@ -45,7 +45,7 @@ module.exports = class YnetNewsCommand extends Command {
       }
       await processArray(articleArr);
     } catch (err) {
-      message.say("Something failed along the way");
+      message.say('Something failed along the way');
       return console.error(err);
     }
   }
