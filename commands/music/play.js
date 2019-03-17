@@ -191,8 +191,8 @@ function playSong(queue, message) {
 
 function deleteEmbed(embed) {
   try {
-    embed.delete();
+    return embed.delete();
   } catch (err) {
-    console.error(err);
+    return console.error(err);
   }
 }
