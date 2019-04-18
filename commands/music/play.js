@@ -41,6 +41,7 @@ module.exports = class PlayCommand extends Command {
 
     //let query = text.join(' ');
     let query = text;
+    // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
       let id;
       let vidTitle;
@@ -62,7 +63,13 @@ module.exports = class PlayCommand extends Command {
           title: vidTitle,
           voiceChannel
         };
-        queue.push(song);
+        if (queue.length > 6) {
+          return message.say(
+            'There are too many songs in the queue already, skip or wait a bit'
+          );
+        } else {
+          queue.push(song);
+        }
       } catch (err) {
         console.error(err);
         return message.say('Something went wrong, please try later');
@@ -128,7 +135,13 @@ module.exports = class PlayCommand extends Command {
           title: vidTitle,
           voiceChannel
         };
-        queue.push(song);
+        if (queue.length > 6) {
+          return message.say(
+            'There are too many songs in the queue already, skip or wait a bit'
+          );
+        } else {
+          queue.push(song);
+        }
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
           deleteEmbed(songEmbed);
