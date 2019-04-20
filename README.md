@@ -92,4 +92,5 @@ Anyone is welcome to suggest new features and improve code quality!
 ### Tasks
 
 - [ ] Improve code quality
-- [ ] Add new features
+- [ ] Write more guild commands
+- [ ] Improve music quality
