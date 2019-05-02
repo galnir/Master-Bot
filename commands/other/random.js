@@ -24,13 +24,8 @@ module.exports = class RandomNumberCommand extends Command {
   }
 
   run(message, { min, max }) {
-    try {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return message.say(Math.floor(Math.random() * (max - min + 1)) + min);
-    } catch (err) {
-      console.error(err);
-      return message.say('Failed to generate a random number');
-    }
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return message.say(Math.floor(Math.random() * (max - min + 1)) + min);
   }
 };
