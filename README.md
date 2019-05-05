@@ -68,6 +68,10 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 !reddit 'subreddit-name' - Get the 5 top posts of any non-nsfw subreddit or leave blank for r/all
 
+- Random number command:
+
+!random min max
+
 ### Resources
 
 [Get a Tenor API key here](https://tenor.com/developer/keyregistration)
