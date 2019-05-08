@@ -23,6 +23,8 @@ Make a config.json file in the root directory of the project and add:
 
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems, if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below. Moreover, the music command is still under development, so it might break.
 
+Also, no matter what operating system you have, make sure [ffmpeg](https://www.ffmpeg.org/download.html) is installed.
+
 ### Commands
 
 - Music commands:
@@ -67,6 +69,10 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 - Reddit command:
 
 !reddit 'subreddit-name' - Get the 5 top posts of any non-nsfw subreddit or leave blank for r/all
+
+- Random number command:
+
+!random min max
 
 ### Resources
 
