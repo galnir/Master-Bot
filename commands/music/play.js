@@ -181,6 +181,7 @@ function playSong(queue, message) {
         )
         .on('start', () => {
           module.exports.dispatcher = dispatcher;
+          module.exports.queue = queue;
           return message.say(
             `:musical_note: Now playing: ${queue[0].title} :musical_note:`
           );
