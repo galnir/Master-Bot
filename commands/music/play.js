@@ -67,16 +67,19 @@ module.exports = class PlayCommand extends Command {
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
-        } else {
-          queue.push(song);
+        }
+        queue.push(song);
+        if (isPlaying == false || typeof isPlaying == 'undefined') {
+          isPlaying = true;
+          return playSong(queue, message);
+        } else if (isPlaying == true) {
+          return message.say(`${song.title} added to queue`);
         }
       } catch (err) {
         console.error(err);
         return message.say('Something went wrong, please try later');
       }
-      return playSong(queue, message);
     }
-
     try {
       var videos = await youtube.searchVideos(query, 5);
       let vidNameArr = [];
@@ -195,6 +198,7 @@ function playSong(queue, message) {
           }
         })
         .on('error', e => {
+          message.say('Cannot play song');
           return console.log(e);
         });
     })
