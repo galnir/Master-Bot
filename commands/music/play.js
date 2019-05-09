@@ -116,7 +116,7 @@ module.exports = class PlayCommand extends Command {
           'Please try again and enter a number between 1 and 5 or exit'
         );
       }
-      if (response.first().content === 'exit') return;
+      if (response.first().content === 'exit') return deleteEmbed(songEmbed);
       const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
