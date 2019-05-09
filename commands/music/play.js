@@ -39,28 +39,23 @@ module.exports = class PlayCommand extends Command {
     if (!voiceChannel) return message.say('Join a channel and try again');
     // end initial check
 
-    //let query = text.join(' ');
     let query = text;
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
-      let id;
-      let vidTitle;
-      let url = query;
-      let song;
+      const url = query;
       try {
         query = query
           .replace(/(>|<)/gi, '')
           .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        id = query[2].split(/[^0-9a-z_\-]/i);
-        id = id[0];
-        let video = await youtube.getVideoByID(id);
+        const id = query[2].split(/[^0-9a-z_\-]/i)[0];
+        const video = await youtube.getVideoByID(id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
           return message.say("I don't support live streams!");
-        vidTitle = video.title;
+        const title = video.title;
 
-        song = {
+        const song = {
           url,
-          title: vidTitle,
+          title,
           voiceChannel
         };
         if (queue.length > 6) {
@@ -81,8 +76,8 @@ module.exports = class PlayCommand extends Command {
       }
     }
     try {
-      var videos = await youtube.searchVideos(query, 5);
-      let vidNameArr = [];
+      const videos = await youtube.searchVideos(query, 5);
+      const vidNameArr = [];
       let j = 1;
       for (let i = 0; i < videos.length; i++) {
         vidNameArr.push(`${j}: ${videos[i].title}`);
@@ -129,13 +124,13 @@ module.exports = class PlayCommand extends Command {
           'An error has occured when trying to get the video ID from youtube'
         );
       }
-      const proccessedURL = `https://www.youtube.com/watch?v=${video.raw.id}`;
-      var vidTitle = video.title;
+      const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
+      const title = video.title;
 
       try {
         let song = {
-          url: proccessedURL,
-          title: vidTitle,
+          url,
+          title,
           voiceChannel
         };
         if (queue.length > 6) {
