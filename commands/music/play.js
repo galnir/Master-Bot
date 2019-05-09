@@ -171,6 +171,7 @@ module.exports = class PlayCommand extends Command {
 };
 
 function playSong(queue, message) {
+  let voiceChannel;
   queue[0].voiceChannel
     .join()
     .then(connection => {
@@ -185,6 +186,7 @@ function playSong(queue, message) {
         .on('start', () => {
           module.exports.dispatcher = dispatcher;
           module.exports.queue = queue;
+          voiceChannel = queue[0].voiceChannel;
           return message.say(
             `:musical_note: Now playing: ${queue[0].title} :musical_note:`
           );
@@ -195,6 +197,7 @@ function playSong(queue, message) {
             return playSong(queue, message);
           } else {
             isPlaying = false;
+            return voiceChannel.leave();
           }
         })
         .on('error', e => {
