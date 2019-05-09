@@ -12,7 +12,7 @@ module.exports = class PlayCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'play',
-      aliases: ['play-song', 'add', 'queue'],
+      aliases: ['play-song', 'add'],
       memberName: 'play',
       group: 'music',
       description: 'Play any song from youtube',
@@ -137,9 +137,8 @@ module.exports = class PlayCommand extends Command {
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
-        } else {
-          queue.push(song);
         }
+        queue.push(song);
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
           deleteEmbed(songEmbed);
