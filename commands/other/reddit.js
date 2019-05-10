@@ -19,6 +19,7 @@ module.exports = class RedditCommand extends Command {
           key: 'text',
           prompt: 'What subreddit would you like to search?',
           type: 'string',
+          default: 'all',
           validate: text => text.length < 50
         }
       ]
@@ -27,31 +28,18 @@ module.exports = class RedditCommand extends Command {
 
   async run(message, { text }) {
     try {
-      // user provides no args
-      if (!text) {
-        await fetch('https://www.reddit.com/r/all/top/.json?limit=5&t=day')
-          .then(res => res.json())
-          .then(json => {
-            const dataArr = json.data.children;
-            for (let i = 0; i < dataArr.length; i++) {
+      await fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
+        .then(res => res.json())
+        .then(json => {
+          const dataArr = json.data.children;
+          for (let i = 0; i < dataArr.length; i++) {
+            if (dataArr[i].data.over_18 === true) {
+              message.say(':no_entry: nsfw :no_entry:');
+            } else {
               message.say(embedPost(dataArr[i].data));
             }
-          });
-        // user provides args
-      } else {
-        await fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
-          .then(res => res.json())
-          .then(json => {
-            const dataArr = json.data.children;
-            for (let i = 0; i < dataArr.length; i++) {
-              if (dataArr[i].data.over_18 === true) {
-                message.say(':no_entry: nsfw :no_entry:');
-              } else {
-                message.say(embedPost(dataArr[i].data));
-              }
-            }
-          });
-      }
+          }
+        });
     } catch (e) {
       message.say('The subreddit you asked for was not found');
       return console.log(e);
@@ -64,7 +52,11 @@ module.exports = class RedditCommand extends Command {
       return new MessageEmbed()
         .setColor('#FE9004')
         .setTitle(data.title)
-        .setThumbnail(data.thumbnail)
+        .setThumbnail(
+          data.thumbnail === 'self'
+            ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Reddit.svg/256px-Reddit.svg.png'
+            : data.thumbnail
+        )
         .setURL(`https://www.reddit.com${data.permalink}`)
         .setDescription(`Upvotes: ${data.score} :thumbsup: `)
         .setAuthor(data.author);
