@@ -78,10 +78,8 @@ module.exports = class PlayCommand extends Command {
     try {
       const videos = await youtube.searchVideos(query, 5);
       const vidNameArr = [];
-      let j = 1;
       for (let i = 0; i < videos.length; i++) {
-        vidNameArr.push(`${j}: ${videos[i].title}`);
-        j++;
+        vidNameArr.push(`${i + 1}: ${videos[i].title}`);
       }
       vidNameArr.push('exit');
       const embed = new MessageEmbed()
