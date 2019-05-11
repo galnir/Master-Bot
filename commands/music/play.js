@@ -51,8 +51,9 @@ module.exports = class PlayCommand extends Command {
         const video = await youtube.getVideoByID(id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
           return message.say("I don't support live streams!");
+        if (video.duration.hours !== 0)
+          return message.say('I cannot play videos longer than 1 hour');
         const title = video.title;
-
         const song = {
           url,
           title,
