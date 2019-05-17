@@ -24,6 +24,7 @@ module.exports = class SkipAllCommand extends Command {
     }
     if (!playFile.queue) return message.say('There are no songs in queue');
     dispatcher.end();
-    return (playFile.queue.length = 0); // clear queue
+    playFile.queue.length = 0; // clear queue
+    return;
   }
 };
