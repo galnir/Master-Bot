@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const playFile = require('./play.js');
+const playFile = require('./play.js'); // importing the stuff I exported in play.js
 
 module.exports = class SkipCommand extends Command {
   constructor(client) {
@@ -14,20 +14,16 @@ module.exports = class SkipCommand extends Command {
   }
 
   run(message) {
-    var voiceChannel = message.member.voice.channel;
+    const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
-    var dispatcher = playFile.dispatcher;
-
-    if (typeof dispatcher == 'undefined') {
+    if (typeof playFile.dispatcher == 'undefined') {
       return message.reply('There is no song playing right now!');
     }
-    var queue = playFile.queue;
-    if (queue >= 1) {
-      queue.shift();
-      return playFile.playSong(queue, message);
-    } else {
-      dispatcher.end();
-    }
+    playFile.dispatcher.end();
+    /* when dispatcher.end function is called, it basically goes to the
+       .on('finish') method, and there we call queue.shift() to remove the 
+       skipped song from queue and decide if to call playSong method again 
+    */
   }
 };
