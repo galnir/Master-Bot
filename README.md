@@ -2,6 +2,8 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
 
+Please drop a ⭐ if you find this repo/bot useful :)
+
 ### Installing the dependencies
 
 `npm i`
