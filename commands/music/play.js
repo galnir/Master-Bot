@@ -24,7 +24,7 @@ module.exports = class PlayCommand extends Command {
       },
       args: [
         {
-          key: 'text',
+          key: 'query',
           prompt: 'What song would you like to listen to?',
           type: 'string',
           validate: text => text.length > 0 && text.length < 200
@@ -33,13 +33,11 @@ module.exports = class PlayCommand extends Command {
     });
   }
 
-  async run(message, { text }) {
+  async run(message, { query }) {
     // initial checking
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.say('Join a channel and try again');
     // end initial check
-
-    let query = text;
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
       const url = query;
@@ -186,6 +184,7 @@ function playSong(queue, message) {
         })
         .on('finish', () => {
           queue.shift();
+          console.log(`queue length is ${queue.length}`);
           if (queue.length >= 1) {
             return playSong(queue, message);
           } else {
