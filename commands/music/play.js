@@ -103,12 +103,12 @@ module.exports = class PlayCommand extends Command {
         );
       } catch (err) {
         console.error(err);
-        deleteEmbed(songEmbed);
+        songEmbed.delete();
         return message.say(
           'Please try again and enter a number between 1 and 5 or exit'
         );
       }
-      if (response.first().content === 'exit') return deleteEmbed(songEmbed);
+      if (response.first().content === 'exit') return songEmbed.delete();
       const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
@@ -116,7 +116,7 @@ module.exports = class PlayCommand extends Command {
           return message.say("I don't support live streams!");
       } catch (err) {
         console.error(err);
-        deleteEmbed(songEmbed);
+        songEmbed.delete();
         return message.say(
           'An error has occured when trying to get the video ID from youtube'
         );
@@ -138,21 +138,21 @@ module.exports = class PlayCommand extends Command {
         queue.push(song);
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
-          deleteEmbed(songEmbed);
+          songEmbed.delete();
           playSong(queue, message);
         } else if (isPlaying == true) {
-          deleteEmbed(songEmbed);
+          songEmbed.delete();
           return message.say(`${song.title} added to queue`);
         }
       } catch (err) {
         console.error(err);
-        deleteEmbed(songEmbed);
+        songEmbed.delete();
         return message.say('queue process gone wrong');
       }
     } catch (err) {
       console.error(err);
       if (songEmbed) {
-        deleteEmbed(songEmbed);
+        songEmbed.delete();
       }
       return message.say(
         'Something went wrong with searching the video you requested :('
@@ -184,7 +184,6 @@ function playSong(queue, message) {
         })
         .on('finish', () => {
           queue.shift();
-          console.log(`queue length is ${queue.length}`);
           if (queue.length >= 1) {
             return playSong(queue, message);
           } else {
@@ -200,12 +199,4 @@ function playSong(queue, message) {
     .catch(err => {
       return console.log(err);
     });
-}
-
-function deleteEmbed(embed) {
-  try {
-    return embed.delete();
-  } catch (err) {
-    return console.error(err);
-  }
 }
