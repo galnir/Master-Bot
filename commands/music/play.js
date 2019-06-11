@@ -198,6 +198,7 @@ function playSong(queue, message) {
         });
     })
     .catch(err => {
-      return console.log(err);
+      console.log(err);
+      return voiceChannel.leave();
     });
 }
