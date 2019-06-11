@@ -193,7 +193,8 @@ function playSong(queue, message) {
         })
         .on('error', e => {
           message.say('Cannot play song');
-          return console.log(e);
+          console.log(e);
+          return voiceChannel.leave();
         });
     })
     .catch(err => {
