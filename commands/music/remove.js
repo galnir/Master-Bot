@@ -15,7 +15,7 @@ module.exports = class RemoveSongCommand extends Command {
           prompt: 'What song number do you want to remove from queue?',
           type: 'integer',
           validate: songNumber =>
-            songNumber > 2 && songNumber <= playFile.queue.length
+            songNumber > 1 && songNumber <= playFile.queue.length
         }
       ]
     });
@@ -30,7 +30,7 @@ module.exports = class RemoveSongCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
-    if (playFile.queue.length < 2)
+    if (playFile.queue.length < 1)
       return message.say('There are no songs in queue');
 
     playFile.queue.splice(songNumber - 1, 1);
