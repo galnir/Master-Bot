@@ -175,6 +175,7 @@ function playSong(queue, message) {
           })
         )
         .on('start', () => {
+          queue.shift();
           module.exports.dispatcher = dispatcher;
           module.exports.queue = queue;
           voiceChannel = queue[0].voiceChannel;
@@ -183,7 +184,6 @@ function playSong(queue, message) {
           );
         })
         .on('finish', () => {
-          queue.shift();
           if (queue.length >= 1) {
             return playSong(queue, message);
           } else {
