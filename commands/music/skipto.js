@@ -33,9 +33,9 @@ module.exports = class SkipToCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
-    if (playFile.queue < 2) return message.say('There are no songs in queue');
+    if (playFile.queue < 1) return message.say('There are no songs in queue');
 
-    playFile.queue.splice(0, songNumber - 2);
+    playFile.queue.splice(0, songNumber - 1);
     dispatcher.end();
     return;
   }
