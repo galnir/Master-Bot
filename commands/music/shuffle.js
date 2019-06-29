@@ -21,7 +21,7 @@ module.exports = class ShuffleQueueCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
-    if (playFile.queue.length < 2)
+    if (playFile.queue.length < 1)
       return message.say('There are no songs in queue');
 
     shuffleQueue(playFile.queue);
