@@ -36,7 +36,6 @@ module.exports = class SkipToCommand extends Command {
     if (playFile.queue < 2) return message.say('There are no songs in queue');
 
     playFile.queue.splice(0, songNumber - 2);
-    console.log(playFile.queue.length);
     dispatcher.end();
     return;
   }
