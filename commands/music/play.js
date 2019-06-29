@@ -175,13 +175,13 @@ function playSong(queue, message) {
           })
         )
         .on('start', () => {
-          queue.shift();
           module.exports.dispatcher = dispatcher;
           module.exports.queue = queue;
           voiceChannel = queue[0].voiceChannel;
-          return message.say(
+          message.say(
             `:musical_note: Now playing: ${queue[0].title} :musical_note:`
           );
+          return queue.shift();
         })
         .on('finish', () => {
           if (queue.length >= 1) {
