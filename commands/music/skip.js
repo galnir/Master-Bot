@@ -21,9 +21,5 @@ module.exports = class SkipCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
     playFile.dispatcher.end();
-    /* when dispatcher.end function is called, it basically goes to the
-       .on('finish') method, and there we call queue.shift() to remove the 
-       skipped song from queue and decide if to call playSong method again 
-    */
   }
 };
