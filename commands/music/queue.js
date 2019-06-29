@@ -16,6 +16,7 @@ module.exports = class QueueCommand extends Command {
 
   run(message) {
     const queue = playFile.queue;
+    if (!queue) return message.say('There are no songs in queue!');
     const titleArray = [];
     queue.map(obj => {
       titleArray.push(obj.title);
