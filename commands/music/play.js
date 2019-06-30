@@ -57,7 +57,7 @@ module.exports = class PlayCommand extends Command {
           title,
           voiceChannel
         };
-        if (queue.length > 6) {
+        if (queue.length > 10) {
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
