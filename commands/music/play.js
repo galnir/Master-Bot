@@ -48,8 +48,10 @@ module.exports = class PlayCommand extends Command {
         const id = query[2].split(/[^0-9a-z_\-]/i)[0];
         const video = await youtube.getVideoByID(id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
+          // can be removed
           return message.say("I don't support live streams!");
         if (video.duration.hours !== 0)
+          // can be removed
           return message.say('I cannot play videos longer than 1 hour');
         const title = video.title;
         const song = {
@@ -58,6 +60,7 @@ module.exports = class PlayCommand extends Command {
           voiceChannel
         };
         if (queue.length > 10) {
+          // can be removed
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
@@ -113,8 +116,10 @@ module.exports = class PlayCommand extends Command {
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
+          // can be removed
           return message.say("I don't support live streams!");
         if (video.duration.hours !== 0)
+          // can be removed
           return message.say('I cannot play videos longer than 1 hour');
       } catch (err) {
         console.error(err);
@@ -133,6 +138,7 @@ module.exports = class PlayCommand extends Command {
           voiceChannel
         };
         if (queue.length > 10) {
+          // can be removed
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
