@@ -4,7 +4,7 @@ const { prefix, token } = require('./config.json');
 
 const client = new CommandoClient({
   commandPrefix: prefix,
-  owner: '183647046564184065',
+  owner: '183647046564184065', // change this to your Discord user ID
   unknownCommandResponse: false
 });
 
