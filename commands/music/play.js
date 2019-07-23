@@ -114,6 +114,8 @@ module.exports = class PlayCommand extends Command {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
           return message.say("I don't support live streams!");
+        if (video.duration.hours !== 0)
+          return message.say('I cannot play videos longer than 1 hour');
       } catch (err) {
         console.error(err);
         songEmbed.delete();
