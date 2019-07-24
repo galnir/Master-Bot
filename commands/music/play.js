@@ -54,9 +54,15 @@ module.exports = class PlayCommand extends Command {
           // can be removed
           return message.say('I cannot play videos longer than 1 hour');
         const title = video.title;
+        const duration = `${
+          video.duration.hours ? video.duration.hours + ':' : ''
+        }${video.duration.minutes ? video.duration.minutes : '0'}:${
+          video.duration.seconds ? video.duration.seconds : '00'
+        }`;
         const song = {
           url,
           title,
+          duration,
           voiceChannel
         };
         if (queue.length > 10) {
@@ -130,11 +136,17 @@ module.exports = class PlayCommand extends Command {
       }
       const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
       const title = video.title;
+      const duration = `${
+        video.duration.hours ? video.duration.hours + ':' : ''
+      }${video.duration.minutes ? video.duration.minutes : '0'}:${
+        video.duration.seconds ? video.duration.seconds : '00'
+      }`;
 
       try {
         let song = {
           url,
           title,
+          duration,
           voiceChannel
         };
         if (queue.length > 10) {
@@ -187,7 +199,7 @@ function playSong(queue, message) {
           module.exports.queue = queue;
           voiceChannel = queue[0].voiceChannel;
           message.say(
-            `:musical_note: Now playing: ${queue[0].title} :musical_note:`
+            `:musical_note: Now playing: ${queue[0].title} (${queue[0].duration}) :musical_note:`
           );
           return queue.shift();
         })
