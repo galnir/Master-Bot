@@ -79,7 +79,7 @@ module.exports = class PlayCommand extends Command {
           isPlaying = true;
           return playSong(queue, message);
         } else if (isPlaying == true) {
-          message.say(
+          return message.say(
             `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
           );
         }
