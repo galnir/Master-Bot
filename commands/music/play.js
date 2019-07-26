@@ -56,7 +56,7 @@ module.exports = class PlayCommand extends Command {
         const title = video.title;
         const duration = `${
           video.duration.hours ? video.duration.hours + ':' : ''
-        }${video.duration.minutes ? video.duration.minutes : '0'}:${
+        }${video.duration.minutes ? video.duration.minutes : '00'}:${
           video.duration.seconds ? video.duration.seconds : '00'
         }`;
         const song = {
@@ -138,7 +138,7 @@ module.exports = class PlayCommand extends Command {
       const title = video.title;
       const duration = `${
         video.duration.hours ? video.duration.hours + ':' : ''
-      }${video.duration.minutes ? video.duration.minutes : '0'}:${
+      }${video.duration.minutes ? video.duration.minutes : '00'}:${
         video.duration.seconds ? video.duration.seconds : '00'
       }`;
 
