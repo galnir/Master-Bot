@@ -15,7 +15,7 @@ module.exports = class PlayCommand extends Command {
       aliases: ['play-song', 'add'],
       memberName: 'play',
       group: 'music',
-      description: 'Play any song from youtube',
+      description: 'Play any song or playlist from youtube',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT'],
       throttling: {
@@ -25,7 +25,7 @@ module.exports = class PlayCommand extends Command {
       args: [
         {
           key: 'query',
-          prompt: 'What song would you like to listen to?',
+          prompt: 'What song or playlist would you like to listen to?',
           type: 'string',
           validate: query => query.length > 0 && query.length < 200
         }
@@ -38,6 +38,57 @@ module.exports = class PlayCommand extends Command {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.say('Join a channel and try again');
     // end initial check
+
+    // This if statement checks if the user entered a youtube playlist url
+    if (
+      query.match(
+        /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/
+      )
+    ) {
+      try {
+        const playlist = await youtube.getPlaylist(query);
+        const videosObj = await playlist.getVideos(10); // remove the 10 if you removed the queue limit conditions below
+        //const videos = Object.entries(videosObj);
+        for (let i = 0; i < videosObj.length; i++) {
+          const video = await videosObj[i].fetch();
+
+          const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
+          const title = video.raw.snippet.title;
+          const duration = `${
+            video.duration.hours ? video.duration.hours + ':' : ''
+          }${video.duration.minutes ? video.duration.minutes : '00'}:${
+            video.duration.seconds ? video.duration.seconds : '00'
+          }`;
+          const song = {
+            url,
+            title,
+            duration,
+            voiceChannel
+          };
+          if (queue.length < 10) {
+            // can be removed
+            queue.push(song);
+          } else {
+            // this can be removed if you choose not to limit the queue
+            return message.say(
+              `I can't play the full playlist because there will be more than 10 songs in queue`
+            );
+          }
+        }
+        if (isPlaying == false || typeof isPlaying == 'undefined') {
+          isPlaying = true;
+          return playSong(queue, message);
+        } else if (isPlaying == true) {
+          message.say(
+            `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        return message.say('Playlist is either private or it does not exist');
+      }
+    }
+
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
     if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
       const url = query;
