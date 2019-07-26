@@ -29,52 +29,52 @@ Also, no matter what operating system you have, make sure [ffmpeg](https://www.f
 
 ### Commands
 
-- Music commands:
+- Music
 
-!play - the bot joins your channel and plays music from youtube, either add a url after '!play' or a song name and choose from the provided list
+|   Command    |   Description | Usage   |
+| -----             |    ------           | -----          |
+|!play              | Play any song or playlist from youtube, you can do it by searching for a song by name or song url or playlist url             | !play darude sandstorm    |
+|!pause              | Pause the current playing song   | !pause          |
+|!resume              |Resume the current paused song  |!resume           |
+|!leave              | Leaves voice channel if in one              |!leave           |
+|!remove              | Remove a specific song from queue by its number in queue |!remove 4           |
+|!queue             | Display the song queue              |!queue           |
+|!shuffle              |Shuffle the song queue               |!shuffle           |
+|!skip              |Skip the current playing song               |!skip           |
+|!skipall              |Skip all songs in queue               | !skipall          |
+|!skipto              |Skip to a specific song in the queue, provide the song number as an argument               | !skipto 5          |
 
-```
-!play Darude - Sandstorm
-!play https://www.youtube.com/watch?v=y6120QOlsfU
-```
+- Misc
 
-!pause
+|   Command    |   Description | Usage     |
+| -----        |    ------     | -----     |
+| !cat             | Get a cute cat picture              | !cat             |
+| !fortune             | Get a fortune cookie tip              |   !fortune        |
+| !global-news             | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in global-news.js or ynet-news.js| !global-news         |
+| !random             | Generate a random number between two provided numbers              |!random 0 100           |
+| !reddit             | Replies with 5 top non nsfw subreddit posts   | !reddit askreddit          |
+| !say             |  Make the bot say anything             |!say Lorem Ipsum       |
+| !translate             | Translate to English(for now) from any supported language using yandex translation service|!translate ありがとう           |
+| !whomademe             |  Info about me and the repo       | !whomademe          |
 
-!resume
+- Gifs
 
-!skip
+|   Command    |   Description | Usage     |
+| -----        |    ------     | -----     |
+|!animegif              | Get an anime related gif by a query               |!animegif one punch man           |
+|!gif              | Get any gif by a query              |!gif labrador           |
+|!gintama              |Replies with a random gintama gif               |!gintama              |
+|!jojo              |eplies with a random jojo gif               |!jojo             |
 
-- Gif commands:
+- Guild
 
-!gif - query a gif
-
-```
-!gif labrador
-```
-
-!animegif - random anime gif
-
-!gintama - random gintama gif
-
-!jojo - random jojo gif
-
-!cat
-
-- News command:
-
-!global-news - latest headlines from reuters, you can change the news source to [whatever news source you want](https://newsapi.org/sources), just change the source in line 13 in global-news.js or ynet-news.js
-
-- Translate command:
-
-!translate 'your-text-here' - You can translate any text from any language to English(more languages will be added)
-
-- Reddit command:
-
-!reddit 'subreddit-name' - Get the 5 top posts of any non-nsfw subreddit or leave blank for r/all
-
-- Random number command:
-
-!random min max
+|   Command    |   Description | Usage     |
+| -----        |    ------     | --------------    |
+| !ban             | Bans a tagged member              | !ban @johndoe          |
+| !create-text-channel             | Creates a text channel              | !create-text-channel music-discussion          |
+| !create-voice-channel             | Creates a new voice channel              | !create-voice-channel Music Channel         |
+| !kick             | Kicks a tagged member              | !kick @johndoe          |
+| !prune               | Delete up to 99 recent messages              | !prune 50          |
 
 ### Resources
 
@@ -87,10 +87,6 @@ Also, no matter what operating system you have, make sure [ffmpeg](https://www.f
 [Get a Yandex API key here](https://translate.yandex.com/developers/keys)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
-
-- Other commands:
-
-You also have other commands like kick, ban, fortune cookie, etc..
 
 ### Contributing
 
