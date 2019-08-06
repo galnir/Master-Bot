@@ -1,15 +1,15 @@
 // const fetch = require("node-fetch");
 // const { tenorAPI } = require("../config.json");
-const fs = require("fs");
-const { Command } = require("discord.js-commando");
+const fs = require('fs');
+const { Command } = require('discord.js-commando');
 
 module.exports = class GintamaCommand extends Command {
   constructor(client) {
     super(client, {
-      name: "gintama",
-      group: "gifs",
-      memberName: "gintama",
-      description: "Replies with a gintama gif!",
+      name: 'gintama',
+      group: 'gifs',
+      memberName: 'gintama',
+      description: 'Replies with a gintama gif!',
       throttling: {
         usages: 2,
         duration: 8
@@ -20,8 +20,8 @@ module.exports = class GintamaCommand extends Command {
   run(message) {
     try {
       const linkArray = fs
-        .readFileSync("resources/gintamalinks.txt", "utf8")
-        .split("\n");
+        .readFileSync('resources/gintamalinks.txt', 'utf8')
+        .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
       return message.say(link);
 
@@ -35,18 +35,20 @@ module.exports = class GintamaCommand extends Command {
       the gintamalinks file so the response is faster.
       You can still use the old method, it's commented out down below, and
       don't forget to uncomment the require for node-fetch and tenorAPI above
-      and make add the 'async' keyword before execute
-      */
-
-      /*
-      await fetch(
+    
+      
+       fetch(
         `https://api.tenor.com/v1/random?key=${tenorAPI}&q=gintama&limit=1`
       )
         .then(res => res.json())
-        .then(json => message.say(json.results[0].url));
+        .then(json => message.say(json.results[0].url))
+        .catch(e => {
+          message.say('Failed to fetch a gintama gif :slight_frown:');
+          return console.error(e);
+        })
       */
     } catch (e) {
-      message.say("Failed to fetch a gintama gif :slight_frown:");
+      message.say('Failed to fetch a gintama gif :slight_frown:');
       return console.error(e);
     }
   }
