@@ -1,14 +1,14 @@
 {
-  "name": "discordjs",
+  "name": "master-bot",
   "version": "1.0.0",
-  "description": "discord bot made with javascript",
+  "description": "a discord music bot with guild , gifs and misc commands",
   "main": "index.js",
   "scripts": {
     "start": "node .",
     "pretest": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "nir",
+  "author": "Nir Gal",
   "license": "ISC",
   "dependencies": {
     "discord.js": "github:discordjs/discord.js#master",
