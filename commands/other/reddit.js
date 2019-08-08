@@ -26,24 +26,23 @@ module.exports = class RedditCommand extends Command {
     });
   }
 
-  async run(message, { text }) {
-    try {
-      await fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
-        .then(res => res.json())
-        .then(json => {
-          const dataArr = json.data.children;
-          for (let i = 0; i < dataArr.length; i++) {
-            if (dataArr[i].data.over_18 === true) {
-              message.say(':no_entry: nsfw :no_entry:');
-            } else {
-              message.say(embedPost(dataArr[i].data));
-            }
+  run(message, { text }) {
+    fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
+      .then(res => res.json())
+      .then(json => {
+        const dataArr = json.data.children;
+        for (let i = 0; i < dataArr.length; i++) {
+          if (dataArr[i].data.over_18 === true) {
+            message.say(':no_entry: nsfw :no_entry:');
+          } else {
+            message.say(embedPost(dataArr[i].data));
           }
-        });
-    } catch (e) {
-      message.say('The subreddit you asked for was not found');
-      return console.log(e);
-    }
+        }
+      })
+      .catch(e => {
+        message.say('The subreddit you asked for was not found');
+        return console.log(e);
+      });
     // returns an embed that is ready to be sent
     function embedPost(data) {
       if (data.title > 200) {
