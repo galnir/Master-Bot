@@ -9,7 +9,7 @@ module.exports = class RedditCommand extends Command {
       aliases: ['subreddit', 'reddit-search'],
       group: 'other',
       memberName: 'reddit',
-      description: 'Replies with 5 top non nsfw subreddit posts',
+      description: 'Replies with 5 top daily posts in wanted subreddit',
       throttling: {
         usages: 2,
         duration: 10
@@ -26,17 +26,19 @@ module.exports = class RedditCommand extends Command {
     });
   }
 
+  // If you want to restrict nsfw posts, remove the commented out code below
+
   run(message, { text }) {
     fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
       .then(res => res.json())
       .then(json => {
         const dataArr = json.data.children;
         for (let i = 0; i < dataArr.length; i++) {
-          if (dataArr[i].data.over_18 === true) {
-            message.say(':no_entry: nsfw :no_entry:');
-          } else {
-            message.say(embedPost(dataArr[i].data));
-          }
+          // if (dataArr[i].data.over_18 === true) {
+          //   message.say(':no_entry: nsfw :no_entry:');
+          // } else {
+          message.say(embedPost(dataArr[i].data));
+          //}
         }
       })
       .catch(e => {
@@ -49,7 +51,7 @@ module.exports = class RedditCommand extends Command {
         data.title = '';
       }
       return new MessageEmbed()
-        .setColor('#FE9004')
+        .setColor(data.over_18 ? '#cf000f' : '#FE9004') // if post is nsfw, color is red
         .setTitle(data.title)
         .setThumbnail(
           data.thumbnail === 'self'
