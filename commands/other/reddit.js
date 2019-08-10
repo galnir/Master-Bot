@@ -9,18 +9,35 @@ module.exports = class RedditCommand extends Command {
       aliases: ['subreddit', 'reddit-search'],
       group: 'other',
       memberName: 'reddit',
-      description: 'Replies with 5 top daily posts in wanted subreddit',
+      description:
+        'Replies with 5 top daily posts in wanted subreddit, you can specify sorting and time',
       throttling: {
         usages: 2,
         duration: 10
       },
       args: [
         {
-          key: 'text',
+          key: 'subreddit',
           prompt: 'What subreddit would you like to search?',
           type: 'string',
           default: 'all',
-          validate: text => text.length < 50
+          max: 50,
+          wait: 20
+        },
+        {
+          key: 'sort',
+          prompt:
+            'What posts do you want to see? Choose from best/hot/top/new/controversial/rising',
+          type: 'string',
+          default: 'top',
+          validate: sort =>
+            sort === 'best' ||
+            sort === 'hot' ||
+            sort === 'new' ||
+            sort === 'top' ||
+            sort === 'controversial' ||
+            sort === 'rising',
+          wait: 10
         }
       ]
     });
@@ -28,8 +45,44 @@ module.exports = class RedditCommand extends Command {
 
   // If you want to restrict nsfw posts, remove the commented out code below
 
-  run(message, { text }) {
-    fetch(`https://www.reddit.com/r/${text}/top/.json?limit=5&t=day`)
+  async run(message, { subreddit, sort }) {
+    if (sort === 'top' || sort === 'controversial') {
+      await message.say(
+        `Do you want to get the ${sort} posts from past hour/week/month/year or all?`
+      );
+      try {
+        var t = await message.channel.awaitMessages(
+          m =>
+            m.content === 'hour' ||
+            m.content === 'week' ||
+            m.content === 'month' ||
+            m.content === 'year' ||
+            m.content === 'all',
+          {
+            max: 1,
+            maxProcessed: 1,
+            time: 60000,
+            errors: ['time']
+          }
+        );
+      } catch (e) {
+        console.error(e);
+        return message.say('Please try again and enter a proper time filter');
+      }
+      try {
+        var timeFilter = t.first().content;
+      } catch (e) {
+        // if we enter this catch that means the user entered an invalid sort value
+        // because the first() call above will fail if the value is not valid, this
+        // is the only way to check if the user entered a valid sort value that I know of
+        return message.say('Please try again and enter a proper time filter');
+      }
+    }
+    fetch(
+      `https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=5&t=${
+        timeFilter ? timeFilter : 'day'
+      }`
+    )
       .then(res => res.json())
       .then(json => {
         const dataArr = json.data.children;
@@ -43,12 +96,12 @@ module.exports = class RedditCommand extends Command {
       })
       .catch(e => {
         message.say('The subreddit you asked for was not found');
-        return console.log(e);
+        return console.error(e);
       });
     // returns an embed that is ready to be sent
     function embedPost(data) {
-      if (data.title > 200) {
-        data.title = '';
+      if (data.title.length > 255) {
+        data.title = data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
       }
       return new MessageEmbed()
         .setColor(data.over_18 ? '#cf000f' : '#FE9004') // if post is nsfw, color is red
