@@ -264,12 +264,12 @@ function playSong(queue, message) {
         })
         .on('error', e => {
           message.say('Cannot play song');
-          console.log(e);
+          console.error(e);
           return voiceChannel.leave();
         });
     })
-    .catch(err => {
-      console.log(err);
+    .catch(e => {
+      console.error(e);
       return voiceChannel.leave();
     });
 }
