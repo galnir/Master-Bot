@@ -161,6 +161,7 @@ module.exports = class PlayCommand extends Command {
             errors: ['time']
           }
         );
+        var videoIndex = parseInt(response.first().content);
       } catch (err) {
         console.error(err);
         songEmbed.delete();
@@ -169,7 +170,6 @@ module.exports = class PlayCommand extends Command {
         );
       }
       if (response.first().content === 'exit') return songEmbed.delete();
-      const videoIndex = parseInt(response.first().content);
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
         if (video.raw.snippet.liveBroadcastContent === 'live')
