@@ -65,16 +65,9 @@ module.exports = class RedditCommand extends Command {
             errors: ['time']
           }
         );
-      } catch (e) {
-        console.error(e);
-        return message.say('Please try again and enter a proper time filter');
-      }
-      try {
         var timeFilter = t.first().content;
       } catch (e) {
-        // if we enter this catch that means the user entered an invalid sort value
-        // because the first() call above will fail if the value is not valid, this
-        // is the only way to check if the user entered a valid sort value that I know of
+        console.error(e);
         return message.say('Please try again and enter a proper time filter');
       }
     }
