@@ -190,7 +190,11 @@ module.exports = class PlayCommand extends Command {
       const duration = `${
         video.duration.hours ? video.duration.hours + ':' : ''
       }${video.duration.minutes ? video.duration.minutes : '00'}:${
-        video.duration.seconds ? video.duration.seconds : '00'
+        video.duration.seconds < 10
+          ? '0' + video.duration.seconds
+          : video.duration.seconds
+          ? video.duration.seconds
+          : '00'
       }`;
 
       try {
