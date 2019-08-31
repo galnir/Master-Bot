@@ -57,12 +57,18 @@ module.exports = class PlayCommand extends Command {
           const duration = `${
             video.duration.hours ? video.duration.hours + ':' : ''
           }${video.duration.minutes ? video.duration.minutes : '00'}:${
-            video.duration.seconds ? video.duration.seconds : '00'
+            video.duration.seconds < 10
+              ? '0' + video.duration.seconds
+              : video.duration.seconds
+              ? video.duration.seconds
+              : '00'
           }`;
+          const thumbnail = video.thumbnails.high.url;
           const song = {
             url,
             title,
             duration,
+            thumbnail,
             voiceChannel
           };
           if (queue.length < 10) {
@@ -108,12 +114,18 @@ module.exports = class PlayCommand extends Command {
         const duration = `${
           video.duration.hours ? video.duration.hours + ':' : ''
         }${video.duration.minutes ? video.duration.minutes : '00'}:${
-          video.duration.seconds ? video.duration.seconds : '00'
+          video.duration.seconds < 10
+            ? '0' + video.duration.seconds
+            : video.duration.seconds
+            ? video.duration.seconds
+            : '00'
         }`;
+        const thumbnail = video.thumbnails.high.url;
         const song = {
           url,
           title,
           duration,
+          thumbnail,
           voiceChannel
         };
         if (queue.length > 10) {
@@ -196,12 +208,13 @@ module.exports = class PlayCommand extends Command {
           ? video.duration.seconds
           : '00'
       }`;
-
+      const thumbnail = video.thumbnails.high.url;
       try {
         let song = {
           url,
           title,
           duration,
+          thumbnail,
           voiceChannel
         };
         if (queue.length > 10) {
@@ -253,9 +266,13 @@ function playSong(queue, message) {
           module.exports.dispatcher = dispatcher;
           module.exports.queue = queue;
           voiceChannel = queue[0].voiceChannel;
-          message.say(
-            `:musical_note: Now playing: ${queue[0].title} (${queue[0].duration}) :musical_note:`
-          );
+          const videoEmbed = new MessageEmbed()
+            .setThumbnail(queue[0].thumbnail)
+            .setColor('#e9f931')
+            .addField('Now Playing:', queue[0].title)
+            .addField('Duration:', queue[0].duration);
+          if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
+          message.say(videoEmbed);
           return queue.shift();
         })
         .on('finish', () => {
