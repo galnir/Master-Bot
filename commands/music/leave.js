@@ -14,14 +14,17 @@ module.exports = class LeaveCommand extends Command {
   }
 
   run(message) {
-    const dispatcher = playFile.dispatcher;
-    const queue = playFile.queue;
-    if (!message.guild.voiceConnection) {
-      return message.say("I'm not in a voice channel right now");
-    } else if (message.guild.voiceConnection) {
-      queue.length = 0; // the absence of this line caused the bot to rejoin the channel if there were songs in queue
-      dispatcher.end();
-      return message.guild.voiceConnection.disconnect();
+    var voiceChannel = message.member.voice.channel;
+    if (!voiceChannel) return message.reply('Join a channel and try again');
+
+    var dispatcher = playFile.dispatcher;
+
+    if (typeof dispatcher == 'undefined') {
+      return message.reply('There is no song playing right now!');
     }
+    if (!playFile.queue) return message.say('There are no songs in queue');
+    dispatcher.end();
+    playFile.queue.length = 0;
+    return;
   }
 };
