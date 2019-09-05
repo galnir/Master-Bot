@@ -27,6 +27,8 @@ I run the bot on a debian 9 environment so it might not work as intended on othe
 
 Also, no matter what operating system you have, make sure [ffmpeg](https://www.ffmpeg.org/download.html) and [python 2.7](https://www.python.org/downloads/) are installed.
 
+If you are not cloning this repo, make sure your dependencies versions are the same as this repo's.
+
 ### Commands
 
 - Music
@@ -89,6 +91,8 @@ Also, no matter what operating system you have, make sure [ffmpeg](https://www.f
 [Get a Yandex API key here](https://translate.yandex.com/developers/keys)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+
+[Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
 ### Contributing
 
