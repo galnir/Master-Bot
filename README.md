@@ -1,4 +1,4 @@
-# A discord bot made with JavaScript and the discord.js-commando library
+# A Discord bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
 
