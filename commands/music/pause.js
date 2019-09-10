@@ -23,6 +23,8 @@ module.exports = class PauseCommand extends Command {
       return message.say('There is no song playing right now!');
     }
 
+    message.say('Song paused :pause_button:');
+
     dispatcher.pause();
   }
 };
