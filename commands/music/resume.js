@@ -23,6 +23,8 @@ module.exports = class ResumeCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
+    message.say('Song resumed :play_pause:');
+
     dispatcher.resume();
   }
 };
