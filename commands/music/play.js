@@ -54,15 +54,7 @@ module.exports = class PlayCommand extends Command {
 
           const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
           const title = video.raw.snippet.title;
-          const duration = `${
-            video.duration.hours ? video.duration.hours + ':' : ''
-          }${video.duration.minutes ? video.duration.minutes : '00'}:${
-            video.duration.seconds < 10
-              ? '0' + video.duration.seconds
-              : video.duration.seconds
-              ? video.duration.seconds
-              : '00'
-          }`;
+          const duration = formatDuration(video.duration);
           const thumbnail = video.thumbnails.high.url;
           const song = {
             url,
@@ -111,15 +103,7 @@ module.exports = class PlayCommand extends Command {
           // can be removed
           return message.say('I cannot play videos longer than 1 hour');
         const title = video.title;
-        const duration = `${
-          video.duration.hours ? video.duration.hours + ':' : ''
-        }${video.duration.minutes ? video.duration.minutes : '00'}:${
-          video.duration.seconds < 10
-            ? '0' + video.duration.seconds
-            : video.duration.seconds
-            ? video.duration.seconds
-            : '00'
-        }`;
+        const duration = formatDuration(video.duration);
         const thumbnail = video.thumbnails.high.url;
         const song = {
           url,
@@ -199,15 +183,7 @@ module.exports = class PlayCommand extends Command {
       }
       const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
       const title = video.title;
-      const duration = `${
-        video.duration.hours ? video.duration.hours + ':' : ''
-      }${video.duration.minutes ? video.duration.minutes : '00'}:${
-        video.duration.seconds < 10
-          ? '0' + video.duration.seconds
-          : video.duration.seconds
-          ? video.duration.seconds
-          : '00'
-      }`;
+      const duration = formatDuration(video.duration);
       const thumbnail = video.thumbnails.high.url;
       try {
         let song = {
@@ -293,4 +269,17 @@ function playSong(queue, message) {
       console.error(e);
       return voiceChannel.leave();
     });
+}
+
+function formatDuration(durationObj) {
+  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
+    durationObj.minutes ? durationObj.minutes : '00'
+  }:${
+    durationObj.seconds < 10
+      ? '0' + durationObj.seconds
+      : durationObj.seconds
+      ? durationObj.seconds
+      : '00'
+  }`;
+  return duration;
 }
