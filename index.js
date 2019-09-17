@@ -25,4 +25,10 @@ client.once('ready', () => {
   client.user.setActivity('!help for commands', 'WATCHING');
 });
 
+client.on('guildMemberAdd', member => {
+  const channel = member.guild.channels.find(c => c.name === 'general'); // change this to the channel you want to send the greeting to
+  if (!channel) return;
+  channel.send(`Welcome ${member}!`);
+});
+
 client.login(token);
