@@ -63,15 +63,16 @@ module.exports = class PlayCommand extends Command {
             thumbnail,
             voiceChannel
           };
-          if (queue.length < 10) {
-            // can be removed
-            queue.push(song);
-          } else {
-            // this can be removed if you choose not to limit the queue
-            return message.say(
-              `I can't play the full playlist because there will be more than 10 songs in queue`
-            );
-          }
+          // this can be removed if you choose not to limit the queue
+          // if (queue.length < 10) {
+          //
+          queue.push(song);
+          // } else {
+          //
+          //   return message.say(
+          //     `I can't play the full playlist because there will be more than 10 songs in queue`
+          //   );
+          // }
         }
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
@@ -168,12 +169,17 @@ module.exports = class PlayCommand extends Command {
       if (response.first().content === 'exit') return songEmbed.delete();
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-        if (video.raw.snippet.liveBroadcastContent === 'live')
+        if (video.raw.snippet.liveBroadcastContent === 'live') {
           // can be removed
+          songEmbed.delete();
           return message.say("I don't support live streams!");
-        if (video.duration.hours !== 0)
+        }
+
+        if (video.duration.hours !== 0) {
           // can be removed
+          songEmbed.delete();
           return message.say('I cannot play videos longer than 1 hour');
+        }
       } catch (err) {
         console.error(err);
         songEmbed.delete();
@@ -195,6 +201,7 @@ module.exports = class PlayCommand extends Command {
         };
         if (queue.length > 10) {
           // can be removed
+          songEmbed.delete();
           return message.say(
             'There are too many songs in the queue already, skip or wait a bit'
           );
