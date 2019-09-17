@@ -54,8 +54,9 @@ module.exports = class PlayCommand extends Command {
 
           const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
           const title = video.raw.snippet.title;
-          const duration = formatDuration(video.duration);
+          let duration = formatDuration(video.duration);
           const thumbnail = video.thumbnails.high.url;
+          if (duration == '00:00') duration = 'Live Stream';
           const song = {
             url,
             title,
@@ -105,8 +106,9 @@ module.exports = class PlayCommand extends Command {
         //   return message.say('I cannot play videos longer than 1 hour');
         // }
         const title = video.title;
-        const duration = formatDuration(video.duration);
+        let duration = formatDuration(video.duration);
         const thumbnail = video.thumbnails.high.url;
+        if (duration == '00:00') duration = 'Live Stream';
         const song = {
           url,
           title,
@@ -190,10 +192,11 @@ module.exports = class PlayCommand extends Command {
       }
       const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
       const title = video.title;
-      const duration = formatDuration(video.duration);
+      let duration = formatDuration(video.duration);
       const thumbnail = video.thumbnails.high.url;
       try {
-        let song = {
+        if (duration == '00:00') duration = 'Live Stream';
+        const song = {
           url,
           title,
           duration,
