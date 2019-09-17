@@ -63,12 +63,11 @@ module.exports = class PlayCommand extends Command {
             thumbnail,
             voiceChannel
           };
-          // this can be removed if you choose not to limit the queue
+          // this can be uncommented if you choose not to limit the queue
           // if (queue.length < 10) {
           //
           queue.push(song);
           // } else {
-          //
           //   return message.say(
           //     `I can't play the full playlist because there will be more than 10 songs in queue`
           //   );
@@ -97,12 +96,14 @@ module.exports = class PlayCommand extends Command {
           .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
         const id = query[2].split(/[^0-9a-z_\-]/i)[0];
         const video = await youtube.getVideoByID(id);
-        if (video.raw.snippet.liveBroadcastContent === 'live')
-          // can be removed
-          return message.say("I don't support live streams!");
-        if (video.duration.hours !== 0)
-          // can be removed
-          return message.say('I cannot play videos longer than 1 hour');
+        // // can be uncommented if you don't want the bot to play live streams
+        // if (video.raw.snippet.liveBroadcastContent === 'live') {
+        //   return message.say("I don't support live streams!");
+        // }
+        // // can be uncommented if you don't want the bot to play videos longer than 1 hour
+        // if (video.duration.hours !== 0) {
+        //   return message.say('I cannot play videos longer than 1 hour');
+        // }
         const title = video.title;
         const duration = formatDuration(video.duration);
         const thumbnail = video.thumbnails.high.url;
@@ -113,12 +114,12 @@ module.exports = class PlayCommand extends Command {
           thumbnail,
           voiceChannel
         };
-        if (queue.length > 10) {
-          // can be removed
-          return message.say(
-            'There are too many songs in the queue already, skip or wait a bit'
-          );
-        }
+        // // can be uncommented if you don't want to limit the queue
+        // if (queue.length > 10) {
+        //   return message.say(
+        //     'There are too many songs in the queue already, skip or wait a bit'
+        //   );
+        // }
         queue.push(song);
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
@@ -169,17 +170,17 @@ module.exports = class PlayCommand extends Command {
       if (response.first().content === 'exit') return songEmbed.delete();
       try {
         var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-        if (video.raw.snippet.liveBroadcastContent === 'live') {
-          // can be removed
-          songEmbed.delete();
-          return message.say("I don't support live streams!");
-        }
+        // // can be uncommented if you don't want the bot to play live streams
+        // if (video.raw.snippet.liveBroadcastContent === 'live') {
+        //   songEmbed.delete();
+        //   return message.say("I don't support live streams!");
+        // }
 
-        if (video.duration.hours !== 0) {
-          // can be removed
-          songEmbed.delete();
-          return message.say('I cannot play videos longer than 1 hour');
-        }
+        // // can be uncommented if you don't want the bot to play videos longer than 1 hour
+        // if (video.duration.hours !== 0) {
+        //   songEmbed.delete();
+        //   return message.say('I cannot play videos longer than 1 hour');
+        // }
       } catch (err) {
         console.error(err);
         songEmbed.delete();
@@ -199,13 +200,13 @@ module.exports = class PlayCommand extends Command {
           thumbnail,
           voiceChannel
         };
-        if (queue.length > 10) {
-          // can be removed
-          songEmbed.delete();
-          return message.say(
-            'There are too many songs in the queue already, skip or wait a bit'
-          );
-        }
+        // // can be uncommented if you don't want to limit the queue
+        // if (queue.length > 10) {
+        //   songEmbed.delete();
+        //   return message.say(
+        //     'There are too many songs in the queue already, skip or wait a bit'
+        //   );
+        // }
         queue.push(song);
         if (isPlaying == false || typeof isPlaying == 'undefined') {
           isPlaying = true;
