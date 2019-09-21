@@ -244,7 +244,6 @@ function playSong(queue, message) {
       const dispatcher = connection
         .play(
           ytdl(queue[0].url, {
-            volume: 0.5,
             quality: 'highestaudio',
             highWaterMark: 1024 * 1024 * 10
           })
