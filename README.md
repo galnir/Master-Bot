@@ -99,8 +99,3 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
 
-### Tasks
-
-- [ ] Improve code quality
-- [ ] Write more guild commands
-- [ ] Improve music quality
