@@ -23,7 +23,7 @@ Make a config.json file in the root directory of the project and add:
 }
 ```
 
-I run the bot on a debian 9 environment so it might not work as intended on other operating systems, if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below. Moreover, the music command is still under development, so it might break.
+I run the bot on a debian 9 environment so it might not work as intended on other operating systems, if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
 Also, no matter what operating system you have, make sure [ffmpeg](https://www.ffmpeg.org/download.html) and [python 2.7](https://www.python.org/downloads/) are installed.
 
