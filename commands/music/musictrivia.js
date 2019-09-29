@@ -9,7 +9,7 @@ const fs = require('fs');
 var dispatcher;
 var quizQueue = [];
 const score = [];
-var usersPlaying = [];
+var usersPlaying = new Set();
 var isPlaying;
 
 module.exports = class MusicTriviaCommand extends Command {
@@ -77,7 +77,7 @@ module.exports = class MusicTriviaCommand extends Command {
       message.member.voice.channel.members.entries()
     );
     channelInfo.forEach(user => {
-      usersPlaying.push(user[1].user.username);
+      usersPlaying.add(user[1].user.username);
       score.push({ name: user[1].user.username, score: 0 });
     });
     playQuizSong(quizQueue, message);
@@ -99,13 +99,14 @@ function playQuizSong(queue, message) {
         // let songNameFound = false;
         // let songSingerFound = true;
 
-        const filter = m => usersPlaying.includes(m.author.username);
+        const filter = m => usersPlaying.has(m.author.username);
         const collector = message.channel.createMessageCollector(filter, {
           time: 30000
         });
 
         collector.on('collect', m => {
-          if (!usersPlaying.includes(m.author.username)) return;
+          if (!usersPlaying.has(m.author.username)) return;
+          if (m.content.startsWith('!')) return;
           // if user guessed song name
           // if (m.content.toLowerCase() === queue[0].title.toLowerCase()) {
           //   songNameFound = true;
