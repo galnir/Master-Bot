@@ -10,6 +10,7 @@ var dispatcher;
 var quizQueue = [];
 const score = [];
 var usersPlaying = [];
+var isPlaying;
 
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
@@ -31,6 +32,9 @@ module.exports = class MusicTriviaCommand extends Command {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel)
       return message.say('Please join a voice channel and try again');
+    if (isPlaying === true)
+      return message.channel.send('A trivia is already running');
+    isPlaying = true;
     // fetch link array from txt file
     const videoLinksArray = fs
       .readFileSync('resources/music/trivialinks.txt', 'utf8')
@@ -165,6 +169,7 @@ function playQuizSong(queue, message) {
           message.channel.send(
             `The winner is ${winner} with ${highestScore} points`
           );
+          isPlaying = false;
           return voiceChannel.leave();
         }
       });
