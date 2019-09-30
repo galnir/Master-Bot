@@ -1,8 +1,5 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const { youtubeAPI } = require('../../config.json');
-const Youtube = require('simple-youtube-api');
-const youtube = new Youtube(youtubeAPI);
 const ytdl = require('ytdl-core');
 const fs = require('fs');
 
@@ -36,11 +33,13 @@ module.exports = class MusicTriviaCommand extends Command {
       return message.channel.send('A trivia is already running');
     isPlaying = true;
     // fetch link array from txt file
-    const videoLinksArray = fs
-      .readFileSync('resources/music/trivialinks.txt', 'utf8')
-      .split('\n');
+    const Jsonsongs = fs.readFileSync(
+      'resources/music/musictrivia.json',
+      'utf8'
+    );
+    var videoDataArray = JSON.parse(Jsonsongs).songs;
     // get random x videos from array
-    const randomTenVideoLinks = getRandom(videoLinksArray, 3); // get 3 random urls
+    const randomXVideoLinks = getRandom(videoDataArray, 5); // get 3 random urls
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#BADA55')
@@ -51,28 +50,16 @@ module.exports = class MusicTriviaCommand extends Command {
     message.say(infoEmbed);
     // init quiz queue
     // turn each vid to song object
-    for (let i = 0; i < randomTenVideoLinks.length; i++) {
-      let splitURL = randomTenVideoLinks[i];
-      try {
-        splitURL = splitURL
-          .replace(/(>|<)/gi, '')
-          .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-        const id = splitURL[2].split(/[^0-9a-z_\-]/i)[0];
-        const video = await youtube.getVideoByID(id);
-        const titleAndSingerArr = video.title.split('-');
-
-        const song = {
-          url: randomTenVideoLinks[i],
-          singer: titleAndSingerArr[0].trim(),
-          //title: titleAndSingerArr[1].trim(),
-          voiceChannel
-        };
-        quizQueue.push(song);
-      } catch (e) {
-        console.error(e);
-        return message.say('Something went wrong when trying to process songs');
-      }
+    for (let i = 0; i < randomXVideoLinks.length; i++) {
+      const song = {
+        url: randomXVideoLinks[i].url,
+        singer: randomXVideoLinks[i].singer,
+        title: randomXVideoLinks[i].title,
+        voiceChannel
+      };
+      quizQueue.push(song);
     }
+    console.log(quizQueue);
     const channelInfo = Array.from(
       message.member.voice.channel.members.entries()
     );

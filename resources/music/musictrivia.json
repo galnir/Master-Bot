@@ -1,0 +1,129 @@
+{
+  "songs": [
+    {
+      "url": "https://www.youtube.com/watch?v=4-jBiumYmXk",
+      "singer": "adele",
+      "title": "hello"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=hLQl3WQQoQ0",
+      "singer": "adele",
+      "title": "someone like you"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=rYEDA3JcQqw",
+      "singer": "adele",
+      "title": "rolling in the deep"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=7JJfJgyHYwU",
+      "singer": "rixton",
+      "title": "me and my broken heart"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=SR6iYWJxHqs",
+      "singer": "bruno mars",
+      "title": "grenade"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=pXRviuL6vMY",
+      "singer": "twenty one pilots",
+      "title": "stressed out"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=fLexgOxsZu0",
+      "singer": "bruno mars",
+      "title": "the lazy song"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=QK8mJJJvaes",
+      "singer": "macklemore",
+      "title": "thrift shop"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=fWNaR-rxAic",
+      "singer": "carly rae jepsen",
+      "title": "call me maybe"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=lDK9QqIzhwk",
+      "singer": "bon jovi",
+      "title": "livin on a prayer"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=dKez38i5h14",
+      "singer": "gorillaz",
+      "title": "feel good inc"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=0J2QdDbelmY",
+      "singer": "the white stripes",
+      "title": "seven nation army"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=ZbytR2avo-0",
+      "singer": "eminem",
+      "title": "without me"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=eVTXPUF4Oz4",
+      "singer": "linkin park",
+      "title": "in the end"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=kXYiU_JCYtU",
+      "singer": "linkin park",
+      "title": "numb"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=hTWKbfoikeg",
+      "singer": "nirvana",
+      "title": "smells like teen spirit"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=y1nM4OKvoXw",
+      "singer": "flo rida",
+      "title": "low"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=1CBN9fKeVB4",
+      "singer": "panic at the disco",
+      "title": "i write sins not tragedies"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=lOxb_SW4Cfg",
+      "singer": "kanye west",
+      "title": "gold digger"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=u5uSlUKBEDc",
+      "singer": "kesha",
+      "title": "tik tok"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=r5EXKDlf44M",
+      "singer": "green day",
+      "title": "boulevard of broken dreams"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=3JV74i4yvcA",
+      "singer": "train",
+      "title": "hey soul sister"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=opPV1-IUmGw",
+      "singer": "coldplay",
+      "title": "viva la vida"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=EQ2T-Tw_drE",
+      "singer": "taio cruz",
+      "title": "dynamite"
+    },
+    {
+      "url": "https://www.youtube.com/watch?v=ADIyIlO-_Ug",
+      "singer": "snoop dog",
+      "title": "the next episode"
+    }
+  ]
+}
