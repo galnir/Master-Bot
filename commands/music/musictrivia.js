@@ -5,7 +5,7 @@ const fs = require('fs');
 
 var dispatcher;
 var quizQueue = [];
-const score = [];
+var score = [];
 var usersPlaying = new Set();
 var isPlaying;
 
@@ -158,6 +158,8 @@ function playQuizSong(queue, message) {
             `The winner is ${winner} with ${highestScore} points`
           );
           isPlaying = false;
+          score = [];
+          usersPlaying.clear();
           return voiceChannel.leave();
         }
       });
