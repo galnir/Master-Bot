@@ -83,8 +83,8 @@ function playQuizSong(queue, message) {
       )
       .on('start', () => {
         voiceChannel = queue[0].voiceChannel;
-        // let songNameFound = false;
-        // let songSingerFound = true;
+        let songNameFound = false;
+        let songSingerFound = false;
 
         const filter = m => usersPlaying.has(m.author.username);
         const collector = message.channel.createMessageCollector(filter, {
@@ -95,36 +95,35 @@ function playQuizSong(queue, message) {
           if (!usersPlaying.has(m.author.username)) return;
           if (m.content.startsWith('!')) return;
           // if user guessed song name
-          // if (m.content.toLowerCase() === queue[0].title.toLowerCase()) {
-          //   songNameFound = true;
-          //   for (let i = 0; i < score.length; i++) {
-          //     if (songNameFound && songSingerFound) {
-          //       score[i].score++;
-          //       m.react('☑');
-          //       collector.stop();
-          //       break;
-          //     }
-          //     if (score[i].name === m.author.username) {
-          //       score[i].score++;
-          //       m.react('☑');
-          //       break;
-          //     }
-          //   }
-          // }
-          // if user guessed singer
-          else if (m.content.toLowerCase() === queue[0].singer.toLowerCase()) {
-            //songSingerFound = true;
+          if (m.content.toLowerCase() === queue[0].title) {
             for (let i = 0; i < score.length; i++) {
-              // if (songNameFound && songSingerFound) {
-              //   score[i].score++;
-              //   m.react('☑');
-              //   collector.stop();
-              //   break;
-              // }
+              songNameFound = true;
+              if (songNameFound && songSingerFound) {
+                score[i].score++;
+                m.react('☑');
+                collector.stop();
+                break;
+              }
               if (score[i].name === m.author.username) {
                 score[i].score++;
                 m.react('☑');
-                collector.stop(); // remove when supporting title aswell
+                break;
+              }
+            }
+          }
+          // if user guessed singer
+          else if (m.content.toLowerCase() === queue[0].singer) {
+            songSingerFound = true;
+            for (let i = 0; i < score.length; i++) {
+              if (songNameFound && songSingerFound) {
+                score[i].score++;
+                m.react('☑');
+                collector.stop();
+                break;
+              }
+              if (score[i].name === m.author.username) {
+                score[i].score++;
+                m.react('☑');
                 break;
               }
             }
