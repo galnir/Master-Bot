@@ -44,7 +44,10 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 |!shuffle              |Shuffle the song queue               |!shuffle           |
 |!skip              |Skip the current playing song               |!skip           |
 |!skipall              |Skip all songs in queue               | !skipall          |
-|!skipto              |Skip to a specific song in the queue, provide the song number as an argument               | !skipto 5          |
+|!skipto              |Skip to a specific song in the queue, provide the song number as an argument   | !skipto 5  |
+|!volume              |Adjust song volume                                                             |!volume 80  |
+|!music-trivia        |Engage in a music trivia with your friends                                     |!music-trivia|
+
 
 - Misc
 
