@@ -39,7 +39,7 @@ module.exports = class MusicTriviaCommand extends Command {
     );
     var videoDataArray = JSON.parse(Jsonsongs).songs;
     // get random x videos from array
-    const randomXVideoLinks = getRandom(videoDataArray, 5); // get 3 random urls
+    const randomXVideoLinks = getRandom(videoDataArray, 5); // get x random urls
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#BADA55')
