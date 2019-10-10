@@ -51,7 +51,7 @@ module.exports = class PlayCommand extends Command {
 
           const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
           const title = video.raw.snippet.title;
-          let duration = formatDuration(video.duration);
+          let duration = this.formatDuration(video.duration);
           const thumbnail = video.thumbnails.high.url;
           if (duration == '00:00') duration = 'Live Stream';
           const song = {
@@ -73,7 +73,7 @@ module.exports = class PlayCommand extends Command {
         }
         if (this.client.isPlaying == false) {
           this.client.isPlaying = true;
-          return playSong(this.client.queue, message);
+          return this.playSong(this.client.queue, message);
         } else if (this.client.isPlaying == true) {
           return message.say(
             `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
@@ -103,7 +103,7 @@ module.exports = class PlayCommand extends Command {
         //   return message.say('I cannot play videos longer than 1 hour');
         // }
         const title = video.title;
-        let duration = formatDuration(video.duration);
+        let duration = this.formatDuration(video.duration);
         const thumbnail = video.thumbnails.high.url;
         if (duration == '00:00') duration = 'Live Stream';
         const song = {
@@ -122,7 +122,7 @@ module.exports = class PlayCommand extends Command {
         this.client.queue.push(song);
         if (this.client.isPlaying == false || typeof isPlaying == 'undefined') {
           this.client.isPlaying = true;
-          return playSong(this.client.queue, message);
+          return this.playSong(this.client.queue, message);
         } else if (this.client.isPlaying == true) {
           return message.say(`${song.title} added to queue`);
         }
@@ -189,7 +189,7 @@ module.exports = class PlayCommand extends Command {
       }
       const url = `https://www.youtube.com/watch?v=${video.raw.id}`;
       const title = video.title;
-      let duration = formatDuration(video.duration);
+      let duration = this.formatDuration(video.duration);
       const thumbnail = video.thumbnails.high.url;
       try {
         if (duration == '00:00') duration = 'Live Stream';
@@ -211,7 +211,7 @@ module.exports = class PlayCommand extends Command {
         if (this.client.isPlaying == false) {
           this.client.isPlaying = true;
           songEmbed.delete();
-          playSong(this.client.queue, message);
+          this.playSong(this.client.queue, message);
         } else if (this.client.isPlaying == true) {
           songEmbed.delete();
           return message.say(`${song.title} added to queue`);
@@ -231,61 +231,60 @@ module.exports = class PlayCommand extends Command {
       );
     }
   }
-};
-
-function playSong(queue, message) {
-  let voiceChannel;
-  queue[0].voiceChannel
-    .join()
-    .then(connection => {
-      const dispatcher = connection
-        .play(
-          ytdl(queue[0].url, {
-            quality: 'highestaudio',
-            highWaterMark: 1024 * 1024 * 10
+  playSong(queue, message) {
+    let voiceChannel;
+    queue[0].voiceChannel
+      .join()
+      .then(connection => {
+        const dispatcher = connection
+          .play(
+            ytdl(queue[0].url, {
+              quality: 'highestaudio',
+              highWaterMark: 1024 * 1024 * 10
+            })
+          )
+          .on('start', () => {
+            this.client.songDispatcher = dispatcher;
+            voiceChannel = queue[0].voiceChannel;
+            const videoEmbed = new MessageEmbed()
+              .setThumbnail(queue[0].thumbnail)
+              .setColor('#e9f931')
+              .addField('Now Playing:', queue[0].title)
+              .addField('Duration:', queue[0].duration);
+            if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
+            message.say(videoEmbed);
+            return queue.shift();
           })
-        )
-        .on('start', () => {
-          module.exports.dispatcher = dispatcher;
-          voiceChannel = queue[0].voiceChannel;
-          const videoEmbed = new MessageEmbed()
-            .setThumbnail(queue[0].thumbnail)
-            .setColor('#e9f931')
-            .addField('Now Playing:', queue[0].title)
-            .addField('Duration:', queue[0].duration);
-          if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
-          message.say(videoEmbed);
-          return queue.shift();
-        })
-        .on('finish', () => {
-          if (queue.length >= 1) {
-            return playSong(queue, message);
-          } else {
-            message.client.isPlaying = false;
+          .on('finish', () => {
+            if (queue.length >= 1) {
+              return this.playSong(queue, message);
+            } else {
+              message.client.isPlaying = false;
+              return voiceChannel.leave();
+            }
+          })
+          .on('error', e => {
+            message.say('Cannot play song');
+            console.error(e);
             return voiceChannel.leave();
-          }
-        })
-        .on('error', e => {
-          message.say('Cannot play song');
-          console.error(e);
-          return voiceChannel.leave();
-        });
-    })
-    .catch(e => {
-      console.error(e);
-      return voiceChannel.leave();
-    });
-}
+          });
+      })
+      .catch(e => {
+        console.error(e);
+        return voiceChannel.leave();
+      });
+  }
 
-function formatDuration(durationObj) {
-  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
-    durationObj.minutes ? durationObj.minutes : '00'
-  }:${
-    durationObj.seconds < 10
-      ? '0' + durationObj.seconds
-      : durationObj.seconds
-      ? durationObj.seconds
-      : '00'
-  }`;
-  return duration;
-}
+  formatDuration(durationObj) {
+    const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
+      durationObj.minutes ? durationObj.minutes : '00'
+    }:${
+      durationObj.seconds < 10
+        ? '0' + durationObj.seconds
+        : durationObj.seconds
+        ? durationObj.seconds
+        : '00'
+    }`;
+    return duration;
+  }
+};

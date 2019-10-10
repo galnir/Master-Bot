@@ -10,7 +10,7 @@ const client = new CommandoClient({
 
 client.queue = [];
 client.isPlaying = false;
-//client.dispatcher = null;
+client.songDispatcher = null;
 
 client.registry
   .registerDefaultTypes()

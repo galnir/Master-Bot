@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const playFile = require('./play.js');
 
 module.exports = class VolumeCommand extends Command {
   constructor(client) {
@@ -29,10 +28,13 @@ module.exports = class VolumeCommand extends Command {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
-    if (typeof playFile.dispatcher == 'undefined') {
+    if (
+      typeof this.client.songDispatcher == 'undefined' ||
+      this.client.songDispatcher == null
+    ) {
       return message.reply('There is no song playing right now!');
     }
     const volume = wantedVolume / 100;
-    playFile.dispatcher.setVolume(volume);
+    this.client.songDispatcher.setVolume(volume);
   }
 };
