@@ -14,10 +14,10 @@ module.exports = class SkipToCommand extends Command {
         {
           key: 'songNumber',
           prompt:
-            'What is the number in queue of the song you want to skip to?, it needs to be greater than 2',
+            'What is the number in queue of the song you want to skip to?, it needs to be greater than 1',
           type: 'integer',
           validate: songNumber =>
-            songNumber > 2 && songNumber <= playFile.queue.length
+            songNumber > 1 && songNumber <= this.client.queue.length
         }
       ]
     });
@@ -33,9 +33,10 @@ module.exports = class SkipToCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
-    if (playFile.queue < 1) return message.say('There are no songs in queue');
+    if (this.client.queue < 1)
+      return message.say('There are no songs in queue');
 
-    playFile.queue.splice(0, songNumber - 1);
+    this.client.queue.splice(0, songNumber - 1);
     dispatcher.end();
     return;
   }

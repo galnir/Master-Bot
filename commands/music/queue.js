@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const playFile = require('./play.js');
 
 module.exports = class QueueCommand extends Command {
   constructor(client) {
@@ -15,10 +14,9 @@ module.exports = class QueueCommand extends Command {
   }
 
   run(message) {
-    const queue = playFile.queue;
-    if (!queue) return message.say('There are no songs in queue!');
+    if (!this.client.queue) return message.say('There are no songs in queue!');
     const titleArray = [];
-    queue.map(obj => {
+    this.client.queue.map(obj => {
       titleArray.push(obj.title);
     });
     var queueEmbed = new MessageEmbed()

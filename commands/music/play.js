@@ -5,9 +5,6 @@ const ytdl = require('ytdl-core');
 const { youtubeAPI } = require('../../config.json');
 const youtube = new Youtube(youtubeAPI);
 
-var queue = [];
-var isPlaying;
-
 module.exports = class PlayCommand extends Command {
   constructor(client) {
     super(client, {
@@ -67,17 +64,17 @@ module.exports = class PlayCommand extends Command {
           // this can be uncommented if you choose not to limit the queue
           // if (queue.length < 10) {
           //
-          queue.push(song);
+          this.client.queue.push(song);
           // } else {
           //   return message.say(
           //     `I can't play the full playlist because there will be more than 10 songs in queue`
           //   );
           // }
         }
-        if (isPlaying == false || typeof isPlaying == 'undefined') {
-          isPlaying = true;
-          return playSong(queue, message);
-        } else if (isPlaying == true) {
+        if (this.client.isPlaying == false) {
+          this.client.isPlaying = true;
+          return playSong(this.client.queue, message);
+        } else if (this.client.isPlaying == true) {
           return message.say(
             `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
           );
@@ -122,11 +119,11 @@ module.exports = class PlayCommand extends Command {
         //     'There are too many songs in the queue already, skip or wait a bit'
         //   );
         // }
-        queue.push(song);
-        if (isPlaying == false || typeof isPlaying == 'undefined') {
-          isPlaying = true;
-          return playSong(queue, message);
-        } else if (isPlaying == true) {
+        this.client.queue.push(song);
+        if (this.client.isPlaying == false || typeof isPlaying == 'undefined') {
+          this.client.isPlaying = true;
+          return playSong(this.client.queue, message);
+        } else if (this.client.isPlaying == true) {
           return message.say(`${song.title} added to queue`);
         }
       } catch (err) {
@@ -210,12 +207,12 @@ module.exports = class PlayCommand extends Command {
         //     'There are too many songs in the queue already, skip or wait a bit'
         //   );
         // }
-        queue.push(song);
-        if (isPlaying == false || typeof isPlaying == 'undefined') {
-          isPlaying = true;
+        this.client.queue.push(song);
+        if (this.client.isPlaying == false) {
+          this.client.isPlaying = true;
           songEmbed.delete();
-          playSong(queue, message);
-        } else if (isPlaying == true) {
+          playSong(this.client.queue, message);
+        } else if (this.client.isPlaying == true) {
           songEmbed.delete();
           return message.say(`${song.title} added to queue`);
         }
@@ -250,7 +247,6 @@ function playSong(queue, message) {
         )
         .on('start', () => {
           module.exports.dispatcher = dispatcher;
-          module.exports.queue = queue;
           voiceChannel = queue[0].voiceChannel;
           const videoEmbed = new MessageEmbed()
             .setThumbnail(queue[0].thumbnail)
@@ -265,7 +261,7 @@ function playSong(queue, message) {
           if (queue.length >= 1) {
             return playSong(queue, message);
           } else {
-            isPlaying = false;
+            message.client.isPlaying = false;
             return voiceChannel.leave();
           }
         })

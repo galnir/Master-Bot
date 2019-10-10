@@ -22,9 +22,9 @@ module.exports = class LeaveCommand extends Command {
     if (typeof dispatcher == 'undefined') {
       return message.reply('There is no song playing right now!');
     }
-    if (!playFile.queue) return message.say('There are no songs in queue');
+    if (!this.client.queue) return message.say('There are no songs in queue');
     dispatcher.end();
-    playFile.queue.length = 0;
+    this.client.queue.length = 0;
     return;
   }
 };

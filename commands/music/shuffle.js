@@ -21,10 +21,10 @@ module.exports = class ShuffleQueueCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
 
-    if (playFile.queue.length < 1)
+    if (this.client.queue.length < 1)
       return message.say('There are no songs in queue');
 
-    shuffleQueue(playFile.queue);
+    shuffleQueue(this.client.queue);
 
     return message.say('Queue shuffled, to view new queue, call queue command');
   }

@@ -8,6 +8,10 @@ const client = new CommandoClient({
   unknownCommandResponse: false
 });
 
+client.queue = [];
+client.isPlaying = false;
+//client.dispatcher = null;
+
 client.registry
   .registerDefaultTypes()
   .registerGroups([

@@ -22,9 +22,9 @@ module.exports = class SkipAllCommand extends Command {
     if (typeof dispatcher == 'undefined') {
       return message.reply('There is no song playing right now!');
     }
-    if (!playFile.queue) return message.say('There are no songs in queue');
+    if (!this.client.queue) return message.say('There are no songs in queue');
     dispatcher.end();
-    playFile.queue.length = 0; // clear queue
+    this.client.queue.length = 0; // clear queue
     return;
   }
 };
