@@ -11,6 +11,7 @@ const client = new CommandoClient({
 client.queue = [];
 client.isPlaying = false;
 client.songDispatcher = null;
+client.isTriviaRunning = false;
 
 client.registry
   .registerDefaultTypes()

@@ -35,7 +35,8 @@ module.exports = class PlayCommand extends Command {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.say('Join a channel and try again');
     // end initial check
-
+    if (this.client.isTriviaRunning == true)
+      return message.say('Please try after the trivia has ended');
     // This if statement checks if the user entered a youtube playlist url
     if (
       query.match(
