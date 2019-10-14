@@ -14,30 +14,31 @@ module.exports = class SkipToCommand extends Command {
           key: 'songNumber',
           prompt:
             'What is the number in queue of the song you want to skip to?, it needs to be greater than 1',
-          type: 'integer',
-          validate: songNumber =>
-            songNumber > 1 && songNumber <= this.client.queue.length
+          type: 'integer'
         }
       ]
     });
   }
 
   run(message, { songNumber }) {
+    if (songNumber < 1 && songNumber >= message.guild.musicData.queue.length) {
+      return message.reply('Please enter a valid song number');
+    }
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (
-      typeof this.client.songDispatcher == 'undefined' ||
-      this.client.songDispatcher == null
+      typeof message.guild.musicData.songDispatcher == 'undefined' ||
+      message.guild.musicData.songDispatcher == null
     ) {
       return message.reply('There is no song playing right now!');
     }
 
-    if (this.client.queue < 1)
+    if (message.guild.musicData.queue < 1)
       return message.say('There are no songs in queue');
 
-    this.client.queue.splice(0, songNumber - 1);
-    this.client.songDispatcher.end();
+    message.guild.musicData.queue.splice(0, songNumber - 1);
+    message.guild.musicData.songDispatcher.end();
     return;
   }
 };

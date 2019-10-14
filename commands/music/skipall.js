@@ -17,14 +17,15 @@ module.exports = class SkipAllCommand extends Command {
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (
-      typeof this.client.songDispatcher == 'undefined' ||
-      this.client.songDispatcher == null
+      typeof message.guild.musicData.songDispatcher == 'undefined' ||
+      message.guild.musicData.songDispatcher == null
     ) {
       return message.reply('There is no song playing right now!');
     }
-    if (!this.client.queue) return message.say('There are no songs in queue');
-    this.client.songDispatcher.end();
-    this.client.queue.length = 0; // clear queue
+    if (!message.guild.musicData.queue)
+      return message.say('There are no songs in queue');
+    message.guild.musicData.songDispatcher.end();
+    message.guild.musicData.queue.length = 0; // clear queue
     return;
   }
 };

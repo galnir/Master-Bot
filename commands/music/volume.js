@@ -29,12 +29,12 @@ module.exports = class VolumeCommand extends Command {
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (
-      typeof this.client.songDispatcher == 'undefined' ||
-      this.client.songDispatcher == null
+      typeof message.guild.musicData.songDispatcher == 'undefined' ||
+      message.guild.musicData.songDispatcher == null
     ) {
       return message.reply('There is no song playing right now!');
     }
     const volume = wantedVolume / 100;
-    this.client.songDispatcher.setVolume(volume);
+    message.guild.musicData.songDispatcher.setVolume(volume);
   }
 };

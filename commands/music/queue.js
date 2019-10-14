@@ -14,9 +14,10 @@ module.exports = class QueueCommand extends Command {
   }
 
   run(message) {
-    if (!this.client.queue) return message.say('There are no songs in queue!');
+    if (!message.guild.musicData.queue)
+      return message.say('There are no songs in queue!');
     const titleArray = [];
-    this.client.queue.map(obj => {
+    message.guild.musicData.queue.map(obj => {
       titleArray.push(obj.title);
     });
     var queueEmbed = new MessageEmbed()

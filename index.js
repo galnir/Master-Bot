@@ -1,17 +1,33 @@
 const { CommandoClient } = require('discord.js-commando');
+const { Structures } = require('discord.js');
 const path = require('path');
 const { prefix, token } = require('./config.json');
+
+Structures.extend('Guild', Guild => {
+  class MusicGuild extends Guild {
+    constructor(client, data) {
+      super(client, data);
+      this.musicData = {
+        queue: [],
+        isPlaying: false,
+        songDispatcher: null
+      };
+      this.triviaData = {
+        isTriviaRunning: false,
+        triviaQueue: [],
+        triviaScore: [],
+        usersPlaying: new Set()
+      };
+    }
+  }
+  return MusicGuild;
+});
 
 const client = new CommandoClient({
   commandPrefix: prefix,
   owner: '183647046564184065', // change this to your Discord user ID
   unknownCommandResponse: false
 });
-
-client.queue = [];
-client.isPlaying = false;
-client.songDispatcher = null;
-client.isTriviaRunning = false;
 
 client.registry
   .registerDefaultTypes()

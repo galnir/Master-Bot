@@ -12,25 +12,26 @@ module.exports = class RemoveSongCommand extends Command {
         {
           key: 'songNumber',
           prompt: 'What song number do you want to remove from queue?',
-          type: 'integer',
-          validate: songNumber =>
-            songNumber > 1 && songNumber <= this.client.queue.length
+          type: 'integer'
         }
       ]
     });
   }
   run(message, { songNumber }) {
+    if (songNumber < 1 && songNumber >= message.guild.musicData.queue.length) {
+      return message.reply('Please enter a valid song number');
+    }
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (
-      typeof this.client.songDispatcher == 'undefined' ||
-      this.client.songDispatcher == null
+      typeof message.guild.musicData.songDispatcher == 'undefined' ||
+      message.guild.musicData.songDispatcher == null
     ) {
       return message.reply('There is no song playing right now!');
     }
 
-    this.client.queue.splice(songNumber - 1, 1);
+    message.guild.musicData.queue.splice(songNumber - 1, 1);
     return message.say(`Removed song number ${songNumber} from queue`);
   }
 };

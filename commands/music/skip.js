@@ -17,11 +17,11 @@ module.exports = class SkipCommand extends Command {
     if (!voiceChannel) return message.reply('Join a channel and try again');
 
     if (
-      typeof this.client.songDispatcher == 'undefined' ||
-      this.client.songDispatcher == null
+      typeof message.guild.musicData.songDispatcher == 'undefined' ||
+      message.guild.musicData.songDispatcher == null
     ) {
       return message.reply('There is no song playing right now!');
     }
-    this.client.songDispatcher.end();
+    message.guild.musicData.songDispatcher.end();
   }
 };

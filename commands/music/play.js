@@ -35,7 +35,7 @@ module.exports = class PlayCommand extends Command {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) return message.say('Join a channel and try again');
     // end initial check
-    if (this.client.isTriviaRunning == true)
+    if (message.guild.triviaData.isTriviaRunning == true)
       return message.say('Please try after the trivia has ended');
     // This if statement checks if the user entered a youtube playlist url
     if (
@@ -65,17 +65,17 @@ module.exports = class PlayCommand extends Command {
           // this can be uncommented if you choose not to limit the queue
           // if (queue.length < 10) {
           //
-          this.client.queue.push(song);
+          message.guild.musicData.queue.push(song);
           // } else {
           //   return message.say(
           //     `I can't play the full playlist because there will be more than 10 songs in queue`
           //   );
           // }
         }
-        if (this.client.isPlaying == false) {
-          this.client.isPlaying = true;
-          return this.playSong(this.client.queue, message);
-        } else if (this.client.isPlaying == true) {
+        if (message.guild.musicData.isPlaying == false) {
+          message.guild.musicData.isPlaying = true;
+          return this.playSong(message.guild.musicData.queue, message);
+        } else if (message.guild.musicData.isPlaying == true) {
           return message.say(
             `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
           );
@@ -120,11 +120,14 @@ module.exports = class PlayCommand extends Command {
         //     'There are too many songs in the queue already, skip or wait a bit'
         //   );
         // }
-        this.client.queue.push(song);
-        if (this.client.isPlaying == false || typeof isPlaying == 'undefined') {
-          this.client.isPlaying = true;
-          return this.playSong(this.client.queue, message);
-        } else if (this.client.isPlaying == true) {
+        message.guild.musicData.queue.push(song);
+        if (
+          message.guild.musicData.isPlaying == false ||
+          typeof message.guild.musicData.isPlaying == 'undefined'
+        ) {
+          message.guild.musicData.isPlaying = true;
+          return this.playSong(message.guild.musicData.queue, message);
+        } else if (message.guild.musicData.isPlaying == true) {
           return message.say(`${song.title} added to queue`);
         }
       } catch (err) {
@@ -208,12 +211,12 @@ module.exports = class PlayCommand extends Command {
         //     'There are too many songs in the queue already, skip or wait a bit'
         //   );
         // }
-        this.client.queue.push(song);
-        if (this.client.isPlaying == false) {
-          this.client.isPlaying = true;
+        message.guild.musicData.queue.push(song);
+        if (message.guild.musicData.isPlaying == false) {
+          message.guild.musicData.isPlaying = true;
           songEmbed.delete();
-          this.playSong(this.client.queue, message);
-        } else if (this.client.isPlaying == true) {
+          this.playSong(message.guild.musicData.queue, message);
+        } else if (message.guild.musicData.isPlaying == true) {
           songEmbed.delete();
           return message.say(`${song.title} added to queue`);
         }
@@ -245,7 +248,7 @@ module.exports = class PlayCommand extends Command {
             })
           )
           .on('start', () => {
-            this.client.songDispatcher = dispatcher;
+            message.guild.musicData.songDispatcher = dispatcher;
             voiceChannel = queue[0].voiceChannel;
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
@@ -260,7 +263,7 @@ module.exports = class PlayCommand extends Command {
             if (queue.length >= 1) {
               return this.playSong(queue, message);
             } else {
-              message.client.isPlaying = false;
+              message.guild.musicData.isPlaying = false;
               return voiceChannel.leave();
             }
           })
