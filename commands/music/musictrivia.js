@@ -159,7 +159,7 @@ module.exports = class MusicTriviaCommand extends Command {
           if (queue.length >= 1) {
             return this.playQuizSong(queue, message);
           } else {
-            let highesttriviaScore = 0;
+            let highestTriviaScore = 0;
             let winner = '';
             for (
               let i = 0;
@@ -168,17 +168,17 @@ module.exports = class MusicTriviaCommand extends Command {
             ) {
               if (
                 message.guild.triviaData.triviaScore[i].triviaScore >
-                highesttriviaScore
+                highestTriviaScore
               ) {
-                highesttriviaScore =
+                highestTriviaScore =
                   message.guild.triviaData.triviaScore[i].triviaScore;
                 winner = message.guild.triviaData.triviaScore[i].name;
               }
             }
-            if (highesttriviaScore === 0)
+            if (highestTriviaScore === 0)
               return message.channel.send('No one won. Better luck next time');
             message.channel.send(
-              `The winner is ${winner} with ${highesttriviaScore} points`
+              `The winner is ${winner} with ${highestTriviaScore} points`
             );
             message.guild.musicData.isPlaying = false;
             message.guild.triviaData.isTriviaRunning = false;
