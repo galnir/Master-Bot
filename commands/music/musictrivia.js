@@ -96,12 +96,13 @@ module.exports = class MusicTriviaCommand extends Command {
             if (m.content.startsWith('!')) return;
             // if user guessed song name
             if (m.content.toLowerCase() === queue[0].title) {
+              if (songNameFound) return; // if song name already found
+              songNameFound = true;
               for (
                 let i = 0;
                 i < message.guild.triviaData.triviaScore.length;
                 i++
               ) {
-                songNameFound = true;
                 if (songNameFound && songSingerFound) {
                   message.guild.triviaData.triviaScore[i].triviaScore++;
                   m.react('☑');
@@ -120,6 +121,7 @@ module.exports = class MusicTriviaCommand extends Command {
             }
             // if user guessed singer
             else if (m.content.toLowerCase() === queue[0].singer) {
+              if (songSingerFound) return;
               songSingerFound = true;
               for (
                 let i = 0;
