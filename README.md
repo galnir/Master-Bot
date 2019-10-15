@@ -2,13 +2,11 @@
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
 
-Please drop a ⭐ if you find this repo/bot useful :)
-
 ### Installing the dependencies
 
 `npm i`
 
-### Usage
+### Setup
 
 Make a config.json file in the root directory of the project and add:
 
