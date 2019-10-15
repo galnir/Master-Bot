@@ -62,8 +62,8 @@ module.exports = class PlayCommand extends Command {
             thumbnail,
             voiceChannel
           };
-          // this can be uncommented if you choose not to limit the queue
-          // if (queue.length < 10) {
+          // this can be uncommented if you choose to limit the queue
+          // if (message.guild.musicData.queue.length < 10) {
           //
           message.guild.musicData.queue.push(song);
           // } else {
@@ -114,8 +114,8 @@ module.exports = class PlayCommand extends Command {
           thumbnail,
           voiceChannel
         };
-        // // can be uncommented if you don't want to limit the queue
-        // if (queue.length > 10) {
+        // // can be uncommented if you want to limit the queue
+        // if (message.guild.musicData.queue.length > 10) {
         //   return message.say(
         //     'There are too many songs in the queue already, skip or wait a bit'
         //   );
@@ -137,6 +137,11 @@ module.exports = class PlayCommand extends Command {
     }
     try {
       const videos = await youtube.searchVideos(query, 5);
+      if (videos.length < 5) {
+        return message.say(
+          `I had some trouble finding what you were looking for, please try again or be more specific`
+        );
+      }
       const vidNameArr = [];
       for (let i = 0; i < videos.length; i++) {
         vidNameArr.push(`${i + 1}: ${videos[i].title}`);
@@ -195,35 +200,29 @@ module.exports = class PlayCommand extends Command {
       const title = video.title;
       let duration = this.formatDuration(video.duration);
       const thumbnail = video.thumbnails.high.url;
-      try {
-        if (duration == '00:00') duration = 'Live Stream';
-        const song = {
-          url,
-          title,
-          duration,
-          thumbnail,
-          voiceChannel
-        };
-        // // can be uncommented if you don't want to limit the queue
-        // if (queue.length > 10) {
-        //   songEmbed.delete();
-        //   return message.say(
-        //     'There are too many songs in the queue already, skip or wait a bit'
-        //   );
-        // }
-        message.guild.musicData.queue.push(song);
-        if (message.guild.musicData.isPlaying == false) {
-          message.guild.musicData.isPlaying = true;
-          songEmbed.delete();
-          this.playSong(message.guild.musicData.queue, message);
-        } else if (message.guild.musicData.isPlaying == true) {
-          songEmbed.delete();
-          return message.say(`${song.title} added to queue`);
-        }
-      } catch (err) {
-        console.error(err);
+      if (duration == '00:00') duration = 'Live Stream';
+      const song = {
+        url,
+        title,
+        duration,
+        thumbnail,
+        voiceChannel
+      };
+      // // can be uncommented if you don't want to limit the queue
+      // if (message.guild.musicData.queue.length > 10) {
+      //   songEmbed.delete();
+      //   return message.say(
+      //     'There are too many songs in the queue already, skip or wait a bit'
+      //   );
+      // }
+      message.guild.musicData.queue.push(song);
+      if (message.guild.musicData.isPlaying == false) {
+        message.guild.musicData.isPlaying = true;
         songEmbed.delete();
-        return message.say('queue process gone wrong');
+        this.playSong(message.guild.musicData.queue, message);
+      } else if (message.guild.musicData.isPlaying == true) {
+        songEmbed.delete();
+        return message.say(`${song.title} added to queue`);
       }
     } catch (err) {
       console.error(err);
