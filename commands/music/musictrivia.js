@@ -127,6 +127,27 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.triviaScore.get(m.author.username)
                 .score++;
               m.react('☑');
+            } else if (
+              m.content.toLowerCase() ===
+                queue[0].singer + ' ' + queue[0].title ||
+              m.content.toLowerCase() === queue[0].title + ' ' + queue[0].singer
+            ) {
+              if (
+                (songSingerFound && !songNameFound) ||
+                (songNameFound && !songSingerFound)
+              ) {
+                message.guild.triviaData.triviaScore.get(m.author.username)
+                  .score++;
+                m.react('☑');
+                return collector.stop();
+              }
+              message.guild.triviaData.triviaScore.get(
+                m.author.username
+              ).score =
+                message.guild.triviaData.triviaScore.get(m.author.username)
+                  .score + 2;
+              m.react('☑');
+              return collector.stop();
             } else {
               // wrong answer
               return m.react('❌');
