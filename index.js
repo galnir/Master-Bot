@@ -15,8 +15,7 @@ Structures.extend('Guild', Guild => {
       this.triviaData = {
         isTriviaRunning: false,
         triviaQueue: [],
-        triviaScore: [],
-        usersPlaying: new Set()
+        triviaScore: new Map()
       };
     }
   }
