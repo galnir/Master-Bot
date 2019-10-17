@@ -61,6 +61,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !say             |  Make the bot say anything             |!say Lorem Ipsum       |
 | !translate             | Translate to English(for now) from any supported language using yandex translation service|!translate ありがとう           |
 | !whomademe             |  Info about me and the repo       | !whomademe          |
+| !uptime      | Replies with the bot's total uptime | !uptime |
 
 - Gifs
 
@@ -100,3 +101,5 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
 
+## Contributors
+@OmeGa-glitch - uptime command
