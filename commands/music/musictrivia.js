@@ -68,7 +68,6 @@ module.exports = class MusicTriviaCommand extends Command {
   }
 
   playQuizSong(queue, message) {
-    let voiceChannel;
     queue[0].voiceChannel.join().then(connection => {
       const dispatcher = connection
         .play(
@@ -79,7 +78,6 @@ module.exports = class MusicTriviaCommand extends Command {
         )
         .on('start', () => {
           message.guild.triviaData.songDispatcher = dispatcher;
-          voiceChannel = queue[0].voiceChannel;
           let songNameFound = false;
           let songSingerFound = false;
 
@@ -178,7 +176,7 @@ module.exports = class MusicTriviaCommand extends Command {
             message.guild.musicData.isPlaying = false;
             message.guild.triviaData.isTriviaRunning = false;
             message.guild.triviaData.triviaScore.clear();
-            return voiceChannel.leave();
+            return message.guild.me.voice.channel.leave();
           }
         });
     });

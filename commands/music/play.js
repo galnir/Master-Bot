@@ -235,7 +235,6 @@ module.exports = class PlayCommand extends Command {
     }
   }
   playSong(queue, message) {
-    let voiceChannel;
     queue[0].voiceChannel
       .join()
       .then(connection => {
@@ -248,7 +247,6 @@ module.exports = class PlayCommand extends Command {
           )
           .on('start', () => {
             message.guild.musicData.songDispatcher = dispatcher;
-            voiceChannel = queue[0].voiceChannel;
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
               .setColor('#e9f931')
@@ -263,18 +261,18 @@ module.exports = class PlayCommand extends Command {
               return this.playSong(queue, message);
             } else {
               message.guild.musicData.isPlaying = false;
-              return voiceChannel.leave();
+              return message.guild.me.voice.channel.leave();
             }
           })
           .on('error', e => {
             message.say('Cannot play song');
             console.error(e);
-            return voiceChannel.leave();
+            return message.guild.me.voice.channel.leave();
           });
       })
       .catch(e => {
         console.error(e);
-        return voiceChannel.leave();
+        return message.guild.me.voice.channel.leave();
       });
   }
 
