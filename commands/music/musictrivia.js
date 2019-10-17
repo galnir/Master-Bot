@@ -60,11 +60,6 @@ module.exports = class MusicTriviaCommand extends Command {
       message.member.voice.channel.members.entries()
     );
     channelInfo.forEach(user => {
-      // message.guild.triviaData.usersPlaying.add(user[1].user.username);
-      // message.guild.triviaData.triviaScore.push({
-      //   name: user[1].user.username,
-      //   triviaScore: 0
-      // });
       message.guild.triviaData.triviaScore.set(user[1].user.username, {
         score: 0
       });
