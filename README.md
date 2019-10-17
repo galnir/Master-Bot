@@ -102,4 +102,4 @@ Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors
-@OmeGa-glitch - uptime command
+[OmeGa-glitch](https://github.com/OmeGa-glitch) - uptime command
