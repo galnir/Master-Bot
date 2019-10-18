@@ -77,7 +77,7 @@ module.exports = class MusicTriviaCommand extends Command {
           })
         )
         .on('start', () => {
-          message.guild.triviaData.songDispatcher = dispatcher;
+          message.guild.musicData.songDispatcher = dispatcher;
           let songNameFound = false;
           let songSingerFound = false;
 
@@ -157,6 +157,13 @@ module.exports = class MusicTriviaCommand extends Command {
           if (queue.length >= 1) {
             return this.playQuizSong(queue, message);
           } else {
+            if (message.guild.triviaData.wasTriviaEndCalled) {
+              message.guild.musicData.isPlaying = false;
+              message.guild.triviaData.isTriviaRunning = false;
+              message.guild.triviaData.wasTriviaEndCalled = false;
+              message.guild.triviaData.triviaScore.clear();
+              return message.guild.me.voice.channel.leave();
+            }
             let highestTriviaScore = 0;
             let winner = '';
 
