@@ -14,7 +14,9 @@ module.exports = class QueueCommand extends Command {
   }
 
   run(message) {
-    if (!message.guild.musicData.queue)
+    if (message.guild.triviaData.isTriviaRunning)
+      return message.say('Try again after the trivia has ended');
+    if (message.guild.musicData.queue.length == 0)
       return message.say('There are no songs in queue!');
     const titleArray = [];
     message.guild.musicData.queue.map(obj => {
