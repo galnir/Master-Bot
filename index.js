@@ -10,6 +10,7 @@ Structures.extend('Guild', Guild => {
       this.musicData = {
         queue: [],
         isPlaying: false,
+        nowPlaying: null,
         songDispatcher: null
       };
       this.triviaData = {

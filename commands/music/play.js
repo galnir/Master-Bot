@@ -254,6 +254,7 @@ module.exports = class PlayCommand extends Command {
               .addField('Duration:', queue[0].duration);
             if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
             message.say(videoEmbed);
+            message.guild.musicData.nowPlaying = queue[0];
             return queue.shift();
           })
           .on('finish', () => {
@@ -261,6 +262,7 @@ module.exports = class PlayCommand extends Command {
               return this.playSong(queue, message);
             } else {
               message.guild.musicData.isPlaying = false;
+              message.guild.musicData.nowPlaying = null;
               return message.guild.me.voice.channel.leave();
             }
           })
