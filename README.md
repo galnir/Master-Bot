@@ -45,7 +45,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 |!skipto              |Skip to a specific song in the queue, provide the song number as an argument   | !skipto 5  |
 |!volume              |Adjust song volume                                                             |!volume 80  |
 |!music-trivia        |Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json|!music-trivia|
-
+|!loop                |Loop the currently playing song | !loop |
 
 - Misc
 
