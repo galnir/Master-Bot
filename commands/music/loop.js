@@ -21,6 +21,9 @@ module.exports = class LoopCommand extends Command {
       return message.say('You cannot loop over a trivia!');
     }
 
+    message.channel.send(
+      `${message.guild.musicData.nowPlaying.title} added to queue`
+    );
     message.guild.musicData.queue.unshift(message.guild.musicData.nowPlaying);
     return;
   }
