@@ -46,6 +46,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 |!volume              |Adjust song volume                                                             |!volume 80  |
 |!music-trivia        |Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json|!music-trivia|
 |!loop                |Loop the currently playing song | !loop |
+|!lyrics              |Display lyrics of any song |!lyrics song-name |
 
 - Misc
 
