@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class ShuffleQueueCommand extends Command {
   constructor(client) {
@@ -26,7 +27,17 @@ module.exports = class ShuffleQueueCommand extends Command {
 
     shuffleQueue(message.guild.musicData.queue);
 
-    return message.say('Queue shuffled, to view new queue, call queue command');
+    const titleArray = [];
+    message.guild.musicData.queue.map(obj => {
+      titleArray.push(obj.title);
+    });
+    var queueEmbed = new MessageEmbed()
+      .setColor('#ff7373')
+      .setTitle('New Music Queue');
+    for (let i = 0; i < titleArray.length; i++) {
+      queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
+    }
+    return message.say(queueEmbed);
   }
 };
 
