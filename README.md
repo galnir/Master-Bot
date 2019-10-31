@@ -17,7 +17,8 @@ Make a config.json file in the root directory of the project and add:
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
   "youtubeAPI": "youtube-api-key",
-  "yandexAPI": 'yandex-api-key"
+  "yandexAPI": "yandex-api-key",
+  "geniusLyricsAPI": "genius-api-key"
 }
 ```
 
@@ -92,6 +93,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 [How to get a Youtube API key](https://developers.google.com/youtube/v3/getting-started)
 
 [Get a Yandex API key here](https://translate.yandex.com/developers/keys)
+
+[Get a Genius API key here](https://genius.com/api-clients/new)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
