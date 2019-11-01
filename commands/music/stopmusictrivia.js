@@ -30,6 +30,6 @@ module.exports = class StopMusicTriviaCommand extends Command {
 
     message.guild.triviaData.wasTriviaEndCalled = true;
 
-    message.guild.musicData.songDispatcher.end();
+    return message.guild.musicData.songDispatcher.end();
   }
 };
