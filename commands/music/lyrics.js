@@ -46,10 +46,26 @@ module.exports = class LyricsCommand extends Command {
 
       let lyrics = await getLyrics(song.url);
       lyrics = lyrics.replace(/(\[.+\])/g, '');
-      const lyricsEmbed = new MessageEmbed()
-        .setColor('#00724E')
-        .setDescription(lyrics.trim());
-      return message.channel.send(lyricsEmbed);
+
+      if (lyrics.length > 4095)
+        return message.say('Lyrics are too long to be returned as embed');
+      if (lyrics.length < 2048) {
+        const lyricsEmbed = new MessageEmbed()
+          .setColor('#00724E')
+          .setDescription(lyrics.trim());
+        return message.channel.send(lyricsEmbed);
+      } else {
+        // lyrics.length > 2048
+        const firstLyricsEmbed = new MessageEmbed()
+          .setColor('#00724E')
+          .setDescription(lyrics.slice(0, 2048));
+        const secondLyricsEmbed = new MessageEmbed()
+          .setColor('#00724E')
+          .setDescription(lyrics.slice(2048, lyrics.length));
+        message.channel.send(firstLyricsEmbed);
+        message.channel.send(secondLyricsEmbed);
+        return;
+      }
     } catch (e) {
       console.error(e);
       return message.channel.send(
