@@ -90,7 +90,7 @@ module.exports = class MusicTriviaCommand extends Command {
           collector.on('collect', m => {
             if (!message.guild.triviaData.triviaScore.has(m.author.username))
               return;
-            if (m.content.startsWith('!')) return;
+            if (m.content.startsWith(this.client.commandPrefix)) return;
             // if user guessed song name
             if (m.content.toLowerCase() === queue[0].title) {
               if (songNameFound) return; // if song name already found
