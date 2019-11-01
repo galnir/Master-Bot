@@ -26,6 +26,10 @@ module.exports = class LyricsCommand extends Command {
     });
   }
   async run(message, { songName }) {
+    const sentMessage = await message.channel.send(
+      '👀 Searching for lyrics 👀'
+    );
+
     // get song id
     var url = `https://api.genius.com/search?q=${encodeURI(songName)}`;
 
@@ -53,7 +57,7 @@ module.exports = class LyricsCommand extends Command {
         const lyricsEmbed = new MessageEmbed()
           .setColor('#00724E')
           .setDescription(lyrics.trim());
-        return message.channel.send(lyricsEmbed);
+        return sentMessage.edit('', lyricsEmbed);
       } else {
         // lyrics.length > 2048
         const firstLyricsEmbed = new MessageEmbed()
@@ -62,13 +66,13 @@ module.exports = class LyricsCommand extends Command {
         const secondLyricsEmbed = new MessageEmbed()
           .setColor('#00724E')
           .setDescription(lyrics.slice(2048, lyrics.length));
-        message.channel.send(firstLyricsEmbed);
+        sentMessage.edit('', firstLyricsEmbed);
         message.channel.send(secondLyricsEmbed);
         return;
       }
     } catch (e) {
       console.error(e);
-      return message.channel.send(
+      return sentMessage.edit(
         'Something when wrong, please try again or be more specific'
       );
     }
