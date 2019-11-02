@@ -151,6 +151,7 @@ module.exports = class MusicTriviaCommand extends Command {
             console.log(message.guild.triviaData.triviaScore.values());
             queue.shift();
             dispatcher.end();
+            return;
           });
         })
         .on('end', () => {
@@ -162,7 +163,8 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.isTriviaRunning = false;
               message.guild.triviaData.wasTriviaEndCalled = false;
               message.guild.triviaData.triviaScore.clear();
-              return message.guild.me.voice.channel.leave();
+              message.guild.me.voice.channel.leave();
+              return;
             }
             let highestTriviaScore = 0;
             let winner = '';
@@ -183,7 +185,8 @@ module.exports = class MusicTriviaCommand extends Command {
             message.guild.musicData.isPlaying = false;
             message.guild.triviaData.isTriviaRunning = false;
             message.guild.triviaData.triviaScore.clear();
-            return message.guild.me.voice.channel.leave();
+            message.guild.me.voice.channel.leave();
+            return;
           }
         });
     });
