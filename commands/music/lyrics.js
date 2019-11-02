@@ -9,7 +9,8 @@ module.exports = class LyricsCommand extends Command {
     super(client, {
       name: 'lyrics',
       memberName: 'lyrics',
-      description: 'Get lyrics of any song',
+      description:
+        'Get lyrics of any song or the lyrics of the currently playing song',
       group: 'music',
       throttling: {
         usages: 1,
@@ -26,6 +27,19 @@ module.exports = class LyricsCommand extends Command {
     });
   }
   async run(message, { songName }) {
+    if (
+      songName == '' &&
+      message.guild.musicData.isPlaying &&
+      !message.guild.triviaData.isTriviaRunning
+    ) {
+      songName = message.guild.musicData.nowPlaying.title;
+    } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
+      return message.say('Please try again after the trivia has ended');
+    } else if (songName == '' && !message.guild.musicData.isPlaying) {
+      return message.say(
+        'There is no song playing right now, please try again with a song name or play a song first'
+      );
+    }
     const sentMessage = await message.channel.send(
       '👀 Searching for lyrics 👀'
     );
