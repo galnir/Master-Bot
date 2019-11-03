@@ -168,16 +168,20 @@ module.exports = class MusicTriviaCommand extends Command {
             }
             let highestTriviaScore = 0;
             let winner = '';
+            let isHighestValueDuplicate = false;
 
             Array.from(message.guild.triviaData.triviaScore.entries()).map(
               entry => {
                 if (entry[1].score > highestTriviaScore) {
                   highestTriviaScore = entry[1].score;
                   winner = entry[0];
+                  isHighestValueDuplicate = false;
+                } else if (entry[1].score == highestTriviaScore) {
+                  isHighestValueDuplicate = true;
                 }
               }
             );
-            if (highestTriviaScore === 0)
+            if (highestTriviaScore == 0 || isHighestValueDuplicate)
               return message.channel.send('No one won. Better luck next time');
             message.channel.send(
               `The winner is ${winner} with ${highestTriviaScore} points`
