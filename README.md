@@ -107,4 +107,4 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors
 
-[OmeGa-glitch](https://github.com/OmeGa-glitch) - uptime command
+[encoder-glitch](https://github.com/encoder-glitch) - uptime command
