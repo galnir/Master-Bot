@@ -148,7 +148,14 @@ module.exports = class MusicTriviaCommand extends Command {
           });
 
           collector.on('end', () => {
-            console.log(message.guild.triviaData.triviaScore.values());
+            console.log(
+              Array.from(message.guild.triviaData.triviaScore.entries())
+            );
+            message.channel.send(
+              this.scoreEmbed(
+                Array.from(message.guild.triviaData.triviaScore.entries())
+              )
+            );
             queue.shift();
             dispatcher.end();
             return;
@@ -208,5 +215,20 @@ module.exports = class MusicTriviaCommand extends Command {
       taken[x] = --len in taken ? taken[len] : len;
     }
     return result;
+  }
+
+  scoreEmbed(arr) {
+    if (!arr) return;
+
+    // create an embed with no fields
+    const embed = new MessageEmbed()
+      .setColor('#ff7373')
+      .setTitle('Trivia Score');
+
+    for (let i = 0; i < arr.length; i++) {
+      embed.addField(arr[i][0] + ':', arr[i][1].score);
+    }
+
+    return embed;
   }
 };
