@@ -28,11 +28,11 @@ module.exports = class MusicTriviaCommand extends Command {
     message.guild.musicData.isPlaying = true;
     message.guild.triviaData.isTriviaRunning = true;
     // fetch link array from txt file
-    const Jsonsongs = fs.readFileSync(
+    const jsonSongs = fs.readFileSync(
       'resources/music/musictrivia.json',
       'utf8'
     );
-    var videoDataArray = JSON.parse(Jsonsongs).songs;
+    var videoDataArray = JSON.parse(jsonSongs).songs;
     // get random x videos from array
     const numOfLinks = 5;
     const randomXVideoLinks = this.getRandom(videoDataArray, numOfLinks); // get x random urls
