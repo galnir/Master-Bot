@@ -57,6 +57,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !fortune     | Get a fortune cookie tip                                                                                                                                            | !fortune              |
 | !insult      | Generate an evil insult                                                                                                                                             | !insult               |
 | !chucknorris | Get a satirical fact about Chuck Norris                                                                                                                             | !chucknorris          |
+| !motivation  | Get a random motivational quote                                                                                                                                     | !motivation           |
 | !global-news | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in global-news.js or ynet-news.js | !global-news          |
 | !random      | Generate a random number between two provided numbers                                                                                                               | !random 0 100         |
 | !reddit      | Replies with 5 top non nsfw subreddit posts                                                                                                                         | !reddit askreddit     |
