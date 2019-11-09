@@ -25,13 +25,18 @@ module.exports = class KickCommand extends Command {
     });
   }
 
-  run(message, { reason }) {
-    const user = message.mentions.members.first();
+  run(message, { userToKick, reason }) {
+    const user =
+      message.mentions.members.first() || message.guild.members.get(userToKick);
+    if (user == undefined)
+      return message.channel.send('Please try again with a valid user');
     user
       .kick(reason)
-      .then(() => message.say(`Kicked ${user} reason: ${reason}`))
+      .then(() => message.say(`Kicked ${userToKick} reason: ${reason}`))
       .catch(e => {
-        message.say('Something went wrong when trying to kick this user');
+        message.say(
+          'Something went wrong when trying to ban this user, I probably do not have the permission to kick him'
+        );
         return console.error(e);
       });
   }
