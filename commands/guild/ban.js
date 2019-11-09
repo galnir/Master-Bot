@@ -13,7 +13,8 @@ module.exports = class BanCommand extends Command {
       args: [
         {
           key: 'userToBan',
-          prompt: 'Who do you want to ban?',
+          prompt:
+            'Please mention the user you want to ban with @ or provide his ID',
           type: 'string'
         },
         {
@@ -25,13 +26,18 @@ module.exports = class BanCommand extends Command {
     });
   }
 
-  run(message, { reason }) {
-    const user = message.mentions.members.first();
+  run(message, { userToBan, reason }) {
+    const user =
+      message.mentions.members.first() || message.guild.members.get(userToBan);
+    if (user == undefined)
+      return message.channel.send('Please try again with a valid user');
     user
       .ban(reason)
-      .then(() => message.say(`Banned ${user} reason: ${reason}`))
+      .then(() => message.say(`Banned ${userToBan} reason: ${reason}`))
       .catch(e => {
-        message.say('Something went wrong when trying to ban this user');
+        message.say(
+          'Something went wrong when trying to ban this user, I probably do not have the permission to ban him'
+        );
         return console.error(e);
       });
   }
