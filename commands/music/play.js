@@ -170,7 +170,9 @@ module.exports = class PlayCommand extends Command {
         var videoIndex = parseInt(response.first().content);
       } catch (err) {
         console.error(err);
-        songEmbed.delete();
+        if (songEmbed) {
+          songEmbed.delete();
+        }
         return message.say(
           'Please try again and enter a number between 1 and 5 or exit'
         );
@@ -191,7 +193,9 @@ module.exports = class PlayCommand extends Command {
         // }
       } catch (err) {
         console.error(err);
-        songEmbed.delete();
+        if (songEmbed) {
+          songEmbed.delete();
+        }
         return message.say(
           'An error has occured when trying to get the video ID from youtube'
         );
@@ -218,10 +222,14 @@ module.exports = class PlayCommand extends Command {
       message.guild.musicData.queue.push(song);
       if (message.guild.musicData.isPlaying == false) {
         message.guild.musicData.isPlaying = true;
-        songEmbed.delete();
+        if (songEmbed) {
+          songEmbed.delete();
+        }
         this.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        songEmbed.delete();
+        if (songEmbed) {
+          songEmbed.delete();
+        }
         return message.say(`${song.title} added to queue`);
       }
     } catch (err) {
