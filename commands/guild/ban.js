@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class BanCommand extends Command {
   constructor(client) {
@@ -33,7 +34,13 @@ module.exports = class BanCommand extends Command {
       return message.channel.send('Please try again with a valid user');
     user
       .ban(reason)
-      .then(() => message.say(`Banned ${userToBan} reason: ${reason}`))
+      .then(() => {
+        const banEmbed = new MessageEmbed()
+          .addField('Banned:', userToBan)
+          .addField('Reason', reason)
+          .setColor('#420626');
+        message.channel.send(banEmbed);
+      })
       .catch(e => {
         message.say(
           'Something went wrong when trying to ban this user, I probably do not have the permission to ban him'
