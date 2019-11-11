@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class KickCommand extends Command {
   constructor(client) {
@@ -32,7 +33,14 @@ module.exports = class KickCommand extends Command {
       return message.channel.send('Please try again with a valid user');
     user
       .kick(reason)
-      .then(() => message.say(`Kicked ${userToKick} reason: ${reason}`))
+      .then(() => {
+        //message.say(`Kicked ${userToKick} reason: ${reason}`)
+        const kickEmbed = new MessageEmbed()
+          .addField('Kicked:', userToKick)
+          .addField('Reason:', reason)
+          .setColor('#420626');
+        message.channel.send(kickEmbed);
+      })
       .catch(e => {
         message.say(
           'Something went wrong when trying to ban this user, I probably do not have the permission to kick him'
