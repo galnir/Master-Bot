@@ -62,7 +62,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !random      | Generate a random number between two provided numbers                                                                                                               | !random 0 100         |
 | !reddit      | Replies with 5 top non nsfw subreddit posts                                                                                                                         | !reddit askreddit     |
 | !say         | Make the bot say anything                                                                                                                                           | !say Lorem Ipsum      |
-| !translate   | Translate to English(for now) from any supported language using yandex translation service                                                                          | !translate ありがとう |
+| !translate   | Translate to any language using yandex translation service(only supported lanugages)                                                                          | !translate ありがとう |
 | !whomademe   | Info about me and the repo                                                                                                                                          | !whomademe            |
 | !uptime      | Replies with the bot's total uptime                                                                                                                                 | !uptime               |
 
