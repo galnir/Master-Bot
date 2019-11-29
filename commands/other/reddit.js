@@ -10,7 +10,7 @@ module.exports = class RedditCommand extends Command {
       group: 'other',
       memberName: 'reddit',
       description:
-        'Replies with 5 top daily posts in wanted subreddit, you can specify sorting and time',
+        'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time',
       throttling: {
         usages: 2,
         duration: 10
@@ -27,7 +27,7 @@ module.exports = class RedditCommand extends Command {
         {
           key: 'sort',
           prompt:
-            'What posts do you want to see? Choose from best/hot/top/new/controversial/rising',
+            'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
           type: 'string',
           default: 'top',
           validate: sort =>
@@ -72,7 +72,7 @@ module.exports = class RedditCommand extends Command {
       }
     }
     fetch(
-      `https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=5&t=${
+      `https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${
         timeFilter ? timeFilter : 'day'
       }`
     )
