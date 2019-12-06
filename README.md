@@ -73,7 +73,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !animegif | Get an anime related gif by a query | !animegif one punch man |
 | !gif      | Get any gif by a query              | !gif labrador           |
 | !gintama  | Replies with a random gintama gif   | !gintama                |
-| !jojo     | eplies with a random jojo gif       | !jojo                   |
+| !jojo     | Replies with a random jojo gif       | !jojo                   |
 
 - Guild
 
