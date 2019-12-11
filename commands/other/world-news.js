@@ -19,6 +19,7 @@ module.exports = class GlobalNewsCommand extends Command {
   }
 
   async run(message) {
+    // powered by NewsAPI.org
     try {
       const response = await fetch(
         `https://newsapi.org/v2/top-headlines?sources=reuters&pageSize=5&apiKey=${newsAPI}`
@@ -34,7 +35,7 @@ module.exports = class GlobalNewsCommand extends Command {
           .setDescription(article.description)
           .setThumbnail(article.urlToImage)
           .setTimestamp(article.publishedAt)
-          .setFooter('---------------------------------');
+          .setFooter('powered by NewsAPI.org');
         return embed;
       };
       async function processArray(array) {
@@ -50,4 +51,3 @@ module.exports = class GlobalNewsCommand extends Command {
     }
   }
 };
-// The news api is powered by NewsAPI.org!
