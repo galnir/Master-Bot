@@ -6,11 +6,11 @@ const { Command } = require('discord.js-commando');
 module.exports = class GlobalNewsCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'global-news',
-      aliases: ['world-news', 'reuters'],
+      name: 'world-news',
+      aliases: ['global-news', 'reuters'],
       group: 'other',
-      memberName: 'global-news',
-      description: 'Replies with the 5 latest global news headlines',
+      memberName: 'world-news',
+      description: 'Replies with the 5 latest world news headlines',
       throttling: {
         usages: 2,
         duration: 10
