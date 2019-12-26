@@ -278,6 +278,8 @@ module.exports = class PlayCommand extends Command {
             message.say('Cannot play song');
             console.error(e);
             message.guild.musicData.queue.length = 0;
+            message.guild.musicData.isPlaying = false;
+            message.guild.musicData.nowPlaying = null;
             return message.guild.me.voice.channel.leave();
           });
       })
