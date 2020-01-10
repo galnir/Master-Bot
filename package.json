@@ -12,18 +12,18 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
-    "discord.js": "github:discordjs/discord.js#master",
+    "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
-    "ffmpeg-static": "^2.5.0",
+    "ffmpeg-static": "^2.7.0",
     "iso-639-1": "^2.1.0",
-    "node-opus": "^0.3.2",
+    "node-opus": "^0.3.3",
     "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^1.0.5"
+    "ytdl-core": "^1.0.6"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "eslint": "^5.16.0",
-    "nodemon": "^1.19.1",
-    "prettier": "^1.18.2"
+    "nodemon": "^1.19.4",
+    "prettier": "^1.19.1"
   }
 }
