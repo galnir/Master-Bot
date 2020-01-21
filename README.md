@@ -80,8 +80,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command               | Description                     | Usage                                 |
 | --------------------- | ------------------------------- | ------------------------------------- |
 | !ban                  | Bans a tagged member            | !ban @johndoe                         |
-| !create-text-channel  | Creates a text channel          | !create-text-channel music-discussion |
-| !create-voice-channel | Creates a new voice channel     | !create-voice-channel Music Channel   |
 | !kick                 | Kicks a tagged member           | !kick @johndoe                        |
 | !prune                | Delete up to 99 recent messages | !prune 50                             |
 
