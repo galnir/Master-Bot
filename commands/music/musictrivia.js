@@ -188,16 +188,22 @@ module.exports = class MusicTriviaCommand extends Command {
                 }
               }
             );
-            if (highestTriviaScore == 0 || isHighestValueDuplicate)
+            if (highestTriviaScore == 0 || isHighestValueDuplicate) {
+              message.guild.musicData.isPlaying = false;
+              message.guild.triviaData.isTriviaRunning = false;
+              message.guild.triviaData.triviaScore.clear();
+              message.guild.me.voice.channel.leave();
               return message.channel.send('No one won. Better luck next time');
-            message.channel.send(
-              `The winner is ${winner} with ${highestTriviaScore} points`
-            );
-            message.guild.musicData.isPlaying = false;
-            message.guild.triviaData.isTriviaRunning = false;
-            message.guild.triviaData.triviaScore.clear();
-            message.guild.me.voice.channel.leave();
-            return;
+            } else {
+              message.channel.send(
+                `The winner is ${winner} with ${highestTriviaScore} points`
+              );
+              message.guild.musicData.isPlaying = false;
+              message.guild.triviaData.isTriviaRunning = false;
+              message.guild.triviaData.triviaScore.clear();
+              message.guild.me.voice.channel.leave();
+              return;
+            }
           }
         });
     });
