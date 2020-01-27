@@ -41,7 +41,8 @@ module.exports = class MusicTriviaCommand extends Command {
       .setColor('#ff7373')
       .setTitle('Starting Music Quiz')
       .setDescription(
-        `Get ready! There are ${numOfLinks} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!`
+        `Get ready! There are ${numOfLinks} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
+        You can end the trivia at any point by using the end-trivia command`
       );
     message.say(infoEmbed);
     // init quiz queue
