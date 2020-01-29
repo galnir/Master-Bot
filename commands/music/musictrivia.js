@@ -149,6 +149,14 @@ module.exports = class MusicTriviaCommand extends Command {
           });
 
           collector.on('end', () => {
+            /*
+            The reason for this if statement is that we don't want to get an
+            empty embed returned via chat by the bot if end-trivia command was called
+            */
+            if (message.guild.triviaData.wasTriviaEndCalled) {
+              message.guild.triviaData.wasTriviaEndCalled = false;
+              return;
+            }
             message.channel.send(
               this.scoreEmbed(
                 Array.from(message.guild.triviaData.triviaScore.entries())
@@ -166,7 +174,6 @@ module.exports = class MusicTriviaCommand extends Command {
             if (message.guild.triviaData.wasTriviaEndCalled) {
               message.guild.musicData.isPlaying = false;
               message.guild.triviaData.isTriviaRunning = false;
-              message.guild.triviaData.wasTriviaEndCalled = false;
               message.guild.triviaData.triviaScore.clear();
               message.guild.me.voice.channel.leave();
               return;
