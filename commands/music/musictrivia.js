@@ -149,9 +149,6 @@ module.exports = class MusicTriviaCommand extends Command {
           });
 
           collector.on('end', () => {
-            console.log(
-              Array.from(message.guild.triviaData.triviaScore.entries())
-            );
             message.channel.send(
               this.scoreEmbed(
                 Array.from(message.guild.triviaData.triviaScore.entries())
