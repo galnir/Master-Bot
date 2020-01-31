@@ -43,7 +43,10 @@ client.registry
 
 client.once('ready', () => {
   console.log('Ready!');
-  client.user.setActivity('!help for commands', 'WATCHING');
+  client.user.setActivity('!help', {
+    type: 'WATCHING',
+    url: 'https://github.com/galnir/Master-Bot'
+  });
 });
 
 client.on('guildMemberAdd', member => {
