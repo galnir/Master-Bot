@@ -38,7 +38,11 @@ client.registry
     ['guild', 'guild related commands']
   ])
   .registerDefaultGroups()
-  .registerDefaultCommands()
+  .registerDefaultCommands({
+    eval: false,
+    prefix: false,
+    commandState: false
+  })
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
 client.once('ready', () => {
