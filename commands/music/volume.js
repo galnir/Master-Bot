@@ -35,6 +35,7 @@ module.exports = class VolumeCommand extends Command {
       return message.reply('There is no song playing right now!');
     }
     const volume = wantedVolume / 100;
+    message.guild.musicData.volume = volume;
     message.guild.musicData.songDispatcher.setVolume(volume);
   }
 };
