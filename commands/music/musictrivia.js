@@ -79,6 +79,7 @@ module.exports = class MusicTriviaCommand extends Command {
         )
         .on('start', () => {
           message.guild.musicData.songDispatcher = dispatcher;
+          dispatcher.setVolume(message.guild.musicData.volume);
           let songNameFound = false;
           let songSingerFound = false;
 
