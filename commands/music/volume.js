@@ -37,5 +37,6 @@ module.exports = class VolumeCommand extends Command {
     const volume = wantedVolume / 100;
     message.guild.musicData.volume = volume;
     message.guild.musicData.songDispatcher.setVolume(volume);
+    message.say(`Current volume is: ${wantedVolume}%`);
   }
 };
