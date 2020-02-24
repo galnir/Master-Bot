@@ -25,7 +25,7 @@ module.exports = class StopMusicTriviaCommand extends Command {
       return message.say("Join the trivia's channel and try again");
     }
 
-    if (!message.guild.triviaData.triviaScore.has(message.member.displayName)) {
+    if (!message.guild.triviaData.triviaScore.has(message.author.username)) {
       return message.say(
         'You need to participate in the trivia in order to end it'
       );
