@@ -122,7 +122,7 @@
     },
     {
       "url": "https://www.youtube.com/watch?v=ADIyIlO-_Ug",
-      "singer": "snoop dog",
+      "singer": "snoop dogg",
       "title": "the next episode"
     },
     {
@@ -201,11 +201,6 @@
       "title": "blue"
     },
     {
-      "url": "https://www.youtube.com/watch?v=Eww7ahPd8r4",
-      "singer": "jay z",
-      "title": "empire state of mind"
-    },
-    {
       "url": "https://www.youtube.com/watch?v=i4YutyVP7ig",
       "singer": "kelis",
       "title": "milkshake"
@@ -226,11 +221,6 @@
       "title": "lose yourself"
     },
     {
-      "url": "https://www.youtube.com/watch?v=1CBN9fKeVB4",
-      "singer": "panic at the disco",
-      "title": "i write sins not tragedies"
-    },
-    {
       "url": "https://www.youtube.com/watch?v=96MiYk9VYvc",
       "singer": "evanescence",
       "title": "bring me to life"
@@ -244,21 +234,6 @@
       "url": "https://www.youtube.com/watch?v=-zuviud2HHQ",
       "singer": "cascada",
       "title": "everytime we touch"
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=r5EXKDlf44M",
-      "singer": "green day",
-      "title": "boulevard of broken dreams"
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=3JV74i4yvcA",
-      "singer": "train",
-      "title": "hey soul sister"
-    },
-    {
-      "url": "https://www.youtube.com/watch?v=lWD9wVPwhH4",
-      "singer": "50 cent",
-      "title": "in da club"
     },
     {
       "url": "https://www.youtube.com/watch?v=5pVKZeSoAp0",
@@ -297,13 +272,13 @@
     },
     {
       "url": "https://www.youtube.com/watch?v=OZnBt2W48A0",
-      "singer": "snoop dog",
+      "singer": "snoop dogg",
       "title": "drop it like its hot"
     },
     {
       "url": "https://www.youtube.com/watch?v=a1BS7XnEZqc",
-      "singer": "american idiot",
-      "title": "green day"
+      "singer": "green day",
+      "title": "american idiot"
     },
     {
       "url": "https://www.youtube.com/watch?v=WcBfg4NmqzA",
@@ -328,7 +303,7 @@
     {
       "url": "https://www.youtube.com/watch?v=JiUNTdFX8G8",
       "singer": "rihanna",
-      "title": "eminem"
+      "title": "love the way you lie"
     },
     {
       "url": "https://www.youtube.com/watch?v=xR6lFaPTxh0",
