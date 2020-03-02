@@ -111,3 +111,4 @@ Anyone is welcome to suggest new features and improve code quality!
 ## Contributors
 
 [encoder-glitch](https://github.com/encoder-glitch) - uptime command
+[chimaerra](https://github.com/chimaerra) - minor command tweaks
