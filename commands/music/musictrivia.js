@@ -168,7 +168,7 @@ module.exports = class MusicTriviaCommand extends Command {
             return;
           });
         })
-        .on('end', () => {
+        .on('finish', () => {
           if (queue.length >= 1) {
             return this.playQuizSong(queue, message);
           } else {
