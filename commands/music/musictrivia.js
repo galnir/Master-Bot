@@ -8,17 +8,27 @@ module.exports = class MusicTriviaCommand extends Command {
     super(client, {
       name: 'music-trivia',
       memberName: 'music-trivia',
+      aliases: ['music-quiz', 'start-quiz'],
       group: 'music',
-      description: "Engage in a 2000's music quiz with your friends!",
+      description: 'Engage in a music quiz with your friends!',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT'],
       throttling: {
         usages: 1,
         duration: 10
-      }
+      },
+      args: [
+        {
+          key: 'numberOfSongs',
+          prompt: 'What is the number of songs you want the quiz to have?',
+          type: 'integer',
+          default: 5,
+          max: 15
+        }
+      ]
     });
   }
-  async run(message) {
+  async run(message, { numberOfSongs }) {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel)
@@ -33,15 +43,14 @@ module.exports = class MusicTriviaCommand extends Command {
       'utf8'
     );
     var videoDataArray = JSON.parse(jsonSongs).songs;
-    // get random x videos from array
-    const numOfLinks = 5;
-    const randomXVideoLinks = this.getRandom(videoDataArray, numOfLinks); // get x random urls
+    // get random numberOfSongs videos from array
+    const randomXVideoLinks = this.getRandom(videoDataArray, numberOfSongs); // get x random urls
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
       .setTitle('Starting Music Quiz')
       .setDescription(
-        `Get ready! There are ${numOfLinks} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
+        `Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
         You can end the trivia at any point by using the end-trivia command`
       );
     message.say(infoEmbed);
