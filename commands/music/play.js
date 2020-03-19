@@ -81,7 +81,7 @@ module.exports = class PlayCommand extends Command {
           );
         }
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         return message.say('Playlist is either private or it does not exist');
       }
     }
@@ -169,7 +169,7 @@ module.exports = class PlayCommand extends Command {
         );
         var videoIndex = parseInt(response.first().content);
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         if (songEmbed) {
           songEmbed.delete();
         }
@@ -192,7 +192,7 @@ module.exports = class PlayCommand extends Command {
         //   return message.say('I cannot play videos longer than 1 hour');
         // }
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         if (songEmbed) {
           songEmbed.delete();
         }

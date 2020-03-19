@@ -31,7 +31,8 @@ module.exports = class GifCommand extends Command {
       .then(json => message.say(json.results[0].url))
       .catch(e => {
         message.say('Failed to find a gif that matched your query');
-        return console.error(e);
+        // console.error(e);
+        return;
       });
   }
 };
