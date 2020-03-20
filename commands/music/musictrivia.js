@@ -34,7 +34,7 @@ module.exports = class MusicTriviaCommand extends Command {
     if (!voiceChannel)
       return message.say('Please join a voice channel and try again');
     if (message.guild.musicData.isPlaying === true)
-      return message.channel.send('A trivia or a song is already running');
+      return message.channel.send('A quiz or a song is already running');
     message.guild.musicData.isPlaying = true;
     message.guild.triviaData.isTriviaRunning = true;
     // fetch link array from txt file
