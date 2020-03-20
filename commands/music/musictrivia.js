@@ -103,7 +103,7 @@ module.exports = class MusicTriviaCommand extends Command {
               return;
             if (m.content.startsWith(this.client.commandPrefix)) return;
             // if user guessed song name
-            if (m.content.toLowerCase() === queue[0].title) {
+            if (m.content.toLowerCase() === queue[0].title.toLowerCase()) {
               if (songNameFound) return; // if song name already found
               songNameFound = true;
 
@@ -118,7 +118,9 @@ module.exports = class MusicTriviaCommand extends Command {
               m.react('☑');
             }
             // if user guessed singer
-            else if (m.content.toLowerCase() === queue[0].singer) {
+            else if (
+              m.content.toLowerCase() === queue[0].singer.toLowerCase()
+            ) {
               if (songSingerFound) return;
               songSingerFound = true;
               if (songNameFound && songSingerFound) {
@@ -133,8 +135,13 @@ module.exports = class MusicTriviaCommand extends Command {
               m.react('☑');
             } else if (
               m.content.toLowerCase() ===
-                queue[0].singer + ' ' + queue[0].title ||
-              m.content.toLowerCase() === queue[0].title + ' ' + queue[0].singer
+                queue[0].singer.toLowerCase() +
+                  ' ' +
+                  queue[0].title.toLowerCase() ||
+              m.content.toLowerCase() ===
+                queue[0].title.toLowerCase() +
+                  ' ' +
+                  queue[0].singer.toLowerCase()
             ) {
               if (
                 (songSingerFound && !songNameFound) ||
