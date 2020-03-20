@@ -15,7 +15,7 @@
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg-static": "^2.7.0",
-    "iso-639-1": "^2.1.0",
+    "iso-639-1": "^2.1.1",
     "node-opus": "^0.3.3",
     "simple-youtube-api": "^5.2.1",
     "ytdl-core": "^1.0.9"
