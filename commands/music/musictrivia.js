@@ -191,7 +191,6 @@ module.exports = class MusicTriviaCommand extends Command {
             if (message.guild.triviaData.wasTriviaEndCalled) {
               message.guild.musicData.isPlaying = false;
               message.guild.triviaData.isTriviaRunning = false;
-              message.guild.triviaData.triviaScore.clear();
               message.guild.me.voice.channel.leave();
               return;
             }
