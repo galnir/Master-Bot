@@ -70,9 +70,7 @@ module.exports = class MusicTriviaCommand extends Command {
       message.member.voice.channel.members.entries()
     );
     channelInfo.forEach(user => {
-      message.guild.triviaData.triviaScore.set(user[1].user.username, {
-        score: 0
-      });
+      message.guild.triviaData.triviaScore.set(user[1].user.username, 0);
     });
     this.playQuizSong(message.guild.triviaData.triviaQueue, message);
   }
@@ -108,13 +106,18 @@ module.exports = class MusicTriviaCommand extends Command {
               songNameFound = true;
 
               if (songNameFound && songSingerFound) {
-                message.guild.triviaData.triviaScore.get(m.author.username)
-                  .score++;
+                message.guild.triviaData.triviaScore.set(
+                  m.author.username,
+                  message.guild.triviaData.triviaScore.get(m.author.username) +
+                    1
+                );
                 m.react('☑');
                 return collector.stop();
               }
-              message.guild.triviaData.triviaScore.get(m.author.username)
-                .score++;
+              message.guild.triviaData.triviaScore.set(
+                m.author.username,
+                message.guild.triviaData.triviaScore.get(m.author.username) + 1
+              );
               m.react('☑');
             }
             // if user guessed singer
@@ -124,14 +127,19 @@ module.exports = class MusicTriviaCommand extends Command {
               if (songSingerFound) return;
               songSingerFound = true;
               if (songNameFound && songSingerFound) {
-                message.guild.triviaData.triviaScore.get(m.author.username)
-                  .score++;
+                message.guild.triviaData.triviaScore.set(
+                  m.author.username,
+                  message.guild.triviaData.triviaScore.get(m.author.username) +
+                    1
+                );
                 m.react('☑');
                 return collector.stop();
               }
 
-              message.guild.triviaData.triviaScore.get(m.author.username)
-                .score++;
+              message.guild.triviaData.triviaScore.set(
+                m.author.username,
+                message.guild.triviaData.triviaScore.get(m.author.username) + 1
+              );
               m.react('☑');
             } else if (
               m.content.toLowerCase() ===
@@ -147,16 +155,18 @@ module.exports = class MusicTriviaCommand extends Command {
                 (songSingerFound && !songNameFound) ||
                 (songNameFound && !songSingerFound)
               ) {
-                message.guild.triviaData.triviaScore.get(m.author.username)
-                  .score++;
+                message.guild.triviaData.triviaScore.set(
+                  m.author.username,
+                  message.guild.triviaData.triviaScore.get(m.author.username) +
+                    1
+                );
                 m.react('☑');
                 return collector.stop();
               }
-              message.guild.triviaData.triviaScore.get(
-                m.author.username
-              ).score =
-                message.guild.triviaData.triviaScore.get(m.author.username)
-                  .score + 2;
+              message.guild.triviaData.triviaScore.set(
+                m.author.username,
+                message.guild.triviaData.triviaScore.get(m.author.username) + 2
+              );
               m.react('☑');
               return collector.stop();
             } else {
@@ -174,10 +184,15 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.wasTriviaEndCalled = false;
               return;
             }
-            message.channel.send(
-              this.scoreEmbed(
-                Array.from(message.guild.triviaData.triviaScore.entries())
+
+            const sortedScoreMap = new Map(
+              [...message.guild.triviaData.triviaScore.entries()].sort(
+                (a, b) => b[1] - a[1]
               )
+            );
+
+            message.channel.send(
+              this.scoreEmbed(Array.from(sortedScoreMap.entries()))
             );
             queue.shift();
             dispatcher.end();
@@ -200,11 +215,11 @@ module.exports = class MusicTriviaCommand extends Command {
 
             Array.from(message.guild.triviaData.triviaScore.entries()).map(
               entry => {
-                if (entry[1].score > highestTriviaScore) {
-                  highestTriviaScore = entry[1].score;
+                if (entry[1] > highestTriviaScore) {
+                  highestTriviaScore = entry[1];
                   winner = entry[0];
                   isHighestValueDuplicate = false;
-                } else if (entry[1].score == highestTriviaScore) {
+                } else if (entry[1] == highestTriviaScore) {
                   isHighestValueDuplicate = true;
                 }
               }
@@ -253,7 +268,7 @@ module.exports = class MusicTriviaCommand extends Command {
       .setTitle('Trivia Score');
 
     for (let i = 0; i < arr.length; i++) {
-      embed.addField(arr[i][0] + ':', arr[i][1].score);
+      embed.addField(arr[i][0] + ':', arr[i][1]);
     }
 
     return embed;
