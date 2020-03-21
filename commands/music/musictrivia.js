@@ -70,6 +70,7 @@ module.exports = class MusicTriviaCommand extends Command {
       message.member.voice.channel.members.entries()
     );
     channelInfo.forEach(user => {
+      if (user[1].user.bot) return;
       message.guild.triviaData.triviaScore.set(user[1].user.username, 0);
     });
     this.playQuizSong(message.guild.triviaData.triviaQueue, message);
@@ -191,9 +192,18 @@ module.exports = class MusicTriviaCommand extends Command {
               )
             );
 
-            message.channel.send(
-              this.scoreEmbed(Array.from(sortedScoreMap.entries()))
-            );
+            const song = `${this.capitalize_Words(
+              queue[0].singer
+            )}: ${this.capitalize_Words(queue[0].title)}`;
+
+            const embed = new MessageEmbed()
+              .setColor('#ff7373')
+              .setTitle(`The song was:  ${song}`)
+              .setDescription(
+                this.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+              );
+
+            message.channel.send(embed);
             queue.shift();
             dispatcher.end();
             return;
@@ -209,37 +219,20 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.me.voice.channel.leave();
               return;
             }
-            let highestTriviaScore = 0;
-            let winner = '';
-            let isHighestValueDuplicate = false;
-
-            Array.from(message.guild.triviaData.triviaScore.entries()).map(
-              entry => {
-                if (entry[1] > highestTriviaScore) {
-                  highestTriviaScore = entry[1];
-                  winner = entry[0];
-                  isHighestValueDuplicate = false;
-                } else if (entry[1] == highestTriviaScore) {
-                  isHighestValueDuplicate = true;
-                }
-              }
-            );
-            if (highestTriviaScore == 0 || isHighestValueDuplicate) {
-              message.guild.musicData.isPlaying = false;
-              message.guild.triviaData.isTriviaRunning = false;
-              message.guild.triviaData.triviaScore.clear();
-              message.guild.me.voice.channel.leave();
-              return message.channel.send('No one won. Better luck next time');
-            } else {
-              message.channel.send(
-                `The winner is ${winner} with ${highestTriviaScore} points`
+            const embed = new MessageEmbed()
+              .setColor('#ff7373')
+              .setTitle(`Music Quiz Results:`)
+              .setDescription(
+                this.getLeaderBoard(
+                  Array.from(message.guild.triviaData.triviaScore.entries())
+                )
               );
-              message.guild.musicData.isPlaying = false;
-              message.guild.triviaData.isTriviaRunning = false;
-              message.guild.triviaData.triviaScore.clear();
-              message.guild.me.voice.channel.leave();
-              return;
-            }
+            message.channel.send(embed);
+            message.guild.musicData.isPlaying = false;
+            message.guild.triviaData.isTriviaRunning = false;
+            message.guild.triviaData.triviaScore.clear();
+            message.guild.me.voice.channel.leave();
+            return;
           }
         });
     });
@@ -259,18 +252,24 @@ module.exports = class MusicTriviaCommand extends Command {
     return result;
   }
 
-  scoreEmbed(arr) {
+  getLeaderBoard(arr) {
     if (!arr) return;
+    let leaderBoard = '';
 
-    // create an embed with no fields
-    const embed = new MessageEmbed()
-      .setColor('#ff7373')
-      .setTitle('Trivia Score');
+    leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
 
-    for (let i = 0; i < arr.length; i++) {
-      embed.addField(arr[i][0] + ':', arr[i][1]);
+    if (arr.length > 1) {
+      for (let i = 1; i < arr.length; i++) {
+        leaderBoard =
+          leaderBoard + `\n\n   ${i + 1}: ${arr[i][0]}: ${arr[i][1]}  points`;
+      }
     }
-
-    return embed;
+    return leaderBoard;
+  }
+  // https://www.w3resource.com/javascript-exercises/javascript-string-exercise-9.php
+  capitalize_Words(str) {
+    return str.replace(/\w\S*/g, function(txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   }
 };
