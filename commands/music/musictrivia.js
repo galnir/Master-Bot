@@ -219,13 +219,16 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.me.voice.channel.leave();
               return;
             }
+            const sortedScoreMap = new Map(
+              [...message.guild.triviaData.triviaScore.entries()].sort(
+                (a, b) => b[1] - a[1]
+              )
+            );
             const embed = new MessageEmbed()
               .setColor('#ff7373')
               .setTitle(`Music Quiz Results:`)
               .setDescription(
-                this.getLeaderBoard(
-                  Array.from(message.guild.triviaData.triviaScore.entries())
-                )
+                this.getLeaderBoard(Array.from(sortedScoreMap.entries()))
               );
             message.channel.send(embed);
             message.guild.musicData.isPlaying = false;
