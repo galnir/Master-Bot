@@ -272,6 +272,7 @@ module.exports = class PlayCommand extends Command {
             } else {
               message.guild.musicData.isPlaying = false;
               message.guild.musicData.nowPlaying = null;
+              message.guild.musicData.songDispatcher = null;
               return message.guild.me.voice.channel.leave();
             }
           })
@@ -281,6 +282,7 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.isPlaying = false;
             message.guild.musicData.nowPlaying = null;
+            message.guild.musicData.songDispatcher = null;
             return message.guild.me.voice.channel.leave();
           });
       })
