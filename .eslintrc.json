@@ -4,6 +4,7 @@
     "node": true,
     "es6": true
   },
+  "plugins": ["@getify/proper-arrows", "@getify/proper-ternary"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
@@ -12,7 +13,15 @@
     "//": "The no-console rule is only for development purposes",
     "no-console": "off",
     "no-useless-escape": "off",
-    "no-inner-declarations": "off"
+    "no-inner-declarations": "off",
+    "@getify/proper-arrows/params": ["error", { "unused": "trailing" }],
+    "@getify/proper-arrows/name": ["error", { "trivial": false }],
+    "@getify/proper-arrows/where": ["error", { "global": true }],
+    "@getify/proper-arrows/return": ["error", { "object": true }],
+    "@getify/proper-arrows/this": ["error", "always", { "no-global": true }],
+    "@getify/proper-ternary/nested": "off",
+    "@getify/proper-ternary/parens": "error",
+    "@getify/proper-ternary/where": "error"
   },
   "parser": "babel-eslint"
 }
