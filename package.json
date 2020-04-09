@@ -18,7 +18,7 @@
     "iso-639-1": "^2.1.1",
     "node-opus": "^0.3.3",
     "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^1.0.9"
+    "ytdl-core": "^2.0.1"
   },
   "devDependencies": {
     "@getify/eslint-plugin-proper-arrows": "^8.0.1",
