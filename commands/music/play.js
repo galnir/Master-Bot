@@ -61,7 +61,7 @@ module.exports = class PlayCommand extends Command {
         // if (message.guild.musicData.queue.length < 10) {
         //
         message.guild.musicData.queue.push(
-          this.constructSongObj(video, voiceChannel)
+          PlayCommand.constructSongObj(video, voiceChannel)
         );
         // } else {
         //   return message.say(
@@ -71,7 +71,7 @@ module.exports = class PlayCommand extends Command {
       }
       if (message.guild.musicData.isPlaying == false) {
         message.guild.musicData.isPlaying = true;
-        return this.playSong(message.guild.musicData.queue, message);
+        return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
         return message.say(
           `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
@@ -105,14 +105,14 @@ module.exports = class PlayCommand extends Command {
       //   );
       // }
       message.guild.musicData.queue.push(
-        this.constructSongObj(video, voiceChannel)
+        PlayCommand.constructSongObj(video, voiceChannel)
       );
       if (
         message.guild.musicData.isPlaying == false ||
         typeof message.guild.musicData.isPlaying == 'undefined'
       ) {
         message.guild.musicData.isPlaying = true;
-        return this.playSong(message.guild.musicData.queue, message);
+        return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
         return message.say(`${video.title} added to queue`);
       }
@@ -144,7 +144,6 @@ module.exports = class PlayCommand extends Command {
       .addField('Song 5', vidNameArr[4])
       .addField('Exit', 'exit');
     var songEmbed = await message.channel.send({ embed });
-    var that = this;
     message.channel
       .awaitMessages(
         function(msg) {
@@ -182,14 +181,14 @@ module.exports = class PlayCommand extends Command {
             //   );
             // }
             message.guild.musicData.queue.push(
-              that.constructSongObj(video, voiceChannel)
+              PlayCommand.constructSongObj(video, voiceChannel)
             );
             if (message.guild.musicData.isPlaying == false) {
               message.guild.musicData.isPlaying = true;
               if (songEmbed) {
                 songEmbed.delete();
               }
-              that.playSong(message.guild.musicData.queue, message);
+              PlayCommand.playSong(message.guild.musicData.queue, message);
             } else if (message.guild.musicData.isPlaying == true) {
               if (songEmbed) {
                 songEmbed.delete();
@@ -215,7 +214,7 @@ module.exports = class PlayCommand extends Command {
         );
       });
   }
-  playSong(queue, message) {
+  static playSong(queue, message) {
     const classThis = this; // use classThis instead of 'this' because of lexical scope below
     queue[0].voiceChannel
       .join()
@@ -265,7 +264,7 @@ module.exports = class PlayCommand extends Command {
         return message.guild.me.voice.channel.leave();
       });
   }
-  constructSongObj(video, voiceChannel) {
+  static constructSongObj(video, voiceChannel) {
     let duration = this.formatDuration(video.duration);
     if (duration == '00:00') duration = 'Live Stream';
     return {
@@ -277,7 +276,7 @@ module.exports = class PlayCommand extends Command {
     };
   }
   // prettier-ignore
-  formatDuration(durationObj) {
+  static formatDuration(durationObj) {
     const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${
       durationObj.minutes ? durationObj.minutes : '00'
     }:${
