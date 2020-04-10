@@ -18,7 +18,7 @@
     "@getify/proper-arrows/name": ["error", { "trivial": true }],
     "@getify/proper-arrows/where": ["error", { "global": true }],
     "@getify/proper-arrows/return": ["error", { "object": true }],
-    "@getify/proper-arrows/this": ["error", "always", { "no-global": true }],
+    "@getify/proper-arrows/this": "off",
     "@getify/proper-ternary/nested": "off",
     "@getify/proper-ternary/parens": "error",
     "@getify/proper-ternary/where": "error"
