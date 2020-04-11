@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+const { prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
@@ -44,7 +45,10 @@ module.exports = class MusicTriviaCommand extends Command {
     );
     var videoDataArray = JSON.parse(jsonSongs).songs;
     // get random numberOfSongs videos from array
-    const randomXVideoLinks = this.getRandom(videoDataArray, numberOfSongs); // get x random urls
+    const randomXVideoLinks = MusicTriviaCommand.getRandom(
+      videoDataArray,
+      numberOfSongs
+    ); // get x random urls
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
@@ -73,11 +77,15 @@ module.exports = class MusicTriviaCommand extends Command {
       if (user[1].user.bot) return;
       message.guild.triviaData.triviaScore.set(user[1].user.username, 0);
     });
-    this.playQuizSong(message.guild.triviaData.triviaQueue, message);
+    MusicTriviaCommand.playQuizSong(
+      message.guild.triviaData.triviaQueue,
+      message
+    );
   }
 
-  playQuizSong(queue, message) {
-    queue[0].voiceChannel.join().then(connection => {
+  static async playQuizSong(queue, message) {
+    var classThis = this;
+    queue[0].voiceChannel.join().then(function(connection) {
       const dispatcher = connection
         .play(
           ytdl(queue[0].url, {
@@ -85,69 +93,73 @@ module.exports = class MusicTriviaCommand extends Command {
             highWaterMark: 1024 * 1024 * 1024
           })
         )
-        .on('start', () => {
+        .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
           dispatcher.setVolume(message.guild.musicData.volume);
           let songNameFound = false;
           let songSingerFound = false;
 
-          const filter = m =>
-            message.guild.triviaData.triviaScore.has(m.author.username);
+          const filter = msg =>
+            message.guild.triviaData.triviaScore.has(msg.author.username);
           const collector = message.channel.createMessageCollector(filter, {
             time: 30000
           });
 
-          collector.on('collect', m => {
-            if (!message.guild.triviaData.triviaScore.has(m.author.username))
+          collector.on('collect', msg => {
+            if (!message.guild.triviaData.triviaScore.has(msg.author.username))
               return;
-            if (m.content.startsWith(this.client.commandPrefix)) return;
+            if (msg.content.startsWith(prefix)) return;
             // if user guessed song name
-            if (m.content.toLowerCase() === queue[0].title.toLowerCase()) {
+            if (msg.content.toLowerCase() === queue[0].title.toLowerCase()) {
               if (songNameFound) return; // if song name already found
               songNameFound = true;
 
               if (songNameFound && songSingerFound) {
                 message.guild.triviaData.triviaScore.set(
-                  m.author.username,
-                  message.guild.triviaData.triviaScore.get(m.author.username) +
-                    1
+                  msg.author.username,
+                  message.guild.triviaData.triviaScore.get(
+                    msg.author.username
+                  ) + 1
                 );
-                m.react('☑');
+                msg.react('☑');
                 return collector.stop();
               }
               message.guild.triviaData.triviaScore.set(
-                m.author.username,
-                message.guild.triviaData.triviaScore.get(m.author.username) + 1
+                msg.author.username,
+                message.guild.triviaData.triviaScore.get(msg.author.username) +
+                  1
               );
-              m.react('☑');
+              msg.react('☑');
             }
             // if user guessed singer
             else if (
-              m.content.toLowerCase() === queue[0].singer.toLowerCase()
+              msg.content.toLowerCase() === queue[0].singer.toLowerCase()
             ) {
               if (songSingerFound) return;
               songSingerFound = true;
               if (songNameFound && songSingerFound) {
                 message.guild.triviaData.triviaScore.set(
-                  m.author.username,
-                  message.guild.triviaData.triviaScore.get(m.author.username) +
-                    1
+                  msg.author.username,
+                  message.guild.triviaData.triviaScore.get(
+                    msg.author.username
+                  ) + 1
                 );
-                m.react('☑');
+                msg.react('☑');
                 return collector.stop();
               }
 
               message.guild.triviaData.triviaScore.set(
-                m.author.username,
-                message.guild.triviaData.triviaScore.get(m.author.username) + 1
+                msg.author.username,
+                message.guild.triviaData.triviaScore.get(msg.author.username) +
+                  1
               );
-              m.react('☑');
+              msg.react('☑');
             } else if (
-              m.content.toLowerCase() ===
+              msg.content.toLowerCase() ===
                 queue[0].singer.toLowerCase() +
                   ' ' +
                   queue[0].title.toLowerCase() ||
-              m.content.toLowerCase() ===
+              msg.content.toLowerCase() ===
                 queue[0].title.toLowerCase() +
                   ' ' +
                   queue[0].singer.toLowerCase()
@@ -157,26 +169,28 @@ module.exports = class MusicTriviaCommand extends Command {
                 (songNameFound && !songSingerFound)
               ) {
                 message.guild.triviaData.triviaScore.set(
-                  m.author.username,
-                  message.guild.triviaData.triviaScore.get(m.author.username) +
-                    1
+                  msg.author.username,
+                  message.guild.triviaData.triviaScore.get(
+                    msg.author.username
+                  ) + 1
                 );
-                m.react('☑');
+                msg.react('☑');
                 return collector.stop();
               }
               message.guild.triviaData.triviaScore.set(
-                m.author.username,
-                message.guild.triviaData.triviaScore.get(m.author.username) + 2
+                msg.author.username,
+                message.guild.triviaData.triviaScore.get(msg.author.username) +
+                  2
               );
-              m.react('☑');
+              msg.react('☑');
               return collector.stop();
             } else {
               // wrong answer
-              return m.react('❌');
+              return msg.react('❌');
             }
           });
 
-          collector.on('end', () => {
+          collector.on('end', function() {
             /*
             The reason for this if statement is that we don't want to get an
             empty embed returned via chat by the bot if end-trivia command was called
@@ -187,20 +201,23 @@ module.exports = class MusicTriviaCommand extends Command {
             }
 
             const sortedScoreMap = new Map(
-              [...message.guild.triviaData.triviaScore.entries()].sort(
-                (a, b) => b[1] - a[1]
-              )
+              [...message.guild.triviaData.triviaScore.entries()].sort(function(
+                a,
+                b
+              ) {
+                return b[1] - a[1];
+              })
             );
 
-            const song = `${this.capitalize_Words(
+            const song = `${classThis.capitalize_Words(
               queue[0].singer
-            )}: ${this.capitalize_Words(queue[0].title)}`;
+            )}: ${classThis.capitalize_Words(queue[0].title)}`;
 
             const embed = new MessageEmbed()
               .setColor('#ff7373')
               .setTitle(`The song was:  ${song}`)
               .setDescription(
-                this.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+                classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
               );
 
             message.channel.send(embed);
@@ -209,9 +226,9 @@ module.exports = class MusicTriviaCommand extends Command {
             return;
           });
         })
-        .on('finish', () => {
+        .on('finish', function() {
           if (queue.length >= 1) {
-            return this.playQuizSong(queue, message);
+            return classThis.playQuizSong(queue, message);
           } else {
             if (message.guild.triviaData.wasTriviaEndCalled) {
               message.guild.musicData.isPlaying = false;
@@ -221,15 +238,18 @@ module.exports = class MusicTriviaCommand extends Command {
               return;
             }
             const sortedScoreMap = new Map(
-              [...message.guild.triviaData.triviaScore.entries()].sort(
-                (a, b) => b[1] - a[1]
-              )
+              [...message.guild.triviaData.triviaScore.entries()].sort(function(
+                a,
+                b
+              ) {
+                return b[1] - a[1];
+              })
             );
             const embed = new MessageEmbed()
               .setColor('#ff7373')
               .setTitle(`Music Quiz Results:`)
               .setDescription(
-                this.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+                classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
               );
             message.channel.send(embed);
             message.guild.musicData.isPlaying = false;
@@ -243,7 +263,7 @@ module.exports = class MusicTriviaCommand extends Command {
     });
   }
 
-  getRandom(arr, n) {
+  static getRandom(arr, n) {
     var result = new Array(n),
       len = arr.length,
       taken = new Array(len);
@@ -251,13 +271,16 @@ module.exports = class MusicTriviaCommand extends Command {
       throw new RangeError('getRandom: more elements taken than available');
     while (n--) {
       var x = Math.floor(Math.random() * len);
-      result[n] = arr[x in taken ? taken[x] : x];
-      taken[x] = --len in taken ? taken[len] : len;
+      // prettier-ignore
+      result[n] = arr[(x in taken) ? taken[x] : x];
+      // prettier-ignore
+      taken[x] = (--len in taken) ? taken[len] : len;
+      // prettier-ignore-end
     }
     return result;
   }
 
-  getLeaderBoard(arr) {
+  static getLeaderBoard(arr) {
     if (!arr) return;
     let leaderBoard = '';
 
@@ -272,7 +295,7 @@ module.exports = class MusicTriviaCommand extends Command {
     return leaderBoard;
   }
   // https://www.w3resource.com/javascript-exercises/javascript-string-exercise-9.php
-  capitalize_Words(str) {
+  static capitalize_Words(str) {
     return str.replace(/\w\S*/g, function(txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
