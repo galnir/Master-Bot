@@ -19,9 +19,11 @@ module.exports = class QueueCommand extends Command {
     if (message.guild.musicData.queue.length == 0)
       return message.say('There are no songs in queue!');
     const titleArray = [];
+    /* eslint-disable */
     message.guild.musicData.queue.map(obj => {
       titleArray.push(obj.title);
     });
+    /* eslint-enable */
     var queueEmbed = new MessageEmbed()
       .setColor('#ff7373')
       .setTitle('Music Queue');

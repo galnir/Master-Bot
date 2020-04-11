@@ -18,7 +18,9 @@ module.exports = class VolumeCommand extends Command {
           key: 'wantedVolume',
           prompt: 'What volume would you like to set? from 1 to 200',
           type: 'integer',
-          validate: wantedVolume => wantedVolume >= 1 && wantedVolume <= 200
+          validate: function(wantedVolume) {
+            return wantedVolume >= 1 && wantedVolume <= 200;
+          }
         }
       ]
     });
