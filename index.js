@@ -3,7 +3,7 @@ const { Structures } = require('discord.js');
 const path = require('path');
 const { prefix, token } = require('./config.json');
 
-Structures.extend('Guild', Guild => {
+Structures.extend('Guild', function(Guild) {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
@@ -55,7 +55,7 @@ client.once('ready', () => {
 });
 
 client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.cache.find(c => c.name === 'general'); // change this to the channel name you want to send the greeting to
+  const channel = member.guild.channels.cache.find(ch => ch.name === 'general'); // change this to the channel name you want to send the greeting to
   if (!channel) return;
   channel.send(`Welcome ${member}!`);
 });
