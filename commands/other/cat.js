@@ -21,9 +21,9 @@ module.exports = class CatCommand extends Command {
     fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=cat&limit=1`)
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
-      .catch(e => {
+      .catch(err => {
         message.say('Request to find a kitty failed :(');
-        return console.error(e);
+        return console.error(err);
       });
   }
 };
