@@ -30,13 +30,16 @@ module.exports = class RedditCommand extends Command {
             'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
           type: 'string',
           default: 'top',
-          validate: sort =>
-            sort === 'best' ||
-            sort === 'hot' ||
-            sort === 'new' ||
-            sort === 'top' ||
-            sort === 'controversial' ||
-            sort === 'rising',
+          validate: function(sort) {
+            return (
+              sort === 'best' ||
+              sort === 'hot' ||
+              sort === 'new' ||
+              sort === 'top' ||
+              sort === 'controversial' ||
+              sort === 'rising'
+            );
+          },
           wait: 10
         }
       ]
@@ -52,12 +55,12 @@ module.exports = class RedditCommand extends Command {
       );
       try {
         var t = await message.channel.awaitMessages(
-          m =>
-            m.content === 'hour' ||
-            m.content === 'week' ||
-            m.content === 'month' ||
-            m.content === 'year' ||
-            m.content === 'all',
+          msg =>
+            msg.content === 'hour' ||
+            msg.content === 'week' ||
+            msg.content === 'month' ||
+            msg.content === 'year' ||
+            msg.content === 'all',
           {
             max: 1,
             maxProcessed: 1,
@@ -87,23 +90,20 @@ module.exports = class RedditCommand extends Command {
           //}
         }
       })
-      .catch(e => {
+      .catch(err => {
         message.say('The subreddit you asked for was not found');
-        return console.error(e);
+        return console.error(err);
       });
     // returns an embed that is ready to be sent
     function embedPost(data) {
+      let color = '#FE9004';
       if (data.title.length > 255) {
         data.title = data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
       }
+      if (data.over_18) color = '#cf000f';
       return new MessageEmbed()
-        .setColor(data.over_18 ? '#cf000f' : '#FE9004') // if post is nsfw, color is red
+        .setColor(color) // if post is nsfw, color is red
         .setTitle(data.title)
-        .setThumbnail(
-          data.thumbnail === 'self'
-            ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/Reddit.svg/256px-Reddit.svg.png'
-            : data.thumbnail
-        )
         .setURL(`https://www.reddit.com${data.permalink}`)
         .setDescription(`Upvotes: ${data.score} :thumbsup: `)
         .setAuthor(data.author);

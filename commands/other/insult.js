@@ -28,9 +28,9 @@ module.exports = class InsultCommand extends Command {
           .setURL('https://evilinsult.com');
         return message.say(embed);
       })
-      .catch(e => {
+      .catch(err => {
         message.say('Failed to deliver insult :sob:');
-        return console.error(e);
+        return console.error(err);
       });
   }
 };

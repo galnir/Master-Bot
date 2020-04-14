@@ -22,7 +22,9 @@ module.exports = class TranslateCommand extends Command {
           prompt:
             'What is the target language(language you want to translate to)',
           type: 'string',
-          validate: text => text.length < 3000
+          validate: function(text) {
+            return text.length < 3000;
+          }
         }
       ]
     });

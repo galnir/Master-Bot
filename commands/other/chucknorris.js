@@ -29,9 +29,9 @@ module.exports = class ChuckNorrisCommand extends Command {
           .setURL('https://api.chucknorris.io');
         return message.say(embed);
       })
-      .catch(e => {
+      .catch(err => {
         message.say('An error occured, Chuck is investigating this!');
-        return console.error(e);
+        return console.error(err);
       });
   }
 };
