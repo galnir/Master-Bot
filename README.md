@@ -21,6 +21,8 @@ Make a config.json file in the root directory of the project and add:
   "geniusLyricsAPI": "genius-api-key"
 }
 ```
+Open index.js and change the ID in line 30 to your discord user ID
+
 
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
