@@ -9,7 +9,7 @@ module.exports = class NowPlayingCommand extends Command {
       memberName: 'nowplaying',
       aliases: ['np', 'currently-playing', 'now-playing'],
       guildOnly: true,
-      description: 'Display the current playing song'
+      description: 'Display the currently playing song'
     });
   }
 
