@@ -72,6 +72,9 @@ module.exports = class NowPlayingCommand extends Command {
       if (playBackBarLocation == 0) {
         playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
         break;
+      } else if (playBackBarLocation == 10) {
+        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:';
+        break;
       } else if (i == playBackBarLocation * 2) {
         playBack = playBack + ':musical_note:';
       } else {
