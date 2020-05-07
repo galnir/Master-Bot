@@ -50,6 +50,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !music-trivia | Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json | !music-trivia          |
 | !loop         | Loop the currently playing song                                                                                           | !loop                  |
 | !lyrics       | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name      |
+| !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
 
 - Misc
 
