@@ -11,6 +11,7 @@ module.exports = class BanCommand extends Command {
       description: 'Bans a tagged member',
       guildOnly: true,
       userPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
+      clientPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
       args: [
         {
           key: 'userToBan',
