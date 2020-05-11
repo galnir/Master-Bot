@@ -11,6 +11,7 @@ module.exports = class BanCommand extends Command {
       description: 'Bans a tagged member',
       guildOnly: true,
       userPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
+      clientPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
       args: [
         {
           key: 'userToBan',
@@ -44,7 +45,7 @@ module.exports = class BanCommand extends Command {
       })
       .catch(e => {
         message.say(
-          'Something went wrong when trying to ban this user, I probably do not have the permission to ban him'
+          'Something went wrong when trying to kick this user, I probably do not have the permission to ban him'
         );
         return console.error(e);
       });
