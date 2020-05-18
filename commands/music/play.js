@@ -49,13 +49,14 @@ module.exports = class PlayCommand extends Command {
       const playlist = await youtube.getPlaylist(query).catch(function() {
         return message.say('Playlist is either private or it does not exist!');
       });
-      // remove the 10 if you removed the queue limit conditions below
-      const videosObj = await playlist.getVideos(10).catch(function() {
+      // add 10 as an argument in getVideos() if you choose to limit the queue
+      const videosObj = await playlist.getVideos().catch(function() {
         return message.say(
           'There was a problem getting one of the videos in the playlist!'
         );
       });
       for (let i = 0; i < videosObj.length; i++) {
+        if (videosObj[i].raw.status.privacyStatus == 'private') continue;
         const video = await videosObj[i].fetch();
         // this can be uncommented if you choose to limit the queue
         // if (message.guild.musicData.queue.length < 10) {
