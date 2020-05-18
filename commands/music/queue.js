@@ -20,7 +20,8 @@ module.exports = class QueueCommand extends Command {
       return message.say('There are no songs in queue!');
     const titleArray = [];
     /* eslint-disable */
-    message.guild.musicData.queue.map(obj => {
+    // display only first 10 items in queue
+    message.guild.musicData.queue.slice(0, 10).forEach(obj => {
       titleArray.push(obj.title);
     });
     /* eslint-enable */
