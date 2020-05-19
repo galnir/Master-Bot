@@ -28,13 +28,15 @@ module.exports = class ShuffleQueueCommand extends Command {
     shuffleQueue(message.guild.musicData.queue);
 
     const titleArray = [];
-    message.guild.musicData.queue.map(obj => {
+    message.guild.musicData.queue.slice(0, 10).forEach(obj => {
       titleArray.push(obj.title);
     });
+    var numOfEmbedFields = 10;
+    if (titleArray.length < 10) numOfEmbedFields = titleArray.length;
     var queueEmbed = new MessageEmbed()
       .setColor('#ff7373')
       .setTitle('New Music Queue');
-    for (let i = 0; i < titleArray.length; i++) {
+    for (let i = 0; i < numOfEmbedFields; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }
     return message.say(queueEmbed);
