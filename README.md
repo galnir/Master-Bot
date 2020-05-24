@@ -12,7 +12,8 @@ Make a config.json file in the root directory of the project and add:
 
 ```
 {
-  "prefix": "!",  // You can change the prefix to whatever you want it doesn't have to be - !
+  "prefix": "!",
+  "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
