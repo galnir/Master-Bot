@@ -56,22 +56,25 @@ module.exports = class PlayCommand extends Command {
         );
       });
       for (let i = 0; i < videosObj.length; i++) {
-        if (videosObj[i].raw.status.privacyStatus == 'private') continue;
-        try {
-          const video = await videosObj[i].fetch();
-          // this can be uncommented if you choose to limit the queue
-          // if (message.guild.musicData.queue.length < 10) {
-          //
-          message.guild.musicData.queue.push(
-            PlayCommand.constructSongObj(video, voiceChannel)
-          );
-          // } else {
-          //   return message.say(
-          //     `I can't play the full playlist because there will be more than 10 songs in queue`
-          //   );
-          // }
-        } catch (err) {
-          console.error(err);
+        if (videosObj[i].raw.status.privacyStatus == 'private') {
+          continue;
+        } else {
+          try {
+            const video = await videosObj[i].fetch();
+            // this can be uncommented if you choose to limit the queue
+            // if (message.guild.musicData.queue.length < 10) {
+            //
+            message.guild.musicData.queue.push(
+              PlayCommand.constructSongObj(video, voiceChannel)
+            );
+            // } else {
+            //   return message.say(
+            //     `I can't play the full playlist because there will be more than 10 songs in queue`
+            //   );
+            // }
+          } catch (err) {
+            console.error(err);
+          }
         }
       }
       if (message.guild.musicData.isPlaying == false) {
