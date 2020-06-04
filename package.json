@@ -11,12 +11,12 @@
   "author": "Nir Gal",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg-static": "^2.7.0",
     "iso-639-1": "^2.1.3",
+    "node-opus": "^0.3.3",
     "simple-youtube-api": "^5.2.1",
     "ytdl-core": "^2.1.5"
   },
