@@ -127,12 +127,12 @@ module.exports = class PlayCommand extends Command {
     }
 
     // if user provided a song/video name
-    const videos = await youtube.searchVideos(query, 5).catch(function() {
-      return message.say(
+    const videos = await youtube.searchVideos(query, 5).catch(async function() {
+      await message.say(
         'There was a problem searching the video you requested :('
       );
     });
-    if (videos.length < 5) {
+    if (videos.length < 5 || !videos) {
       return message.say(
         `I had some trouble finding what you were looking for, please try again or be more specific`
       );
