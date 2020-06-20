@@ -43,7 +43,6 @@ module.exports = class LyricsCommand extends Command {
     const sentMessage = await message.channel.send(
       '👀 Searching for lyrics 👀'
     );
-
     // get song id
     var url = `https://api.genius.com/search?q=${encodeURI(songName)}`;
 
@@ -54,7 +53,6 @@ module.exports = class LyricsCommand extends Command {
       var body = await fetch(url, { headers });
       var result = await body.json();
       const songID = result.response.hits[0].result.id;
-
       // get lyrics
       url = `https://api.genius.com/songs/${songID}`;
       body = await fetch(url, { headers });
@@ -64,16 +62,22 @@ module.exports = class LyricsCommand extends Command {
 
       let lyrics = await getLyrics(song.url);
       lyrics = lyrics.replace(/(\[.+\])/g, '');
-
+      if (!lyrics) {
+        return message.say(
+          'No lyrics have been found for your query, please try again and be more specific.'
+        );
+      }
       if (lyrics.length > 4095)
-        return message.say('Lyrics are too long to be returned as embed');
+        return message.say(
+          'Lyrics are too long to be returned in a message embed'
+        );
       if (lyrics.length < 2048) {
         const lyricsEmbed = new MessageEmbed()
           .setColor('#00724E')
           .setDescription(lyrics.trim());
         return sentMessage.edit('', lyricsEmbed);
       } else {
-        // lyrics.length > 2048
+        // 2048 < lyrics.length < 4096
         const firstLyricsEmbed = new MessageEmbed()
           .setColor('#00724E')
           .setDescription(lyrics.slice(0, 2048));
