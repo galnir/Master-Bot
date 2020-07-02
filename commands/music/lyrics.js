@@ -44,6 +44,7 @@ module.exports = class LyricsCommand extends Command {
       '👀 Searching for lyrics 👀'
     );
     // get song id
+    songName = songName.replace(/ *\([^)]*\) */g, ''); // remove stuff like (Official Video)
     var url = `https://api.genius.com/search?q=${encodeURI(songName)}`;
 
     const headers = {
@@ -52,9 +53,9 @@ module.exports = class LyricsCommand extends Command {
     try {
       var body = await fetch(url, { headers });
       var result = await body.json();
-      const songID = result.response.hits[0].result.id;
+      const songPath = result.response.hits[0].result.api_path;
       // get lyrics
-      url = `https://api.genius.com/songs/${songID}`;
+      url = `https://api.genius.com${songPath}`;
       body = await fetch(url, { headers });
       result = await body.json();
 
@@ -67,6 +68,7 @@ module.exports = class LyricsCommand extends Command {
           'No lyrics have been found for your query, please try again and be more specific.'
         );
       }
+
       if (lyrics.length > 4095)
         return message.say(
           'Lyrics are too long to be returned in a message embed'
