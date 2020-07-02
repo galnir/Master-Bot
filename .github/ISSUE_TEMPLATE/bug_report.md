@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+Do not open an issue if you simply "copied" code over to your bot/another bot. This is absolutely not recommended and will cause bugs.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
