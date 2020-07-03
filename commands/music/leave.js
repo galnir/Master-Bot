@@ -14,18 +14,29 @@ module.exports = class LeaveCommand extends Command {
 
   run(message) {
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('Join a channel and try again');
-
-    if (
+    if (!voiceChannel) {
+      message.reply('Join a channel and try again');
+      return;
+    } else if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      message.reply('There is no song playing right now!');
+      return;
+    } else if (!message.guild.musicData.queue) {
+      message.reply('There are no songs in queue');
+      return;
+    } else if (message.guild.musicData.songDispatcher.paused) {
+      message.guild.musicData.songDispatcher.resume();
+      setTimeout(() => {
+        message.guild.musicData.songDispatcher.end();
+      }, 100);
+      message.guild.musicData.queue.length = 0;
+      return;
+    } else {
+      message.guild.musicData.songDispatcher.end();
+      message.guild.musicData.queue.length = 0;
+      return;
     }
-    if (!message.guild.musicData.queue)
-      return message.say('There are no songs in queue');
-    message.guild.musicData.songDispatcher.end();
-    message.guild.musicData.queue.length = 0;
-    return;
   }
 };
