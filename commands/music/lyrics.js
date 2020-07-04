@@ -91,7 +91,6 @@ module.exports = class LyricsCommand extends Command {
         return;
       }
     } catch (e) {
-      console.error(e);
       return sentMessage.edit(
         'Something when wrong, please try again or be more specific'
       );
