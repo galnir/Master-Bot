@@ -45,6 +45,10 @@ module.exports = class LyricsCommand extends Command {
     );
     // get song id
     songName = songName.replace(/ *\([^)]*\) */g, ''); // remove stuff like (Official Video)
+    songName = songName.replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ''
+    ); // remove emojis
     var url = `https://api.genius.com/search?q=${encodeURI(songName)}`;
 
     const headers = {
