@@ -55,6 +55,7 @@ client.once('ready', () => {
 });
 
 client.on('voiceStateUpdate', async (___, newState) => {
+    newState.guild.me.voice.setSelfDeaf(true)
   if (
     newState.member.user.bot &&
     !newState.channelID &&
