@@ -63,6 +63,15 @@ client.on('voiceStateUpdate', async (___, newState) => {
   ) {
     newState.guild.musicData.queue.length = 0;
     newState.guild.musicData.songDispatcher.end();
+    return;
+  }
+  if (
+    newState.member.user.bot &&
+    newState.channelID &&
+    newState.member.user.id == client.user.id &&
+    !newState.selfDeaf
+  ) {
+    newState.setSelfDeaf(true);
   }
 });
 
