@@ -15,22 +15,25 @@ module.exports = class KickCommand extends Command {
       args: [
         {
           key: 'userToKick',
-          prompt: 'Who do you want to kick?',
+          prompt:
+            'Please mention the user you want to kick with @ or provide his ID',
           type: 'string'
         },
         {
           key: 'reason',
-          prompt: 'Why do you want to kick this user',
+          prompt: 'Why do you want to kick this user?',
           type: 'string'
         }
       ]
     });
   }
 
-  run(message, { userToKick, reason }) {
+  async run(message, { userToKick, reason }) {
+    const extractNumber = /\d+/g;
+    const userToKickID = userToKick.match(extractNumber)[0];
     const user =
       message.mentions.members.first() ||
-      message.guild.members.fetch(userToKick);
+      (await message.guild.members.fetch(userToKickID));
     if (user == undefined)
       return message.channel.send('Please try again with a valid user');
     user
@@ -43,11 +46,11 @@ module.exports = class KickCommand extends Command {
           .setColor('#420626');
         message.channel.send(kickEmbed);
       })
-      .catch(e => {
+      .catch(err => {
         message.say(
           'Something went wrong when trying to kick this user, I probably do not have the permission to kick him'
         );
-        return console.error(e);
+        return console.error(err);
       });
   }
 };
