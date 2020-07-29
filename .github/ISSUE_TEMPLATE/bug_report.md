@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Do not open an issue if you simply "copied" code over to your bot/another bot. This is absolutely not recommended and will cause bugs.
+Do not open an issue if you simply "copied" code over to your bot/another bot. This is absolutely not recommended and will cause bugs. Also do not open an issue if you modified code and added features and now it's not working right. This is because I can't figure it out and don't have the time to read your code and find out what you did wrong.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
