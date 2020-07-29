@@ -28,10 +28,12 @@ module.exports = class BanCommand extends Command {
     });
   }
 
-  run(message, { userToBan, reason }) {
+  async run(message, { userToBan, reason }) {
+    const extractNumber = /\d+/g;
+    const userToBanID = userToBan.match(extractNumber)[0];
     const user =
       message.mentions.members.first() ||
-      message.guild.members.fetch(userToBan);
+      (await message.guild.members.fetch(userToBanID));
     if (user == undefined)
       return message.channel.send('Please try again with a valid user');
     user
@@ -43,11 +45,11 @@ module.exports = class BanCommand extends Command {
           .setColor('#420626');
         message.channel.send(banEmbed);
       })
-      .catch(e => {
+      .catch(err => {
         message.say(
           'Something went wrong when trying to ban this user, I probably do not have the permission to ban him'
         );
-        return console.error(e);
+        return console.error(err);
       });
   }
 };
