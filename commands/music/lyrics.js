@@ -95,9 +95,10 @@ module.exports = class LyricsCommand extends Command {
         return;
       }
     } catch (e) {
-      return sentMessage.edit(
+      sentMessage.edit(
         'Something when wrong, please try again or be more specific'
       );
+      return;
     }
     async function getLyrics(url) {
       const response = await fetch(url);
