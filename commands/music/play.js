@@ -65,7 +65,11 @@ module.exports = class PlayCommand extends Command {
             // if (message.guild.musicData.queue.length < 10) {
             //
             message.guild.musicData.queue.push(
-              PlayCommand.constructSongObj(video, voiceChannel)
+              PlayCommand.constructSongObj(
+                video,
+                voiceChannel,
+                message.member.user
+              )
             );
             // } else {
             //   return message.say(
@@ -113,7 +117,7 @@ module.exports = class PlayCommand extends Command {
       //   );
       // }
       message.guild.musicData.queue.push(
-        PlayCommand.constructSongObj(video, voiceChannel)
+        PlayCommand.constructSongObj(video, voiceChannel, message.member.user)
       );
       if (
         message.guild.musicData.isPlaying == false ||
@@ -189,7 +193,11 @@ module.exports = class PlayCommand extends Command {
             //   );
             // }
             message.guild.musicData.queue.push(
-              PlayCommand.constructSongObj(video, voiceChannel)
+              PlayCommand.constructSongObj(
+                video,
+                voiceChannel,
+                message.member.user
+              )
             );
             if (message.guild.musicData.isPlaying == false) {
               message.guild.musicData.isPlaying = true;
@@ -241,7 +249,11 @@ module.exports = class PlayCommand extends Command {
               .setThumbnail(queue[0].thumbnail)
               .setColor('#e9f931')
               .addField('Now Playing:', queue[0].title)
-              .addField('Duration:', queue[0].duration);
+              .addField('Duration:', queue[0].duration)
+              .setFooter(
+                `Requested by ${queue[0].memberDisplayName}`,
+                queue[0].memberAvatar
+              );
             if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
             message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
@@ -274,7 +286,7 @@ module.exports = class PlayCommand extends Command {
         return message.guild.me.voice.channel.leave();
       });
   }
-  static constructSongObj(video, voiceChannel) {
+  static constructSongObj(video, voiceChannel, user) {
     let duration = this.formatDuration(video.duration);
     if (duration == '00:00') duration = 'Live Stream';
     return {
@@ -283,7 +295,9 @@ module.exports = class PlayCommand extends Command {
       rawDuration: video.duration,
       duration,
       thumbnail: video.thumbnails.high.url,
-      voiceChannel
+      voiceChannel,
+      memberDisplayName: user.username,
+      memberAvatar: user.avatarURL('webp', false, 16)
     };
   }
   // prettier-ignore
