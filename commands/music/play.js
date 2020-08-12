@@ -239,7 +239,7 @@ module.exports = class PlayCommand extends Command {
           .play(
             ytdl(queue[0].url, {
               quality: 'highestaudio',
-              highWaterMark: 1024 * 1024 * 10
+              highWaterMark: 1 << 25
             })
           )
           .on('start', function() {
