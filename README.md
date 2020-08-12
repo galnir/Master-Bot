@@ -50,6 +50,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !volume       | Adjust song volume                                                                                                        | !volume 80             |
 | !music-trivia | Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json | !music-trivia          |
 | !loop         | Loop the currently playing song                                                                                           | !loop 5                 |
+| !loopqueue         | Loop the queue                                                                                          | !loopqueue 2                 |
 | !lyrics       | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name      |
 | !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
 
