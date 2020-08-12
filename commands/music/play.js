@@ -50,17 +50,17 @@ module.exports = class PlayCommand extends Command {
         return message.say('Playlist is either private or it does not exist!');
       });
       // add 10 as an argument in getVideos() if you choose to limit the queue
-      const videosObj = await playlist.getVideos().catch(function() {
+      const videosArr = await playlist.getVideos().catch(function() {
         return message.say(
           'There was a problem getting one of the videos in the playlist!'
         );
       });
-      for (let i = 0; i < videosObj.length; i++) {
-        if (videosObj[i].raw.status.privacyStatus == 'private') {
+      for (let i = 0; i < videosArr.length; i++) {
+        if (videosArr[i].raw.status.privacyStatus == 'private') {
           continue;
         } else {
           try {
-            const video = await videosObj[i].fetch();
+            const video = await videosArr[i].fetch();
             // this can be uncommented if you choose to limit the queue
             // if (message.guild.musicData.queue.length < 10) {
             //
