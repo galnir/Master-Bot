@@ -55,6 +55,15 @@ module.exports = class PlayCommand extends Command {
           'There was a problem getting one of the videos in the playlist!'
         );
       });
+
+      // this for loop can be uncommented if you want to shuffle the playlist
+
+      /*for (let i = videosArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [videosArr[i], videosArr[j]] = [videosArr[j], videosArr[i]];
+      }
+      */
+
       for (let i = 0; i < videosArr.length; i++) {
         if (videosArr[i].raw.status.privacyStatus == 'private') {
           continue;
