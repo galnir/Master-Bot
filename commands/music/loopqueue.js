@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 //const { MessageEmbed } = require('discord.js');
 
-module.exports = class TestCommand extends Command {
+module.exports = class LoopQueueCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'loopqueue',
