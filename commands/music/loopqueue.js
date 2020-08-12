@@ -6,7 +6,7 @@ module.exports = class TestCommand extends Command {
     super(client, {
       name: 'loopqueue',
       memberName: 'loopqueue',
-      aliases: ['loop-queue, queue-loop'],
+      aliases: ['loop-queue', 'queue-loop'],
       group: 'music',
       description: 'Loop the queue x times(the default is 1 time)',
       guildOnly: true,
