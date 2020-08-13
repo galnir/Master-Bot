@@ -21,6 +21,11 @@ module.exports = class PauseCommand extends Command {
       message.guild.musicData.songDispatcher == null
     ) {
       return message.say('There is no song playing right now!');
+    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
+      message.reply(
+        `You must be in the same voice channel as the bot's in order to use that!`
+      );
+      return;
     }
 
     message.say('Song paused :pause_button:');
