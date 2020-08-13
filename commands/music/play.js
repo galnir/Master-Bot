@@ -34,10 +34,14 @@ module.exports = class PlayCommand extends Command {
 
   async run(message, { query }) {
     const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.say('Join a channel and try again');
+    if (!voiceChannel) {
+      message.say('Join a channel and try again');
+      return;
+    }
 
     if (message.guild.triviaData.isTriviaRunning == true) {
-      return message.say('Please try after the trivia has ended');
+      message.say('Please try after the trivia has ended');
+      return;
     }
 
     if (
@@ -47,13 +51,15 @@ module.exports = class PlayCommand extends Command {
       )
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
-        return message.say('Playlist is either private or it does not exist!');
+        message.say('Playlist is either private or it does not exist!');
+        return;
       });
       // add 10 as an argument in getVideos() if you choose to limit the queue
       const videosArr = await playlist.getVideos().catch(function() {
-        return message.say(
+        message.say(
           'There was a problem getting one of the videos in the playlist!'
         );
+        return;
       });
 
       // this for loop can be uncommented if you want to shuffle the playlist
@@ -86,7 +92,7 @@ module.exports = class PlayCommand extends Command {
             //   );
             // }
           } catch (err) {
-            console.error(err);
+            return console.error(err);
           }
         }
       }
@@ -94,9 +100,10 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        return message.say(
+        message.say(
           `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
         );
+        return;
       }
     }
 
@@ -107,9 +114,8 @@ module.exports = class PlayCommand extends Command {
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
       const video = await youtube.getVideoByID(id).catch(function() {
-        return message.say(
-          'There was a problem getting the video you provided!'
-        );
+        message.say('There was a problem getting the video you provided!');
+        return;
       });
       // // can be uncommented if you don't want the bot to play live streams
       // if (video.raw.snippet.liveBroadcastContent === 'live') {
@@ -135,7 +141,8 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        return message.say(`${video.title} added to queue`);
+        message.say(`${video.title} added to queue`);
+        return;
       }
     }
 
@@ -144,11 +151,13 @@ module.exports = class PlayCommand extends Command {
       await message.say(
         'There was a problem searching the video you requested :('
       );
+      return;
     });
     if (videos.length < 5 || !videos) {
-      return message.say(
+      message.say(
         `I had some trouble finding what you were looking for, please try again or be more specific`
       );
+      return;
     }
     const vidNameArr = [];
     for (let i = 0; i < videos.length; i++) {
@@ -178,7 +187,10 @@ module.exports = class PlayCommand extends Command {
       )
       .then(function(response) {
         const videoIndex = parseInt(response.first().content);
-        if (response.first().content === 'exit') return songEmbed.delete();
+        if (response.first().content === 'exit') {
+          songEmbed.delete();
+          return;
+        }
         youtube
           .getVideoByID(videos[videoIndex - 1].id)
           .then(function(video) {
@@ -218,25 +230,28 @@ module.exports = class PlayCommand extends Command {
               if (songEmbed) {
                 songEmbed.delete();
               }
-              return message.say(`${video.title} added to queue`);
+              message.say(`${video.title} added to queue`);
+              return;
             }
           })
           .catch(function() {
             if (songEmbed) {
               songEmbed.delete();
             }
-            return message.say(
+            message.say(
               'An error has occured when trying to get the video ID from youtube'
             );
+            return;
           });
       })
       .catch(function() {
         if (songEmbed) {
           songEmbed.delete();
         }
-        return message.say(
+        message.say(
           'Please try again and enter a number between 1 and 5 or exit'
         );
+        return;
       });
   }
   static playSong(queue, message) {
@@ -266,17 +281,20 @@ module.exports = class PlayCommand extends Command {
             if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
             message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
-            return queue.shift();
+            queue.shift();
+            return;
           })
           .on('finish', function() {
             if (queue.length >= 1) {
-              return classThis.playSong(queue, message);
+              classThis.playSong(queue, message);
+              return;
             } else {
               message.guild.musicData.isPlaying = false;
               message.guild.musicData.nowPlaying = null;
               message.guild.musicData.songDispatcher = null;
               if (message.guild.me.voice.channel) {
-                return message.guild.me.voice.channel.leave();
+                message.guild.me.voice.channel.leave();
+                return;
               }
             }
           })
@@ -287,12 +305,15 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.isPlaying = false;
             message.guild.musicData.nowPlaying = null;
             message.guild.musicData.songDispatcher = null;
-            return message.guild.me.voice.channel.leave();
+            message.guild.me.voice.channel.leave();
+            return;
           });
       })
       .catch(function(e) {
-        console.error(e);
-        return message.guild.me.voice.channel.leave();
+        if (message.guild.me.voice.channel) {
+          message.guild.me.voice.channel.leave();
+        }
+        return console.error(e);
       });
   }
   static constructSongObj(video, voiceChannel, user) {
