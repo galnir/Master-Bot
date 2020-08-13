@@ -115,6 +115,6 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors
 
-[encoder-glitch](https://github.com/malokdev) - uptime command
+[malokdev](https://github.com/malokdev) - uptime command
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
