@@ -30,6 +30,13 @@ module.exports = class LoopQueueCommand extends Command {
     ) {
       message.say('You cannot loop over a trivia!');
       return;
+    } else if (
+      message.member.voice.channel.id !== message.guild.me.voice.channel.id
+    ) {
+      message.reply(
+        `You must be in the same voice channel as the bot's in order to use that!`
+      );
+      return;
     } else if (message.guild.musicData.queue.length == 0) {
       message.say(`I can't loop over an empty queue!`);
       return;

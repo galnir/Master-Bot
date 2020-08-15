@@ -27,6 +27,13 @@ module.exports = class LoopCommand extends Command {
       message.guild.triviaData.isTriviaRunning
     ) {
       return message.say('You cannot loop over a trivia!');
+    } else if (
+      message.member.voice.channel.id !== message.guild.me.voice.channel.id
+    ) {
+      message.reply(
+        `You must be in the same voice channel as the bot's in order to use that!`
+      );
+      return;
     }
 
     for (let i = 0; i < numOfTimesToLoop; i++) {
