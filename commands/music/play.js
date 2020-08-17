@@ -309,7 +309,8 @@ module.exports = class PlayCommand extends Command {
             return;
           });
       })
-      .catch(function(e) {
+      .catch(function() {
+        message.say('I have no permission to join your channel!');
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.isPlaying = false;
         message.guild.musicData.nowPlaying = null;
@@ -317,7 +318,7 @@ module.exports = class PlayCommand extends Command {
         if (message.guild.me.voice.channel) {
           message.guild.me.voice.channel.leave();
         }
-        return console.error(e);
+        return;
       });
   }
   static constructSongObj(video, voiceChannel, user) {
