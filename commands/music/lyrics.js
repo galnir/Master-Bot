@@ -8,9 +8,9 @@ module.exports = class LyricsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'lyrics',
+      aliases: ["lr"],
       memberName: 'lyrics',
-      description:
-        'Get lyrics of any song or the lyrics of the currently playing song',
+      description: 'Get lyrics of any song.',
       group: 'music',
       throttling: {
         usages: 1,
@@ -21,9 +21,13 @@ module.exports = class LyricsCommand extends Command {
           key: 'songName',
           default: '',
           type: 'string',
-          prompt: 'What song lyrics would you like to get?'
+          prompt: 'What song lyrics would you like to searching?'
         }
-      ]
+      ],
+      throttling: {
+	      usages: 1,
+	      duration: 10
+      }
     });
   }
   async run(message, { songName }) {
@@ -40,15 +44,7 @@ module.exports = class LyricsCommand extends Command {
         'There is no song playing right now, please try again with a song name or play a song first'
       );
     }
-    const sentMessage = await message.channel.send(
-      '👀 Searching for lyrics 👀'
-    );
-    // get song id
-    songName = songName.replace(/ *\([^)]*\) */g, ''); // remove stuff like (Official Video)
-    songName = songName.replace(
-      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      ''
-    ); // remove emojis
+    const sentMessage = await message.embed({color: "#5dc4ff", description: 'Searching for the lyrics'});
     var url = `https://api.genius.com/search?q=${encodeURI(songName)}`;
 
     const headers = {
@@ -57,9 +53,9 @@ module.exports = class LyricsCommand extends Command {
     try {
       var body = await fetch(url, { headers });
       var result = await body.json();
-      const songPath = result.response.hits[0].result.api_path;
-      // get lyrics
-      url = `https://api.genius.com${songPath}`;
+      const songID = result.response.hits[0].result.id;
+
+      url = `https://api.genius.com/songs/${songID}`;
       body = await fetch(url, { headers });
       result = await body.json();
 
@@ -67,46 +63,82 @@ module.exports = class LyricsCommand extends Command {
 
       let lyrics = await getLyrics(song.url);
       lyrics = lyrics.replace(/(\[.+\])/g, '');
-      if (!lyrics) {
-        return message.say(
-          'No lyrics have been found for your query, please try again and be more specific.'
-        );
-      }
-
-      if (lyrics.length > 4095)
-        return message.say(
-          'Lyrics are too long to be returned in a message embed'
-        );
+      let urll = song.url;
+      if (lyrics.length > 4095) {
+      const errembed = new MessageEmbed()
+             .setColor(0x5dc4ff)
+             .setAuthor('Genius', 'https://lh3.googleusercontent.com/e6-dZlTM-gJ2sFxFFs3X15O84HEv6jc9PQGgHtVTn7FP6lUXeEAkDl9v4RfVOwbSuQ')
+             .setTitle('Error! Lyrics too long!')
+             .setDescription(`Visit the source instead. \nSource: **[Click me!](${urll})**`)
+             .setFooter('Lyrics is > 4059')
+        return message.say(errembed);
+        }
+      
       if (lyrics.length < 2048) {
         const lyricsEmbed = new MessageEmbed()
-          .setColor('#00724E')
-          .setDescription(lyrics.trim());
+          .setAuthor('Genius', 'https://lh3.googleusercontent.com/e6-dZlTM-gJ2sFxFFs3X15O84HEv6jc9PQGgHtVTn7FP6lUXeEAkDl9v4RfVOwbSuQ')
+          .setURL(urll)
+          .setTitle(`**[ ${song.full_title} ]**`)
+          .setThumbnail(song.header_image_thumbnail_url)
+          .setColor('#5dc4ff')
+          .setDescription(`${lyrics.trim()} \n\n(\_Source\_ : ${urll})`);
         return sentMessage.edit('', lyricsEmbed);
       } else {
-        // 2048 < lyrics.length < 4096
-        const firstLyricsEmbed = new MessageEmbed()
-          .setColor('#00724E')
-          .setDescription(lyrics.slice(0, 2048));
-        const secondLyricsEmbed = new MessageEmbed()
-          .setColor('#00724E')
-          .setDescription(lyrics.slice(2048, lyrics.length));
-        sentMessage.edit('', firstLyricsEmbed);
-        message.channel.send(secondLyricsEmbed);
+        
+      let pages = [`${lyrics.slice(0, 2048)}`, `${lyrics.slice(2048, lyrics.length)}`]  
+      let page = 1; 
+    
+      let embed = new MessageEmbed()
+      .setAuthor('Genius', 'https://lh3.googleusercontent.com/e6-dZlTM-gJ2sFxFFs3X15O84HEv6jc9PQGgHtVTn7FP6lUXeEAkDl9v4RfVOwbSuQ')
+      .setURL(urll)
+      .setTitle(`**[ ${song.full_title} ]**`)
+      .setThumbnail(song.header_image_thumbnail_url)
+      .setColor("#5dc4ff")
+      .setFooter(`Page ${page} of ${pages.length}`)
+      .setDescription(pages[page-1])
+      message.channel.send(embed).then(msg => {
+	      
+      		msg.react('⬅').then( r => {
+      		msg.react('➡')
+			
+    const backwardsFilter = (reaction, user) => reaction.emoji.name === '⬅' && user.id === message.author.id;
+    const forwardsFilter = (reaction, user) => reaction.emoji.name === '➡' && user.id === message.author.id;
+
+    const backwards = msg.createReactionCollector(backwardsFilter, {timer: 6000});
+    const forwards = msg.createReactionCollector(forwardsFilter, {timer: 6000});
+ 
+      backwards.on('collect', r => {
+	      if (page === 1) return;
+	      page--;
+	      embed.setDescription(pages[page-1]);
+	      embed.setFooter(`Page ${page} of ${pages.length}`);
+	      msg.reactions.resolve("⬅").users.remove(message.author.id)
+	      msg.edit(embed)
+
+      })
+
+      forwards.on('collect', r => {
+	      if (page === pages.length) return;
+	      page++;
+	      embed.setDescription(pages[page-1]);
+	      embed.setFooter(`Page ${page} of ${pages.length}`);
+	      msg.reactions.resolve("➡").users.remove(message.author.id)
+	      msg.edit(embed);
+        })
+      })
+    })
+        sentMessage.delete();
         return;
       }
     } catch (e) {
-      sentMessage.edit(
-        'Something when wrong, please try again or be more specific'
-      );
-      return;
+      	console.error(e);
+      	return sentMessage.edit({embed: {color: "#5dc4ff", description: 'Something went wrong, can you be more specific?'}});
     }
     async function getLyrics(url) {
-      const response = await fetch(url);
-      const text = await response.text();
-      const $ = cheerio.load(text);
-      return $('.lyrics')
-        .text()
-        .trim();
+      	const response = await fetch(url);
+      	const text = await response.text();
+      	const $ = cheerio.load(text);
+      	return $('.lyrics').text().trim();
     }
   }
 };
