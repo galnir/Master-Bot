@@ -285,6 +285,7 @@ module.exports = class PlayCommand extends Command {
             return;
           })
           .on('finish', function() {
+            queue = message.guild.musicData.queue;
             if (queue.length >= 1) {
               classThis.playSong(queue, message);
               return;
