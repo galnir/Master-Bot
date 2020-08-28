@@ -69,16 +69,19 @@ module.exports = class LyricsCommand extends Command {
                 if (lyrics.length < 2048) {
                   const lyricsEmbed = new MessageEmbed()
                     .setColor('#00724E')
-                    .setDescription(lyrics.trim());
+                    .setDescription(lyrics.trim())
+                    .setFooter('Provided by genius.com');
                   return sentMessage.edit('', lyricsEmbed);
                 } else {
                   // 2048 < lyrics.length < 4096
                   const firstLyricsEmbed = new MessageEmbed()
                     .setColor('#00724E')
-                    .setDescription(lyrics.slice(0, 2048));
+                    .setDescription(lyrics.slice(0, 2048))
+                    .setFooter('Provided by genius.com');
                   const secondLyricsEmbed = new MessageEmbed()
                     .setColor('#00724E')
-                    .setDescription(lyrics.slice(2048, lyrics.length));
+                    .setDescription(lyrics.slice(2048, lyrics.length))
+                    .setFooter('Provided by genius.com');
                   sentMessage.edit('', firstLyricsEmbed);
                   message.channel.send(secondLyricsEmbed);
                   return;
@@ -142,29 +145,20 @@ module.exports = class LyricsCommand extends Command {
         const response = await fetch(url);
         const text = await response.text();
         const $ = cheerio.load(text);
-        const lyrics = $('.lyrics')
+        let lyrics = $('.lyrics')
           .text()
           .trim();
         if (!lyrics) {
-          try {
-            // try again, Genius sometimes changes the div class names
-            const response = await fetch(url);
-            const text = await response.text();
-            const $ = cheerio.load(text);
-            const lyrics = $('.lyrics')
-              .text()
-              .trim();
-            if (!lyrics) {
-              reject(
-                'There was a problem fetching lyrics for this song, please try again'
-              );
-            } else {
-              resolve(lyrics.replace(/(\[.+\])/g, ''));
-            }
-          } catch (e) {
+          $('.Lyrics__Container-sc-1ynbvzw-2')
+            .find('br')
+            .replaceWith('\n');
+          lyrics = $('.Lyrics__Container-sc-1ynbvzw-2').text();
+          if (!lyrics) {
             reject(
               'There was a problem fetching lyrics for this song, please try again'
             );
+          } else {
+            resolve(lyrics.replace(/(\[.+\])/g, ''));
           }
         } else {
           resolve(lyrics.replace(/(\[.+\])/g, ''));
