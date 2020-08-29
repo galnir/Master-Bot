@@ -34,6 +34,15 @@ module.exports = class LyricsCommand extends Command {
       !message.guild.triviaData.isTriviaRunning
     ) {
       songName = message.guild.musicData.nowPlaying.title;
+
+      // remove stuff like (Official Video)
+      songName = songName.replace(/ *\([^)]*\) */g, '');
+
+      // remove emojis
+      songName = songName.replace(
+        /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+        ''
+      );
     } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
       return message.say('Please try again after the trivia has ended');
     } else if (songName == '' && !message.guild.musicData.isPlaying) {
@@ -43,15 +52,6 @@ module.exports = class LyricsCommand extends Command {
     }
     const sentMessage = await message.channel.send(
       '👀 Searching for lyrics 👀'
-    );
-
-    // remove stuff like (Official Video)
-    songName = songName.replace(/ *\([^)]*\) */g, '');
-
-    // remove emojis
-    songName = songName.replace(
-      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      ''
     );
 
     LyricsCommand.searchSong(songName)
