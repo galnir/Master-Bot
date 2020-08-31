@@ -134,6 +134,7 @@ module.exports = class LyricsCommand extends Command {
           resolve(result.response.song.url);
         }
       } catch (e) {
+        console.log(e);
         reject('There was a problem finding a URL for this song');
       }
     });
@@ -164,6 +165,7 @@ module.exports = class LyricsCommand extends Command {
           resolve(lyrics.replace(/(\[.+\])/g, ''));
         }
       } catch (e) {
+        console.log(e);
         reject(
           'There was a problem fetching lyrics for this song, please try again'
         );
