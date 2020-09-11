@@ -22,13 +22,17 @@ module.exports = class RemoveSongCommand extends Command {
       return message.reply('Please enter a valid song number');
     }
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('Join a channel and try again');
+    if (!voiceChannel) {
+      message.reply('Join a channel and try again');
+      return;
+    }
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      message.reply('There is no song playing right now!');
+      return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
         `You must be in the same voice channel as the bot's in order to use that!`
@@ -37,6 +41,6 @@ module.exports = class RemoveSongCommand extends Command {
     }
 
     message.guild.musicData.queue.splice(songNumber - 1, 1);
-    return message.say(`Removed song number ${songNumber} from queue`);
+    message.say(`Removed song number ${songNumber} from queue`);
   }
 };
