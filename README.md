@@ -51,6 +51,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !loopqueue         | Loop the queue                                                                                          | !loopqueue 2                 |
 | !lyrics       | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name      |
 | !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
+| !move       | Move song to a desired position in queue                                                        | !move 8 1      |
 
 - Misc
 
