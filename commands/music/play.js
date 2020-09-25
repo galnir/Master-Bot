@@ -293,6 +293,14 @@ module.exports = class PlayCommand extends Command {
               message.guild.musicData.isPlaying = false;
               message.guild.musicData.nowPlaying = null;
               message.guild.musicData.songDispatcher = null;
+              if (
+                message.guild.me.voice.channel &&
+                message.guild.musicData.skipTimer
+              ) {
+                message.guild.me.voice.channel.leave();
+                message.guild.musicData.skipTimer = false;
+                return;
+              }
               if (message.guild.me.voice.channel) {
                 setTimeout(function onTimeOut() {
                   if (

@@ -12,6 +12,7 @@ Structures.extend('Guild', function(Guild) {
         isPlaying: false,
         nowPlaying: null,
         songDispatcher: null,
+        skipTimer: false, // only skip if user used leave command
         volume: 1
       };
       this.triviaData = {

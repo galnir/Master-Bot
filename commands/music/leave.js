@@ -40,6 +40,7 @@ module.exports = class LeaveCommand extends Command {
       return;
     } else {
       message.guild.musicData.queue.length = 0;
+      message.guild.musicData.skipTimer = true;
       message.guild.musicData.songDispatcher.end();
       return;
     }
