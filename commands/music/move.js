@@ -52,6 +52,11 @@ module.exports = class MoveSongCommand extends Command {
         `You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
+    } else if (message.guild.musicData.loopSong) {
+      message.reply(
+        'Turn off the **loop** command before using the **move** command'
+      );
+      return;
     }
 
     const songName = message.guild.musicData.queue[oldPosition - 1].title;

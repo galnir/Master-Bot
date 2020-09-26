@@ -25,8 +25,12 @@ module.exports = class ShuffleQueueCommand extends Command {
         `You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
+    } else if (message.guild.musicData.loopSong) {
+      message.reply(
+        'Turn off the **loop** command before using the **shuffle** command'
+      );
+      return;
     }
-
     if (message.guild.musicData.queue.length < 1)
       return message.say('There are no songs in queue');
 

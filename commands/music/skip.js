@@ -29,6 +29,7 @@ module.exports = class SkipCommand extends Command {
     } else if (message.guild.triviaData.isTriviaRunning) {
       return message.reply(`You can't skip a trivia! Use end-trivia`);
     }
+    message.guild.musicData.loopSong = false;
     message.guild.musicData.songDispatcher.end();
   }
 };

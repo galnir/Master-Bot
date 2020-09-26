@@ -7,19 +7,11 @@ module.exports = class LoopCommand extends Command {
       group: 'music',
       memberName: 'loop',
       guildOnly: true,
-      description: 'Loop the current playing song',
-      args: [
-        {
-          key: 'numOfTimesToLoop',
-          default: 1,
-          type: 'integer',
-          prompt: 'How many times do you want to loop the song?'
-        }
-      ]
+      description: 'Loop the currently playing song'
     });
   }
 
-  run(message, { numOfTimesToLoop }) {
+  run(message) {
     if (!message.guild.musicData.isPlaying) {
       return message.say('There is no song playing right now!');
     } else if (
@@ -36,16 +28,16 @@ module.exports = class LoopCommand extends Command {
       return;
     }
 
-    for (let i = 0; i < numOfTimesToLoop; i++) {
-      message.guild.musicData.queue.unshift(message.guild.musicData.nowPlaying);
+    if (message.guild.musicData.loopSong) {
+      message.guild.musicData.loopSong = false;
+      message.channel.send(
+        `**${message.guild.musicData.nowPlaying.title}** is no longer playing on loop`
+      );
+    } else {
+      message.guild.musicData.loopSong = true;
+      message.channel.send(
+        `**${message.guild.musicData.nowPlaying.title}** is now playing on loop`
+      );
     }
-
-    // prettier-ignore
-    message.channel.send(
-      `${message.guild.musicData.nowPlaying.title} looped ${numOfTimesToLoop} ${
-        (numOfTimesToLoop == 1) ? 'time' : 'times'
-      }`
-    );
-    return;
   }
 };

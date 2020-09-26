@@ -30,10 +30,14 @@ module.exports = class NowPlayingCommand extends Command {
       description = NowPlayingCommand.playbackBar(message, video);
     }
 
+    const title = message.guild.musicData.loopSong
+      ? `${video.title} **On Loop**`
+      : video.title;
+
     const videoEmbed = new MessageEmbed()
       .setThumbnail(video.thumbnail)
       .setColor('#e9f931')
-      .setTitle(video.title)
+      .setTitle(title)
       .setDescription(description);
     message.channel.send(videoEmbed);
     return;

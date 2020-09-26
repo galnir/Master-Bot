@@ -39,10 +39,13 @@ module.exports = class SkipToCommand extends Command {
       return;
     }
 
-    if (message.guild.musicData.queue < 1)
-      return message.say('There are no songs in queue');
+    if (message.guild.musicData.queue < 1) {
+      message.say('There are no songs in queue');
+      return;
+    }
 
     message.guild.musicData.queue.splice(0, songNumber - 1);
+    message.guild.musicData.loopSong = false;
     message.guild.musicData.songDispatcher.end();
     return;
   }

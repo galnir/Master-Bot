@@ -278,7 +278,9 @@ module.exports = class PlayCommand extends Command {
                 `Requested by ${queue[0].memberDisplayName}`,
                 queue[0].memberAvatar
               );
-            if (queue[1]) videoEmbed.addField('Next Song:', queue[1].title);
+
+            if (queue[1] && !message.guild.musicData.loopSong)
+              videoEmbed.addField('Next Song:', queue[1].title);
             message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
@@ -286,6 +288,9 @@ module.exports = class PlayCommand extends Command {
           })
           .on('finish', function() {
             queue = message.guild.musicData.queue;
+            if (message.guild.musicData.loopSong) {
+              queue.unshift(message.guild.musicData.nowPlaying);
+            }
             if (queue.length >= 1) {
               classThis.playSong(queue, message);
               return;

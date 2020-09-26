@@ -40,6 +40,11 @@ module.exports = class LoopQueueCommand extends Command {
     } else if (message.guild.musicData.queue.length == 0) {
       message.say(`I can't loop over an empty queue!`);
       return;
+    } else if (message.guild.musicData.loopSong) {
+      message.reply(
+        'Turn off the **loop** command before using the **loopqueue** command'
+      );
+      return;
     }
     const queue = message.guild.musicData.queue;
     let newQueue = [];
