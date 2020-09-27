@@ -31,12 +31,12 @@ module.exports = class LoopCommand extends Command {
     if (message.guild.musicData.loopSong) {
       message.guild.musicData.loopSong = false;
       message.channel.send(
-        `**${message.guild.musicData.nowPlaying.title}** is no longer playing on loop`
+        `**${message.guild.musicData.nowPlaying.title}** is no longer playing on loop :loop: `
       );
     } else {
       message.guild.musicData.loopSong = true;
       message.channel.send(
-        `**${message.guild.musicData.nowPlaying.title}** is now playing on loop`
+        `**${message.guild.musicData.nowPlaying.title}** is now playing on loop :loop: `
       );
     }
   }
