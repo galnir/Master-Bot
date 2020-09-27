@@ -324,6 +324,7 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.isPlaying = false;
             message.guild.musicData.nowPlaying = null;
+            message.guild.musicData.loopSong = false;
             message.guild.musicData.songDispatcher = null;
             message.guild.me.voice.channel.leave();
             return;
@@ -334,6 +335,7 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.isPlaying = false;
         message.guild.musicData.nowPlaying = null;
+        message.guild.musicData.loopSong = false;
         message.guild.musicData.songDispatcher = null;
         if (message.guild.me.voice.channel) {
           message.guild.me.voice.channel.leave();
