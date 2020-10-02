@@ -44,9 +44,18 @@ module.exports = class SkipToCommand extends Command {
       return;
     }
 
-    message.guild.musicData.queue.splice(0, songNumber - 1);
-    message.guild.musicData.loopSong = false;
-    message.guild.musicData.songDispatcher.end();
-    return;
+    if (!message.guild.musicData.loopQueue) {
+      message.guild.musicData.queue.splice(0, songNumber - 1);
+      message.guild.musicData.loopSong = false;
+      message.guild.musicData.songDispatcher.end();
+    } else if (message.guild.musicData.loopQueue) {
+      const slicedBefore = message.guild.musicData.queue.slice(
+        0,
+        songNumber - 1
+      );
+      const slicedAfter = message.guild.musicData.queue.slice(songNumber - 1);
+      message.guild.musicData.queue = slicedAfter.concat(slicedBefore);
+      message.guild.musicData.songDispatcher.end();
+    }
   }
 };

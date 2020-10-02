@@ -290,6 +290,8 @@ module.exports = class PlayCommand extends Command {
             queue = message.guild.musicData.queue;
             if (message.guild.musicData.loopSong) {
               queue.unshift(message.guild.musicData.nowPlaying);
+            } else if (message.guild.musicData.loopQueue) {
+              queue.push(message.guild.musicData.nowPlaying);
             }
             if (queue.length >= 1) {
               classThis.playSong(queue, message);

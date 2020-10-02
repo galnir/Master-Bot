@@ -43,6 +43,7 @@ module.exports = class LeaveCommand extends Command {
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.skipTimer = true;
       message.guild.musicData.loopSong = false;
+      message.guild.musicData.loopQueue = false;
       message.guild.musicData.songDispatcher.end();
       return;
     }

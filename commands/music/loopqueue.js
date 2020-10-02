@@ -20,7 +20,7 @@ module.exports = class LoopQueueCommand extends Command {
     });
   }
 
-  run(message, { numOfTimesToLoop }) {
+  run(message) {
     if (!message.guild.musicData.isPlaying) {
       message.say('There is no song playing right now!');
       return;
@@ -46,18 +46,13 @@ module.exports = class LoopQueueCommand extends Command {
       );
       return;
     }
-    const queue = message.guild.musicData.queue;
-    let newQueue = [];
-    for (let i = 0; i < numOfTimesToLoop; i++) {
-      newQueue = newQueue.concat(queue);
+
+    if (message.guild.musicData.loopQueue) {
+      message.guild.musicData.loopQueue = false;
+      message.channel.send('The queue is no longer playing on **loop** :loop:');
+    } else {
+      message.guild.musicData.loopQueue = true;
+      message.channel.send('The queue is now playing on **loop** :loop:');
     }
-    message.guild.musicData.queue = newQueue;
-    // prettier-ignore
-    message.channel.send(
-      `Looped the queue ${numOfTimesToLoop} ${
-        (numOfTimesToLoop == 1) ? 'time' : 'times'
-      }`
-    );
-    return;
   }
 };
