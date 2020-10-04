@@ -21,7 +21,14 @@ module.exports = class LeaveCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      message.reply('There is no song playing right now!');
+      if (
+        message.guild.musicData.isPlaying == false &&
+        message.guild.me.voice.channel
+      ) {
+        message.guild.me.voice.channel.leave();
+      } else {
+        message.reply('There is no song playing right now!');
+      }
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(

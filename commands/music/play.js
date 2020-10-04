@@ -301,6 +301,7 @@ module.exports = class PlayCommand extends Command {
               message.guild.musicData.nowPlaying = null;
               message.guild.musicData.songDispatcher = null;
               if (
+                // when the leave command is called
                 message.guild.me.voice.channel &&
                 message.guild.musicData.skipTimer
               ) {
@@ -315,6 +316,7 @@ module.exports = class PlayCommand extends Command {
                     message.guild.me.voice.channel
                   ) {
                     message.guild.me.voice.channel.leave();
+                    message.channel.send('Left channel due to inactivity');
                   }
                 }, 90000);
               }
