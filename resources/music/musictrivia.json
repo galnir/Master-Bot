@@ -441,7 +441,7 @@
       "title": "Gasoline"
     },
     {
-      "url": "https://www.youtube.com/watch?v=Cs_LnAdfKas",
+      "url": "https://www.youtube.com\/watch?v=VYOjWnS4cMY",
       "singer": "Childish Gambino",
       "title": "This Is America"
     },
@@ -537,8 +537,8 @@
     },
     {
       "url": "https://www.youtube.com/watch?v=4-TbQnONe_w",
-      "singer": "bad guy",
-      "title": "Billie Eilish"
+      "singer": "billie eilish",
+      "title": "Bad Guy"
     },
     {
       "url": "https://www.youtube.com/watch?v=DSxg7pNYQhI",
@@ -596,7 +596,7 @@
       "title": "Love In This Club"
     },
     {
-      "url": "https://www.youtube.com/watch?v=uHV3t4f8TZM",
+      "url": "https://www.youtube.com/watch?v=We1AQetsAx4",
       "singer": "Soulja Boy",
       "title": "Crank That"
     },
@@ -716,7 +716,7 @@
       "title": "Wrecking Ball"
     },
     {
-      "url": "https://www.youtube.com/watch?v=H0m3Lfkzcw4",
+      "url": "https://www.youtube.com/watch?v=cmCDqX3ngfA",
       "singer": "Pharrell Williams",
       "title": "Happy"
     },
@@ -764,6 +764,61 @@
       "url": "https://www.youtube.com/watch?v=570tFRoRR0A",
       "singer": "Pink",
       "title": "Raise your Glass"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=Nj2U6rhnucI",
+      "singer": "dua lipa",
+      "title": "break my heart"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=83xBPCw5hh4",
+      "singer": "dababy",
+      "title": "Rockstar"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=8EJ3zbKTWQ8",
+      "singer": "justin bieber",
+      "title": "yummy"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=fwK7ggA3-bU",
+      "singer": "maroon 5",
+      "title": "one more night"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=pPw_izFr5PA",
+      "singer": "6ix9ine",
+      "title": "GOOBA"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=UYwF-jdcVjY",
+      "singer": "post malone",
+      "title": "better now"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=fEUS_NP5Qzo",
+      "singer": "blackbear",
+      "title": "chateau"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=WagT4pdaPG8",
+      "singer": "CMG",
+      "title": "stonner"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=CxnaPa8ohmM",
+      "singer": "g-eazy",
+      "title": "i mean it"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=cwQgjq0mCdE",
+      "singer": "kanye west",
+      "title": "i love it"
+    },
+    {
+      "url": "https://www.youtube.com\/watch?v=QYh6mYIJG2Y",
+      "singer": "ariana grande",
+      "title": "7 rings"
     }
   ]
 }
