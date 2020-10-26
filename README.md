@@ -70,6 +70,9 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !translate   | Translate to any language using yandex translation service(only supported lanugages)                                                                          | !translate ありがとう |
 | !whomademe   | Info about me and the repo                                                                                                                                          | !whomademe            |
 | !uptime      | Replies with the bot's total uptime                                                                                                                                 | !uptime               |
+| !8ball      | Get the answer to anything!                                                                                                                                   |     !8ball Is this bot awesome?               |
+| !rps      | Rock Paper Scissors                                                                                                                                | !rps               |
+
 
 - Gifs
 
@@ -109,12 +112,10 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
 
-### Tasks
-
-* Feature: Saved queues (Being worked on)
-
 ## Contributors
 
 [malokdev](https://github.com/malokdev) - uptime command
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
+
+[ModoSN](https://github.com/ModoSN) - rps, 8ball commands 
