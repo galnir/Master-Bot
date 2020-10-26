@@ -1,6 +1,7 @@
 # A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
+![image](https://img.shields.io/badge/language-javascript-yellow)
+![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)
 
 ### Installing the dependencies
 
