@@ -1,4 +1,6 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
+const fs = require('fs');
 
 module.exports = class EightBallCommand extends Command {
   constructor(client) {
@@ -19,11 +21,8 @@ module.exports = class EightBallCommand extends Command {
   }
 
   run(message) {
-        const ballanswers = fs.readFileSync( 
-      'resources/other/8ball.json',
-      'utf8'
-    );
-    const ballArray = JSON.parse(ballanswers).quotes; 
+    const ballanswers = fs.readFileSync('resources/other/8ball.json', 'utf8');
+    const ballArray = JSON.parse(ballanswers).quotes;
 
     const randomAnswer =
       ballArray[Math.floor(Math.random() * ballArray.length)];
