@@ -30,7 +30,7 @@ module.exports = class LookupCommand extends Command {
   }
 
   async run(message, { text }) {
-	  const fuck = text
+	  const addr = text
     // text needs to be less than 3000 length
 
     try {
@@ -45,7 +45,7 @@ module.exports = class LookupCommand extends Command {
         .setColor('#42aaf5')
         .setTitle('IP/Hostname Lookup')
 		.addFields(
-		{ name: 'Query', value: fuck, inline: true },
+		{ name: 'Query', value: addr, inline: true },
 		{ name: 'Resolves', value: json.query, inline: true },
 		{ name: '‎', value: "‎", inline: true },
 		{ name: 'Location', value: `${json.city}, ${json.zip}, ${json.regionName}, ${json.country}`, inline: false },
