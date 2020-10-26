@@ -32,6 +32,7 @@ module.exports = class EightBallCommand extends Command {
       .setTitle('Magic')
       .setDescription(randomAnswer.text)
       .setColor('#ff003c');
-    return message.channel.send(answerEmbed);
+    message.channel.send(answerEmbed);
+    return;
   }
 };
