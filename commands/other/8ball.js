@@ -20,7 +20,7 @@ module.exports = class EightBallCommand extends Command {
 
   run(message) {
         const ballanswers = fs.readFileSync( 
-      'resources/fun/8ball.json',
+      'resources/other/8ball.json',
       'utf8'
     );
     const ballArray = JSON.parse(ballanswers).quotes; 
