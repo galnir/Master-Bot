@@ -21,8 +21,8 @@ module.exports = class EightBallCommand extends Command {
   }
 
   run(message) {
-    const ballanswers = fs.readFileSync('resources/other/8ball.json', 'utf8');
-    const ballArray = JSON.parse(ballanswers).quotes;
+    const ballAnswers = fs.readFileSync('resources/other/8ball.json', 'utf8');
+    const ballArray = JSON.parse(ballAnswers).answers;
 
     const randomAnswer =
       ballArray[Math.floor(Math.random() * ballArray.length)];
@@ -31,7 +31,6 @@ module.exports = class EightBallCommand extends Command {
       .setTitle('Magic')
       .setDescription(randomAnswer.text)
       .setColor('#ff003c');
-    message.channel.send(answerEmbed);
-    return;
+    return message.channel.send(answerEmbed);
   }
 };
