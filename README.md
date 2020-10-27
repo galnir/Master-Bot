@@ -59,6 +59,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command      | Description                                                                                                                                                         | Usage                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | !cat         | Get a cute cat picture                                                                                                                                              | !cat                  |
+| !dog         | Get a cute dog picture                                                                                                                                              | !dog                  |
 | !fortune     | Get a fortune cookie tip                                                                                                                                            | !fortune              |
 | !insult      | Generate an evil insult                                                                                                                                             | !insult               |
 | !chucknorris | Get a satirical fact about Chuck Norris                                                                                                                             | !chucknorris          |
