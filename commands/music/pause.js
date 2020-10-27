@@ -31,7 +31,7 @@ module.exports = class PauseCommand extends Command {
       return;
     }
 
-    message.say(':pause_button: Song paused');
+    message.say(':pause_button: Song was paused!');
 
     message.guild.musicData.songDispatcher.pause();
   }
