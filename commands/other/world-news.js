@@ -10,7 +10,7 @@ module.exports = class GlobalNewsCommand extends Command {
       aliases: ['global-news', 'reuters'],
       group: 'other',
       memberName: 'world-news',
-      description: 'Replies with the 5 latest world news headlines',
+      description: 'Replies with the 5 latest world news headlines!',
       throttling: {
         usages: 2,
         duration: 10
@@ -46,7 +46,7 @@ module.exports = class GlobalNewsCommand extends Command {
       }
       await processArray(articleArr);
     } catch (e) {
-      message.say('Something failed along the way');
+      message.say(':x: Something failed along the way!');
       return console.error(e);
     }
   }
