@@ -23,8 +23,7 @@ module.exports = class AnimegifCommand extends Command {
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
       .catch(e => {
-        message.say('Failed to find a gif :slight_frown:');
-        // console.error(e);
+        message.say(':x: Failed to find a gif!');
         return;
       });
   }

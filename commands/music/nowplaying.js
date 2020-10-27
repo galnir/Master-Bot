@@ -9,7 +9,7 @@ module.exports = class NowPlayingCommand extends Command {
       memberName: 'nowplaying',
       aliases: ['np', 'currently-playing', 'now-playing'],
       guildOnly: true,
-      description: 'Display the currently playing song'
+      description: 'Display the currently playing song!'
     });
   }
 
@@ -19,25 +19,28 @@ module.exports = class NowPlayingCommand extends Command {
         !message.guild.musicData.nowPlaying) ||
       message.guild.triviaData.isTriviaRunning
     ) {
-      return message.say('There is no song playing right now!');
+      return message.say(
+        ':no_entry: Please join a voice channel and try again!'
+      );
     }
 
     const video = message.guild.musicData.nowPlaying;
     let description;
     if (video.duration == 'Live Stream') {
-      description = 'Live Stream';
+      description = ':red_circle: Live Stream';
     } else {
       description = NowPlayingCommand.playbackBar(message, video);
     }
 
     const title = message.guild.musicData.loopSong
-      ? `${video.title} **On Loop**`
+      ? `:repeat: ${video.title} **On Loop**`
       : video.title;
 
     const videoEmbed = new MessageEmbed()
       .setThumbnail(video.thumbnail)
       .setColor('#e9f931')
       .setTitle(title)
+      .setURL(video.url)
       .setDescription(description);
     message.channel.send(videoEmbed);
     return;

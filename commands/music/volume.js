@@ -4,11 +4,11 @@ module.exports = class VolumeCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'volume',
-      aliases: ['change-volume'],
+      aliases: ['change-volume', 'v', 'vol'],
       group: 'music',
       memberName: 'volume',
       guildOnly: true,
-      description: 'Adjust song volume',
+      description: 'Adjust song volume!',
       throttling: {
         usages: 1,
         duration: 5
@@ -16,8 +16,10 @@ module.exports = class VolumeCommand extends Command {
       args: [
         {
           key: 'wantedVolume',
-          prompt: 'What volume would you like to set? from 1 to 200',
+          prompt:
+            ':loud_sound: What volume would you like to set? from 1 to 200!',
           type: 'integer',
+          // default: 25,
           validate: function(wantedVolume) {
             return wantedVolume >= 1 && wantedVolume <= 200;
           }
@@ -28,22 +30,25 @@ module.exports = class VolumeCommand extends Command {
 
   run(message, { wantedVolume }) {
     const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('Join a channel and try again');
+    if (!voiceChannel)
+      return message.reply(
+        ':no_entry: Please join a voice channel and try again!'
+      );
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      return message.reply(':x: There is no song playing right now!');
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     }
     const volume = wantedVolume / 100;
     message.guild.musicData.volume = volume;
     message.guild.musicData.songDispatcher.setVolume(volume);
-    message.say(`I set the volume to: ${wantedVolume}%`);
+    message.say(`:loud_sound: Setting the volume to: ${wantedVolume}%!`);
   }
 };

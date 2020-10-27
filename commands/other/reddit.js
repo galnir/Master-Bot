@@ -10,7 +10,7 @@ module.exports = class RedditCommand extends Command {
       group: 'other',
       memberName: 'reddit',
       description:
-        'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time',
+        'Replies with 10 top daily posts in wanted subreddit, you can specify sorting and time!',
       throttling: {
         usages: 2,
         duration: 10
@@ -18,7 +18,7 @@ module.exports = class RedditCommand extends Command {
       args: [
         {
           key: 'subreddit',
-          prompt: 'What subreddit would you like to search?',
+          prompt: ':mag: What subreddit would you like to search?',
           type: 'string',
           default: 'all',
           max: 50,
@@ -27,7 +27,7 @@ module.exports = class RedditCommand extends Command {
         {
           key: 'sort',
           prompt:
-            'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
+            ':mag: What posts do you want to see? Select from best/hot/top/new/controversial/rising',
           type: 'string',
           default: 'top',
           validate: function(sort) {
@@ -51,7 +51,7 @@ module.exports = class RedditCommand extends Command {
   async run(message, { subreddit, sort }) {
     if (sort === 'top' || sort === 'controversial') {
       await message.say(
-        `Do you want to get the ${sort} posts from past hour/week/month/year or all?`
+        `:lound_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`
       );
       try {
         var t = await message.channel.awaitMessages(
@@ -71,7 +71,9 @@ module.exports = class RedditCommand extends Command {
         var timeFilter = t.first().content;
       } catch (e) {
         console.error(e);
-        return message.say('Please try again and enter a proper time filter');
+        return message.say(
+          ':x: Please try again and enter a proper time filter!'
+        );
       }
     }
     fetch(
@@ -91,7 +93,7 @@ module.exports = class RedditCommand extends Command {
         }
       })
       .catch(err => {
-        message.say('The subreddit you asked for was not found');
+        message.say(':x: The subreddit you asked for was not found!');
         return console.error(err);
       });
     // returns an embed that is ready to be sent

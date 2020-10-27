@@ -1,13 +1,14 @@
+const { MessageEmbed } = require('discord.js');
 const { Command } = require('discord.js-commando');
 
 module.exports = class RandomNumberCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'random',
-      aliases: ['random-number', 'number-between'],
+      aliases: ['random-number', 'number-between', 'rng'],
       memberName: 'random',
       group: 'other',
-      description: 'Generate a random number between two provided numbers',
+      description: 'Generate a random number between two provided numbers!',
       args: [
         {
           key: 'min',
@@ -26,6 +27,9 @@ module.exports = class RandomNumberCommand extends Command {
   run(message, { min, max }) {
     min = Math.ceil(min);
     max = Math.floor(max);
-    return message.say(Math.floor(Math.random() * (max - min + 1)) + min);
+    var rngEmbed = new MessageEmbed().setTitle(
+      Math.floor(Math.random() * (max - min + 1)) + min
+    );
+    return message.say(rngEmbed);
   }
 };

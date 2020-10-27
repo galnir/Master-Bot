@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class SayCommand extends Command {
   constructor(client) {
@@ -7,11 +8,11 @@ module.exports = class SayCommand extends Command {
       aliases: ['make-me-say', 'print'],
       memberName: 'say',
       group: 'other',
-      description: 'Make the bot say anything',
+      description: 'Make the bot say anything!',
       args: [
         {
           key: 'text',
-          prompt: 'What do you want the bot to say?',
+          prompt: ':microphone2: What do you want the bot to say?',
           type: 'string'
         }
       ]
@@ -19,6 +20,10 @@ module.exports = class SayCommand extends Command {
   }
 
   run(message, { text }) {
-    return message.say(text);
+    var embed = new MessageEmbed()
+      .setTitle(`Just wanted to say...`)
+      .setDescription(text)
+      .setFooter(`That is all.`);
+    return message.say(embed);
   }
 };

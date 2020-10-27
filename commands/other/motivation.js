@@ -9,7 +9,7 @@ module.exports = class MotivationCommand extends Command {
       aliases: ['motivational, motivation-quote'],
       group: 'other',
       memberName: 'motivation',
-      description: 'Get a random motivation quote'
+      description: 'Get a random motivational quote!'
     });
   }
   run(message) {

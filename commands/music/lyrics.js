@@ -11,7 +11,7 @@ module.exports = class LyricsCommand extends Command {
       memberName: 'lyrics',
       aliases: ['lr'],
       description:
-        'Get lyrics of any song or the lyrics of the currently playing song',
+        'Get lyrics of any song or the lyrics of the currently playing song!',
       group: 'music',
       throttling: {
         usages: 1,
@@ -22,7 +22,7 @@ module.exports = class LyricsCommand extends Command {
           key: 'songName',
           default: '',
           type: 'string',
-          prompt: 'What song lyrics would you like to get?'
+          prompt: ':mag: What song lyrics would you like to get?'
         }
       ]
     });
@@ -35,14 +35,14 @@ module.exports = class LyricsCommand extends Command {
     ) {
       songName = message.guild.musicData.nowPlaying.title;
     } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
-      return message.say('Please try again after the trivia has ended');
+      return message.say(':x: Please try again after the trivia has ended');
     } else if (songName == '' && !message.guild.musicData.isPlaying) {
       return message.say(
-        'There is no song playing right now, please try again with a song name or play a song first'
+        ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
       );
     }
     const sentMessage = await message.channel.send(
-      '👀 Searching for lyrics 👀'
+      ':mag: :notes: Searching for lyrics!'
     );
 
     // remove stuff like (Official Video)
@@ -62,7 +62,7 @@ module.exports = class LyricsCommand extends Command {
               .then(function(lyrics) {
                 if (lyrics.length > 4095) {
                   message.say(
-                    'Lyrics are too long to be returned in a message embed'
+                    ':x: Lyrics are too long to be returned in a message embed!'
                   );
                   return;
                 }
@@ -115,7 +115,7 @@ module.exports = class LyricsCommand extends Command {
         const songPath = result.response.hits[0].result.api_path;
         resolve(`https://api.genius.com${songPath}`);
       } catch (e) {
-        reject('No song has been found for this query');
+        reject(':x: No song has been found for this query');
       }
     });
   }
@@ -129,7 +129,7 @@ module.exports = class LyricsCommand extends Command {
         const body = await fetch(url, { headers });
         const result = await body.json();
         if (!result.response.song.url) {
-          reject('There was a problem finding a URL for this song');
+          reject(':x: There was a problem finding a URL for this song');
         } else {
           resolve(result.response.song.url);
         }

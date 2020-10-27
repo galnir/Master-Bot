@@ -24,13 +24,13 @@ module.exports = class ChuckNorrisCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#E41032')
-          .setTitle('Chuck Norris Fact')
+          .setTitle(':sunglasses: Chuck Norris Fact:')
           .setDescription(json.value)
           .setURL('https://api.chucknorris.io');
         return message.say(embed);
       })
       .catch(err => {
-        message.say('An error occured, Chuck is investigating this!');
+        message.say(':x: An error occured, Chuck is investigating this!');
         return console.error(err);
       });
   }

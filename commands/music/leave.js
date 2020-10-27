@@ -8,14 +8,14 @@ module.exports = class LeaveCommand extends Command {
       group: 'music',
       memberName: 'leave',
       guildOnly: true,
-      description: 'Leaves voice channel if in one'
+      description: 'Leaves voice channel if in one!'
     });
   }
 
   run(message) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply('Join a channel and try again');
+      message.reply(':no_entry: Please join a voice channel and try again!');
       return;
     } else if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
@@ -27,16 +27,16 @@ module.exports = class LeaveCommand extends Command {
       ) {
         message.guild.me.voice.channel.leave();
       } else {
-        message.reply('There is no song playing right now!');
+        message.reply(':x: There is no song playing right now!');
       }
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     } else if (!message.guild.musicData.queue) {
-      message.reply('There are no songs in queue');
+      message.reply(':x: There are no songs in queue');
       return;
     } else if (message.guild.musicData.songDispatcher.paused) {
       message.guild.musicData.songDispatcher.resume();

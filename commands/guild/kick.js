@@ -8,7 +8,7 @@ module.exports = class KickCommand extends Command {
       aliases: ['kick-member', 'throw'],
       memberName: 'kick',
       group: 'guild',
-      description: 'Kicks a tagged member',
+      description: 'Kicks a tagged member.',
       guildOnly: true,
       userPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
       clientPermissions: ['MANAGE_MESSAGES', 'KICK_MEMBERS', 'BAN_MEMBERS'],
@@ -16,7 +16,7 @@ module.exports = class KickCommand extends Command {
         {
           key: 'userToKick',
           prompt:
-            'Please mention the user you want to kick with @ or provide his ID',
+            'Please mention the user you want to kick with @ or provide his ID.',
           type: 'string'
         },
         {
@@ -35,11 +35,10 @@ module.exports = class KickCommand extends Command {
       message.mentions.members.first() ||
       (await message.guild.members.fetch(userToKickID));
     if (user == undefined)
-      return message.channel.send('Please try again with a valid user');
+      return message.channel.send(':x: Please try again with a valid user.');
     user
       .kick(reason)
       .then(() => {
-        //message.say(`Kicked ${userToKick} reason: ${reason}`)
         const kickEmbed = new MessageEmbed()
           .addField('Kicked:', userToKick)
           .addField('Reason:', reason)
@@ -48,7 +47,7 @@ module.exports = class KickCommand extends Command {
       })
       .catch(err => {
         message.say(
-          'Something went wrong when trying to kick this user, I probably do not have the permission to kick him'
+          ':x: Something went wrong when trying to kick this user, I probably do not have the permission to kick him!'
         );
         return console.error(err);
       });

@@ -7,32 +7,35 @@ module.exports = class ShuffleQueueCommand extends Command {
       name: 'shuffle',
       memberName: 'shuffle',
       group: 'music',
-      description: 'Shuffle the song queue',
+      description: 'Shuffle the song queue!',
       guildOnly: true
     });
   }
   run(message) {
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('Join a channel and try again');
+    if (!voiceChannel)
+      return message.reply(
+        ':no_entry: Please join a voice channel and try again!'
+      );
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      return message.reply(':x: There is no song playing right now!');
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     } else if (message.guild.musicData.loopSong) {
       message.reply(
-        'Turn off the **loop** command before using the **shuffle** command'
+        ':x: Turn off the **loop** command before using the **shuffle** command!'
       );
       return;
     }
     if (message.guild.musicData.queue.length < 1)
-      return message.say('There are no songs in queue');
+      return message.say(':x: There are no songs in queue!');
 
     shuffleQueue(message.guild.musicData.queue);
 
@@ -44,7 +47,7 @@ module.exports = class ShuffleQueueCommand extends Command {
     if (titleArray.length < 10) numOfEmbedFields = titleArray.length;
     var queueEmbed = new MessageEmbed()
       .setColor('#ff7373')
-      .setTitle('New Music Queue');
+      .setTitle(':twisted_rightwars_arrows: New Music Queue!');
     for (let i = 0; i < numOfEmbedFields; i++) {
       queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
     }

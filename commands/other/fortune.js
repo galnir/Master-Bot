@@ -9,7 +9,7 @@ module.exports = class FortuneCommand extends Command {
       aliases: ['fortune-cookie'],
       group: 'other',
       memberName: 'fortune',
-      description: 'Replies with a fortune cookie tip',
+      description: 'Replies with a fortune cookie tip!',
       throttling: {
         usages: 2,
         duration: 10
@@ -23,11 +23,11 @@ module.exports = class FortuneCommand extends Command {
       const json = await res.json();
       const embed = new MessageEmbed()
         .setColor('RANDOM')
-        .setTitle('Fortune Cookie')
+        .setTitle(':fortune_cookie: Fortune Cookie:')
         .setDescription(json.fortune);
       return message.say(embed);
     } catch (e) {
-      message.say('Could not obtain fortune cookie :confused: ');
+      message.say(':x: Could not obtain a fortune cookie!');
       return console.error(e);
     }
   }

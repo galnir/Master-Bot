@@ -50,7 +50,7 @@ module.exports = class JojoCommand extends Command {
         })
       */
     } catch (e) {
-      message.say('Failed to fetch a gif :slight_frown:');
+      message.say(':x: Failed to fetch a gif!');
       return console.error(e);
     }
   }
