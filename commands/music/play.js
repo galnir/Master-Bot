@@ -105,7 +105,7 @@ module.exports = class PlayCommand extends Command {
           .setColor('#ff0000')
           .setTitle(`:musical_note: ${playlist.title}`)
           .addField(
-            `Playlist has been added ${message.guild.musicData.queue.length} songs to queue!`,
+            `Playlist has added ${message.guild.musicData.queue.length} songs to queue!`,
             playlist.url
           )
           .setThumbnail(playlist.thumbnails.high.url)
