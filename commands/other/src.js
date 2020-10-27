@@ -42,7 +42,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
       if (body.data[0].runs.length === 0) {
         message.reply(
-          body.data[0].game.data.names.international + ' has no runs'
+          body.data[0].game.data.names.international + ' has no runs.'
         );
       } else {
         let platform =
