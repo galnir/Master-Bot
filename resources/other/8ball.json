@@ -1,21 +1,61 @@
-[
-    "Yes.",
-    "No.",
-    "My sources say yes",
-    "Most likely.",
-    "idk",
-    "maybe sometime",
-    "Outlook good.",
-    "Signs point to yes.",
-    "Definitely",
-    "Absolutely",
-    "Nope.",
-    "No thanks, I won’t be able to make it.",
-    "No Way!",
-    " It is certain.",
-    "It is decidedly so.",
-    "Without a doubt.",
-    "Yes - definitely.",
-    "You may rely on it.",
-    "As I see it, yes."
-] 
+{
+  "answers": [
+    {
+      "text": "Yes."
+    },
+    {
+      "text": "No."
+    },
+    {
+      "text": "My sources say yes!"
+    },
+    {
+      "text": "Most likely."
+    },
+    {
+      "text": "I don't know."
+    },
+    {
+      "text": "Maybe, sometimes."
+    },
+    {
+      "text": "Outlook is good."
+    },
+    {
+      "text": "Signs point to yes."
+    },
+    {
+      "text": "Definitely!"
+    },
+    {
+      "text": "Absolutely!"
+    },
+    {
+      "text": "Nope."
+    },
+    {
+      "text": "No thanks, I won’t be able to make it."
+    },
+    {
+      "text": "No Way!"
+    },
+    {
+      "text": "It's certain."
+    },
+    {
+      "text": "It's decidedly so."
+    },
+    {
+      "text": "Without a doubt."
+    },
+    {
+      "text": "Yes - definitely."
+    },
+    {
+      "text": "You can rely on it."
+    },
+    {
+      "text": "As I see it, yes."
+    }
+  ]
+}
