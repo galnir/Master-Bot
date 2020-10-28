@@ -179,7 +179,7 @@ module.exports = class PlayCommand extends Command {
     }
     const vidNameArr = [];
     for (let i = 0; i < videos.length; i++) {
-      vidNameArr.push(`${i + 1}: ${videos[i].title}\n ${videos[i].shortURL}`);
+      vidNameArr.push(`${i + 1}: [${videos[i].title}](${videos[i].shortURL})`);
     }
     vidNameArr.push('cancel');
     const embed = new MessageEmbed()
