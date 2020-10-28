@@ -31,11 +31,9 @@ module.exports = class LookupCommand extends Command {
 
   async run(message, { text }) {
 	  const resl = text
-    // text needs to be less than 3000 length
 
     try {
-		// fetch json data from ip-api.com
-      var res = await fetch(`http://ip-api.com/json/${text}`);
+      var res = await fetch(`http://ip-api.com/json/${text}`); // fetch json data from ip-api.com
 
 	  // json results
       const json = await res.json();
@@ -49,8 +47,8 @@ module.exports = class LookupCommand extends Command {
 		{ name: 'Resolves', value: json.query, inline: true },
 		{ name: '‎', value: "‎", inline: true },
 		{ name: 'Location', value: `${json.city}, ${json.zip}, ${json.regionName}, ${json.country}`, inline: false },
-		{ name: 'ORG', value: `${json.org}‎`, inline: true },
-		{ name: 'ISP', value: json.isp, inline: true },
+		{ name: 'ORG', value: `${json.org}‎`, inline: true }, // organisation who own the ip
+		{ name: 'ISP', value: json.isp, inline: true }, // internet service provider
 		{ name: 'OBO', value: json.as, inline: false },
 	)
         .setTimestamp(); //img here
