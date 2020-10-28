@@ -7,7 +7,7 @@ module.exports = class LoopQueueCommand extends Command {
       memberName: 'loopqueue',
       aliases: ['loop-queue', 'queue-loop'],
       group: 'music',
-      description: 'Loop the queue x times(the default is 1 time)',
+      description: 'Loop the queue x times! - (the default is 1 time)',
       guildOnly: true,
       args: [
         {
@@ -22,37 +22,39 @@ module.exports = class LoopQueueCommand extends Command {
 
   run(message) {
     if (!message.guild.musicData.isPlaying) {
-      message.say('There is no song playing right now!');
+      message.say(':x: There is no song playing right now!');
       return;
     } else if (
       message.guild.musicData.isPlaying &&
       message.guild.triviaData.isTriviaRunning
     ) {
-      message.say('You cannot loop over a trivia!');
+      message.say(':x: You cannot loop over a trivia!');
       return;
     } else if (
       message.member.voice.channel.id !== message.guild.me.voice.channel.id
     ) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     } else if (message.guild.musicData.queue.length == 0) {
-      message.say(`I can't loop over an empty queue!`);
+      message.say(`:x: I can't loop over an empty queue!`);
       return;
     } else if (message.guild.musicData.loopSong) {
       message.reply(
-        'Turn off the **loop** command before using the **loopqueue** command'
+        ':x: Turn off the **loop** command before using the **loopqueue** command'
       );
       return;
     }
 
     if (message.guild.musicData.loopQueue) {
       message.guild.musicData.loopQueue = false;
-      message.channel.send('The queue is no longer playing on **loop** :loop:');
+      message.channel.send(
+        ':repeat: The queue is no longer playing on **loop**'
+      );
     } else {
       message.guild.musicData.loopQueue = true;
-      message.channel.send('The queue is now playing on **loop** :loop:');
+      message.channel.send(':repeat: The queue is now playing on **loop**');
     }
   }
 };

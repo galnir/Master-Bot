@@ -6,7 +6,7 @@ module.exports = class MoveSongCommand extends Command {
       name: 'move',
       memberName: 'move',
       aliases: ['m', 'movesong'],
-      description: 'Move song to a desired position in queue',
+      description: 'Move song to a desired position in queue!',
       group: 'music',
       throttling: {
         usages: 1,
@@ -16,12 +16,12 @@ module.exports = class MoveSongCommand extends Command {
         {
           key: 'oldPosition',
           type: 'integer',
-          prompt: 'What is the position of the song you want to move?'
+          prompt: ':notes: What is the position of the song you want to move?'
         },
         {
           key: 'newPosition',
           type: 'integer',
-          prompt: 'What position do you want to move the song to?'
+          prompt: ':notes: What position do you want to move the song to?'
         }
       ]
     });
@@ -34,27 +34,27 @@ module.exports = class MoveSongCommand extends Command {
       newPosition > message.guild.musicData.queue.length ||
       oldPosition == newPosition
     ) {
-      message.reply('Try again and enter a valid song position number');
+      message.reply(':x: Try again and enter a valid song position number');
       return;
     }
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.reply('Join a channel and try again');
+      message.reply(':no_entry: Please join a voice channel and try again!');
       return;
     }
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      return message.reply(':x: There is no song playing right now!');
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     } else if (message.guild.musicData.loopSong) {
       message.reply(
-        'Turn off the **loop** command before using the **move** command'
+        ':x: Turn off the **loop** command before using the **move** command.'
       );
       return;
     }

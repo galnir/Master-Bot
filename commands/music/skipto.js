@@ -7,13 +7,13 @@ module.exports = class SkipToCommand extends Command {
       memberName: 'skipto',
       group: 'music',
       description:
-        'Skip to a specific song in the queue, provide the song number as an argument',
+        'Skip to a specific song in the queue, provide the song number as an argument!',
       guildOnly: true,
       args: [
         {
           key: 'songNumber',
           prompt:
-            'What is the number in queue of the song you want to skip to?, it needs to be greater than 1',
+            'What is the number in queue of the song you want to skip to?, it needs to be greater than 1!',
           type: 'integer'
         }
       ]
@@ -22,25 +22,28 @@ module.exports = class SkipToCommand extends Command {
 
   run(message, { songNumber }) {
     if (songNumber < 1 && songNumber >= message.guild.musicData.queue.length) {
-      return message.reply('Please enter a valid song number');
+      return message.reply(':x: Please enter a valid song number!');
     }
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel) return message.reply('Join a channel and try again');
+    if (!voiceChannel)
+      return message.reply(
+        ':no_entry: Please join a voice channel and try again!'
+      );
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply('There is no song playing right now!');
+      return message.reply(':x: There is no song playing right now!');
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
     }
 
     if (message.guild.musicData.queue < 1) {
-      message.say('There are no songs in queue');
+      message.say(':x: There are no songs in queue!');
       return;
     }
 

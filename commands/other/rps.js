@@ -8,7 +8,15 @@ module.exports = class RPSCommand extends Command {
       aliases: ['rock-paper-scissors', 'rock'],
       group: 'other',
       memberName: 'other',
-      description: 'Rock paper scissors'
+      description: 'Rock paper scissors',
+      args: [
+        {
+          key: 'text',
+          prompt:
+            'You ready for a game of Rock, Paper, Sissors? \n What is your move?',
+          type: 'string'
+        }
+      ]
     });
   }
 

@@ -12,22 +12,24 @@ module.exports = class StopMusicTriviaCommand extends Command {
       ],
       memberName: 'stop-trivia',
       group: 'music',
-      description: 'End the music trivia',
+      description: 'End the music trivia!',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT']
     });
   }
   run(message) {
     if (!message.guild.triviaData.isTriviaRunning)
-      return message.say('No trivia is currently running');
+      return message.say(':x: No trivia is currently running!');
 
     if (message.guild.me.voice.channel !== message.member.voice.channel) {
-      return message.say("Join the trivia's channel and try again");
+      return message.say(
+        ':no_entry: Please join a voice channel and try again!'
+      );
     }
 
     if (!message.guild.triviaData.triviaScore.has(message.author.username)) {
       return message.say(
-        'You need to participate in the trivia in order to end it'
+        ':stop_sign: You need to participate in the trivia in order to end it'
       );
     }
 

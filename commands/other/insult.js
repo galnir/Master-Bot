@@ -23,13 +23,13 @@ module.exports = class InsultCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#E41032')
-          .setTitle('Evil Insult')
+          .setTitle(':imp: Evil Insult:')
           .setDescription(json.insult)
           .setURL('https://evilinsult.com');
         return message.say(embed);
       })
       .catch(err => {
-        message.say('Failed to deliver insult :sob:');
+        message.say(':x: Failed to deliver insult!');
         return console.error(err);
       });
   }

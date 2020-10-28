@@ -1,3 +1,4 @@
+  
 const fetch = require('node-fetch');
 const { tenorAPI } = require('../../config.json');
 const { Command } = require('discord.js-commando');
@@ -22,7 +23,7 @@ module.exports = class DogCommand extends Command {
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
       .catch(err => {
-        message.say('Request to find a doggo failed :(');
+        message.say(':x: Request to find a doggo failed!');
         return console.error(err);
       });
   }

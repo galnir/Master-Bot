@@ -5,7 +5,7 @@ module.exports = class PruneCommand extends Command {
     super(client, {
       name: 'prune',
       aliases: ['delete-messages', 'bulk-delete'],
-      description: 'Delete up to 99 recent messages',
+      description: 'Delete up to 99 recent messages.',
       group: 'guild',
       memberName: 'prune',
       guildOnly: true,
@@ -28,7 +28,7 @@ module.exports = class PruneCommand extends Command {
       .catch(e => {
         console.error(e);
         return message.say(
-          'Something went wrong when trying to delete messages :('
+          ':x: Something went wrong when trying to delete messages!'
         );
       });
   }

@@ -12,7 +12,7 @@ module.exports = class PlayCommand extends Command {
       aliases: ['play-song', 'add'],
       memberName: 'play',
       group: 'music',
-      description: 'Play any song or playlist from youtube',
+      description: 'Play any song or playlist from youtube!',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT'],
       throttling: {
@@ -22,7 +22,7 @@ module.exports = class PlayCommand extends Command {
       args: [
         {
           key: 'query',
-          prompt: 'What song or playlist would you like to listen to?',
+          prompt: ':notes: What song or playlist would you like to listen to?',
           type: 'string',
           validate: function(query) {
             return query.length > 0 && query.length < 200;
@@ -32,37 +32,38 @@ module.exports = class PlayCommand extends Command {
     });
   }
 
+  // Error Messages
   async run(message, { query }) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.say('Join a channel and try again');
+      message.say(':no_entry: Please join a voice channel and try again!');
       return;
     }
 
     if (message.guild.triviaData.isTriviaRunning == true) {
-      message.say('Please try after the trivia has ended');
+      message.say(':x: Please try after the trivia has ended!');
       return;
     }
 
     if (
-      // if the user entered a youtube playlist url
+      // Handles PlayList Links
       query.match(
         /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/
       )
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
-        message.say('Playlist is either private or it does not exist!');
+        message.say(':x: Playlist is either private or it does not exist!');
         return;
       });
       // add 10 as an argument in getVideos() if you choose to limit the queue
       const videosArr = await playlist.getVideos().catch(function() {
         message.say(
-          'There was a problem getting one of the videos in the playlist!'
+          ':x: There was a problem getting one of the videos in the playlist!'
         );
         return;
       });
 
-      // this for loop can be uncommented if you want to shuffle the playlist
+      // Uncommented if you want to shuffle the playlist
 
       /*for (let i = videosArr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -100,9 +101,17 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        message.say(
-          `Playlist - :musical_note:  ${playlist.title} :musical_note: has been added to queue`
-        );
+        const PlayListEmbed = new MessageEmbed()
+          .setColor('#ff0000')
+          .setTitle(`:musical_note: ${playlist.title}`)
+          .addField(
+            `Playlist has added ${message.guild.musicData.queue.length} songs to queue!`,
+            playlist.url
+          )
+          .setThumbnail(playlist.thumbnails.high.url)
+          .setURL(playlist.url);
+        message.say(PlayListEmbed);
+        // @TODO add the the position number of queue of the when a playlist is added
         return;
       }
     }
@@ -114,7 +123,7 @@ module.exports = class PlayCommand extends Command {
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
       const video = await youtube.getVideoByID(id).catch(function() {
-        message.say('There was a problem getting the video you provided!');
+        message.say(':x: There was a problem getting the video you provided!');
         return;
       });
       // // can be uncommented if you don't want the bot to play live streams
@@ -141,7 +150,16 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        message.say(`${video.title} added to queue`);
+        const addedEmbed = new MessageEmbed()
+          .setColor('#ff0000')
+          .setTitle(`:musical_note: ${video.title}`)
+          .addField(
+            `Has been added to queue. `,
+            `This song is #${message.guild.musicData.queue.length} in queue`
+          )
+          .setThumbnail(video.thumbnails.high.url)
+          .setURL(video.url);
+        message.say(addedEmbed);
         return;
       }
     }
@@ -149,35 +167,40 @@ module.exports = class PlayCommand extends Command {
     // if user provided a song/video name
     const videos = await youtube.searchVideos(query, 5).catch(async function() {
       await message.say(
-        'There was a problem searching the video you requested :('
+        ':x: There was a problem searching the video you requested!'
       );
       return;
     });
     if (videos.length < 5 || !videos) {
       message.say(
-        `I had some trouble finding what you were looking for, please try again or be more specific`
+        `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
       );
       return;
     }
     const vidNameArr = [];
     for (let i = 0; i < videos.length; i++) {
-      vidNameArr.push(`${i + 1}: ${videos[i].title}`);
+      vidNameArr.push(`${i + 1}: [${videos[i].title}](${videos[i].shortURL})`);
     }
-    vidNameArr.push('exit');
+    vidNameArr.push('cancel');
     const embed = new MessageEmbed()
-      .setColor('#e9f931')
-      .setTitle('Choose a song by commenting a number between 1 and 5')
-      .addField('Song 1', vidNameArr[0])
-      .addField('Song 2', vidNameArr[1])
-      .addField('Song 3', vidNameArr[2])
-      .addField('Song 4', vidNameArr[3])
-      .addField('Song 5', vidNameArr[4])
-      .addField('Exit', 'exit');
+      .setColor('#ff0000')
+      .setTitle(`:mag: Search Results!`)
+      .addField(':notes: Result 1', vidNameArr[0])
+      .setURL(videos[0].url)
+      .addField(':notes: Result 2', vidNameArr[1])
+      .addField(':notes: Result 3', vidNameArr[2])
+      .addField(':notes: Result 4', vidNameArr[3])
+      .addField(':notes: Result 5', vidNameArr[4])
+      .setThumbnail(videos[0].thumbnails.high.url)
+      .setFooter('Choose a song by commenting a number between 1 and 5')
+      .addField(':x: Cancel', 'to cancel ');
     var songEmbed = await message.channel.send({ embed });
     message.channel
       .awaitMessages(
         function(msg) {
-          return (msg.content > 0 && msg.content < 6) || msg.content === 'exit';
+          return (
+            (msg.content > 0 && msg.content < 6) || msg.content === 'cancel'
+          );
         },
         {
           max: 1,
@@ -187,7 +210,7 @@ module.exports = class PlayCommand extends Command {
       )
       .then(function(response) {
         const videoIndex = parseInt(response.first().content);
-        if (response.first().content === 'exit') {
+        if (response.first().content === 'cancel') {
           songEmbed.delete();
           return;
         }
@@ -230,7 +253,16 @@ module.exports = class PlayCommand extends Command {
               if (songEmbed) {
                 songEmbed.delete();
               }
-              message.say(`${video.title} added to queue`);
+              const addedEmbed = new MessageEmbed()
+                .setColor('#ff0000')
+                .setTitle(`:musical_note: ${video.title}`)
+                .addField(
+                  `Has been added to queue. `,
+                  `This song is #${message.guild.musicData.queue.length} in queue`
+                )
+                .setThumbnail(video.thumbnails.high.url)
+                .setURL(video.url);
+              message.say(addedEmbed);
               return;
             }
           })
@@ -239,7 +271,7 @@ module.exports = class PlayCommand extends Command {
               songEmbed.delete();
             }
             message.say(
-              'An error has occured when trying to get the video ID from youtube'
+              ':x: An error has occured when trying to get the video ID from youtube.'
             );
             return;
           });
@@ -249,7 +281,7 @@ module.exports = class PlayCommand extends Command {
           songEmbed.delete();
         }
         message.say(
-          'Please try again and enter a number between 1 and 5 or exit'
+          ':x: Please try again and enter a number between 1 and 5 or cancel.'
         );
         return;
       });
@@ -271,16 +303,17 @@ module.exports = class PlayCommand extends Command {
             dispatcher.setVolume(message.guild.musicData.volume);
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
-              .setColor('#e9f931')
-              .addField('Now Playing:', queue[0].title)
-              .addField('Duration:', queue[0].duration)
+              .setColor('#ff0000')
+              .addField(':notes: Now Playing:', queue[0].title)
+              .addField(':stopwatch: Duration:', queue[0].duration)
+              .setURL(queue[0].url)
               .setFooter(
-                `Requested by ${queue[0].memberDisplayName}`,
+                `Requested by ${queue[0].memberDisplayName}!`,
                 queue[0].memberAvatar
               );
 
             if (queue[1] && !message.guild.musicData.loopSong)
-              videoEmbed.addField('Next Song:', queue[1].title);
+              videoEmbed.addField(':track_next: Next Song:', queue[1].title);
             message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
@@ -301,7 +334,6 @@ module.exports = class PlayCommand extends Command {
               message.guild.musicData.nowPlaying = null;
               message.guild.musicData.songDispatcher = null;
               if (
-                // when the leave command is called
                 message.guild.me.voice.channel &&
                 message.guild.musicData.skipTimer
               ) {
@@ -316,14 +348,16 @@ module.exports = class PlayCommand extends Command {
                     message.guild.me.voice.channel
                   ) {
                     message.guild.me.voice.channel.leave();
-                    message.channel.send('Left channel due to inactivity');
+                    message.channel.send(
+                      ':zzz: Left channel due to inactivity.'
+                    );
                   }
                 }, 90000);
               }
             }
           })
           .on('error', function(e) {
-            message.say('Cannot play song');
+            message.say(':x: Cannot play song!');
             console.error(e);
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.isPlaying = false;
@@ -335,7 +369,7 @@ module.exports = class PlayCommand extends Command {
           });
       })
       .catch(function() {
-        message.say('I have no permission to join your channel!');
+        message.say(':no_entry: I have no permission to join your channel!');
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.isPlaying = false;
         message.guild.musicData.nowPlaying = null;
@@ -349,7 +383,7 @@ module.exports = class PlayCommand extends Command {
   }
   static constructSongObj(video, voiceChannel, user) {
     let duration = this.formatDuration(video.duration);
-    if (duration == '00:00') duration = 'Live Stream';
+    if (duration == '00:00') duration = ':red_circle: Live Stream';
     return {
       url: `https://www.youtube.com/watch?v=${video.raw.id}`,
       title: video.title,

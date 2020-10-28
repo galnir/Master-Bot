@@ -9,7 +9,7 @@ module.exports = class CatCommand extends Command {
       aliases: ['cat-pic', 'cats'],
       group: 'other',
       memberName: 'cat',
-      description: 'Replies with a cute cat picture',
+      description: 'Replies with a cute cat picture!',
       throttling: {
         usages: 2,
         duration: 10
@@ -22,7 +22,7 @@ module.exports = class CatCommand extends Command {
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
       .catch(err => {
-        message.say('Request to find a kitty failed :(');
+        message.say(':x: Request to find a kitty failed!');
         return console.error(err);
       });
   }

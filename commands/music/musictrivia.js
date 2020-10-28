@@ -23,7 +23,7 @@ module.exports = class MusicTriviaCommand extends Command {
           key: 'numberOfSongs',
           prompt: 'What is the number of songs you want the quiz to have?',
           type: 'integer',
-          default: 5,
+          //default: 5,
           max: 15
         }
       ]
@@ -33,9 +33,11 @@ module.exports = class MusicTriviaCommand extends Command {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel)
-      return message.say('Please join a voice channel and try again');
+      return message.say(
+        ':no_entry: Please join a voice channel and try again!'
+      );
     if (message.guild.musicData.isPlaying === true)
-      return message.channel.send('A quiz or a song is already running');
+      return message.channel.send(':x: A quiz or a song is already running!');
     message.guild.musicData.isPlaying = true;
     message.guild.triviaData.isTriviaRunning = true;
     // fetch link array from txt file
@@ -52,10 +54,10 @@ module.exports = class MusicTriviaCommand extends Command {
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
-      .setTitle('Starting Music Quiz')
+      .setTitle(':notes: Starting Music Quiz!')
       .setDescription(
-        `Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
-        You can end the trivia at any point by using the end-trivia command`
+        `:notes: Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
+        You can end the trivia at any point by using the ${prefix}end-trivia command!`
       );
     message.say(infoEmbed);
     // init quiz queue
@@ -215,7 +217,7 @@ module.exports = class MusicTriviaCommand extends Command {
 
             const embed = new MessageEmbed()
               .setColor('#ff7373')
-              .setTitle(`The song was:  ${song}`)
+              .setTitle(`:musical_note: The song was:  ${song}`)
               .setDescription(
                 classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
               );
@@ -268,7 +270,7 @@ module.exports = class MusicTriviaCommand extends Command {
       len = arr.length,
       taken = new Array(len);
     if (n > len)
-      throw new RangeError('getRandom: more elements taken than available');
+      throw new RangeError('getRandom: more elements taken than available!');
     while (n--) {
       var x = Math.floor(Math.random() * len);
       // prettier-ignore

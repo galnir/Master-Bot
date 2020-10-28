@@ -28,7 +28,7 @@ module.exports = class EightBallCommand extends Command {
       ballArray[Math.floor(Math.random() * ballArray.length)];
 
     const answerEmbed = new MessageEmbed()
-      .setTitle('Magic')
+      .setTitle('Magic 8Ball Says!')
       .setDescription(randomAnswer.text)
       .setColor('#ff003c');
     return message.channel.send(answerEmbed);
