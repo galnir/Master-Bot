@@ -22,10 +22,10 @@ module.exports = class TrumpCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#BB7D61')
-          .setTitle('Quotes from Trump')
+	  .setAuthor('Donald Trump', 'https://www.whitehouse.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-200x200.jpg')
           .setDescription(json.value)
 		  .setTimestamp()
-		  .setFooter('Powered by tronalddump.io', 'https://www.whitehouse.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-200x200.jpg');
+		  .setFooter('Powered by tronalddump.io', '');
         return message.say(embed);
       })
       .catch(err => {
