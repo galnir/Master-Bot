@@ -1,3 +1,5 @@
+/* eslint-disable @getify/proper-ternary/parens */
+
 const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
@@ -42,7 +44,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
       if (body.data[0].runs.length === 0) {
         message.reply(
-          body.data[0].game.data.names.international + ' has no runs.'
+          body.data[0].game.data.names.international + ' has no runs'
         );
       } else {
         let platform =
@@ -59,11 +61,12 @@ module.exports = class SpeedrunBasicCommand extends Command {
             ? body.data[0].players.data[0].names.international
             : body.data[0].players.data[0].name;
 
-        const time = require('resources/other/seconds.js');
         const embed = new MessageEmbed()
           .setColor('#800020')
           .setTitle(
-            time.convert(body.data[0].runs[0].run.times.primary_t) +
+            SpeedrunBasicCommand.convertTime(
+              body.data[0].runs[0].run.times.primary_t
+            ) +
               ' by ' +
               runnerName
           )
@@ -81,5 +84,53 @@ module.exports = class SpeedrunBasicCommand extends Command {
         message.channel.send(embed);
       }
     }
+  }
+  static convertTime(time) {
+    let str, hr, min, sec, ms;
+    let parts = time.toString().split('.');
+    ms =
+      parts.length > 1 ? parseInt((parts[1] + '00').substr(0, 3)) : undefined;
+    sec = parseInt(parts[0]);
+    if (sec >= 60) {
+      min = Math.floor(sec / 60);
+      sec = sec % 60;
+      sec = sec < 10 ? '0' + sec : sec;
+    }
+    if (min >= 60) {
+      hr = Math.floor(min / 60);
+      min = min % 60;
+      min = min < 10 ? '0' + min : min;
+    }
+    if (ms < 10) ms = '00' + ms;
+    else if (ms < 100) ms = '0' + ms;
+    if (min === undefined) {
+      str =
+        ms === undefined
+          ? sec.toString() + 's'
+          : sec.toString() + 's ' + ms.toString() + 'ms';
+    } else if (hr === undefined) {
+      str =
+        ms === undefined
+          ? min.toString() + 'm ' + sec.toString() + 's'
+          : min.toString() +
+            'm ' +
+            sec.toString() +
+            's ' +
+            ms.toString() +
+            'ms';
+    } else {
+      str =
+        ms === undefined
+          ? hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's'
+          : hr.toString() +
+            'h ' +
+            min.toString() +
+            'm ' +
+            sec.toString() +
+            's ' +
+            ms.toString() +
+            'ms';
+    }
+    return str;
   }
 };
