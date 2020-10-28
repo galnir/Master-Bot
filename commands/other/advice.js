@@ -22,10 +22,10 @@ module.exports = class AdviceCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#403B3A')
-          .setTitle('Advice Slip')
+	.setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png')
           .setDescription(json.slip.advice)
 		  .setTimestamp()
-		  .setFooter('Powered by adviceslip.com', 'https://i.imgur.com/8pIvnmD.png');
+		  .setFooter('Powered by adviceslip.com', '');
         return message.say(embed);
       })
       .catch(err => {
