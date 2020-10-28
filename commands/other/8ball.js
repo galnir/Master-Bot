@@ -30,7 +30,9 @@ module.exports = class EightBallCommand extends Command {
     const answerEmbed = new MessageEmbed()
       .setTitle('Magic 8Ball Says!')
       .setDescription(randomAnswer.text)
-      .setColor('#ff003c');
+      .setColor('#000000')
+      .setTimestamp()
+      .setFooter('', 'https://i.imgur.com/HbwMhWM.png');
     return message.channel.send(answerEmbed);
   }
 };
