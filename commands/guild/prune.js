@@ -4,7 +4,7 @@ module.exports = class PruneCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'prune',
-      aliases: ['delete-messages', 'bulk-delete'],
+      aliases: ['delete-messages', 'bulk-delete', 'purge', 'clear'],
       description: 'Delete up to 99 recent messages.',
       group: 'guild',
       memberName: 'prune',
