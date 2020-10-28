@@ -23,10 +23,11 @@ module.exports = class ChuckNorrisCommand extends Command {
       .then(res => res.json())
       .then(json => {
         const embed = new MessageEmbed()
-          .setColor('#E41032')
+          .setColor('#CD7232')
           .setTitle(':sunglasses: Chuck Norris Fact:')
           .setDescription(json.value)
-          .setURL('https://api.chucknorris.io');
+          .setTimestamp()
+          .setFooter('Powered by chucknorris.io', 'https://i.imgur.com/wr1g92v.png');
         return message.say(embed);
       })
       .catch(err => {
