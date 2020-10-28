@@ -23,9 +23,10 @@ module.exports = class InsultCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#E41032')
-          .setTitle(':imp: Evil Insult:')
+          .setTitle('Evil Insult :face_with_symbols_over_mouth:')
           .setDescription(json.insult)
-          .setURL('https://evilinsult.com');
+          .setTimestamp()
+          .setFooter('Powered by evilinsult.com', 'https://i.imgur.com/bOVpNAX.png');
         return message.say(embed);
       })
       .catch(err => {
