@@ -22,11 +22,12 @@ module.exports = class BoredCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#6BA3FF')
-	  .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png')
+          .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png')
           .setDescription(json.activity)
-		  .setTimestamp()
-		  .setFooter('Powered by boredapi.com', '');
-        return message.say(embed);
+          .setTimestamp()
+          .setFooter('Powered by boredapi.com', '');
+        message.channel.send(embed);
+        return;
       })
       .catch(err => {
         message.say('Failed to deliver activity :sob:');
