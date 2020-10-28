@@ -5,15 +5,15 @@ const fetch = require('node-fetch');
 module.exports = class LookupCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'resolve',
-      memberName: 'resolve',
-	  aliases: ['lookup', 'ip', 'whois'],
+      name: 'lookup',
+      memberName: 'lookup',
+	  aliases: ['lookup', 'ip', 'whois', 'resolve'],
       group: 'other',
       description:
         'Resolve an IP address or hostname with additional info.',
       throttling: {
-        usages: 2,
-        duration: 12
+        usages: 45, // 45 queries
+        duration: 60 // every 60 seconds
       },
       args: [
         {
@@ -41,7 +41,7 @@ module.exports = class LookupCommand extends Command {
 		  //embed json results
       return new MessageEmbed()
         .setColor('#42aaf5')
-        .setTitle('IP/Hostname Lookup')
+		.setAuthor('IP/Hostname Resolver', 'https://i.imgur.com/3lIiIv9.png', 'https://ip-api.com')
 		.addFields(
 		{ name: 'Query', value: resl, inline: true },
 		{ name: 'Resolves', value: json.query, inline: true },
@@ -60,7 +60,5 @@ module.exports = class LookupCommand extends Command {
         'Something went wrong looking for that result, is the api throttled?'
       );
     }
-
-
   }
 };
