@@ -25,7 +25,7 @@ module.exports = class TrumpCommand extends Command {
           .setTitle('Quotes from Trump')
           .setDescription(json.value)
 		  .setTimestamp()
-		  .setFooter('Powered tronalddump.io', 'https://www.whitehouse.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-200x200.jpg');
+		  .setFooter('Powered by tronalddump.io', 'https://www.whitehouse.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-200x200.jpg');
         return message.say(embed);
       })
       .catch(err => {
