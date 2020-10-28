@@ -33,11 +33,11 @@ module.exports = class UrbanCommand extends Command {
         const embed = new MessageEmbed()
           .setColor('#BB7D61')
           .setTitle(`${text}`)
-		  .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
+	  .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
           .setDescription(`*${json.list[Math.floor(Math.random()*1)].definition}*`)
-		  .setURL(json.list[0].permalink)
-		  .setTimestamp()
-		  .setFooter('Powered by UrbanDictionary', '');
+	  .setURL(json.list[0].permalink)
+	  .setTimestamp()
+	  .setFooter('Powered by UrbanDictionary', '');
         return message.say(embed);
       })
       .catch(err => {
