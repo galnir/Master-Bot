@@ -22,11 +22,12 @@ module.exports = class KanyeCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#AF6234')
-	  .setAuthor('Kanye West', 'https://i.imgur.com/SsNoHVh.png')
+          .setAuthor('Kanye West', 'https://i.imgur.com/SsNoHVh.png')
           .setDescription(json.quote)
-	  .setTimestamp()
-	  .setFooter('Powered by kanye.rest', '');
-        return message.say(embed);
+          .setTimestamp()
+          .setFooter('Powered by kanye.rest', '');
+        message.channel.send(embed);
+        return;
       })
       .catch(err => {
         message.say('Failed to deliver quote :sob:');
