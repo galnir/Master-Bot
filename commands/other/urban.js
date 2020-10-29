@@ -2,7 +2,6 @@ const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 
-
 module.exports = class UrbanCommand extends Command {
   constructor(client) {
     super(client, {
@@ -20,7 +19,9 @@ module.exports = class UrbanCommand extends Command {
           key: 'text',
           prompt: 'What do you want to search for?',
           type: 'string',
-          validate: text => text.length < 50
+          validate: function validateTextLength(text) {
+            return text.length < 50;
+          }
         }
       ]
     });
@@ -33,16 +34,24 @@ module.exports = class UrbanCommand extends Command {
         const embed = new MessageEmbed()
           .setColor('#BB7D61')
           .setTitle(`${text}`)
-	  .setAuthor('Urban Dictionary', 'https://i.imgur.com/vdoosDm.png', 'https://urbandictionary.com')
-          .setDescription(`*${json.list[Math.floor(Math.random()*1)].definition}*`)
-	  .setURL(json.list[0].permalink)
-	  .setTimestamp()
-	  .setFooter('Powered by UrbanDictionary', '');
-        return message.say(embed);
+          .setAuthor(
+            'Urban Dictionary',
+            'https://i.imgur.com/vdoosDm.png',
+            'https://urbandictionary.com'
+          )
+          .setDescription(
+            `*${json.list[Math.floor(Math.random() * 1)].definition}*`
+          )
+          .setURL(json.list[0].permalink)
+          .setTimestamp()
+          .setFooter('Powered by UrbanDictionary', '');
+        message.channel.send(embed);
+        return;
       })
-      .catch(err => {
-         message.say('Failed to deliver definition :sob:');
-        return console.error(err);
+      .catch(() => {
+        message.say('Failed to deliver definition :sob:');
+        // console.error(err); // no need to spam console for each time it doesn't find a query
+        return;
       });
   }
 };
