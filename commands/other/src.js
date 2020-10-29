@@ -33,7 +33,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.reply('No game was found.');
+      message.reply(':x: No game was found.');
     } else {
       let gameID = initial.data[0].id;
 
@@ -77,9 +77,10 @@ module.exports = class SpeedrunBasicCommand extends Command {
               ' - ' +
               body.data[0].category.data.name
           )
-          .addField('Date Played:', body.data[0].runs[0].run.date)
-          .addField('Played On:', platform + region + emu)
-          .setTimestamp();
+          .addField(':calendar_spiral: Date Played:', body.data[0].runs[0].run.date)
+          .addField(':video_game: Played On:', platform + region + emu)
+          .setTimestamp()
+          .setFooter('Powered by www.speedrun.com', '');
 
         message.channel.send(embed);
       }
