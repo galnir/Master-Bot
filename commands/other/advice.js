@@ -22,11 +22,12 @@ module.exports = class AdviceCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#403B3A')
-	.setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png')
+          .setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png')
           .setDescription(json.slip.advice)
-		  .setTimestamp()
-		  .setFooter('Powered by adviceslip.com', '');
-        return message.say(embed);
+          .setTimestamp()
+          .setFooter('Powered by adviceslip.com', '');
+        message.channel.send(embed);
+        return;
       })
       .catch(err => {
         message.say('Failed to deliver advice :sob:');
