@@ -33,7 +33,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.reply('No game was found.');
+      message.reply(':x: No game was found.');
     } else {
       let gameID = initial.data[0].id;
 
@@ -62,7 +62,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
             : body.data[0].players.data[0].name;
 
         const embed = new MessageEmbed()
-          .setColor('#800020')
+          .setColor('#3E8657')
           .setTitle(
             SpeedrunBasicCommand.convertTime(
               body.data[0].runs[0].run.times.primary_t
@@ -75,11 +75,12 @@ module.exports = class SpeedrunBasicCommand extends Command {
           .setAuthor(
             body.data[0].game.data.names.international +
               ' - ' +
-              body.data[0].category.data.name
+              body.data[0].category.data.name, 'https://i.imgur.com/PpxR9E1.png', 'http://speedrun.com/'
           )
-          .addField('Date Played:', body.data[0].runs[0].run.date)
-          .addField('Played On:', platform + region + emu)
-          .setTimestamp();
+          .addField(':calendar_spiral: Date Played:', body.data[0].runs[0].run.date)
+          .addField(':video_game: Played On:', platform + region + emu)
+          .setTimestamp()
+          .setFooter('Powered by www.speedrun.com', '');
 
         message.channel.send(embed);
       }
