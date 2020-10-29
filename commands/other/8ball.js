@@ -28,9 +28,10 @@ module.exports = class EightBallCommand extends Command {
       ballArray[Math.floor(Math.random() * ballArray.length)];
 
     const answerEmbed = new MessageEmbed()
-      .setTitle('Magic 8Ball Says!')
+      .setAuthor('Magic 8 Ball', 'https://i.imgur.com/HbwMhWM.png')
       .setDescription(randomAnswer.text)
-      .setColor('#ff003c');
+      .setColor('#000000')
+      .setTimestamp()
     return message.channel.send(answerEmbed);
   }
 };
