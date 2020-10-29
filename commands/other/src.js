@@ -75,7 +75,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
           .setAuthor(
             body.data[0].game.data.names.international +
               ' - ' +
-              body.data[0].category.data.name ,'https://i.imgur.com/PpxR9E1.png'
+              body.data[0].category.data.name, 'https://i.imgur.com/PpxR9E1.png', 'http://speedrun.com/'
           )
           .addField(':calendar_spiral: Date Played:', body.data[0].runs[0].run.date)
           .addField(':video_game: Played On:', platform + region + emu)
