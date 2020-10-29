@@ -74,6 +74,10 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !uptime      | Replies with the bot's total uptime                                                                                                                                 | !uptime               |
 | !8ball      | Get the answer to anything!                                                                                                                                   |     !8ball Is this bot awesome?               |
 | !rps      | Rock Paper Scissors                                                                                                                                | !rps               |
+| !bored      | Generate a random activity!                                                                                                                                | !bored               |
+| !advice      | Get some advice!                                                                                                                                | !advice               |
+| !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
+| !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
 
 
 - Gifs
@@ -114,7 +118,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
 
-## Contributors
+## Contributors ❤️
 
 [malokdev](https://github.com/malokdev) - 'uptime' command
 
