@@ -62,7 +62,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
             : body.data[0].players.data[0].name;
 
         const embed = new MessageEmbed()
-          .setColor('#3e8657')
+          .setColor('#3E8657')
           .setTitle(
             SpeedrunBasicCommand.convertTime(
               body.data[0].runs[0].run.times.primary_t
