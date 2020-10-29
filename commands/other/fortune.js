@@ -22,9 +22,11 @@ module.exports = class FortuneCommand extends Command {
       const res = await fetch('http://yerkee.com/api/fortune');
       const json = await res.json();
       const embed = new MessageEmbed()
-        .setColor('RANDOM')
-        .setTitle(':fortune_cookie: Fortune Cookie:')
-        .setDescription(json.fortune);
+        .setColor('#F4D190')
+        .setAuthor('Fortune Cookie', 'https://i.imgur.com/58wIjK0.pngg', 'https://yerkee.com')
+        .setDescription(json.fortune)
+        .setTimestamp()
+        .setFooter('Powered by yerkee.com', '');
       return message.say(embed);
     } catch (e) {
       message.say(':x: Could not obtain a fortune cookie!');
