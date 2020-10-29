@@ -6,7 +6,7 @@ module.exports = class MotivationCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'motivation',
-      aliases: ['motivational, motivation-quote'],
+      aliases: ['motivational', 'motivation-quote', 'motivate'],
       group: 'other',
       memberName: 'motivation',
       description: 'Get a random motivational quote!'
