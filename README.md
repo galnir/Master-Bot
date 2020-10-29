@@ -116,8 +116,10 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors
 
-[malokdev](https://github.com/malokdev) - uptime command
+[malokdev](https://github.com/malokdev) - 'uptime' command
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
 
-[ModoSN](https://github.com/ModoSN) - rps, 8ball commands 
+[ModoSN](https://github.com/ModoSN) - 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
+
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up' command and visual updates
