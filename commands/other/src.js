@@ -62,7 +62,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
             : body.data[0].players.data[0].name;
 
         const embed = new MessageEmbed()
-          .setColor('#800020')
+          .setColor('#3e8657')
           .setTitle(
             SpeedrunBasicCommand.convertTime(
               body.data[0].runs[0].run.times.primary_t
@@ -75,7 +75,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
           .setAuthor(
             body.data[0].game.data.names.international +
               ' - ' +
-              body.data[0].category.data.name
+              body.data[0].category.data.name ,'https://i.imgur.com/PpxR9E1.png'
           )
           .addField(':calendar_spiral: Date Played:', body.data[0].runs[0].run.date)
           .addField(':video_game: Played On:', platform + region + emu)
