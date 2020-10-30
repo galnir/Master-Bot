@@ -25,9 +25,11 @@ module.exports = class MotivationCommand extends Command {
       quoteArray[Math.floor(Math.random() * quoteArray.length)];
 
     const quoteEmbed = new MessageEmbed()
-      .setTitle(randomQuote.author)
-      .setDescription(randomQuote.text)
-      .setColor('#ff003c');
+      .setAuthor('Motivational Quote', 'https://i.imgur.com/Cnr6cQb.png', 'https://type.fit')
+      .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
+	  .setTimestamp()
+	  .setFooter('Powered by type.fit')
+      .setColor('#FFD77A');
     return message.channel.send(quoteEmbed);
   }
 };
