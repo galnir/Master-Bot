@@ -24,12 +24,16 @@ module.exports = class ChuckNorrisCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#CD7232')
-          .setTitle(':sunglasses: Chuck Norris Fact:')
-         .setAuthor('Chuck Norris', 'https://i.imgur.com/wr1g92v.png', 'https://chucknorris.io')
+          .setAuthor(
+            'Chuck Norris',
+            'https://i.imgur.com/wr1g92v.png',
+            'https://chucknorris.io'
+          )
           .setDescription(json.value)
           .setTimestamp()
           .setFooter('Powered by chucknorris.io', '');
-        return message.say(embed);
+        message.channel.send(embed);
+        return;
       })
       .catch(err => {
         message.say(':x: An error occured, Chuck is investigating this!');
