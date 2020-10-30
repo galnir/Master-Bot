@@ -3,11 +3,11 @@ const { Command } = require('discord.js-commando');
 module.exports = class WhoMadeMeCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'whomademe',
-      aliases: ['bot-maker', 'bot-creator'],
-      memberName: 'whomademe',
+      name: 'about',
+      aliases: ['botinfo', 'whomademe', 'bot-maker', 'bot-creator'],
+      memberName: 'about',
       group: 'other',
-      description: "Replies with the bot creator's name!"
+      description: "Learn about the bot and it's creator!"
     });
   }
 
