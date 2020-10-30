@@ -70,7 +70,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !say         | Make the bot say anything                                                                                                                                           | !say Lorem Ipsum      |
 | !sr          | Replies with speedrun info of the main category.                                                                                                                    | !sr super metroid     |
 | !translate   | Translate to any language using yandex translation service(only supported lanugages)                                                                          | !translate ありがとう |
-| !whomademe   | Info about me and the repo                                                                                                                                          | !whomademe            |
+| !about   | Info about me and the repo                                                                                                                                          | !about            |
 | !uptime      | Replies with the bot's total uptime                                                                                                                                 | !uptime               |
 | !8ball      | Get the answer to anything!                                                                                                                                   |     !8ball Is this bot awesome?               |
 | !rps      | Rock Paper Scissors                                                                                                                                | !rps               |
