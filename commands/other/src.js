@@ -50,8 +50,8 @@ module.exports = class SpeedrunBasicCommand extends Command {
         var gameName = new MessageEmbed()
           .setColor('#3E8657')
           .setTitle(':mag: Search Results')
-          .setThumbnail(initial.data[1].assets['cover-medium'].uri)
-          .addField('Try searching again with the following suggestions.', initial.data[0].names.international)
+          .setThumbnail(initial.data[0].assets['cover-medium'].uri)
+          .addField(':x: Try searching again with the following suggestions.', initial.data[0].names.international + ` doesn't have any runs.`)
           .setTimestamp()
           .setFooter('Powered by www.speedrun.com', '');
         for (let i = 1; i < gameNameArr.length; i++) {
