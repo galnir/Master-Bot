@@ -43,9 +43,20 @@ module.exports = class SpeedrunBasicCommand extends Command {
       const body = await response.json();
 
       if (body.data.length === 0) {
-        message.say(
-          ':x: Error: ' + initial.data[0].names.international + ' has no runs.'
-        );
+        const gameNameArr = [];
+        initial.data.slice(0, 6).forEach(id => {
+          gameNameArr.push(id.names.international);
+        });
+        var gameName = new MessageEmbed()
+          .setColor('#3E8657')
+          .setTitle(':mag: Search Results')
+          .setThumbnail(initial.data[1].assets['cover-medium'].uri)
+          .addField('Try searching again with the following suggestions.', initial.data[0].names.international);
+        for (let i = 1; i < gameNameArr.length; i++) {
+          gameName.addField(`:video_game: Result ${i}`,gameNameArr[i],)
+        }
+        message.say(gameName)
+      
       } else {
         let platform =
           body.data[0].platforms.data.length > 0
