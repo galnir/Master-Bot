@@ -51,7 +51,9 @@ module.exports = class SpeedrunBasicCommand extends Command {
           .setColor('#3E8657')
           .setTitle(':mag: Search Results')
           .setThumbnail(initial.data[1].assets['cover-medium'].uri)
-          .addField('Try searching again with the following suggestions.', initial.data[0].names.international);
+          .addField('Try searching again with the following suggestions.', initial.data[0].names.international)
+          .setTimestamp()
+          .setFooter('Powered by www.speedrun.com', '');
         for (let i = 1; i < gameNameArr.length; i++) {
           gameName.addField(`:video_game: Result ${i}`,gameNameArr[i],)
         }
