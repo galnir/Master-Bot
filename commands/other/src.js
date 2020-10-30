@@ -33,7 +33,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.reply(':x: No game was found.');
+      message.say(':x: No game was found.');
     } else {
       let gameID = initial.data[0].id;
 
@@ -42,9 +42,9 @@ module.exports = class SpeedrunBasicCommand extends Command {
       );
       const body = await response.json();
 
-      if (body.data[0].runs.length === 0) {
-        message.reply(
-          body.data[0].game.data.names.international + ' has no runs'
+      if (body.data.length === 0) {
+        message.say(
+          ':x: Error: ' + initial.data[0].names.international + ' has no runs.'
         );
       } else {
         let platform =
