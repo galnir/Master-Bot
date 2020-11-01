@@ -9,7 +9,7 @@ module.exports = class MusicTriviaCommand extends Command {
     super(client, {
       name: 'music-trivia',
       memberName: 'music-trivia',
-      aliases: ['music-quiz', 'start-quiz'],
+      aliases: ['music-quiz', 'start-quiz', 'mtrivia'],
       group: 'music',
       description: 'Engage in a music quiz with your friends!',
       guildOnly: true,
