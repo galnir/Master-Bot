@@ -9,7 +9,6 @@ module.exports = class VoteCommand extends Command {
             group: 'other',
             memberName: 'vote',
             description: "Starts a yes/no/don't care vote.",
-            examples: ['!vote "Do you like to vote?" "I mean who doesn\'t right?!" 5'],
             args: [
                 {
                     key: 'question',

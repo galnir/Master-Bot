@@ -9,7 +9,6 @@ module.exports = class PollCommand extends Command {
             group: 'other',
             memberName: 'poll',
             description: 'Creates a poll with up to 10 choices.',
-            examples: ["!poll \"What\'s your favourite food?\" \"Hot Dogs,Pizza,Burgers,Fruits,Veggies\" 10"],
             args: [
                 {
                     key: 'question',
