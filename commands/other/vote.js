@@ -48,7 +48,7 @@ module.exports = class VoteCommand extends Command {
             .setTitle(question)
             .setDescription(desc)
             .setAuthor(msg.author.username, msg.author.displayAvatarURL)
-            .setColor(0xD53C55)
+            .setColor(`#FF0000`)
             .setTimestamp();
             
         if (time) {
