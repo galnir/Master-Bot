@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
-const oneLine = require('common-tags').oneLine;
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class PollCommand extends Command {
     constructor(client) {
@@ -52,11 +51,11 @@ module.exports = class PollCommand extends Command {
             optionsText += emojiList[i] + " " + optionsList[i] + "\n";
         }
         
-        var embed = new RichEmbed()
+        var embed = new MessageEmbed()
             .setTitle(question)
             .setDescription(optionsText)
             .setAuthor(msg.author.username, msg.author.displayAvatarURL)
-            .setColor(0xD53C55) // Green: 0x00AE86
+            .setColor(0xD53C55)
             .setTimestamp();
             
         if (time) {
