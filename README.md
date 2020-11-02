@@ -54,7 +54,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
 | !move       | Move song to a desired position in queue                                                        | !move 8 1      |
 
-- Misc
+- Other
 
 | Command      | Description                                                                                                                                                         | Usage                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
@@ -78,6 +78,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !advice      | Get some advice!                                                                                                                                | !advice               |
 | !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
+| !poll         | Creates a poll with up to 10 choices.                                                                                                                                         | !poll What's your favourite food? Hot Dogs,Pizza,Burgers,Fruits,Veggie 10 |
+| !vote         | Starts a yes/no/don't care vote.                                                                                                                                              | !vote Do you like to vote?. I mean who doesn't right?! 5                 |
 
 
 - Gifs
