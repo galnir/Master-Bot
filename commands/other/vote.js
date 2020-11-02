@@ -28,16 +28,16 @@ module.exports = class VoteCommand extends Command {
             return 'Polling questions must be between 10 and 200 characters in length.';
           }
         },
-        {
-          key: 'time',
-          prompt: '(Optional) How long should the vote last in minutes?',
-          type: 'integer',
-          default: 0,
-          validate: (time) => {
-            if (time >= 0 && time <= 60) return true;
-            return 'Polling time must be between 0 and 60.';
-          }
-        }
+        // {
+        //   key: 'time',
+        //   prompt: '(Optional) How long should the vote last in minutes?',
+        //   type: 'integer',
+        //   default: 0,
+        //   validate: (time) => {
+        //     if (time >= 0 && time <= 60) return true;
+        //     return 'Polling time must be between 0 and 60.';
+        //   }
+        // }
       ]
     });
   }

@@ -28,17 +28,17 @@ module.exports = class PollCommand extends Command {
             return 'Polling options must be greater than one.';
           }
         },
-        {
-          key: 'time',
-          prompt: 'How long should the poll last in minutes?',
-          type: 'integer',
-          default: 0,
-          validate: (time) => {
-            if (time >= 0 && time <= 60) return true;
-            return 'Polling time must be between 0 and 60.';
-          }
-        }
-      ]
+    //     {
+    //       key: 'time',
+    //       prompt: 'How long should the poll last in minutes?',
+    //       type: 'integer',
+    //       default: 0,
+    //       validate: (time) => {
+    //         if (time >= 0 && time <= 60) return true;
+    //         return 'Polling time must be between 0 and 60.';
+    //       }
+    //     }
+       ]
     });
   }
 
@@ -65,7 +65,7 @@ module.exports = class PollCommand extends Command {
     var embed = new MessageEmbed()
       .setTitle(question)
       .setDescription(optionsText)
-      .setAuthor(msg.author.username, msg.author.displayAvatarURL)
+      .setAuthor(msg.author.username, msg.author.displayAvatar)
       .setColor(`#FF0000`)
       .setTimestamp();
 
