@@ -13,7 +13,7 @@ module.exports = class PollCommand extends Command {
           key: 'question',
           prompt: 'What is the poll question?',
           type: 'string',
-          validate: (question) => {
+          validate: question => {
             if (question.length < 101 && question.length > 11) return true;
             return 'Polling questions must be between 10 and 100 characters in length.';
           }
@@ -22,23 +22,23 @@ module.exports = class PollCommand extends Command {
           key: 'options',
           prompt: 'What options do you want for the poll?',
           type: 'string',
-          validate: (options) => {
+          validate: options => {
             var optionsList = options.split(',');
             if (optionsList.length > 1) return true;
             return 'Polling options must be greater than one.';
           }
         },
-    //     {
-    //       key: 'time',
-    //       prompt: 'How long should the poll last in minutes?',
-    //       type: 'integer',
-    //       default: 0,
-    //       validate: (time) => {
-    //         if (time >= 0 && time <= 60) return true;
-    //         return 'Polling time must be between 0 and 60.';
-    //       }
-    //     }
-       ]
+        {
+          key: 'time',
+          prompt: 'How long should the poll last in minutes?',
+          type: 'integer',
+          default: 0,
+          validate: time => {
+            if (time >= 0 && time <= 60) return true;
+            return 'Polling time must be between 0 and 60.';
+          }
+        }
+      ]
     });
   }
 
@@ -65,7 +65,7 @@ module.exports = class PollCommand extends Command {
     var embed = new MessageEmbed()
       .setTitle(question)
       .setDescription(optionsText)
-      .setAuthor(msg.author.username, msg.author.displayAvatar)
+      .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setColor(`#FF0000`)
       .setTimestamp();
 
@@ -75,11 +75,11 @@ module.exports = class PollCommand extends Command {
       embed.setFooter(`The poll has started and has no end time`);
     }
 
-    //msg.delete(); // Remove the user's command message
+    msg.delete(); // Remove the user's command message
 
     msg.channel
       .send({ embed }) // Definitely use a 2d array here..
-      .then(async function (message) {
+      .then(async function(message) {
         var reactionArray = [];
         for (var i = 0; i < optionsList.length; i++) {
           reactionArray[i] = await message.react(emojiList[i]);
@@ -88,13 +88,13 @@ module.exports = class PollCommand extends Command {
         if (time) {
           setTimeout(() => {
             // Re-fetch the message and get reaction counts
-            message.channel
-              .fetchMessage(message.id)
-              .then(async function (message) {
+            message.channel.messages
+              .fetch(message.id)
+              .then(async function(message) {
                 var reactionCountsArray = [];
                 for (var i = 0; i < optionsList.length; i++) {
                   reactionCountsArray[i] =
-                    message.reactions.get(emojiList[i]).count - 1;
+                    message.reactions.cache.get(emojiList[i]).count - 1;
                 }
 
                 // Find winner(s)
@@ -106,7 +106,6 @@ module.exports = class PollCommand extends Command {
                   else if (reactionCountsArray[i] === max) indexMax.push(i);
 
                 // Display winner(s)
-                console.log(reactionCountsArray); // Debugging votes
                 var winnersText = '';
                 if (reactionCountsArray[indexMax[0]] == 0) {
                   winnersText = 'No one voted!';

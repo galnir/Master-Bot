@@ -13,7 +13,7 @@ module.exports = class VoteCommand extends Command {
           key: 'question',
           prompt: 'What is the vote question?',
           type: 'string',
-          validate: (question) => {
+          validate: question => {
             if (question.length < 101 && question.length > 11) return true;
             return 'Polling questions must be between 10 and 100 characters in length.';
           }
@@ -23,21 +23,21 @@ module.exports = class VoteCommand extends Command {
           prompt: '(Optional) Do you have more details?',
           type: 'string',
           default: ' ',
-          validate: (desc) => {
+          validate: desc => {
             if (desc.length < 201 && desc.length > 11) return true;
             return 'Polling questions must be between 10 and 200 characters in length.';
           }
         },
-        // {
-        //   key: 'time',
-        //   prompt: '(Optional) How long should the vote last in minutes?',
-        //   type: 'integer',
-        //   default: 0,
-        //   validate: (time) => {
-        //     if (time >= 0 && time <= 60) return true;
-        //     return 'Polling time must be between 0 and 60.';
-        //   }
-        // }
+        {
+          key: 'time',
+          prompt: '(Optional) How long should the vote last in minutes?',
+          type: 'integer',
+          default: 0,
+          validate: time => {
+            if (time >= 0 && time <= 60) return true;
+            return 'Polling time must be between 0 and 60.';
+          }
+        }
       ]
     });
   }
@@ -47,7 +47,7 @@ module.exports = class VoteCommand extends Command {
     var embed = new MessageEmbed()
       .setTitle(question)
       .setDescription(desc)
-      .setAuthor(msg.author.username, msg.author.displayAvatarURL)
+      .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setColor(`#FF0000`)
       .setTimestamp();
 
@@ -61,7 +61,7 @@ module.exports = class VoteCommand extends Command {
 
     msg.channel
       .send({ embed }) // Use a 2d array?
-      .then(async function (message) {
+      .then(async function(message) {
         var reactionArray = [];
         reactionArray[0] = await message.react(emojiList[0]);
         reactionArray[1] = await message.react(emojiList[1]);
@@ -70,13 +70,13 @@ module.exports = class VoteCommand extends Command {
         if (time) {
           setTimeout(() => {
             // Re-fetch the message and get reaction counts
-            message.channel
-              .fetchMessage(message.id)
-              .then(async function (message) {
+            message.channel.messages
+              .fetch(msg.id)
+              .then(async function(message) {
                 var reactionCountsArray = [];
                 for (var i = 0; i < reactionArray.length; i++) {
                   reactionCountsArray[i] =
-                    message.reactions.get(emojiList[i]).count - 1;
+                    message.reactions.cache.get(emojiList[i]).count - 1;
                 }
 
                 // Find winner(s)
