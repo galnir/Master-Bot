@@ -36,7 +36,7 @@ module.exports = class LookupCommand extends Command {
 
       // json results
       const json = await res.json();
-      function embedResolve(text) {
+      function embedResolve() {
         //embed json results
         return new MessageEmbed()
           .setColor('#42aaf5')
