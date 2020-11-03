@@ -124,6 +124,6 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
 
-[ModoSN](https://github.com/ModoSN) - 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
+[ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
 [Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up' command and visual updates
