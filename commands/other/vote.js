@@ -71,7 +71,7 @@ module.exports = class VoteCommand extends Command {
           setTimeout(() => {
             // Re-fetch the message and get reaction counts
             message.channel.messages
-              .fetch(msg.id)
+              .fetch(message.id)
               .then(async function(message) {
                 var reactionCountsArray = [];
                 for (var i = 0; i < reactionArray.length; i++) {
@@ -88,7 +88,6 @@ module.exports = class VoteCommand extends Command {
                   else if (reactionCountsArray[i] === max) indexMax.push(i);
 
                 // Display winner(s)
-                console.log(reactionCountsArray); // Debugging votes
                 var winnersText = '';
                 if (reactionCountsArray[indexMax[0]] == 0) {
                   winnersText = 'No one voted!';
