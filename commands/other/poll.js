@@ -63,7 +63,7 @@ module.exports = class PollCommand extends Command {
     }
 
     var embed = new MessageEmbed()
-      .setTitle(question)
+      .setTitle(':ballot_box: ' + question)
       .setDescription(optionsText)
       .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setColor(`#FF0000`)
@@ -108,7 +108,7 @@ module.exports = class PollCommand extends Command {
                 // Display winner(s)
                 var winnersText = '';
                 if (reactionCountsArray[indexMax[0]] == 0) {
-                  winnersText = 'No one voted!';
+                  winnersText = ':x: No one voted!';
                 } else {
                   for (var i = 0; i < indexMax.length; i++) {
                     winnersText +=
@@ -121,7 +121,7 @@ module.exports = class PollCommand extends Command {
                   }
                 }
 
-                embed.addField('**Winner(s):**', winnersText);
+                embed.addField(':crown: **Winner(s):**', winnersText);
                 embed.setFooter(
                   `The poll is now closed! It lasted ${time} minute(s)`
                 );

@@ -45,7 +45,7 @@ module.exports = class VoteCommand extends Command {
   run(msg, { question, desc, time }) {
     var emojiList = ['👍', '👎', '🤷'];
     var embed = new MessageEmbed()
-      .setTitle(question)
+      .setTitle(':ballot_box: ' + question)
       .setDescription(desc)
       .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setColor(`#FF0000`)
@@ -90,7 +90,7 @@ module.exports = class VoteCommand extends Command {
                 // Display winner(s)
                 var winnersText = '';
                 if (reactionCountsArray[indexMax[0]] == 0) {
-                  winnersText = 'No one voted!';
+                  winnersText = ':x: No one voted!';
                 } else {
                   for (var i = 0; i < indexMax.length; i++) {
                     winnersText +=
@@ -100,7 +100,7 @@ module.exports = class VoteCommand extends Command {
                       ' vote(s))\n';
                   }
                 }
-                embed.addField('**Winner(s):**', winnersText);
+                embed.addField(':crown: **Winner(s):**', winnersText);
                 embed.setFooter(
                   `The vote is now closed! It lasted ${time} minute(s)`
                 );
