@@ -57,7 +57,7 @@ module.exports = class VoteCommand extends Command {
       embed.setFooter(`The vote has started and has no end time`);
     }
 
-    //msg.delete(); // Remove the user's command message
+    msg.delete(); // Remove the user's command message
 
     msg.channel
       .send({ embed }) // Use a 2d array?
