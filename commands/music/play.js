@@ -182,7 +182,7 @@ module.exports = class PlayCommand extends Command {
     }
     const vidNameArr = [];
     for (let i = 0; i < videos.length; i++) {
-      vidNameArr.push(`${i + 1}: [${videos[i].title.replace(/&#39;/g, "'").replace(/quot;/g, `"`).replace(/&amp;/g, "&")}](${videos[i].shortURL})`);
+      vidNameArr.push(`${i + 1}: [${videos[i].title.replace(/&#39;/g, "'").replace(/quot;/g, `"`).replace(/&amp;/g, " & ")}](${videos[i].shortURL})`);
     }
     vidNameArr.push('cancel');
     const embed = new MessageEmbed()
