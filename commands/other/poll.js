@@ -44,16 +44,16 @@ module.exports = class PollCommand extends Command {
 
   run(msg, { question, options, time }) {
     var emojiList = [
-      ':one:',
-      ':two:',
-      ':three:',
-      ':four:',
-      ':five:',
-      ':six:',
-      ':seven:',
-      ':eight:',
-      ':nine:',
-      ':keycap_ten:'
+      '1⃣',
+      '2⃣',
+      '3⃣',
+      '4⃣',
+      '5⃣',
+      '6⃣',
+      '7⃣',
+      '8⃣',
+      '9⃣',
+      '🔟'
     ];
     var optionsList = options.split(',');
 
