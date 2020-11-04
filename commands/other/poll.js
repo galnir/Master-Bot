@@ -53,7 +53,7 @@ module.exports = class PollCommand extends Command {
       ':seven:',
       ':eight:',
       ':nine:',
-      ':ten:'
+      ':keycap_ten:'
     ];
     var optionsList = options.split(',');
 
