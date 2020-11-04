@@ -55,7 +55,7 @@ client.registry
 
 // Profile Info of the bot when it's running
 client.once('ready', () => {
-  console.log('Ready!');
+  console.log(`${client.user.tag} is Ready!`);
   client.user.setActivity(`${prefix}help`, {
     type: 'WATCHING',
     url: 'https://github.com/galnir/Master-Bot'
