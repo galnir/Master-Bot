@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
-    "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
