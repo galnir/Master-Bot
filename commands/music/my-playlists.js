@@ -30,7 +30,7 @@ module.exports = class MyPlaylistsCommand extends Command {
     let playlistNames = '';
     for (let i = 0; i < savedPlaylistsClone.length; i++) {
       playlistNames = `${playlistNames} ${savedPlaylistsClone[i].name} ${
-        i == savedPlaylists.length ? '' : ',' // eslint-disable-line
+        i + 1 == savedPlaylistsClone.length ? '' : ',' // eslint-disable-line
       }`;
     }
     message.reply(`Your playlists are: ${playlistNames}`);
