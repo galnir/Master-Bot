@@ -21,13 +21,16 @@ module.exports = class DeletePlaylistCommand extends Command {
 
   run(message, { playlistName }) {
     // check if user has playlists or user is in the db
-    const savedPlaylists = db.get(message.member.id).savedPlaylists;
-    if (!savedPlaylists || savedPlaylists.length == 0) {
+    const dbUserFetch = db.get(message.member.id);
+    if (!dbUserFetch) {
       message.reply('You have zero saved playlists!');
       return;
     }
-
-    const savedPlaylistsClone = db.get(message.member.id).savedPlaylists;
+    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    if (savedPlaylistsClone.length == 0) {
+      message.reply('You have zero saved playlists!');
+      return;
+    }
 
     let found = false;
     let location;

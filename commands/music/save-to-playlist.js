@@ -32,8 +32,13 @@ module.exports = class SaveToPlaylistCommand extends Command {
 
   async run(message, { url, playlist }) {
     // check if user has playlists or user is in the db
-    const savedPlaylistsClone = db.get(message.member.id).savedPlaylists;
-    if (!savedPlaylistsClone || savedPlaylistsClone.length == 0) {
+    const dbUserFetch = db.get(message.member.id);
+    if (!dbUserFetch) {
+      message.reply('You have zero saved playlists!');
+      return;
+    }
+    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    if (savedPlaylistsClone.length == 0) {
       message.reply('You have zero saved playlists!');
       return;
     }
@@ -52,7 +57,11 @@ module.exports = class SaveToPlaylistCommand extends Command {
       urlsArrayClone.push(await SaveToPlaylistCommand.processURL(url, message));
       savedPlaylistsClone.urls = urlsArrayClone;
       db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      console.log(db.get(message.member.id).savedPlaylists[location].urls);
+      message.reply(
+        `I added **${
+          savedPlaylistsClone.urls[savedPlaylistsClone.urls.length - 1].title
+        }** to **${playlist}**`
+      );
     } else {
       message.reply(`You have no playlist named ${playlist}`);
       return;

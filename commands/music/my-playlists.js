@@ -15,16 +15,21 @@ module.exports = class MyPlaylistsCommand extends Command {
 
   run(message) {
     // check if user has playlists or user is in the db
-    const savedPlaylists = db.get(message.member.id).savedPlaylists;
-    if (!savedPlaylists || savedPlaylists.length == 0) {
+    const dbUserFetch = db.get(message.member.id);
+    if (!dbUserFetch) {
+      message.reply('You have zero saved playlists!');
+      return;
+    }
+    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    if (savedPlaylistsClone.length == 0) {
       message.reply('You have zero saved playlists!');
       return;
     }
 
     // basic implementation
     let playlistNames = '';
-    for (let i = 0; i < savedPlaylists.length; i++) {
-      playlistNames = `${playlistNames} ${savedPlaylists[i].name} ${
+    for (let i = 0; i < savedPlaylistsClone.length; i++) {
+      playlistNames = `${playlistNames} ${savedPlaylistsClone[i].name} ${
         i == savedPlaylists.length ? '' : ',' // eslint-disable-line
       }`;
     }
