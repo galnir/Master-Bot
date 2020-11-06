@@ -111,7 +111,6 @@ module.exports = class PlayCommand extends Command {
           .setThumbnail(playlist.thumbnails.high.url)
           .setURL(playlist.url);
         message.say(PlayListEmbed);
-        // @TODO add the the position number of queue of the when a playlist is added
         return;
       }
     }
@@ -182,7 +181,11 @@ module.exports = class PlayCommand extends Command {
     }
     const vidNameArr = [];
     for (let i = 0; i < videos.length; i++) {
-      vidNameArr.push(`${i + 1}: [${videos[i].title.replace(/&#39;/g, "'").replace(/quot;/g, `"`)}](${videos[i].shortURL})`);
+      vidNameArr.push(
+        `${i + 1}: [${videos[i].title
+          .replace(/&#39;/g, "'")
+          .replace(/quot;/g, `"`)}](${videos[i].shortURL})`
+      );
     }
     vidNameArr.push('cancel');
     const embed = new MessageEmbed()
