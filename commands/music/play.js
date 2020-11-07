@@ -62,7 +62,6 @@ module.exports = class PlayCommand extends Command {
       }
     }
     if (found) {
-      // const clarifyMessage = `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
       const embed = new MessageEmbed()
         .setColor('#ff0000')
         .setTitle('Clarification')
@@ -87,8 +86,27 @@ module.exports = class PlayCommand extends Command {
         .then(async function onClarifyResponse(response) {
           const msgContent = response.first().content;
           if (msgContent == 1) {
-            const urls = userPlaylists[location].urls;
-            console.log(urls);
+            if (clarifyEmbed) {
+              clarifyEmbed.delete();
+            }
+            const urlsArray = userPlaylists[location].urls;
+            if (urlsArray.length == 0) {
+              message.reply(
+                `${query} is empty, add songs to it before attempting to play it`
+              );
+              return;
+            }
+            for (let i = 0; i < urlsArray.length; i++) {
+              message.guild.musicData.queue.push(urlsArray[i]);
+            }
+            if (message.guild.musicData.isPlaying == true) {
+              message.channel.send(
+                `Playlist **${query} has been added to queue**`
+              );
+            } else if (message.guild.musicData.isPlaying == false) {
+              message.guild.musicData.isPlaying = true;
+              PlayCommand.playSong(message.guild.musicData.queue, message);
+            }
           } else if (msgContent == 2) {
             await PlayCommand.searchYoutube(query, message, voiceChannel);
             return;
@@ -230,6 +248,10 @@ module.exports = class PlayCommand extends Command {
   }
   static playSong(queue, message) {
     const classThis = this; // use classThis instead of 'this' because of lexical scope below
+    if (queue[0].voiceChannel == undefined) {
+      // happens when loading a saved playlist
+      queue[0].voiceChannel = message.member.voice.channel;
+    }
     queue[0].voiceChannel
       .join()
       .then(function(connection) {

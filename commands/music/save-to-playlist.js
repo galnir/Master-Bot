@@ -81,16 +81,18 @@ module.exports = class SaveToPlaylistCommand extends Command {
       message.reply("I don't support live streams!");
       return false;
     }
-    return SaveToPlaylistCommand.constructSongObj(video);
+    return SaveToPlaylistCommand.constructSongObj(video, message.member.user);
   }
-  static constructSongObj(video) {
+  static constructSongObj(video, user) {
     let duration = this.formatDuration(video.duration);
     return {
       url: `https://www.youtube.com/watch?v=${video.raw.id}`,
       title: video.title,
       rawDuration: video.duration,
       duration,
-      thumbnail: video.thumbnails.high.url
+      thumbnail: video.thumbnails.high.url,
+      memberDisplayName: user.username,
+      memberAvatar: user.avatarURL('webp', false, 16)
     };
   }
   // prettier-ignore
