@@ -23,7 +23,15 @@ module.exports = class SaveToPlaylistCommand extends Command {
           key: 'url',
           prompt:
             'What url would you like to save to playlist? It can also be a playlist url',
-          type: 'string'
+          type: 'string',
+          validate: function validateURL(url) {
+            return (
+              url.match(
+                /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/
+              ) ||
+              url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
+            );
+          }
           // default: '' // after supporting adding currently playing song
         }
       ]
