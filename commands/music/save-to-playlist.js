@@ -30,7 +30,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
     });
   }
 
-  async run(message, { url, playlist }) {
+  async run(message, { playlist, url }) {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
