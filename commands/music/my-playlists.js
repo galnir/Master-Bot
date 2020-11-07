@@ -5,7 +5,7 @@ module.exports = class MyPlaylistsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'my-playlists',
-      aliases: ['mps', 'my-queues', 'my-saved-queues'],
+      aliases: ['mps', 'my-queues', 'my-saved-queues', 'playlists'],
       group: 'music',
       memberName: 'my-playlists',
       guildOnly: true,
