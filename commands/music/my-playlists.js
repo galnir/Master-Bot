@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class MyPlaylistsCommand extends Command {
   constructor(client) {
@@ -25,14 +26,16 @@ module.exports = class MyPlaylistsCommand extends Command {
       message.reply('You have zero saved playlists!');
       return;
     }
+    const playlistsEmbed = new Pagination.FieldsEmbed()
+      .setArray(savedPlaylistsClone)
+      .setAuthorizedUsers([message.author.id])
+      .setChannel(message.channel)
+      .setElementsPerPage(5)
+      .formatField('# - Playlist', function(e) {
+        return `**${savedPlaylistsClone.indexOf(e) + 1}**: ${e.name}`;
+      });
 
-    // basic implementation
-    let playlistNames = '';
-    for (let i = 0; i < savedPlaylistsClone.length; i++) {
-      playlistNames = `${playlistNames} ${savedPlaylistsClone[i].name} ${
-        i + 1 == savedPlaylistsClone.length ? '' : ',' // eslint-disable-line
-      }`;
-    }
-    message.reply(`Your playlists are: ${playlistNames}`);
+    playlistsEmbed.embed.setColor('#ff7373').setTitle('Saved Playlists');
+    playlistsEmbed.build();
   }
 };
