@@ -104,9 +104,6 @@ const applyText = (canvas, text) => {
 };
 
 client.on('guildMemberAdd', async member => {
-  const channel = member.guild.channels.cache.find(ch => ch.name === 'general'); // change this to the channel name you want to send the greeting to
-  if (!channel) return;
-
   const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height) 
   const ctx = canvas.getContext('2d');
 
@@ -170,7 +167,7 @@ client.on('guildMemberAdd', async member => {
     .setImage('attachment://welcome-image.png')
     .setFooter(`Type ${prefix}help for a feature list!`)
     .setTimestamp();
-  channel.send(embed);
+  member.user.send(embed);
 });
 
 // Uncomment below to test the Custom Welcome Image with a !join command
