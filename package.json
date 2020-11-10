@@ -13,6 +13,7 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
     "cheerio": "^1.0.0-rc.3",
+    "discord-paginationembed": "^2.0.0-beta.4",
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg-static": "^2.7.0",
