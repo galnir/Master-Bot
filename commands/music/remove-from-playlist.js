@@ -53,6 +53,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
         message.reply(`**${playlist}** is empty!`);
+        return;
       }
       let foundURL = false;
       for (let i = 0; i < urlsArrayClone.length; i++) {
