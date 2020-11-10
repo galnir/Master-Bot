@@ -24,7 +24,7 @@ module.exports = class QueueCommand extends Command {
       .setAuthorizedUsers([message.author.id])
       .setChannel(message.channel)
       .setElementsPerPage(10)
-      .formatField('Song', function(e) {
+      .formatField('# - Song', function(e) {
         return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
       });
 
