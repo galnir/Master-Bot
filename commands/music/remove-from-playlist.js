@@ -17,17 +17,19 @@ module.exports = class SaveToPlaylistCommand extends Command {
           type: 'string'
         },
         {
-          // will be changed in later updates from url to location in playlist
-          key: 'url',
+          key: 'index',
           prompt:
-            'What is the url of the video you would like to delete from your saved playlist?',
-          type: 'string'
+            'What is the index of the video you would like to delete from your saved playlist?',
+          type: 'string',
+          validate: function validateIndex(index) {
+            return index > 0;
+          }
         }
       ]
     });
   }
 
-  async run(message, { playlist, url }) {
+  async run(message, { playlist, index }) {
     // check if user has playlists or user is in the db
     const dbUserFetch = db.get(message.member.id);
     if (!dbUserFetch) {
@@ -55,20 +57,20 @@ module.exports = class SaveToPlaylistCommand extends Command {
         message.reply(`**${playlist}** is empty!`);
         return;
       }
-      let foundURL = false;
-      for (let i = 0; i < urlsArrayClone.length; i++) {
-        if (urlsArrayClone[i].url == url) {
-          foundURL = true;
-          urlsArrayClone.splice(i, 1);
-          savedPlaylistsClone[location].urls = urlsArrayClone;
-          db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-          message.reply(`I removed the url you requested from **${playlist}**`);
-          break;
-        }
+
+      if (index > urlsArrayClone.length) {
+        message.reply(
+          `The index you provided is larger than the playlist's length`
+        );
+        return;
       }
-      if (!foundURL) {
-        message.reply(`The URL you provided does not exist in **${playlist}**`);
-      }
+      const title = urlsArrayClone[index - 1].title;
+      urlsArrayClone.splice(index - 1, 1);
+      savedPlaylistsClone[location].urls = urlsArrayClone;
+      db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
+      message.reply(
+        `I removed **${title}** from **${savedPlaylistsClone[location].name}**`
+      );
       return;
     } else {
       message.reply(`You have no playlist named **${playlist}**`);
