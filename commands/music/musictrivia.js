@@ -43,7 +43,7 @@ module.exports = class MusicTriviaCommand extends Command {
     message.guild.triviaData.isTriviaRunning = true;
     // fetch link array from txt file
     const jsonSongs = fs.readFileSync(
-      'resources/music/musictrivia.json',
+      '././resources/music/musictrivia.json',
       'utf8'
     );
     var videoDataArray = JSON.parse(jsonSongs).songs;
