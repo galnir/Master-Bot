@@ -1,8 +1,7 @@
 const { CommandoClient } = require('discord.js-commando');
-const { Structures } = require('discord.js');
+const { Structures, MessageEmbed, MessageAttachment} = require('discord.js');
 const path = require('path');
 const { prefix, token, discord_owner_id } = require('./config.json');
-const Discord = require('discord.js');
 const Canvas = require('canvas');
 
 Structures.extend('Guild', function(Guild) {
@@ -30,13 +29,11 @@ Structures.extend('Guild', function(Guild) {
   return MusicGuild;
 });
 
-// These values come from config.json
 const client = new CommandoClient({
   commandPrefix: prefix,
   owner: discord_owner_id
 });
 
-// Setting up the groups and names for the help command
 client.registry
   .registerDefaultTypes()
   .registerGroups([
@@ -53,7 +50,6 @@ client.registry
   })
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
-// Profile Info of the bot when it's running
 client.once('ready', () => {
   console.log(`${client.user.tag} is Ready!`);
   client.user.setActivity(`${prefix}help`, {
@@ -61,15 +57,9 @@ client.once('ready', () => {
     url: 'https://github.com/galnir/Master-Bot'
   });
   const Guilds = client.guilds.cache.map(guild => guild.name);
-  if (client.guilds.cache.map(guild => guild.name)) {
-    console.log(Guilds, 'Connected!');
-  } else {
-    console.log(
-      `Error couldn't connect to discord, Double check your config.json`
-    );
-  }
+  console.log(Guilds, 'Connected!');
 });
-
+  
 client.on('voiceStateUpdate', async (___, newState) => {
   if (
     newState.member.user.bot &&
@@ -108,21 +98,21 @@ client.on('guildMemberAdd', async member => {
   const ctx = canvas.getContext('2d');
 
   const background = await Canvas.loadImage(
-    './resources/welcome/wallpaper.jpg' // can add what ever image you want for the Background just make sure that the filename matches
+    './resources/welcome/wallpaper.jpg'         // can add what ever image you want for the Background just make sure that the filename matches
   );
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
+  ctx.strokeStyle = '#000000';                  // the color of the trim on the outside of the welcome image
   ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
   ctx.font = '26px sans-serif';
-  ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+  ctx.fillStyle = '#FFFFFF';                   // Main Color of the Text on the top of the welcome image
   ctx.fillText(
     `Welcome to ${member.guild.name}`,
     canvas.width / 2.5,
     canvas.height / 3.5
   );
-  ctx.strokeStyle = `#000000`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+  ctx.strokeStyle = `#FFFFFF`;                 // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
   ctx.strokeText(
     `Welcome to ${member.guild.name}`,
     canvas.width / 2.5,
@@ -130,13 +120,13 @@ client.on('guildMemberAdd', async member => {
   );
 
   ctx.font = applyText(canvas, `${member.displayName}!`);
-  ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+  ctx.fillStyle = '#FFFFFF';                  // Main Color for the members name for the welcome image  
   ctx.fillText(
     `${member.displayName}!`,
     canvas.width / 2.5,
     canvas.height / 1.8
   );
-  ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+  ctx.strokeStyle = `#FF0000`;                // Secondary Color for the member name to add depth/shadow to the text
   ctx.strokeText(
     `${member.displayName}!`,
     canvas.width / 2.5,
@@ -153,12 +143,12 @@ client.on('guildMemberAdd', async member => {
   );
   ctx.drawImage(avatar, 25, 25, 200, 200);
 
-  const attachment = new Discord.MessageAttachment(
+  const attachment = new MessageAttachment(
     canvas.toBuffer(),
     'welcome-image.png'
   );
 
-  var embed = new Discord.MessageEmbed()
+  var embed = new MessageEmbed()
     .setTitle(
       `:speech_balloon: Hey ${member.displayName}, Welcome to ${member.guild.name}!`
     )
@@ -170,12 +160,5 @@ client.on('guildMemberAdd', async member => {
   member.user.send(embed);
 });
 
-// Uncomment below to test the Custom Welcome Image with a !join command
-// client.on('message', message => {
-//   if (message.content === '!join') {
-//     client.emit('guildMemberAdd', message.member);
-//   }
-// });
 
-// Bot logs in with the values in the config.json
 client.login(token);
