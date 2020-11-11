@@ -1,4 +1,4 @@
-# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+[# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
@@ -37,6 +37,12 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command       | Description                                                                                                               | Usage                  |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
 | !play         | Play any song or playlist from youtube, you can do it by searching for a song by name or song url or playlist url         | !play darude sandstorm |
+| !create-playlist         | Create a saved playlist         | !create-playlist EDM |
+| !delete-playlist         | Delete a playlist from your saved playlists         | !delete-playlist EDM |
+| !display-playlist         | Display a saved playlist         | !display-playlist EDM |
+| !my-playlists         | List your saved playlists         | !my-playlists |
+| !remove-from-playlist         | Remove a song from a saved playlist using its index       | !remove-from-playlist EDM 5 |
+| !save-to-playlist         | Save a song or a playlist to a saved playlist         | !save-to-playlist EDM https://www.youtube.com/watch?v=dQw4w9WgXcQ |
 | !pause        | Pause the current playing song                                                                                            | !pause                 |
 | !resume       | Resume the current paused song                                                                                            | !resume                |
 | !leave        | Leaves voice channel if in one                                                                                            | !leave                 |
