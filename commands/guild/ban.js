@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const { validateURL } = require('ytdl-core');
 
 module.exports = class BanCommand extends Command {
   constructor(client) {
@@ -27,7 +28,8 @@ module.exports = class BanCommand extends Command {
         {
           key: 'days',
           prompt: 'How many days worth of messages do you want to delete from this user?',
-          type: 'string'
+          type: 'string',
+          validate: days => days < 8 && days >= 0
         }
       ]
     });
