@@ -51,77 +51,79 @@ module.exports = class PlayCommand extends Command {
       { name: '3', urls: [ [Object], [Object] ] }
      ]
     */
-    const userPlaylists = db.get(message.member.id).savedPlaylists;
-    let found = false;
-    let location;
-    for (let i = 0; i < userPlaylists.length; i++) {
-      if (userPlaylists[i].name == query) {
-        found = true;
-        location = i;
-        break;
+    if (db.get(message.member.id) !== null) {
+      const userPlaylists = db.get(message.member.id).savedPlaylists;
+      let found = false;
+      let location;
+      for (let i = 0; i < userPlaylists.length; i++) {
+        if (userPlaylists[i].name == query) {
+          found = true;
+          location = i;
+          break;
+        }
       }
-    }
-    if (found) {
-      const embed = new MessageEmbed()
-        .setColor('#ff0000')
-        .setTitle('Clarification')
-        .setDescription(
-          `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
-        )
-        .addField('1.', 'Play saved playlist')
-        .addField('2.', 'Search on YouTube')
-        .addField('3.', 'Cancel');
-      const clarifyEmbed = await message.channel.send({ embed });
-      message.channel
-        .awaitMessages(
-          function onMessage(msg) {
-            return msg.content > 0 && msg.content < 4;
-          },
-          {
-            max: 1,
-            time: 30000,
-            errors: ['time']
-          }
-        )
-        .then(async function onClarifyResponse(response) {
-          const msgContent = response.first().content;
-          if (msgContent == 1) {
+      if (found) {
+        const embed = new MessageEmbed()
+          .setColor('#ff0000')
+          .setTitle('Clarification')
+          .setDescription(
+            `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
+          )
+          .addField('1.', 'Play saved playlist')
+          .addField('2.', 'Search on YouTube')
+          .addField('3.', 'Cancel');
+        const clarifyEmbed = await message.channel.send({ embed });
+        message.channel
+          .awaitMessages(
+            function onMessage(msg) {
+              return msg.content > 0 && msg.content < 4;
+            },
+            {
+              max: 1,
+              time: 30000,
+              errors: ['time']
+            }
+          )
+          .then(async function onClarifyResponse(response) {
+            const msgContent = response.first().content;
+            if (msgContent == 1) {
+              if (clarifyEmbed) {
+                clarifyEmbed.delete();
+              }
+              const urlsArray = userPlaylists[location].urls;
+              if (urlsArray.length == 0) {
+                message.reply(
+                  `${query} is empty, add songs to it before attempting to play it`
+                );
+                return;
+              }
+              for (let i = 0; i < urlsArray.length; i++) {
+                message.guild.musicData.queue.push(urlsArray[i]);
+              }
+              if (message.guild.musicData.isPlaying == true) {
+                message.channel.send(
+                  `Playlist **${query} has been added to queue**`
+                );
+              } else if (message.guild.musicData.isPlaying == false) {
+                message.guild.musicData.isPlaying = true;
+                PlayCommand.playSong(message.guild.musicData.queue, message);
+              }
+            } else if (msgContent == 2) {
+              await PlayCommand.searchYoutube(query, message, voiceChannel);
+              return;
+            } else if (msgContent == 3) {
+              clarifyEmbed.delete();
+              return;
+            }
+          })
+          .catch(function onClarifyError() {
             if (clarifyEmbed) {
               clarifyEmbed.delete();
             }
-            const urlsArray = userPlaylists[location].urls;
-            if (urlsArray.length == 0) {
-              message.reply(
-                `${query} is empty, add songs to it before attempting to play it`
-              );
-              return;
-            }
-            for (let i = 0; i < urlsArray.length; i++) {
-              message.guild.musicData.queue.push(urlsArray[i]);
-            }
-            if (message.guild.musicData.isPlaying == true) {
-              message.channel.send(
-                `Playlist **${query} has been added to queue**`
-              );
-            } else if (message.guild.musicData.isPlaying == false) {
-              message.guild.musicData.isPlaying = true;
-              PlayCommand.playSong(message.guild.musicData.queue, message);
-            }
-          } else if (msgContent == 2) {
-            await PlayCommand.searchYoutube(query, message, voiceChannel);
             return;
-          } else if (msgContent == 3) {
-            clarifyEmbed.delete();
-            return;
-          }
-        })
-        .catch(function onClarifyError() {
-          if (clarifyEmbed) {
-            clarifyEmbed.delete();
-          }
-          return;
-        });
-      return;
+          });
+        return;
+      }
     }
 
     if (
