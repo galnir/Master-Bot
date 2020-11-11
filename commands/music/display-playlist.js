@@ -7,7 +7,7 @@ module.exports = class CreatePlaylistCommand extends Command {
     super(client, {
       name: 'display-playlist',
       group: 'music',
-      aliases: ['show-playlist', 'songs-in'],
+      aliases: ['my-playlist', 'show-playlist', 'songs-in'],
       memberName: 'display-playlist',
       guildOnly: true,
       description: 'Create a playlist',
