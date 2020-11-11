@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
+    "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "discord-paginationembed": "^2.0.0-beta.4",
     "discord.js": "github:discordjs/discord.js",
