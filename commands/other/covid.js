@@ -8,7 +8,7 @@ module.exports = class CovidCommand extends Command {
     super(client, {
       name: "covid",
       aliases: ["corona", "covid19"],
-      group: "others",
+      group: "other",
       memberName: "covid",
       description: "Show worldwide corona cases or by country.",
       examples: ["covid United States", "covid UK"],
