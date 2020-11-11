@@ -29,7 +29,12 @@ module.exports = class SaveToPlaylistCommand extends Command {
               url.match(
                 /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/
               ) ||
-              url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
+              url.match(
+                /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/
+              ) ||
+              url.match(
+                /^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/
+              )
             );
           }
           // default: '' // @TODO support saving currently playing song
@@ -50,7 +55,6 @@ module.exports = class SaveToPlaylistCommand extends Command {
       message.reply('You have zero saved playlists!');
       return;
     }
-
     let found = false;
     let location;
     for (let i = 0; i < savedPlaylistsClone.length; i++) {
@@ -61,15 +65,24 @@ module.exports = class SaveToPlaylistCommand extends Command {
       }
     }
     if (found) {
-      const urlsArrayClone = savedPlaylistsClone[location].urls;
-      urlsArrayClone.push(await SaveToPlaylistCommand.processURL(url, message));
-      savedPlaylistsClone.urls = urlsArrayClone;
+      let urlsArrayClone = savedPlaylistsClone[location].urls;
+      const processedURL = await SaveToPlaylistCommand.processURL(url, message);
+      if (Array.isArray(processedURL)) {
+        urlsArrayClone = urlsArrayClone.concat(processedURL);
+        savedPlaylistsClone[location].urls = urlsArrayClone;
+        message.reply('The playlist you provided was successfully saved!');
+      } else {
+        urlsArrayClone.push(processedURL);
+        savedPlaylistsClone[location].urls = urlsArrayClone;
+        message.reply(
+          `I added **${
+            savedPlaylistsClone[location].urls[
+              savedPlaylistsClone[location].urls.length - 1
+            ].title
+          }** to **${playlist}**`
+        );
+      }
       db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      message.reply(
-        `I added **${
-          savedPlaylistsClone.urls[savedPlaylistsClone.urls.length - 1].title
-        }** to **${playlist}**`
-      );
     } else {
       message.reply(`You have no playlist named ${playlist}`);
       return;
@@ -77,6 +90,36 @@ module.exports = class SaveToPlaylistCommand extends Command {
   }
 
   static async processURL(url, message) {
+    if (
+      url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
+    ) {
+      const playlist = await youtube.getPlaylist(url).catch(function() {
+        message.say(':x: Playlist is either private or it does not exist!');
+        return;
+      });
+      const videosArr = await playlist.getVideos().catch(function() {
+        message.say(
+          ':x: There was a problem getting one of the videos in the playlist!'
+        );
+        return;
+      });
+      let urlsArr = [];
+      for (let i = 0; i < videosArr.length; i++) {
+        if (videosArr[i].raw.status.privacyStatus == 'private') {
+          continue;
+        } else {
+          try {
+            const video = await videosArr[i].fetch();
+            urlsArr.push(
+              SaveToPlaylistCommand.constructSongObj(video, message.member.user)
+            );
+          } catch (err) {
+            return console.error(err);
+          }
+        }
+      }
+      return urlsArr;
+    }
     url = url
       .replace(/(>|<)/gi, '')
       .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
