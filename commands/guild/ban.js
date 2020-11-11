@@ -37,7 +37,7 @@ module.exports = class BanCommand extends Command {
     if (user == undefined)
       return message.channel.send(':x: Please try again with a valid user.');
     user
-      .ban(reason)
+      .ban({ days: 7, reason: reason })
       .then(() => {
         const banEmbed = new MessageEmbed()
           .addField('Banned:', userToBan)
