@@ -33,7 +33,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.reply(':x: No game was found.');
+      message.say(':x: No game was found.');
     } else {
       let gameID = initial.data[0].id;
 
@@ -42,10 +42,23 @@ module.exports = class SpeedrunBasicCommand extends Command {
       );
       const body = await response.json();
 
-      if (body.data[0].runs.length === 0) {
-        message.reply(
-          body.data[0].game.data.names.international + ' has no runs'
-        );
+      if (body.data.length === 0) {
+        const gameNameArr = [];
+        initial.data.slice(0, 6).forEach(id => {
+          gameNameArr.push(id.names.international);
+        });
+        var gameName = new MessageEmbed()
+          .setColor('#3E8657')
+          .setTitle(':mag: Search Results')
+          .setThumbnail(initial.data[0].assets['cover-medium'].uri)
+          .addField(':x: Try searching again with the following suggestions.', initial.data[0].names.international + ` doesn't have any runs.`)
+          .setTimestamp()
+          .setFooter('Powered by www.speedrun.com', '');
+        for (let i = 1; i < gameNameArr.length; i++) {
+          gameName.addField(`:video_game: Result ${i}`,gameNameArr[i],)
+        }
+        message.say(gameName)
+      
       } else {
         let platform =
           body.data[0].platforms.data.length > 0

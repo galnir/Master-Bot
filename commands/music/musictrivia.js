@@ -9,7 +9,7 @@ module.exports = class MusicTriviaCommand extends Command {
     super(client, {
       name: 'music-trivia',
       memberName: 'music-trivia',
-      aliases: ['music-quiz', 'start-quiz'],
+      aliases: ['music-quiz', 'start-quiz', 'mtrivia'],
       group: 'music',
       description: 'Engage in a music quiz with your friends!',
       guildOnly: true,
@@ -23,6 +23,7 @@ module.exports = class MusicTriviaCommand extends Command {
           key: 'numberOfSongs',
           prompt: 'What is the number of songs you want the quiz to have?',
           type: 'integer',
+          min: 1,
           //default: 5,
           max: 15
         }
