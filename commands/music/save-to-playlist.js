@@ -12,7 +12,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
       group: 'music',
       memberName: 'save-to-playlist',
       guildOnly: true,
-      description: 'Save a song to a playlist',
+      description: 'Save a song or a playlist to a saved playlist',
       args: [
         {
           key: 'playlist',
