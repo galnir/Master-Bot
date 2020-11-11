@@ -10,11 +10,11 @@ module.exports = class CreatePlaylistCommand extends Command {
       aliases: ['my-playlist', 'show-playlist', 'songs-in'],
       memberName: 'display-playlist',
       guildOnly: true,
-      description: 'Create a playlist',
+      description: 'Display a saved playlist',
       args: [
         {
           key: 'playlistName',
-          prompt: 'What is the name of the playlist you would like to browse?',
+          prompt: 'What is the name of the playlist you would like to display?',
           type: 'string'
         }
       ]
