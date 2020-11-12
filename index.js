@@ -150,12 +150,12 @@ client.on('guildMemberAdd', async member => {
 
   var embed = new MessageEmbed()
     .setTitle(
-      `:speech_balloon: Hey ${member.displayName}, Welcome to ${member.guild.name}!`
+      `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
     )
     .setColor(`RANDOM`)
     .attachFiles(attachment)
     .setImage('attachment://welcome-image.png')
-    .setFooter(`Type ${prefix}help for a feature list!`)
+    .setFooter(`Type help for a feature list!`)
     .setTimestamp();
   member.user.send(embed);
 });
