@@ -1,6 +1,5 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const { validateURL } = require('ytdl-core');
 
 module.exports = class BanCommand extends Command {
   constructor(client) {
