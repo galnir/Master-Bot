@@ -119,6 +119,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
+[Installing bot on a Raspberry](https://github.com/Bacon-Fixation/Master-Bot/blob/pi/Pi_Instructions.md)
+
 ### Contributing
 
 Fork it and submit a pull request!
