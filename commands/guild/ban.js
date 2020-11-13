@@ -25,16 +25,16 @@ module.exports = class BanCommand extends Command {
           type: 'string'
         },
         {
-          key: 'days',
+          key: 'daysDelete',
           prompt: 'How many days worth of messages do you want to delete from this user?',
           type: 'integer',
-          validate: days => days < 7 && days > 0
+          validate: daysDelete => daysDelete < 8 && daysDelete > 0
         }
       ]
     });
   }
 
-  async run(message, { userToBan, reason, days }) {
+  async run(message, { userToBan, reason, daysDelete }) {
     const extractNumber = /\d+/g;
     const userToBanID = userToBan.match(extractNumber)[0];
     const user =
@@ -43,7 +43,7 @@ module.exports = class BanCommand extends Command {
     if (user == undefined)
       return message.channel.send(':x: Please try again with a valid user.');
     user
-      .ban({ days: days, reason: reason })
+      .ban({ days: daysDelete, reason: reason })
       .then(() => {
         const banEmbed = new MessageEmbed()
           .addField('Banned:', userToBan)
