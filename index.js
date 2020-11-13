@@ -1,5 +1,5 @@
 const { CommandoClient } = require('discord.js-commando');
-const { Structures, MessageEmbed, MessageAttachment} = require('discord.js');
+const { Structures, MessageEmbed, MessageAttachment } = require('discord.js');
 const path = require('path');
 const { prefix, token, discord_owner_id } = require('./config.json');
 const Canvas = require('canvas');
@@ -59,7 +59,7 @@ client.once('ready', () => {
   const Guilds = client.guilds.cache.map(guild => guild.name);
   console.log(Guilds, 'Connected!');
 });
-  
+
 client.on('voiceStateUpdate', async (___, newState) => {
   if (
     newState.member.user.bot &&
@@ -94,25 +94,25 @@ const applyText = (canvas, text) => {
 };
 
 client.on('guildMemberAdd', async member => {
-  const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height) 
+  const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height)
   const ctx = canvas.getContext('2d');
 
   const background = await Canvas.loadImage(
-    './resources/welcome/wallpaper.jpg'         // can add what ever image you want for the Background just make sure that the filename matches
+    './resources/welcome/wallpaper.jpg' // can add what ever image you want for the Background just make sure that the filename matches
   );
   ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = '#000000';                  // the color of the trim on the outside of the welcome image
+  ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
   ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
   ctx.font = '26px sans-serif';
-  ctx.fillStyle = '#FFFFFF';                   // Main Color of the Text on the top of the welcome image
+  ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
   ctx.fillText(
     `Welcome to ${member.guild.name}`,
     canvas.width / 2.5,
     canvas.height / 3.5
   );
-  ctx.strokeStyle = `#FFFFFF`;                 // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+  ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
   ctx.strokeText(
     `Welcome to ${member.guild.name}`,
     canvas.width / 2.5,
@@ -120,13 +120,13 @@ client.on('guildMemberAdd', async member => {
   );
 
   ctx.font = applyText(canvas, `${member.displayName}!`);
-  ctx.fillStyle = '#FFFFFF';                  // Main Color for the members name for the welcome image  
+  ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
   ctx.fillText(
     `${member.displayName}!`,
     canvas.width / 2.5,
     canvas.height / 1.8
   );
-  ctx.strokeStyle = `#FF0000`;                // Secondary Color for the member name to add depth/shadow to the text
+  ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
   ctx.strokeText(
     `${member.displayName}!`,
     canvas.width / 2.5,
@@ -157,8 +157,11 @@ client.on('guildMemberAdd', async member => {
     .setImage('attachment://welcome-image.png')
     .setFooter(`Type help for a feature list!`)
     .setTimestamp();
-  member.user.send(embed);
+  try {
+    await member.user.send(embed);
+  } catch {
+    console.log(`${member.user.username}'s dms are private`);
+  }
 });
-
 
 client.login(token);
