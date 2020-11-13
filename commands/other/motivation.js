@@ -16,7 +16,7 @@ module.exports = class MotivationCommand extends Command {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readFileSync(
-      'resources/quotes/motivational.json',
+      '././resources/quotes/motivational.json',
       'utf8'
     );
     const quoteArray = JSON.parse(jsonQuotes).quotes;

@@ -21,7 +21,7 @@ module.exports = class EightBallCommand extends Command {
   }
 
   run(message) {
-    const ballAnswers = fs.readFileSync('resources/other/8ball.json', 'utf8');
+    const ballAnswers = fs.readFileSync('././resources/other/8ball.json', 'utf8');
     const ballArray = JSON.parse(ballAnswers).answers;
 
     const randomAnswer =
