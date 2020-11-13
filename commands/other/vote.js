@@ -13,7 +13,7 @@ module.exports = class VoteCommand extends Command {
           key: 'question',
           prompt: 'What is the vote question?',
           type: 'string',
-          validate: question => {
+          validate: function validateQuestion(question) {
             if (question.length < 101 && question.length > 11) return true;
             return 'Polling questions must be between 10 and 100 characters in length.';
           }
@@ -22,10 +22,10 @@ module.exports = class VoteCommand extends Command {
           key: 'desc',
           prompt: '(Optional) Do you have more details?',
           type: 'string',
-          default: ' ',
-          validate: desc => {
+          default: '',
+          validate: function validateDesc(desc) {
             if (desc.length < 201 && desc.length > 11) return true;
-            return 'Polling questions must be between 10 and 200 characters in length.';
+            return 'The description must be between 10 and 200 characters in length.';
           }
         },
         {
@@ -33,7 +33,7 @@ module.exports = class VoteCommand extends Command {
           prompt: '(Optional) How long should the vote last in minutes?',
           type: 'integer',
           default: 0,
-          validate: time => {
+          validate: function validateTime(time) {
             if (time >= 0 && time <= 60) return true;
             return 'Polling time must be between 0 and 60.';
           }
@@ -82,7 +82,7 @@ module.exports = class VoteCommand extends Command {
                 // Find winner(s)
                 var max = -Infinity,
                   indexMax = [];
-                for (var i = 0; i < reactionCountsArray.length; ++i)
+                for (let i = 0; i < reactionCountsArray.length; ++i)
                   if (reactionCountsArray[i] > max)
                     (max = reactionCountsArray[i]), (indexMax = [i]);
                   else if (reactionCountsArray[i] === max) indexMax.push(i);
@@ -92,7 +92,7 @@ module.exports = class VoteCommand extends Command {
                 if (reactionCountsArray[indexMax[0]] == 0) {
                   winnersText = ':x: No one voted!';
                 } else {
-                  for (var i = 0; i < indexMax.length; i++) {
+                  for (let i = 0; i < indexMax.length; i++) {
                     winnersText +=
                       emojiList[indexMax[i]] +
                       ' (' +
