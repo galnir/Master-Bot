@@ -13,7 +13,7 @@ module.exports = class PollCommand extends Command {
           key: 'question',
           prompt: 'What is the poll question?',
           type: 'string',
-          validate: question => {
+          validate: function validateQuestion(question) {
             if (question.length < 101 && question.length > 11) return true;
             return 'Polling questions must be between 10 and 100 characters in length.';
           }
@@ -22,7 +22,7 @@ module.exports = class PollCommand extends Command {
           key: 'options',
           prompt: 'What options do you want for the poll?',
           type: 'string',
-          validate: options => {
+          validate: function validateOptions(options) {
             var optionsList = options.split(',');
             if (optionsList.length > 1) return true;
             return 'Polling options must be greater than one.';
@@ -33,7 +33,7 @@ module.exports = class PollCommand extends Command {
           prompt: 'How long should the poll last in minutes?',
           type: 'integer',
           default: 0,
-          validate: time => {
+          validate: function validateTime(time) {
             if (time >= 0 && time <= 60) return true;
             return 'Polling time must be between 0 and 60.';
           }
@@ -100,7 +100,7 @@ module.exports = class PollCommand extends Command {
                 // Find winner(s)
                 var max = -Infinity,
                   indexMax = [];
-                for (var i = 0; i < reactionCountsArray.length; ++i)
+                for (let i = 0; i < reactionCountsArray.length; ++i)
                   if (reactionCountsArray[i] > max)
                     (max = reactionCountsArray[i]), (indexMax = [i]);
                   else if (reactionCountsArray[i] === max) indexMax.push(i);
@@ -110,7 +110,7 @@ module.exports = class PollCommand extends Command {
                 if (reactionCountsArray[indexMax[0]] == 0) {
                   winnersText = ':x: No one voted!';
                 } else {
-                  for (var i = 0; i < indexMax.length; i++) {
+                  for (let i = 0; i < indexMax.length; i++) {
                     winnersText +=
                       emojiList[indexMax[i]] +
                       ' ' +
