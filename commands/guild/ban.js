@@ -26,9 +26,12 @@ module.exports = class BanCommand extends Command {
         },
         {
           key: 'daysDelete',
-          prompt: 'How many days worth of messages do you want to delete from this user?',
+          prompt:
+            'How many days worth of messages do you want to delete from this user?',
           type: 'integer',
-          validate: daysDelete => daysDelete < 8 && daysDelete > 0
+          validate: function validate(daysDelete) {
+            return daysDelete < 8 && daysDelete > 0;
+          }
         }
       ]
     });
