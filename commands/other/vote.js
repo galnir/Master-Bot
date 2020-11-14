@@ -19,16 +19,6 @@ module.exports = class VoteCommand extends Command {
           }
         },
         {
-          key: 'desc',
-          prompt: '(Optional) Do you have more details?',
-          type: 'string',
-          default: '',
-          validate: function validateDesc(desc) {
-            if (desc.length < 201 && desc.length > 11) return true;
-            return 'The description must be between 10 and 200 characters in length.';
-          }
-        },
-        {
           key: 'time',
           prompt: '(Optional) How long should the vote last in minutes?',
           type: 'integer',
@@ -42,11 +32,11 @@ module.exports = class VoteCommand extends Command {
     });
   }
 
-  run(msg, { question, desc, time }) {
+  run(msg, { question, time }) {
     var emojiList = ['👍', '👎', '🤷'];
     var embed = new MessageEmbed()
       .setTitle(':ballot_box: ' + question)
-      .setDescription(desc)
+      .setDescription('')
       .setAuthor(msg.author.username, msg.author.displayAvatarURL())
       .setColor(`#FF0000`)
       .setTimestamp();
