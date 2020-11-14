@@ -325,6 +325,11 @@ module.exports = class PlayCommand extends Command {
           .on('error', function(e) {
             message.say(':x: Cannot play song!');
             console.error(e);
+            if (queue.length > 1) {
+              queue.shift();
+              classThis.playSong(queue, message);
+              return;
+            }
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.isPlaying = false;
             message.guild.musicData.nowPlaying = null;
