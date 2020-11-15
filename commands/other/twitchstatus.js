@@ -3,8 +3,10 @@ const { twitchClientID, twitchToken } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 const Twitch = require('simple-twitch-api');
 
-if (twitchClientID == null, twitchToken == null)
-return console.log('WARNING: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command')
+if ((twitchClientID == null, twitchToken == null))
+  return console.log(
+    'WARNING: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command'
+  );
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
     super(client, {
@@ -26,13 +28,17 @@ module.exports = class TwitchStatusCommand extends Command {
     });
   }
 
-  async run(message, { text }) {
+   run(message, { text }) {
     const SCOPE = 'user:read:email';
-    
+
     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
       const access_token = result.access_token;
       if (access_token == null)
-        return console.log('Error: Double check the values of twitchCLIENTID and twitchToken in your config.json') + message.say(':x: Something went wrong!');
+        return (
+          console.log(
+            'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
+          ) + message.say(':x: Something went wrong!')
+        );
 
       const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
 
@@ -46,6 +52,7 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         user_id
       );
+      
       if (streamInfo.data[0] == null)
         return message.say(text + ' is not currently streaming');
 
@@ -54,13 +61,14 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         streamInfo.data[0].game_id
       );
-        message.delete()
+      
       const onlineEmbed = new MessageEmbed()
         .setAuthor(
           'Streamer Status Check',
           user.data[0].profile_image_url,
-          `https://twitch.tv/${streamInfo.data[0].user_name}`
-        )
+          'https://twitch.tv/' + streamInfo.data[0].user_name
+      )
+        .setURL('https://twitch.tv/' + streamInfo.data[0].user_name)
         .setTitle('Looks like ' + text + ' is online!')
         .setThumbnail(
           gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
@@ -71,7 +79,10 @@ module.exports = class TwitchStatusCommand extends Command {
         .setColor('#6441A4')
         .setFooter('Stream Started')
         .setImage(
-          streamInfo.data[0].thumbnail_url.replace(/-{width}x{height}/g, '-1280x720')
+          streamInfo.data[0].thumbnail_url.replace(
+            /-{width}x{height}/g,
+            '-1280x720'
+          )
         )
         .setTimestamp(streamInfo.data[0].started_at);
       if (
@@ -84,7 +95,7 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       //console.log(user.data[0], streamInfo.data[0], gameInfo.data[0])
-      
+      message.delete();
       message.say(onlineEmbed);
     });
   }
