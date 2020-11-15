@@ -26,6 +26,9 @@ module.exports = class TwitchStatusCommand extends Command {
 
   async run(message, { text }) {
     const SCOPE = 'user:read:broadcast';
+    
+    if (twitchClientID == null, twitchToken == null)
+  return console.log('Make sure you have twitchCLIENTID and twitchToken in your config.json file to use this feature')
 
     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
       const access_token = result.access_token;
@@ -50,7 +53,7 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         streamInfo.data[0].game_id
       );
-
+        message.delete()
       const onlineEmbed = new MessageEmbed()
         .setAuthor(
           'Streamer Status Check',
@@ -59,7 +62,7 @@ module.exports = class TwitchStatusCommand extends Command {
         )
         .setTitle('Looks like ' + text + ' is online!')
         .setThumbnail(
-          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '').replace(/%202/g, '')
         )
         .addField('Stream Title:', streamInfo.data[0].title)
         .addField('Currently Playing:', streamInfo.data[0].game_name, true)
@@ -67,7 +70,7 @@ module.exports = class TwitchStatusCommand extends Command {
         .setColor('#6441A4')
         .setFooter('Stream Started')
         .setImage(
-          streamInfo.data[0].thumbnail_url.replace(/-{width}x{height}/g, '')
+          streamInfo.data[0].thumbnail_url.replace(/-{width}x{height}/g, '-1280x720')
         )
         .setTimestamp(streamInfo.data[0].started_at);
       if (
@@ -76,10 +79,11 @@ module.exports = class TwitchStatusCommand extends Command {
       )
         onlineEmbed.addField(
           'Rank:',
-          user.data[0].broadcaster_type.toUpperCase(),
+          user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-
+      console.log(user.data[0], streamInfo.data[0], gameInfo.data[0])
+      
       message.say(onlineEmbed);
     });
   }
