@@ -3,6 +3,8 @@ const { twitchClientID, twitchToken } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 const Twitch = require('simple-twitch-api');
 
+if (twitchClientID == null, twitchToken == null)
+return console.log('WARNING: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command')
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
     super(client, {
@@ -25,13 +27,12 @@ module.exports = class TwitchStatusCommand extends Command {
   }
 
   async run(message, { text }) {
-    const SCOPE = 'user:read:broadcast';
+    const SCOPE = 'user:read:email';
     
-    if (twitchClientID == null, twitchToken == null)
-  return console.log('Make sure you have twitchCLIENTID and twitchToken in your config.json file to use this feature')
-
     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
       const access_token = result.access_token;
+      if (access_token == null)
+        return console.log('Error: Double check the values of twitchCLIENTID and twitchToken in your config.json') + message.say(':x: Something went wrong!');
 
       const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
 
@@ -62,7 +63,7 @@ module.exports = class TwitchStatusCommand extends Command {
         )
         .setTitle('Looks like ' + text + ' is online!')
         .setThumbnail(
-          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '').replace(/%202/g, '')
+          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
         )
         .addField('Stream Title:', streamInfo.data[0].title)
         .addField('Currently Playing:', streamInfo.data[0].game_name, true)
@@ -82,7 +83,7 @@ module.exports = class TwitchStatusCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-      console.log(user.data[0], streamInfo.data[0], gameInfo.data[0])
+      //console.log(user.data[0], streamInfo.data[0], gameInfo.data[0])
       
       message.say(onlineEmbed);
     });
