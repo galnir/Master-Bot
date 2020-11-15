@@ -20,7 +20,9 @@ Make a config.json file in the root directory of the project and add:
   "newsAPI": "news-api-key",
   "youtubeAPI": "youtube-api-key",
   "yandexAPI": "yandex-api-key",
-  "geniusLyricsAPI": "genius-api-key"
+  "geniusLyricsAPI": "genius-api-key",
+  "twitchCleintID": "Your-Client-ID",
+  "twitchToken": " "Secret-Token"
 }
 ```
 
@@ -84,7 +86,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !advice      | Get some advice!                                                                                                                                | !advice               |
 | !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
-
+| !twitchstatus | Gives you the current status of a twitch streamer                                                                                                                   | !twitchstatus MasterBot |
 
 - Gifs
 
@@ -119,7 +121,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
-[Installing bot on a Raspberry](https://github.com/Bacon-Fixation/Master-Bot/blob/pi/Pi_Instructions.md)
+[Installing bot on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
 
 ### Contributing
 
@@ -134,4 +136,4 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up' command and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'twitchstatus' commands and visual updates
