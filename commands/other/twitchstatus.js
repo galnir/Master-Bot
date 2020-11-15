@@ -30,20 +30,19 @@ module.exports = class TwitchStatusCommand extends Command {
 
    run(message, { text }) {
     const SCOPE = 'user:read:email';
+     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
+       const access_token = result.access_token;
+       if (access_token == null)
+         return (
+           console.log(
+             'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
+           ) + message.say(':x: Something went wrong!')
+         );
 
-    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
-      const access_token = result.access_token;
-      if (access_token == null)
-        return (
-          console.log(
-            'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
-          ) + message.say(':x: Something went wrong!')
-        );
-
-      const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
+       const user = await Twitch.getUserInfo(access_token, twitchClientID, text.replace(/https\:\/\/twitch.tv\//g, ''));
 
       if (user.data[0] == null)
-        return message.reply(`:x: No streamer found called ${text}`);
+        return message.reply(`:x: Streamer ${text} was not found, Please try again.`);
 
       const user_id = user.data[0].id;
 
@@ -54,7 +53,7 @@ module.exports = class TwitchStatusCommand extends Command {
       );
       
       if (streamInfo.data[0] == null)
-        return message.say(text + ' is not currently streaming');
+        return message.say(streamInfo.data[0].user_name + ' is not currently streaming');
 
       const gameInfo = await Twitch.getGames(
         access_token,
@@ -69,7 +68,7 @@ module.exports = class TwitchStatusCommand extends Command {
           'https://twitch.tv/' + streamInfo.data[0].user_name
       )
         .setURL('https://twitch.tv/' + streamInfo.data[0].user_name)
-        .setTitle('Looks like ' + text + ' is online!')
+        .setTitle('Looks like ' + streamInfo.data[0].user_name + ' is online!')
         .setThumbnail(
           gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
         )
