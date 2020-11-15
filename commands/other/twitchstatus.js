@@ -12,8 +12,10 @@ module.exports = class TwitchStatusCommand extends Command {
     super(client, {
       name: 'twitchstatus',
       memberName: 'twitchstatus',
+      aliases: ['twitch-shout-out', 'twitchshoutout', 'tso'],
       group: 'other',
-      description: 'A quick check to see if a streamer is currently.',
+      description:
+        'A quick check to see if a streamer is currently. or to give a shout-out a fellow streamer',
       throttling: {
         usages: 45, // 45 queries
         duration: 60 // every 60 seconds
@@ -28,21 +30,26 @@ module.exports = class TwitchStatusCommand extends Command {
     });
   }
 
-   run(message, { text }) {
+  run(message, { text }) {
     const SCOPE = 'user:read:email';
-     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
-       const access_token = result.access_token;
-       if (access_token == null)
-         return (
-           console.log(
-             'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
-           ) + message.say(':x: Something went wrong!')
-         );
+    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
+      const access_token = result.access_token;
+      if (access_token == null)
+        return (
+          console.log(
+            'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
+          ) + message.say(':x: Something went wrong!')
+        );
 
-       const user = await Twitch.getUserInfo(access_token, twitchClientID, text.replace(/https\:\/\/twitch.tv\//g, ''));
+      const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
+
+      if (user.status == `400`)
+        return message.reply(`:x: ${text} was Invaild, Please try again.`);
 
       if (user.data[0] == null)
-        return message.reply(`:x: Streamer ${text} was not found, Please try again.`);
+        return message.reply(
+          `:x: Streamer ${text} was not found, Please try again.`
+        );
 
       const user_id = user.data[0].id;
 
@@ -51,22 +58,24 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         user_id
       );
-      
+
       if (streamInfo.data[0] == null)
-        return message.say(streamInfo.data[0].user_name + ' is not currently streaming');
+        return (
+          message.delete() + message.say(text + ' is not currently streaming')
+        );
 
       const gameInfo = await Twitch.getGames(
         access_token,
         twitchClientID,
         streamInfo.data[0].game_id
       );
-      
+
       const onlineEmbed = new MessageEmbed()
         .setAuthor(
           'Streamer Status Check',
           user.data[0].profile_image_url,
           'https://twitch.tv/' + streamInfo.data[0].user_name
-      )
+        )
         .setURL('https://twitch.tv/' + streamInfo.data[0].user_name)
         .setTitle('Looks like ' + streamInfo.data[0].user_name + ' is online!')
         .setThumbnail(
@@ -93,7 +102,7 @@ module.exports = class TwitchStatusCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-      //console.log(user.data[0], streamInfo.data[0], gameInfo.data[0])
+      // console.log(user, streamInfo, gameInfo)
       message.delete();
       message.say(onlineEmbed);
     });
