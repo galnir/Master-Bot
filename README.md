@@ -62,7 +62,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
 | !move       | Move song to a desired position in queue                                                        | !move 8 1      |
 
-- Misc
+- Other
 
 | Command      | Description                                                                                                                                                         | Usage                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
@@ -86,7 +86,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !advice      | Get some advice!                                                                                                                                | !advice               |
 | !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
-| !twitchstatus | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                                    | !twitchstatus MasterBot |
+| !twitchstatus | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                                    | !twitchstatus MasterBot or !tso MasterBot |
 
 - Gifs
 
