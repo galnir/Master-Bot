@@ -81,6 +81,7 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         user_id
       );
+      
       if (streamInfo.data[0] == null) {
         const offlineEmbed = new MessageEmbed()
           .setAuthor(
@@ -89,7 +90,7 @@ module.exports = class TwitchStatusCommand extends Command {
             'https://twitch.tv/' + user.data[0].display_name
           )
           .setURL('https://twitch.tv/' + user.data[0].display_name)
-          .setTitle('Looks like ' + user.data[0].display_name + ' is offline.')
+          .setTitle('Looks like ' + user.data[0].display_name + ' is: Offline.')
           .setColor('#6441A4')
           .setTimestamp(user.data[0].created_at)
           .setFooter(
@@ -131,7 +132,7 @@ module.exports = class TwitchStatusCommand extends Command {
           'https://twitch.tv/' + user.data[0].display_name
         )
         .setURL('https://twitch.tv/' + user.data[0].display_name)
-        .setTitle('Looks like ' + user.data[0].display_name + ' is online!')
+        .setTitle('Looks like ' + user.data[0].display_name + ' is: Online!')
         .setThumbnail(
           gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
         )
@@ -150,12 +151,14 @@ module.exports = class TwitchStatusCommand extends Command {
           )
         )
         .setTimestamp(streamInfo.data[0].started_at);
+     
       if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
         onlineEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
+      
       if (user.data[0].broadcaster_type == null)
         onlineEmbed.addField('Rank:', 'BASE!', true);
 
