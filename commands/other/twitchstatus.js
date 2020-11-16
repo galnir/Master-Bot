@@ -3,7 +3,7 @@ const { twitchClientID, twitchToken } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 const Twitch = require('simple-twitch-api');
 
-if ((twitchClientID == null, twitchToken == null))
+if ((twitchClientID == null || twitchToken == null))
   return console.log(
     'WARNING: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command'
   );
