@@ -32,14 +32,16 @@ module.exports = class TwitchStatusCommand extends Command {
 
   run(message, { text }) {
     const SCOPE = 'user:read:email';
-    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async (result) => {
+    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
       const access_token = result.access_token;
-      
+
       if (access_token == null)
         return (
           console.log(
             'Error: Double check the values of twitchCLIENTID and twitchToken in your config.json'
-          ) + message.say(':x: Something went wrong!')
+          ) +
+          message.delete() +
+          message.say(':x: Something went wrong!')
         );
 
       const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
@@ -95,14 +97,23 @@ module.exports = class TwitchStatusCommand extends Command {
             'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
           )
           .setThumbnail(user.data[0].profile_image_url)
-          .addField('Profile Description:', user.data[0].description)
           .addField('View Counter:', user.data[0].view_count, true);
+
+        if (!user.data[0].description == null)
+          offlineEmbed.addField(
+            'Profile Description:',
+            user.data[0].description
+          );
+
         if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
           offlineEmbed.addField(
             'Rank:',
             user.data[0].broadcaster_type.toUpperCase() + '!',
             true
           );
+        if (user.data[0].broadcaster_type == undefined)
+          offlineEmbed.addField('Rank:', 'BASE!', true);
+
         message.delete();
         return message.say(offlineEmbed);
       }
@@ -145,6 +156,8 @@ module.exports = class TwitchStatusCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
+      if (user.data[0].broadcaster_type == null)
+        onlineEmbed.addField('Rank:', 'BASE!', true);
 
       message.delete();
       message.say(onlineEmbed);
