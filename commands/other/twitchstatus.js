@@ -153,10 +153,9 @@ module.exports = class TwitchStatusCommand extends Command {
           'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
         )
         .setImage(
-          streamInfo.data[0].thumbnail_url.replace(
-            /-{width}x{height}/g,
-            '-1280x720'
-          )
+          streamInfo.data[0].thumbnail_url
+            .replace(/-{width}x{height}/g, '-1280x720')
+            .concat('?r=' + streamInfo.data[0].id)
         )
         .setTimestamp(streamInfo.data[0].started_at);
 
@@ -166,7 +165,7 @@ module.exports = class TwitchStatusCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-
+      
       if (user.data[0].broadcaster_type == null)
         onlineEmbed.addField('Rank:', 'BASE!', true);
       message.delete();
