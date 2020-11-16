@@ -22,7 +22,7 @@ module.exports = class TwitchStatusCommand extends Command {
       },
       args: [
         {
-          key: 'text',
+          key: 'textRaw',
           prompt: 'Who do you want to see is streaming?.',
           type: 'string'
         }
@@ -30,7 +30,7 @@ module.exports = class TwitchStatusCommand extends Command {
     });
   }
 
-  run(message, { text }) {
+  run(message, { textRaw }) {
     const SCOPE = 'user:read:email';
     Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
       const access_token = result.access_token;
@@ -44,12 +44,18 @@ module.exports = class TwitchStatusCommand extends Command {
           message.say(':x: Something went wrong!')
         );
 
-      const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
+      const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
+
+      const user = await Twitch.getUserInfo(
+        access_token,
+        twitchClientID,
+        textFiltered
+      );
 
       if (user.status == `400`)
         return (
           message.delete() +
-          message.reply(`:x: ${text} was Invaild, Please try again.`)
+          message.reply(`:x: ${textFiltered} was Invaild, Please try again.`)
         );
 
       if (user.status == `429`)
@@ -71,7 +77,9 @@ module.exports = class TwitchStatusCommand extends Command {
       if (user.data[0] == null)
         return (
           message.delete() +
-          message.reply(`:x: Streamer ${text} was not found, Please try again.`)
+          message.reply(
+            `:x: Streamer ${textFiltered} was not found, Please try again.`
+          )
         );
 
       const user_id = user.data[0].id;
@@ -81,7 +89,7 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         user_id
       );
-      
+
       if (streamInfo.data[0] == null) {
         const offlineEmbed = new MessageEmbed()
           .setAuthor(
@@ -151,19 +159,18 @@ module.exports = class TwitchStatusCommand extends Command {
           )
         )
         .setTimestamp(streamInfo.data[0].started_at);
-     
+
       if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
         onlineEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-      
+
       if (user.data[0].broadcaster_type == null)
         onlineEmbed.addField('Rank:', 'BASE!', true);
-
       message.delete();
-      message.say(onlineEmbed);
+      return message.say(onlineEmbed);
     });
   }
 };
