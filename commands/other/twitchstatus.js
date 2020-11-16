@@ -3,7 +3,7 @@ const { twitchClientID, twitchToken } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 const Twitch = require('simple-twitch-api');
 
-if ((twitchClientID == null || twitchToken == null))
+if (twitchClientID == null || twitchToken == null)
   return console.log(
     'WARNING: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command'
   );
@@ -32,8 +32,9 @@ module.exports = class TwitchStatusCommand extends Command {
 
   run(message, { text }) {
     const SCOPE = 'user:read:email';
-    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
+    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async (result) => {
       const access_token = result.access_token;
+      
       if (access_token == null)
         return (
           console.log(
@@ -47,6 +48,22 @@ module.exports = class TwitchStatusCommand extends Command {
         return (
           message.delete() +
           message.reply(`:x: ${text} was Invaild, Please try again.`)
+        );
+
+      if (user.status == `429`)
+        return (
+          message.delete() +
+          message.reply(
+            `:x: Rate Limit exceeded. Please try again in a few minutes.`
+          )
+        );
+
+      if (user.status == `503`)
+        return (
+          message.delete() +
+          message.reply(
+            `:x: Twitch service's are currently unavailable. Please try again later.`
+          )
         );
 
       if (user.data[0] == null)
