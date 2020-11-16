@@ -15,7 +15,7 @@ module.exports = class TwitchStatusCommand extends Command {
       aliases: ['twitch-shout-out', 'twitchshoutout', 'tso'],
       group: 'other',
       description:
-        'A quick check to see if a streamer is currently. or to give a shout-out a fellow streamer',
+        'A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer',
       throttling: {
         usages: 45, // 45 queries
         duration: 60 // every 60 seconds
