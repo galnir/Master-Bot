@@ -44,10 +44,10 @@ module.exports = class TwitchStatusCommand extends Command {
       const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
 
       if (user.status == `400`)
-        return message.reply(`:x: ${text} was Invaild, Please try again.`);
+        return message.delete() + message.reply(`:x: ${text} was Invaild, Please try again.`);
 
       if (user.data[0] == null)
-        return message.reply(
+        return message.delete() + message.reply(
           `:x: Streamer ${text} was not found, Please try again.`
         );
 
@@ -102,7 +102,6 @@ module.exports = class TwitchStatusCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-      // console.log(user, streamInfo, gameInfo)
       message.delete();
       message.say(onlineEmbed);
     });
