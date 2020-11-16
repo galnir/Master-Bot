@@ -114,15 +114,15 @@ module.exports = class TwitchStatusCommand extends Command {
             user.data[0].description
           );
 
-        if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
+        if (user.data[0].broadcaster_type == '')
+          offlineEmbed.addField('Rank:', 'BASE!', true);
+        else {
           offlineEmbed.addField(
             'Rank:',
             user.data[0].broadcaster_type.toUpperCase() + '!',
             true
           );
-        if (user.data[0].broadcaster_type == undefined)
-          offlineEmbed.addField('Rank:', 'BASE!', true);
-
+        }
         message.delete();
         return message.say(offlineEmbed);
       }
@@ -155,19 +155,20 @@ module.exports = class TwitchStatusCommand extends Command {
         .setImage(
           streamInfo.data[0].thumbnail_url
             .replace(/-{width}x{height}/g, '-1280x720')
-            .concat('?r=' + streamInfo.data[0].id)
+            .concat('?r=' + Math.floor((Math.random() * 10000) + 1))
         )
         .setTimestamp(streamInfo.data[0].started_at);
-
-      if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
+      if (user.data[0].broadcaster_type == '')
+        onlineEmbed.addField('Rank:', 'BASE!', true);
+      else {
         onlineEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
-      
-      if (user.data[0].broadcaster_type == null)
-        onlineEmbed.addField('Rank:', 'BASE!', true);
+      }
+      console.log(streamInfo);
+
       message.delete();
       return message.say(onlineEmbed);
     });
