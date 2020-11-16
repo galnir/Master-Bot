@@ -155,7 +155,7 @@ module.exports = class TwitchStatusCommand extends Command {
         .setImage(
           streamInfo.data[0].thumbnail_url
             .replace(/-{width}x{height}/g, '-1280x720')
-            .concat('?r=' + Math.floor((Math.random() * 10000) + 1))
+            .concat('?r=' + Math.floor(Math.random() * 10000 + 1))
         )
         .setTimestamp(streamInfo.data[0].started_at);
       if (user.data[0].broadcaster_type == '')
@@ -167,8 +167,6 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       }
-      console.log(streamInfo);
-
       message.delete();
       return message.say(onlineEmbed);
     });
