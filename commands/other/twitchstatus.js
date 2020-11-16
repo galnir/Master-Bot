@@ -105,15 +105,13 @@ module.exports = class TwitchStatusCommand extends Command {
             'Joined Twitch',
             'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
           )
-          .setThumbnail(user.data[0].profile_image_url)
-          .addField('View Counter:', user.data[0].view_count, true);
+          .setThumbnail(user.data[0].profile_image_url);
 
-        if (!user.data[0].description == null)
-          offlineEmbed.addField(
-            'Profile Description:',
-            user.data[0].description
-          );
+        if (!user.data[0].description == '')
+          offlineEmbed
+            .addField('Profile Description:', user.data[0].description)
 
+            .addField('View Counter:', user.data[0].view_count, true);
         if (user.data[0].broadcaster_type == '')
           offlineEmbed.addField('Rank:', 'BASE!', true);
         else {
