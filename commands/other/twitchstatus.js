@@ -44,11 +44,15 @@ module.exports = class TwitchStatusCommand extends Command {
       const user = await Twitch.getUserInfo(access_token, twitchClientID, text);
 
       if (user.status == `400`)
-        return message.delete() + message.reply(`:x: ${text} was Invaild, Please try again.`);
+        return (
+          message.delete() +
+          message.reply(`:x: ${text} was Invaild, Please try again.`)
+        );
 
       if (user.data[0] == null)
-        return message.delete() + message.reply(
-          `:x: Streamer ${text} was not found, Please try again.`
+        return (
+          message.delete() +
+          message.reply(`:x: Streamer ${text} was not found, Please try again.`)
         );
 
       const user_id = user.data[0].id;
@@ -58,11 +62,33 @@ module.exports = class TwitchStatusCommand extends Command {
         twitchClientID,
         user_id
       );
-
-      if (streamInfo.data[0] == null)
-        return (
-          message.delete() + message.say(text + ' is not currently streaming')
-        );
+      if (streamInfo.data[0] == null) {
+        const offlineEmbed = new MessageEmbed()
+          .setAuthor(
+            'Streamer Status Check',
+            user.data[0].profile_image_url,
+            'https://twitch.tv/' + user.data[0].display_name
+          )
+          .setURL('https://twitch.tv/' + user.data[0].display_name)
+          .setTitle('Looks like ' + user.data[0].display_name + ' is offline.')
+          .setColor('#6441A4')
+          .setTimestamp(user.data[0].created_at)
+          .setFooter(
+            'Joined Twitch',
+            'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
+          )
+          .setThumbnail(user.data[0].profile_image_url)
+          .addField('Profile Description:', user.data[0].description)
+          .addField('View Counter:', user.data[0].view_count, true);
+        if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
+          offlineEmbed.addField(
+            'Rank:',
+            user.data[0].broadcaster_type.toUpperCase() + '!',
+            true
+          );
+        message.delete();
+        return message.say(offlineEmbed);
+      }
 
       const gameInfo = await Twitch.getGames(
         access_token,
@@ -74,10 +100,10 @@ module.exports = class TwitchStatusCommand extends Command {
         .setAuthor(
           'Streamer Status Check',
           user.data[0].profile_image_url,
-          'https://twitch.tv/' + streamInfo.data[0].user_name
+          'https://twitch.tv/' + user.data[0].display_name
         )
-        .setURL('https://twitch.tv/' + streamInfo.data[0].user_name)
-        .setTitle('Looks like ' + streamInfo.data[0].user_name + ' is online!')
+        .setURL('https://twitch.tv/' + user.data[0].display_name)
+        .setTitle('Looks like ' + user.data[0].display_name + ' is online!')
         .setThumbnail(
           gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
         )
@@ -85,7 +111,10 @@ module.exports = class TwitchStatusCommand extends Command {
         .addField('Currently Playing:', streamInfo.data[0].game_name, true)
         .addField('Viewers:', streamInfo.data[0].viewer_count, true)
         .setColor('#6441A4')
-        .setFooter('Stream Started')
+        .setFooter(
+          'Stream Started',
+          'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
+        )
         .setImage(
           streamInfo.data[0].thumbnail_url.replace(
             /-{width}x{height}/g,
@@ -93,15 +122,13 @@ module.exports = class TwitchStatusCommand extends Command {
           )
         )
         .setTimestamp(streamInfo.data[0].started_at);
-      if (
-        (user.data[0].broadcaster_type === 'partner',
-        user.data[0].broadcaster_type === 'affiliate')
-      )
+      if (user.data[0].broadcaster_type == 'partner' || 'affiliate')
         onlineEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
+
       message.delete();
       message.say(onlineEmbed);
     });
