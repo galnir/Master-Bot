@@ -10,7 +10,7 @@ module.exports = class PlayCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'play',
-      aliases: ['play-song', 'add'],
+      aliases: ['play-song', 'add', 'p'],
       memberName: 'play',
       group: 'music',
       description: 'Play any song or playlist from youtube!',
@@ -65,13 +65,14 @@ module.exports = class PlayCommand extends Command {
       if (found) {
         const embed = new MessageEmbed()
           .setColor('#ff0000')
-          .setTitle('Clarification')
+          .setTitle(':eyes: Clarification Please.')
           .setDescription(
             `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
           )
-          .addField('1.', 'Play saved playlist')
-          .addField('2.', 'Search on YouTube')
-          .addField('3.', 'Cancel');
+          .addField(':arrow_forward: Playlist', '1. Play saved playlist')
+          .addField(':mag: YouTube', '2. Search on YouTube')
+          .addField(':x: Cancel', '3. Cancel')
+          .setFooter('Choose by commenting a number between 1 and 3.');
         const clarifyEmbed = await message.channel.send({ embed });
         message.channel
           .awaitMessages(

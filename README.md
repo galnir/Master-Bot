@@ -138,4 +138,5 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'twitchstatus' commands and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'vote', 'poll', 'twitchstatus' commands and visual updates
+
