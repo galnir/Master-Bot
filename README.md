@@ -86,7 +86,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !advice      | Get some advice!                                                                                                                                | !advice               |
 | !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
-| !vote         | Starts a yes/no/don't care vote.                                                                                                                                              | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                 |
 | !twitchstatus | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                                    | !twitchstatus MasterBot or !tso MasterBot |
 
 - Gifs
