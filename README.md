@@ -22,7 +22,7 @@ Make a config.json file in the root directory of the project and add:
   "yandexAPI": "yandex-api-key",
   "geniusLyricsAPI": "genius-api-key",
   "twitchCleintID": "Your-Client-ID",
-  "twitchToken": " "Secret-Token"
+  "twitchToken": "Secret-Token"
 }
 ```
 
