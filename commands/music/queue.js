@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class QueueCommand extends Command {
   constructor(client) {
@@ -18,21 +18,17 @@ module.exports = class QueueCommand extends Command {
       return message.say(':x: Try again after the trivia has ended!');
     if (message.guild.musicData.queue.length == 0)
       return message.say(':x: There are no songs in queue!');
-    const titleArray = [];
-    /* eslint-disable */
-    // display only first 10 items in queue
-    message.guild.musicData.queue.slice(0, 10).forEach(obj => {
-      titleArray.push(obj.title);
-    });
-    /* eslint-enable */
-    var queueEmbed = new MessageEmbed()
-      .setColor('#ff7373')
-      .setTitle(
-        `:notes: Music Queue - ${message.guild.musicData.queue.length} items.`
-      );
-    for (let i = 0; i < titleArray.length; i++) {
-      queueEmbed.addField(`:musical_note: Song: ${i + 1}`, `${titleArray[i]}`);
-    }
-    return message.say(queueEmbed);
+    const queueClone = message.guild.musicData.queue;
+    const queueEmbed = new Pagination.FieldsEmbed()
+      .setArray(queueClone)
+      .setAuthorizedUsers([message.author.id])
+      .setChannel(message.channel)
+      .setElementsPerPage(10)
+      .formatField('# - Song', function(e) {
+        return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
+      });
+
+    queueEmbed.embed.setColor('#ff7373').setTitle('Music Queue');
+    queueEmbed.build();
   }
 };

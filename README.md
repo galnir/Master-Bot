@@ -1,4 +1,4 @@
-# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+[# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
@@ -37,6 +37,12 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command       | Description                                                                                                               | Usage                  |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
 | !play         | Play any song or playlist from youtube, you can do it by searching for a song by name or song url or playlist url         | !play darude sandstorm |
+| !create-playlist         | Create a saved playlist         | !create-playlist EDM |
+| !delete-playlist         | Delete a playlist from your saved playlists         | !delete-playlist EDM |
+| !display-playlist         | Display a saved playlist         | !display-playlist EDM |
+| !my-playlists         | List your saved playlists         | !my-playlists |
+| !remove-from-playlist         | Remove a song from a saved playlist using its index       | !remove-from-playlist EDM 5 |
+| !save-to-playlist         | Save a song or a playlist to a saved playlist         | !save-to-playlist EDM https://www.youtube.com/watch?v=dQw4w9WgXcQ |
 | !pause        | Pause the current playing song                                                                                            | !pause                 |
 | !resume       | Resume the current paused song                                                                                            | !resume                |
 | !leave        | Leaves voice channel if in one                                                                                            | !leave                 |
@@ -54,7 +60,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !now-playing       | Display the current playing song with a playback bar                                                        | !now-playing       |
 | !move       | Move song to a desired position in queue                                                        | !move 8 1      |
 
-- Misc
+- Other
 
 | Command      | Description                                                                                                                                                         | Usage                 |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
@@ -78,6 +84,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !advice      | Get some advice!                                                                                                                                | !advice               |
 | !kanye      | Get a random Kanye quote                                                                                                                                | !kanye               |
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
+| !poll         | Creates a poll with up to 10 choices.                                                                                                                                         | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
+| !vote         | Starts a yes/no/don't care vote.                                                                                                                                              | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                 |
 
 
 - Gifs
@@ -113,6 +121,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
+[Installing bot on a Raspberry](https://github.com/Bacon-Fixation/Master-Bot/blob/pi/Pi_Instructions.md)
+
 ### Contributing
 
 Fork it and submit a pull request!
@@ -124,6 +134,6 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
 
-[ModoSN](https://github.com/ModoSN) - 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
+[ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up' command and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'vote', 'poll' commands and visual updates

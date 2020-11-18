@@ -16,7 +16,7 @@ module.exports = class MotivationCommand extends Command {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readFileSync(
-      'resources/quotes/motivational.json',
+      '././resources/quotes/motivational.json',
       'utf8'
     );
     const quoteArray = JSON.parse(jsonQuotes).quotes;
@@ -25,10 +25,14 @@ module.exports = class MotivationCommand extends Command {
       quoteArray[Math.floor(Math.random() * quoteArray.length)];
 
     const quoteEmbed = new MessageEmbed()
-      .setAuthor('Motivational Quote', 'https://i.imgur.com/Cnr6cQb.png', 'https://type.fit')
+      .setAuthor(
+        'Motivational Quote',
+        'https://i.imgur.com/Cnr6cQb.png',
+        'https://type.fit'
+      )
       .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
-	  .setTimestamp()
-	  .setFooter('Powered by type.fit')
+      .setTimestamp()
+      .setFooter('Powered by type.fit')
       .setColor('#FFD77A');
     return message.channel.send(quoteEmbed);
   }
