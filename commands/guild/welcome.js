@@ -10,12 +10,12 @@ module.exports = class WecomeMessageCommand extends Command {
       group: 'guild',
       guildOnly: true,
       clientPermissions: ['ADMINISTRATOR'],
-      description: 'Allows you to toggle the welcome message for new members that join the server',
+      description: 'Allows you to toggle the welcome message for new members that join the server.',
       args: [
         {
           key: 'choice',
           prompt:
-            'Do you want welcome new users with a custom messages? Type: Yes or No',
+            'Do you want me to welcome new members? Type Yes or No',
           type: 'string',
           oneOf: ['yes', 'no', 'enable', 'disable']
         }
