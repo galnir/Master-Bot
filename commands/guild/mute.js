@@ -61,7 +61,7 @@ module.exports = class MuteCommand extends Command {
       })
       .catch(err => {
         message.say(
-          ':x: Something went wrong when trying to mute this user, I probably do not have the permission to mute them or a Muted role hasn`t been created yet!'
+          ':x: Something went wrong when trying to mute this user.'
         );
         return console.error(err);
       });
