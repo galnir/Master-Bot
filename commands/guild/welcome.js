@@ -1,34 +1,39 @@
-const { Command } = require("discord.js-commando");
+const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 
 module.exports = class WecomeMessageCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: "welcome",
-            memberName: "welcome",
-            group: "guild",
-            guildOnly: true,
-            clientPermissions: ['ADMINISTRATOR'],
-            description: "Asks if you want your server to have Welcome messages.",
-            args: [
-                {
-                    key: "choice",
-                    prompt: "Do you want welcome new users with a custom messages? Type: Yes or No",
-                    type: "string",
-                    oneOf: ['yes', 'no' ]                                   
-                }
-            ]
-        });
-    }
+  constructor(client) {
+    super(client, {
+      name: 'welcome-message',
+      memberName: 'welcome-message',
+      aliases: ['welcomemessage', 'welcome'],
+      group: 'guild',
+      guildOnly: true,
+      clientPermissions: ['ADMINISTRATOR'],
+      description: 'Allows you to toggle the welcome message for new members that join the server',
+      args: [
+        {
+          key: 'choice',
+          prompt:
+            'Do you want welcome new users with a custom messages? Type: Yes or No',
+          type: 'string',
+          oneOf: ['yes', 'no', 'enable', 'disable']
+        }
+      ]
+    });
+  }
 
- 
-    run(message, { choice }) {
-        db.set(message.member.guild.id, { welcomeMsgStatus: choice.toLowerCase() });
-        
-        if (choice.toLowerCase() == 'yes')
-            message.say(`Welcome Message Enabled on ${message.member.guild.name}`)
-         
-        if (choice.toLowerCase() == 'no')
-            message.say(`Welcome Message Disabled on ${message.member.guild.name}`)
-    }
-}
+  run(message, { choice }) {
+    if (choice.toLowerCase() == 'enable') var choice = 'yes';
+
+    if (choice.toLowerCase() == 'disable') var choice = 'no';
+
+    db.set(message.member.guild.id, { welcomeMsgStatus: choice.toLowerCase() });
+
+    if (choice.toLowerCase() == 'yes')
+      message.say(`Welcome Message Enabled on ${message.member.guild.name}`);
+
+    if (choice.toLowerCase() == 'no')
+      message.say(`Welcome Message Disabled on ${message.member.guild.name}`);
+  }
+};

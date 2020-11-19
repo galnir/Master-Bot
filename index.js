@@ -82,28 +82,25 @@ client.on('voiceStateUpdate', async (___, newState) => {
   }
 });
 
-
-// Custom Welcome Image for new members
 client.on('guildMemberAdd', async member => {
-  let welcomeGuildFetch = db.get(member.guild.id);
-   if (!welcomeGuildFetch) 
-      return;
-  
-  let welcomeMessageSetting = welcomeGuildFetch.welcomeMsgStatus;
-  if (welcomeMessageSetting == 'no') 
-    return;
-    
+  const welcomeGuildFetch = db.get(member.guild.id);
+  if (!welcomeGuildFetch) return;
+
+  const welcomeMessageSetting = welcomeGuildFetch.welcomeMsgStatus;
+  if (welcomeMessageSetting == 'no') return;
+
   if (welcomeMessageSetting == 'yes') {
     const applyText = (canvas, text) => {
       const ctx = canvas.getContext('2d');
       let fontSize = 70;
-    
+
       do {
         ctx.font = `${(fontSize -= 10)}px sans-serif`;
       } while (ctx.measureText(text).width > canvas.width - 300);
-    
+
       return ctx.font;
     };
+    // Custom Welcome Image for new members
     const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height)
     const ctx = canvas.getContext('2d');
 
