@@ -24,9 +24,9 @@ module.exports = class WecomeMessageCommand extends Command {
   }
 
   run(message, { choice }) {
-    if (choice.toLowerCase() == 'enable') var choice = 'yes';
+    if (choice.toLowerCase() == 'enable')  choice = 'yes';
 
-    if (choice.toLowerCase() == 'disable') var choice = 'no';
+    if (choice.toLowerCase() == 'disable')  choice = 'no';
 
     db.set(message.member.guild.id, { welcomeMsgStatus: choice.toLowerCase() });
 
