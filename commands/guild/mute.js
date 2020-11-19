@@ -9,7 +9,7 @@ module.exports = class MuteCommand extends Command {
       memberName: 'mute',
       group: 'guild',
       description:
-        'Mutes a tagged user (if you have already created a Muted role)(WIP)',
+        'Mutes a tagged user (if you have already created a Muted role)',
       guildOnly: true,
       userPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
       clientPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
