@@ -9,7 +9,7 @@ module.exports = class WecomeMessageCommand extends Command {
             group: "guild",
             guildOnly: true,
             clientPermissions: ['ADMINISTRATOR'],
-            description: "Askes if you want your server to have Welcome messages.",
+            description: "Asks if you want your server to have Welcome messages.",
             args: [
                 {
                     key: "choice",
@@ -25,10 +25,10 @@ module.exports = class WecomeMessageCommand extends Command {
     run(message, { choice }) {
         db.set(message.member.guild.id, { welcomeMsgStatus: choice.toLowerCase() });
         
-        if (choice == 'yes')
+        if (choice.toLowerCase() == 'yes')
             message.say(`Welcome Message Enabled on ${message.member.guild.name}`)
          
-        if (choice == 'no')
+        if (choice.toLowerCase() == 'no')
             message.say(`Welcome Message Disabled on ${message.member.guild.name}`)
     }
 }
