@@ -1,0 +1,57 @@
+const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
+
+module.exports = class MuteCommand extends Command {
+  constructor(client) {
+    super(client, {
+      name: 'mute',
+      aliases: ['mute-user'],
+      memberName: 'mute',
+      group: 'guild',
+      description: 'Mutes a tagged user (if you have already created a Muted role)(WIP)',
+      guildOnly: true,
+      userPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
+      clientPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
+      args: [
+        {
+          key: 'userToMute',
+          prompt:
+            'Please mention the user you want to mute with @ or provide their ID.',
+          type: 'string'
+        },
+        {
+          key: 'reason',
+          prompt: 'Why do you want to mute this user?',
+          type: 'string',
+          default: 'no reason'
+        },
+      ]
+    });
+  }
+
+  async run(message, { userToMute, reason }) {
+    const mutedRole = message.guild.roles.cache.find(role => role.name === 'Muted');
+    const extractNumber = /\d+/g;
+    const userToMuteID = userToMute.match(extractNumber)[0];
+    const user =
+      message.mentions.members.first() ||
+      (await message.guild.members.fetch(userToMuteID));
+    if (user == undefined)
+      return message.channel.send(':x: Please try again with a valid user.');
+    user
+      .roles.add(mutedRole)
+      .then(() => {
+        const muteEmbed = new MessageEmbed()
+          .addField('Muted:', userToMute)
+          .addField('Reason', reason)
+          .setColor('#420626');
+        message.channel.send(muteEmbed);
+      })
+      .catch(err => {
+        message.say(
+          ':x: Something went wrong when trying to mute this user, I probably do not have the permission to mute them or a Muted role hasn`t been created yet!'
+        );
+        return console.error(err);
+      });
+  }
+};
