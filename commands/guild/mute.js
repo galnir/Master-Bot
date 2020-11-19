@@ -36,7 +36,7 @@ module.exports = class MuteCommand extends Command {
     );
     if (mutedRole == null)
       return message.channel.send(
-        ':x: No "Muted" role found create on and try again.'
+        ':x: No "Muted" role found create one and try again.'
       );
 
     const extractNumber = /\d+/g;
