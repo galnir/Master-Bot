@@ -1,15 +1,14 @@
 const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
 
 module.exports = class MySplitsIOCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'splits',
-      aliases: ['mysplits', 'personal-best', 'pb'],
+      name: 'speedrunner-stats',
+      aliases: ['personal-bests', 'pbs'],
       group: 'speedrun',
-      memberName: 'splits',
+      memberName: 'speedrunner-stats',
       description: 'Show off your splits from Splits.io',
       args: [
         {
@@ -22,7 +21,9 @@ module.exports = class MySplitsIOCommand extends Command {
   }
 
   async run(message, { userQuery }) {
-    message.delete()
+    if (message.channel == true)
+      message.delete();
+    
     const userFiltered = userQuery.toLowerCase();
 
     const userRes = await fetch(
@@ -37,7 +38,7 @@ module.exports = class MySplitsIOCommand extends Command {
       `https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`
     ).then(gameRes => gameRes.json());
 
-    if (!userRes.runners.length == 0) {
+    if (!userRes.runners.length == 0 || !gameRes == null) {
       const pbArray = gameRes.pbs;
       const pbEmbed = new Pagination.FieldsEmbed()
         .setArray(pbArray)
@@ -45,14 +46,14 @@ module.exports = class MySplitsIOCommand extends Command {
         .setChannel(message.channel)
         .setElementsPerPage(10)
         .formatField(
-          '**Game**',
+          'Game',
           function(e) {
             return `**${pbArray.indexOf(e) + 1}**: ${e.game.name}`;
           },
           true
         )
         .formatField(
-          '**Time**',
+          'Time',
           function(e) {
             return MySplitsIOCommand.convertTime(e.realtime_duration_ms);
           },
@@ -83,7 +84,7 @@ module.exports = class MySplitsIOCommand extends Command {
       gameRes.pbs.map(el => el.game)
     );
   }
-
+// Differant than Src Command time convertion - includes ms
   static convertTime(time) {
     let str, hr, min, sec, ms;
     let parts = time.toString().split('.');
