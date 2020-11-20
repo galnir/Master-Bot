@@ -34,15 +34,20 @@ module.exports = class MySplitsIOCommand extends Command {
     ).then(userRes => userRes.json());
     if (userRes.runners.length == 0)
       return message.say(
-        ':x: The User ' + userQuery + ' was not found. Please try again.'
+        ':x: The User ' + userQuery + 's was not found. Please try again.'
       );
 
-    const gameRes = await fetch(
+    const pbsRes = await fetch(
       `https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`
-    ).then(gameRes => gameRes.json());
+    ).then(pbsRes => pbsRes.json());
+    if (pbsRes.pbs.map == 0)
+      return message.say(
+        ':x: The User ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n
+        Please try again later.`
+      );
 
-    if (!userRes.runners.length == 0 || !gameRes == null) {
-      const pbArray = gameRes.pbs;
+    if (!userRes.runners.length == 0) {
+      const pbArray = pbsRes.pbs;
       const pbEmbed = new Pagination.FieldsEmbed()
         .setArray(pbArray)
         .setAuthorizedUsers([message.author.id])
@@ -77,16 +82,18 @@ module.exports = class MySplitsIOCommand extends Command {
           userRes.runners[0].name + '`s Speedrun Stats ',
           userRes.runners[0].avatar
         )
-        .setThumbnail(userRes.runners[0].avatar);
-      // console.log(pbArray);
+        .setThumbnail(userRes.runners[0].avatar)
+        .setFooter('Powered by Splits.io', 'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
+        .setTimestamp();
+      
 
       pbEmbed.build();
 //debug
       // console.log(pbArray);
-      // console.log(userRes, gameRes.pbs);
+      // console.log(userRes, pbsRes.pbs);
       // console.log(
       //   userRes,
-      //   gameRes.pbs.map(el => el.game)
+      //   pbsRes.pbs.map(el => el.game)
       //);
     }
   }
