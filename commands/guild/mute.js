@@ -11,8 +11,8 @@ module.exports = class MuteCommand extends Command {
       description:
         'Mutes a tagged user (if you have already created a Muted role)',
       guildOnly: true,
-      userPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
-      clientPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
+      userPermissions: ['MANAGE_ROLES'],
+      clientPermissions: ['MANAGE_ROLES'],
       args: [
         {
           key: 'userToMute',
