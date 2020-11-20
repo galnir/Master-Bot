@@ -52,7 +52,7 @@ module.exports = class UnmuteCommand extends Command {
       })
       .catch(err => {
         message.say(
-          ':x: Something went wrong when trying to unmute this user, I probably do not have the permission to unmute them!'
+          ':x: Something went wrong when trying to unmute this user.'
         );
         return console.error(err);
       });
