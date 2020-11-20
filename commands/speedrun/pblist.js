@@ -21,9 +21,12 @@ module.exports = class MySplitsIOCommand extends Command {
   }
 
   async run(message, { userQuery }) {
-    if (message.channel == true)
-      message.delete();
-    
+    try {
+      await message.delete();
+    } catch {
+      return;
+    }
+
     const userFiltered = userQuery.toLowerCase();
 
     const userRes = await fetch(
@@ -69,22 +72,26 @@ module.exports = class MySplitsIOCommand extends Command {
         .setDeleteOnTimeout(true);
 
       pbEmbed.embed
-        .setColor('#ff7373')
+        .setColor('#3E8657')
         .setAuthor(
           userRes.runners[0].name + '`s Speedrun Stats ',
           userRes.runners[0].avatar
         )
         .setThumbnail(userRes.runners[0].avatar);
-      console.log(pbArray);
+      // console.log(pbArray);
+
       pbEmbed.build();
+//debug
+      // console.log(pbArray);
+      // console.log(userRes, gameRes.pbs);
+      // console.log(
+      //   userRes,
+      //   gameRes.pbs.map(el => el.game)
+      //);
     }
-    console.log(userRes, gameRes.pbs);
-    console.log(
-      userRes,
-      gameRes.pbs.map(el => el.game)
-    );
   }
-// Differant than Src Command time convertion - includes ms
+
+  // Differant than Src Command time convertion includes ms
   static convertTime(time) {
     let str, hr, min, sec, ms;
     let parts = time.toString().split('.');
