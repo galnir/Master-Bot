@@ -255,6 +255,11 @@ module.exports = class PlayCommand extends Command {
       // happens when loading a saved playlist
       queue[0].voiceChannel = message.member.voice.channel;
     }
+    if(message.guild.me.voice.channel !== null) {
+      if(message.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
+        queue[0].voiceChannel = message.guild.me.voice.channel;
+      }
+    }
     queue[0].voiceChannel
       .join()
       .then(function(connection) {
