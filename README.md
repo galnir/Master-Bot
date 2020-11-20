@@ -106,6 +106,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !ban                  | Bans a tagged member            | !ban @johndoe                         |
 | !kick                 | Kicks a tagged member           | !kick @johndoe                        |
 | !prune                | Delete up to 99 recent messages | !prune 50                             |
+| !welcome-message      | Allows you to toggle the welcome message for new members that join the server.| !welcome-message enable |
 
 ### Resources
 
