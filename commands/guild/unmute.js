@@ -11,8 +11,8 @@ module.exports = class UnmuteCommand extends Command {
       description:
         'Unmutes a tagged user',
       guildOnly: true,
-      userPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
-      clientPermissions: ['MANAGE_MESSAGES', 'MANAGE_ROLES'],
+      userPermissions: ['MANAGE_ROLES'],
+      clientPermissions: ['MANAGE_ROLES'],
       args: [
         {
           key: 'userToUnmute',
