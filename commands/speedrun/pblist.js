@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
 
@@ -40,61 +41,72 @@ module.exports = class MySplitsIOCommand extends Command {
     const pbsRes = await fetch(
       `https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`
     ).then(pbsRes => pbsRes.json());
-    if (pbsRes.pbs.map == 0)
+    if (pbsRes.map == 0)
       return message.say(
-        ':x: The User ' + userRes.runners[0].name + `s hasn't submitted any speedruns to Splits.io\n
+        ':x: The User ' +
+          userRes.runners[0].name +
+          `s hasn't submitted any speedruns to Splits.io\n
         Please try again later.`
       );
 
     if (!userRes.runners.length == 0) {
       const pbArray = pbsRes.pbs;
-      const pbEmbed = new Pagination.FieldsEmbed()
-        .setArray(pbArray)
+      const pbEmbedArray = [];
+
+      for (let i = 1; i <= pbsRes.pbs.length; ++i) {
+        pbEmbedArray.push(
+          new MessageEmbed()
+            .setTitle(`Entry #` + i + ' of ' + pbsRes.pbs.length)
+            .setAuthor(
+              userRes.runners[0].name + '`s Speedrun Stats ',
+              userRes.runners[0].avatar
+            )
+            .setThumbnail(pbArray[i - 1].game.cover_url)
+            .addField('Game', pbArray[i - 1].game.name, true)
+            .addField(`Category`, pbArray[i - 1].category.name, true)
+            .addField('Timer Program', pbArray[i - 1].program)
+            .addField(
+              'Finish Time',
+
+              MySplitsIOCommand.convertTime(
+                pbArray[i - 1].realtime_duration_ms
+              ),
+              true
+            )
+            .addField(
+              'Sum Of Best',
+
+              MySplitsIOCommand.convertTime(
+                pbArray[i - 1].realtime_sum_of_best_ms
+              ),
+              true
+            )
+            .addField('Attempts', pbArray[i - 1].attempts, true)
+
+            .setFooter(
+              'Powered by Splits.io! Run was submited',
+              'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png'
+            )
+            .setTimestamp(pbArray[i - 1].parsed_at)
+        );
+      }
+
+      const pbEmbed = new Pagination.Embeds()
+        .setArray(pbEmbedArray)
         .setAuthorizedUsers([message.author.id])
         .setChannel(message.channel)
-        .setElementsPerPage(10)
-        .formatField(
-          'Game',
-          function(e) {
-            return `**${pbArray.indexOf(e) + 1}**: ${e.game.name}`;
-          },
-          true
-        )
-        .formatField(
-          'Time',
-          function(e) {
-            return MySplitsIOCommand.convertTime(e.realtime_duration_ms);
-          },
-          true
-        )
-        .formatField(
-          'Attempts',
-          function(e) {
-            return e.attempts;
-          },
-          true
-        )
-        .setDeleteOnTimeout(true);
-
-      pbEmbed.embed
+        //.setURL(url)
         .setColor('#3E8657')
-        .setAuthor(
-          userRes.runners[0].name + '`s Speedrun Stats ',
-          userRes.runners[0].avatar
-        )
-        .setThumbnail(userRes.runners[0].avatar)
-        .setFooter('Powered by Splits.io', 'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png')
-        .setTimestamp();
-      
-
-      pbEmbed.build();
-//debug
+        .setTimeout(60000)
+        .setDeleteOnTimeout(true);
+      //debug
       // console.log(pbArray);
       // console.log(userRes, pbsRes.pbs);
       // console.log(
       //   userRes,
       //   pbsRes.pbs.map(el => el.game)
-      //);
+      // );
+      return pbEmbed.build();
     }
   }
 
