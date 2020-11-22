@@ -42,7 +42,7 @@ module.exports = class LyricsCommand extends Command {
         ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
       );
     }
-    
+
     const sentMessage = await message.channel.send(
       ':mag: :notes: Searching for lyrics!'
     );
@@ -82,11 +82,13 @@ module.exports = class LyricsCommand extends Command {
                   .setURL(url)
                   .setColor('#00724E')
                   .setTimeout(60000)
-                  .setDeleteOnTimeout(true)
+                  .setDeleteOnTimeout(true);
 
-                return sentMessage.edit(':white_check_mark: Lyrics Found!',lyricsEmbed.build()).then(msg => {
-                  msg.delete({ timeout: 2000 })
-                });
+                return sentMessage
+                  .edit(':white_check_mark: Lyrics Found!', lyricsEmbed.build())
+                  .then(msg => {
+                    msg.delete({ timeout: 2000 });
+                  });
               })
               .catch(function(err) {
                 message.say(err);
