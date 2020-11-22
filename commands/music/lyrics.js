@@ -74,7 +74,7 @@ module.exports = class LyricsCommand extends Command {
                       .setFooter('Provided by genius.com')
                   );
                 }
-                sentMessage.edit('Lyrics Found!');
+
                 const lyricsEmbed = new Pagination.Embeds()
                   .setArray(lyricsArray)
                   .setAuthorizedUsers([message.author.id])
@@ -84,8 +84,8 @@ module.exports = class LyricsCommand extends Command {
                   .setTimeout(60000)
                   .setDeleteOnTimeout(true)
 
-                return sentMessage.edit(lyricsEmbed.build()).then(msg => {
-                  msg.delete({ timeout: 10000 })
+                return sentMessage.edit(':white_check_mark: Lyrics Found!',lyricsEmbed.build()).then(msg => {
+                  msg.delete({ timeout: 2000 })
                 });
               })
               .catch(function(err) {
