@@ -81,7 +81,8 @@ module.exports = class LyricsCommand extends Command {
                   .setChannel(message.channel)
                   .setURL(url)
                   .setColor('#00724E')
-                  .setDeleteOnTimeout(true);
+                  .setTimeout(60000)
+                  .setDeleteOnTimeout(true)
 
                 return sentMessage.edit(lyricsEmbed.build());
               })
