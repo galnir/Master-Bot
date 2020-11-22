@@ -80,7 +80,8 @@ module.exports = class LyricsCommand extends Command {
                   .setAuthorizedUsers([message.author.id])
                   .setChannel(message.channel)
                   .setURL(url)
-                  .setColor('#00724E');
+                  .setColor('#00724E')
+                  .setDeleteOnTimeout(true);
 
                 return sentMessage.edit(lyricsEmbed.build());
               })
