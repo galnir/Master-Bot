@@ -84,7 +84,9 @@ module.exports = class LyricsCommand extends Command {
                   .setTimeout(60000)
                   .setDeleteOnTimeout(true)
 
-                return sentMessage.edit(lyricsEmbed.build());
+                return sentMessage.edit(lyricsEmbed.build()).then(msg => {
+                  msg.delete({ timeout: 10000 })
+                });
               })
               .catch(function(err) {
                 message.say(err);
