@@ -29,25 +29,35 @@ module.exports = class MySplitsIOCommand extends Command {
     }
 
     const userFiltered = userQuery.toLowerCase();
-
     const userRes = await fetch(
       `https://splits.io/api/v4/runners?search=${userFiltered}`
     ).then(userRes => userRes.json());
+    
     if (userRes.runners.length == 0)
+       message.say(
+        ':x: The Runner ' + userQuery + ' was  not found.');
+    
+    if (userRes.status == 404)
       return message.say(
-        ':x: The User ' + userQuery + 's was not found. Please try again.'
+        ':x: The Runner ' + userQuery + ' was  not found.'
       );
 
     const pbsRes = await fetch(
       `https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`
     ).then(pbsRes => pbsRes.json());
-    if (pbsRes.map == 0)
+    
+    if (pbsRes.length == 0)
       return message.say(
-        ':x: The User ' +
+        ':x: The Runner ' +
           userRes.runners[0].name +
           `s hasn't submitted any speedruns to Splits.io\n
         Please try again later.`
       );
+    
+    if (pbsRes.status == 404)
+      return message.say(
+        ':x: The User ' + userQuery + 's stats were not found.'
+      ).delete('timeout')
 
     if (!userRes.runners.length == 0) {
       const pbArray = pbsRes.pbs;
@@ -57,14 +67,20 @@ module.exports = class MySplitsIOCommand extends Command {
         pbEmbedArray.push(
           new MessageEmbed()
             .setTitle(`Entry #` + i + ' of ' + pbsRes.pbs.length)
+            .setURL('https://splits.io/' + pbArray[i - 1].id)
             .setAuthor(
               userRes.runners[0].name + '`s Speedrun Stats ',
               userRes.runners[0].avatar
             )
             .setThumbnail(pbArray[i - 1].game.cover_url)
             .addField('Game', pbArray[i - 1].game.name, true)
+
             .addField(`Category`, pbArray[i - 1].category.name, true)
-            .addField('Timer Program', pbArray[i - 1].program)
+            .addField(
+              'Number of Segments',
+              pbArray[i - 1].segments.length,
+              true
+            )
             .addField(
               'Finish Time',
 
@@ -82,7 +98,7 @@ module.exports = class MySplitsIOCommand extends Command {
               true
             )
             .addField('Attempts', pbArray[i - 1].attempts, true)
-
+            .addField('Timer Used', pbArray[i - 1].program)
             .setFooter(
               'Powered by Splits.io! Run was submited',
               'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png'
@@ -95,17 +111,9 @@ module.exports = class MySplitsIOCommand extends Command {
         .setArray(pbEmbedArray)
         .setAuthorizedUsers([message.author.id])
         .setChannel(message.channel)
-        //.setURL(url)
         .setColor('#3E8657')
         .setTimeout(60000)
         .setDeleteOnTimeout(true);
-      //debug
-      // console.log(pbArray);
-      // console.log(userRes, pbsRes.pbs);
-      // console.log(
-      //   userRes,
-      //   pbsRes.pbs.map(el => el.game)
-      // );
       return pbEmbed.build();
     }
   }
