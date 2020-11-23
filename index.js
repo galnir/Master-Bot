@@ -172,10 +172,5 @@ client.on('guildMemberAdd', async member => {
     }
   }
 });
-client.on('message', message => {
-	if (message.content === '?join') {
-		client.emit('guildMemberAdd', message.member);
-	}
-});
 
 client.login(token);
