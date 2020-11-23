@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const { geniusLyricsAPI } = require('../../config.json');
@@ -41,6 +42,7 @@ module.exports = class LyricsCommand extends Command {
         ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
       );
     }
+
     const sentMessage = await message.channel.send(
       ':mag: :notes: Searching for lyrics!'
     );
@@ -60,32 +62,33 @@ module.exports = class LyricsCommand extends Command {
           .then(function(url) {
             LyricsCommand.getLyrics(url)
               .then(function(lyrics) {
-                if (lyrics.length > 4095) {
-                  message.say(
-                    ':x: Lyrics are too long to be returned in a message embed!'
+                const lyricsIndex = Math.round(lyrics.length / 2048) + 1;
+                const lyricsArray = [];
+
+                for (let i = 1; i <= lyricsIndex; ++i) {
+                  let b = i - 1;
+                  lyricsArray.push(
+                    new MessageEmbed()
+                      .setTitle(`Lyrics Page #` + i)
+                      .setDescription(lyrics.slice(b * 2048, i * 2048))
+                      .setFooter('Provided by genius.com')
                   );
-                  return;
                 }
-                if (lyrics.length < 2048) {
-                  const lyricsEmbed = new MessageEmbed()
-                    .setColor('#00724E')
-                    .setDescription(lyrics.trim())
-                    .setFooter('Provided by genius.com');
-                  return sentMessage.edit('', lyricsEmbed);
-                } else {
-                  // 2048 < lyrics.length < 4096
-                  const firstLyricsEmbed = new MessageEmbed()
-                    .setColor('#00724E')
-                    .setDescription(lyrics.slice(0, 2048))
-                    .setFooter('Provided by genius.com');
-                  const secondLyricsEmbed = new MessageEmbed()
-                    .setColor('#00724E')
-                    .setDescription(lyrics.slice(2048, lyrics.length))
-                    .setFooter('Provided by genius.com');
-                  sentMessage.edit('', firstLyricsEmbed);
-                  message.channel.send(secondLyricsEmbed);
-                  return;
-                }
+
+                const lyricsEmbed = new Pagination.Embeds()
+                  .setArray(lyricsArray)
+                  .setAuthorizedUsers([message.author.id])
+                  .setChannel(message.channel)
+                  .setURL(url)
+                  .setColor('#00724E')
+                  .setTimeout(60000)
+                  .setDeleteOnTimeout(true);
+
+                return sentMessage
+                  .edit(':white_check_mark: Lyrics Found!', lyricsEmbed.build())
+                  .then(msg => {
+                    msg.delete({ timeout: 2000 });
+                  });
               })
               .catch(function(err) {
                 message.say(err);
