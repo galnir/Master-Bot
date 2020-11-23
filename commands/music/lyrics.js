@@ -80,9 +80,7 @@ module.exports = class LyricsCommand extends Command {
                   .setAuthorizedUsers([message.author.id])
                   .setChannel(message.channel)
                   .setURL(url)
-                  .setColor('#00724E')
-                  .setTimeout(60000)
-                  .setDeleteOnTimeout(true);
+                  .setColor('#00724E');
 
                 return sentMessage
                   .edit(':white_check_mark: Lyrics Found!', lyricsEmbed.build())
