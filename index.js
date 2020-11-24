@@ -59,6 +59,7 @@ client.once('ready', () => {
   });
   const Guilds = client.guilds.cache.map(guild => guild.name);
   console.log(Guilds, 'Connected!');
+  Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', { family: 'Open Sans Light' }); // Registering font For Cloud Services
 });
 
 client.on('voiceStateUpdate', async (___, newState) => {
@@ -95,7 +96,7 @@ client.on('guildMemberAdd', async member => {
       let fontSize = 70;
 
       do {
-        ctx.font = `${(fontSize -= 10)}px sans-serif`;
+        ctx.font = `${(fontSize -= 10)}px Open Sans Light`; // if the font register changed this needs to match the family Name on line 62
       } while (ctx.measureText(text).width > canvas.width - 300);
 
       return ctx.font;
@@ -112,7 +113,7 @@ client.on('guildMemberAdd', async member => {
     ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = '26px sans-serif';
+    ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
     ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
     ctx.fillText(
       `Welcome to ${member.guild.name}`,
