@@ -9,7 +9,7 @@ sudo apt-get updgrade
 ### Checking and Installing needed Dependencies 
 
 ### Complier
-Quick.db and Cavvas both need a Compiler in order to install on a PI
+Quick.db and Canvas both need a Compiler in order to install on a PI
 ```
 sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev`
 ```
