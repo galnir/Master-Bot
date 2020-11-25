@@ -1,4 +1,4 @@
-[# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
@@ -104,6 +104,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !ban                  | Bans a tagged member            | !ban @johndoe                         |
 | !kick                 | Kicks a tagged member           | !kick @johndoe                        |
 | !prune                | Delete up to 99 recent messages | !prune 50                             |
+| !welcome-message      | Allows you to toggle the welcome message for new members that join the server.| !welcome-message enable |
 
 ### Resources
 
