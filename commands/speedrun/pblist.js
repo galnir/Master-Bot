@@ -8,7 +8,7 @@ module.exports = class MySplitsIOCommand extends Command {
     super(client, {
       name: 'speedrunner-stats',
       aliases: ['personal-bests', 'pbs'],
-      group: 'speedrun',
+      group: 'music',
       memberName: 'speedrunner-stats',
       description: 'Show off your splits from Splits.io',
       args: [
@@ -32,32 +32,34 @@ module.exports = class MySplitsIOCommand extends Command {
     const userRes = await fetch(
       `https://splits.io/api/v4/runners?search=${userFiltered}`
     ).then(userRes => userRes.json());
-    
-    if (userRes.runners.length == 0)
-       message.say(
-        ':x: The Runner ' + userQuery + ' was  not found.');
-    
-    if (userRes.status == 404)
-      return message.say(
-        ':x: The Runner ' + userQuery + ' was  not found.'
-      );
+
+    if (userRes.runners.length == 0) {
+      message.say(':x: The Runner ' + userQuery + ' was  not found.');
+      return;
+    }
+
+    if (userRes.status == 404) {
+      message.say(':x: The Runner ' + userQuery + ' was  not found.');
+      return;
+    }
 
     const pbsRes = await fetch(
       `https://splits.io/api/v4/runners/${userRes.runners[0].name}/pbs`
     ).then(pbsRes => pbsRes.json());
-    
-    if (pbsRes.length == 0)
-      return message.say(
+
+    if (pbsRes.length == 0) {
+      message.say(
         ':x: The Runner ' +
           userRes.runners[0].name +
           `s hasn't submitted any speedruns to Splits.io\n
         Please try again later.`
       );
-    
-    if (pbsRes.status == 404)
-      return message.say(
-        ':x: The User ' + userQuery + 's stats were not found.'
-      ).delete('timeout')
+      return;
+    }
+    if (pbsRes.status == 404) {
+      message.say(':x: The User ' + userQuery + 's stats were not found.');
+      return;
+    }
 
     if (!userRes.runners.length == 0) {
       const pbArray = pbsRes.pbs;
@@ -117,7 +119,7 @@ module.exports = class MySplitsIOCommand extends Command {
       return pbEmbed.build();
     }
   }
-
+  // prettier-ignore
   // Differant than Src Command time convertion includes ms
   static convertTime(time) {
     let str, hr, min, sec, ms;
@@ -127,42 +129,42 @@ module.exports = class MySplitsIOCommand extends Command {
     if (sec >= 60) {
       min = Math.floor(sec / 60);
       sec = sec % 60;
-      sec = sec < 10 ? '0' + sec : sec;
+      sec = (sec < 10) ? ('0' + sec) : sec;
     }
     if (min >= 60) {
       hr = Math.floor(min / 60);
       min = min % 60;
-      min = min < 10 ? '0' + min : min;
+      min = (min < 10) ? ('0' + min) : min;
     }
     if (ms < 10) ms = '00' + ms;
     else if (ms < 100) ms = '0' + ms;
     if (min === undefined) {
       str =
-        ms === undefined
-          ? sec.toString() + 's'
-          : sec.toString() + 's ' + ms.toString() + 'ms';
+        (ms === undefined)
+          ? (sec.toString() + 's')
+          : (sec.toString() + 's ' + ms.toString() + 'ms');
     } else if (hr === undefined) {
       str =
-        ms === undefined
-          ? min.toString() + 'm ' + sec.toString() + 's'
-          : min.toString() +
+        (ms === undefined)
+          ? (min.toString() + 'm ' + sec.toString() + 's')
+          : (min.toString() +
             'm ' +
             sec.toString() +
             's ' +
             ms.toString() +
-            'ms';
+            'ms');
     } else {
       str =
-        ms === undefined
-          ? hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's'
-          : hr.toString() +
+        (ms === undefined)
+          ? (hr.toString() + 'h ' + min.toString() + 'm ' + sec.toString() + 's')
+          : (hr.toString() +
             'h ' +
             min.toString() +
             'm ' +
             sec.toString() +
             's ' +
             ms.toString() +
-            'ms';
+            'ms');
     }
     return str;
   }
