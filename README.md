@@ -131,10 +131,13 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', pi instructions and visual updates
+
+[ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
+
+[Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
+
 [malokdev](https://github.com/malokdev) - 'uptime' command
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
 
-[ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
-
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'vote', 'poll' commands and visual updates
