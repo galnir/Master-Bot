@@ -22,7 +22,7 @@
     "quick.db": "^7.1.3",
     "simple-twitch-api": "^1.2.0",
     "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^4.0.5"
+    "ytdl-core": "^4.0.6"
   },
   "devDependencies": {
     "@getify/eslint-plugin-proper-arrows": "^8.0.1",

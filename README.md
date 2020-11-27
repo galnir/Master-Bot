@@ -1,4 +1,4 @@
-[# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
@@ -133,11 +133,13 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[malokdev](https://github.com/malokdev) - 'uptime' command
-
-[chimaerra](https://github.com/chimaerra) - minor command tweaks
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'Speedrun world record look up', 'vote', 'poll', 'twitchstatus' commands and visual updates
+[Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
+
+[malokdev](https://github.com/malokdev) - 'uptime' command
+
+[chimaerra](https://github.com/chimaerra) - minor command tweaks
 

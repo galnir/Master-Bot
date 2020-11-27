@@ -8,7 +8,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'speedrun',
-      group: 'other',
+      group: 'speedrun',
       aliases: ['sr', 'wr', 'src'],
       memberName: 'speedrun',
       description: 'Replies with speedrun info of the main category.',
