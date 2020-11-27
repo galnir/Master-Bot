@@ -11,7 +11,7 @@ sudo apt-get updgrade
 ### Compiler
 Quick.db and Canvas both need a Compiler in order to install on a PI
 ```
-sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev`
+sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 ```
 to install a compliler and the image support for Canvas
 
