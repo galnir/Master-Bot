@@ -79,7 +79,7 @@ I use 14.10.0 because of a bug in the latest v14.15.0 build
 
 ```
 cd ~
-wget https://unofficial-builds.nodejs.org/download/release/v14.10.0/node-v14.15.0-linux-armv6l.tar.gz
+wget https://unofficial-builds.nodejs.org/download/release/v14.10.0/node-v14.10.0-linux-armv6l.tar.gz
 tar -xzf node-v14.10.0-linux-armv6l.tar.gz
 node-v14.10.0-linux-armv6l/bin/node -v
 ```
@@ -88,7 +88,7 @@ The last command should print v14.10.0.
 Now you can copy it to `/usr/local`
 
 ```
-cd node-v14.12.0-linux-armv6l/
+cd node-v14.10.0-linux-armv6l/
 sudo cp -R * /usr/local/
 ```
 Now let's check if it was successful
