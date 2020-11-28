@@ -10,12 +10,12 @@ module.exports = class WecomeMessageCommand extends Command {
       group: 'guild',
       guildOnly: true,
       clientPermissions: ['ADMINISTRATOR'],
-      description: 'Allows you to toggle the welcome message for new members that join the server.',
+      description:
+        'Allows you to toggle the welcome message for new members that join the server.',
       args: [
         {
           key: 'choice',
-          prompt:
-            'Do you want me to welcome new members? Type Yes or No',
+          prompt: 'Do you want me to welcome new members? Type Yes or No',
           type: 'string',
           oneOf: ['yes', 'no', 'enable', 'disable']
         }
@@ -24,11 +24,14 @@ module.exports = class WecomeMessageCommand extends Command {
   }
 
   run(message, { choice }) {
-    if (choice.toLowerCase() == 'enable')  choice = 'yes';
+    if (choice.toLowerCase() == 'enable') choice = 'yes';
 
-    if (choice.toLowerCase() == 'disable')  choice = 'no';
+    if (choice.toLowerCase() == 'disable') choice = 'no';
 
-    db.set(`${message.member.guild.id}.serverSettings.welcomeMsgStatus`, choice.toLowerCase() );
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsgStatus`,
+      choice.toLowerCase()
+    );
 
     if (choice.toLowerCase() == 'yes')
       message.say(`Welcome Message Enabled on ${message.member.guild.name}`);

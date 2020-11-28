@@ -255,8 +255,8 @@ module.exports = class PlayCommand extends Command {
       // happens when loading a saved playlist
       queue[0].voiceChannel = message.member.voice.channel;
     }
-    if(message.guild.me.voice.channel !== null) {
-      if(message.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
+    if (message.guild.me.voice.channel !== null) {
+      if (message.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
         queue[0].voiceChannel = message.guild.me.voice.channel;
       }
     }
@@ -274,8 +274,12 @@ module.exports = class PlayCommand extends Command {
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
             if (!db.get(`${message.guild.id}.serverSettings.volume`))
-            dispatcher.setVolume(message.guild.musicData.volume);
-            else dispatcher.setVolume(db.get(`${message.guild.id}.serverSettings.volume`))
+              dispatcher.setVolume(message.guild.musicData.volume);
+            else
+              dispatcher.setVolume(
+                db.get(`${message.guild.id}.serverSettings.volume`)
+              );
+
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
               .setColor('#ff0000')
