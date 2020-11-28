@@ -88,7 +88,7 @@ client.on('guildMemberAdd', async member => {
   const welcomeGuildFetch = db.get(member.guild.id);
   if (!welcomeGuildFetch) return;
 
-  const welcomeMessageSetting = welcomeGuildFetch.welcomeMsgStatus;
+  const welcomeMessageSetting = welcomeGuildFetch.welcomeMsgStatus.choice;
   if (welcomeMessageSetting == 'no') return;
 
   if (welcomeMessageSetting == 'yes') {

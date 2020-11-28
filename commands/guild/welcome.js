@@ -28,7 +28,7 @@ module.exports = class WecomeMessageCommand extends Command {
 
     if (choice.toLowerCase() == 'disable')  choice = 'no';
 
-    db.set(message.member.guild.id, { welcomeMsgStatus: choice.toLowerCase() });
+    db.set(`${message.member.guild.id}.welcomeMsgStatus`,{ choice: choice.toLowerCase() });
 
     if (choice.toLowerCase() == 'yes')
       message.say(`Welcome Message Enabled on ${message.member.guild.name}`);
