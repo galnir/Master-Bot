@@ -273,7 +273,9 @@ module.exports = class PlayCommand extends Command {
           )
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
+            if (!db.get(`${message.guild.id}.serverSettings.volume`))
             dispatcher.setVolume(message.guild.musicData.volume);
+            else dispatcher.setVolume(db.get(`${message.guild.id}.serverSettings.volume`))
             const videoEmbed = new MessageEmbed()
               .setThumbnail(queue[0].thumbnail)
               .setColor('#ff0000')
