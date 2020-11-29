@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-const db = require('quick.db');
 
 module.exports = class LeaveCommand extends Command {
   constructor(client) {
@@ -13,7 +12,7 @@ module.exports = class LeaveCommand extends Command {
     });
   }
 
-  run(message, { saveQueue }) {
+  run(message) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       message.reply(':no_entry: Please join a voice channel and try again!');
