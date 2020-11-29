@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const db = require('quick.db');
 
 module.exports = class LeaveCommand extends Command {
   constructor(client) {
@@ -8,11 +9,20 @@ module.exports = class LeaveCommand extends Command {
       group: 'music',
       memberName: 'leave',
       guildOnly: true,
-      description: 'Leaves voice channel if in one!'
+      description: 'Leaves voice channel if in one!',
+      args: [
+        {
+          key: 'saveQueue',
+          prompt: '(Optional) Save Current Queue ',
+          type: 'string',
+          default: '',
+          oneOf: ['save', '']
+        }
+      ]
     });
   }
 
-  run(message) {
+  run(message, { saveQueue }) {
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
       message.reply(':no_entry: Please join a voice channel and try again!');
@@ -39,6 +49,12 @@ module.exports = class LeaveCommand extends Command {
       message.reply(':x: There are no songs in queue');
       return;
     } else if (message.guild.musicData.songDispatcher.paused) {
+      if (saveQueue == 'save') {
+        db.set(`${message.member.guild.id}.serverSettings.savedQueue`, {
+          SavedQueue: message.guild.musicData.queue
+        });
+        message.say(':white_check_mark: Queue was saved for later!');
+      }
       message.guild.musicData.songDispatcher.resume();
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.loopSong = false;
@@ -47,6 +63,12 @@ module.exports = class LeaveCommand extends Command {
       }, 100);
       return;
     } else {
+      if (saveQueue == 'save') {
+        db.set(`${message.member.guild.id}.serverSettings.savedQueue`, {
+          SavedQueue: message.guild.musicData.queue
+        });
+        message.say(':white_check_mark: Queue was saved for later!');
+      }
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.skipTimer = true;
       message.guild.musicData.loopSong = false;

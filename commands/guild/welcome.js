@@ -9,6 +9,7 @@ module.exports = class WecomeMessageCommand extends Command {
       aliases: ['welcomemessage', 'welcome'],
       group: 'guild',
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['ADMINISTRATOR'],
       description:
         'Allows you to toggle the welcome message for new members that join the server.',
@@ -34,7 +35,9 @@ module.exports = class WecomeMessageCommand extends Command {
     );
 
     if (choice.toLowerCase() == 'yes')
-      message.say(`Welcome Message Enabled on ${message.member.guild.name}`);
+      message.say(
+        `:white_check_mark: Welcome Message Enabled on ${message.member.guild.name}`
+      );
 
     if (choice.toLowerCase() == 'no')
       message.say(`Welcome Message Disabled on ${message.member.guild.name}`);

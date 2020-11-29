@@ -51,6 +51,7 @@ module.exports = class PlayCommand extends Command {
       { name: '3', urls: [ [Object], [Object] ] }
      ]
     */
+
     if (db.get(message.member.id) !== null) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
       let found = false;
