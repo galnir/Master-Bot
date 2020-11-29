@@ -9,16 +9,7 @@ module.exports = class LeaveCommand extends Command {
       group: 'music',
       memberName: 'leave',
       guildOnly: true,
-      description: 'Leaves voice channel if in one!',
-      args: [
-        {
-          key: 'saveQueue',
-          prompt: '(Optional) Save Current Queue ',
-          type: 'string',
-          default: '',
-          oneOf: ['save', '']
-        }
-      ]
+      description: 'Leaves voice channel if in one!'
     });
   }
 
@@ -49,12 +40,6 @@ module.exports = class LeaveCommand extends Command {
       message.reply(':x: There are no songs in queue');
       return;
     } else if (message.guild.musicData.songDispatcher.paused) {
-      if (saveQueue == 'save') {
-        db.set(`${message.member.guild.id}.serverSettings.savedQueue`, {
-          SavedQueue: message.guild.musicData.queue
-        });
-        message.say(':white_check_mark: Queue was saved for later!');
-      }
       message.guild.musicData.songDispatcher.resume();
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.loopSong = false;
@@ -63,12 +48,6 @@ module.exports = class LeaveCommand extends Command {
       }, 100);
       return;
     } else {
-      if (saveQueue == 'save') {
-        db.set(`${message.member.guild.id}.serverSettings.savedQueue`, {
-          SavedQueue: message.guild.musicData.queue
-        });
-        message.say(':white_check_mark: Queue was saved for later!');
-      }
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.skipTimer = true;
       message.guild.musicData.loopSong = false;
