@@ -27,25 +27,24 @@ module.exports = class NicknameCommand extends Command {
     });
   }
 
-  async run (message, { member, nickname }) {
-  	
-  	if(nickname === 'remove') {
-  		await member.setNickname('');
+async run (message, { member, nickname }) {
+	if(nickname === 'remove') {
+  	await member.setNickname('');
   		
-  		const nickRemoved = new MessageEmbed()
-  		   .setColor('RANDOM')
-  		   .setTitle('Nickname Cleared!')
-  		   .addField('Member', `<@${member.id}>`)
-  		   .addField('Moderator', `${message.author}`);
+  	const nickRemoved = new MessageEmbed()
+  		  .setColor('RANDOM')
+  		  .setTitle('Nickname Cleared!')
+  		  .addField('Member', `<@${member.id}>`)
+  		  .addField('Moderator', `${message.author}`);
   		   
   		  //deletes message from author
   		  /* 
-  		   if(message.deletable) {
-  		   	  message.delete();
-  		   }
+  		  if(message.deletable) {
+  		     message.delete();
+  		  }
   		  */
   		   
-  		message.channel.send(nickRemoved);
+   message.channel.send(nickRemoved);
   		
   	} else {
   		
