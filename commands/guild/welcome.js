@@ -30,16 +30,16 @@ module.exports = class WecomeMessageCommand extends Command {
     if (choice.toLowerCase() == 'disable') choice = 'no';
 
     db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsgStatus`,
+      `${message.member.guild.id}.serverSettings.welcomeMsg.status`,
       choice.toLowerCase()
     );
 
     if (choice.toLowerCase() == 'yes')
       message.say(
-        `:white_check_mark: Welcome Message Enabled on ${message.member.guild.name}`
+        `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
       );
 
     if (choice.toLowerCase() == 'no')
-      message.say(`Welcome Message Disabled on ${message.member.guild.name}`);
+      message.say(`Welcome Message ***Disabled*** on ${message.member.guild.name}`);
   }
 };

@@ -60,11 +60,11 @@ client.once('ready', () => {
   });
   const Guilds = client.guilds.cache.map(guild => guild.name);
   console.log(Guilds, 'Connected!');
+  // Registering font For Cloud Services
   Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', {
     family: 'Open Sans Light'
-  }); // Registering font For Cloud Services
+  });
 });
-
 client.on('voiceStateUpdate', async (___, newState) => {
   if (
     newState.member.user.bot &&
@@ -87,14 +87,13 @@ client.on('voiceStateUpdate', async (___, newState) => {
 });
 
 client.on('guildMemberAdd', async member => {
-  const welcomeGuildFetch = db.get(member.guild.id);
-  if (!welcomeGuildFetch) return;
+  const serverSettingsFetch = db.get(member.guild.id);
+  if (!serverSettingsFetch || serverSettingsFetch == null) return;
 
-  const welcomeMessageSetting =
-    welcomeGuildFetch.serverSettings.welcomeMsgStatus;
-  if (welcomeMessageSetting == 'no') return;
+  const welcomeMsgSettings = serverSettingsFetch.serverSettings.welcomeMsg;
+  if (welcomeMsgSettings.status == 'no') return;
 
-  if (welcomeMessageSetting == 'yes') {
+  if (welcomeMsgSettings.status == 'yes') {
     const applyText = (canvas, text) => {
       const ctx = canvas.getContext('2d');
       let fontSize = 70;
@@ -106,11 +105,15 @@ client.on('guildMemberAdd', async member => {
       return ctx.font;
     };
     // Custom Welcome Image for new members
-    const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height)
+    const canvas = Canvas.createCanvas(
+      welcomeMsgSettings.imageWidth,
+      welcomeMsgSettings.imageHeight
+    );
+    console.log(welcomeMsgSettings.imageWidth, welcomeMsgSettings.imageHeight); // Set the dimensions (Width, Height)
     const ctx = canvas.getContext('2d');
 
     const background = await Canvas.loadImage(
-      './resources/welcome/wallpaper.jpg' // can add what ever image you want for the Background just make sure that the filename matches
+      welcomeMsgSettings.wallpaperURL // can add what ever image you want for the Background just make sure that the filename matches
     );
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
@@ -161,19 +164,26 @@ client.on('guildMemberAdd', async member => {
     );
 
     var embed = new MessageEmbed()
-      .setTitle(
-        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
-      )
       .setColor(`RANDOM`)
       .attachFiles(attachment)
       .setImage('attachment://welcome-image.png')
       .setFooter(`Type help for a feature list!`)
       .setTimestamp();
+    if (welcomeMsgSettings.embedTitle == 'default') {
+      embed.setTitle(
+        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
+      );
+    } else embed.setTitle(welcomeMsgSettings.embedTitle);
     try {
       await member.user.send(embed);
     } catch {
       console.log(`${member.user.username}'s dms are private`);
     }
+  }
+});
+client.on('message', message => {
+  if (message.content === `${prefix}join`) {
+    client.emit('guildMemberAdd', message.member);
   }
 });
 
