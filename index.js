@@ -94,7 +94,7 @@ client.on('guildMemberAdd', async member => {
   if (welcomeMsgSettings.status == 'no') return;
 
   if (welcomeMsgSettings.status == 'yes') {
-    const applyText = (canvas, text) => {
+    var applyText = (canvas, text) => {
       const ctx = canvas.getContext('2d');
       let fontSize = 70;
 
@@ -106,15 +106,15 @@ client.on('guildMemberAdd', async member => {
     };
     // Custom Welcome Image for new members
     // Canvas Size Options (Width, Height)
-    const canvas = Canvas.createCanvas(
+    var canvas = await Canvas.createCanvas(
       welcomeMsgSettings.imageWidth,
       welcomeMsgSettings.imageHeight
     );
     console.log(welcomeMsgSettings.imageWidth, welcomeMsgSettings.imageHeight);
-    const ctx = canvas.getContext('2d');
+    var ctx = canvas.getContext('2d');
 
     // Background Image Options
-    const background = await Canvas.loadImage(welcomeMsgSettings.wallpaperURL);
+    var background = await Canvas.loadImage(welcomeMsgSettings.wallpaperURL);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
     // Background Image Border Options

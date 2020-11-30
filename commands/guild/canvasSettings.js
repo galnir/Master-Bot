@@ -19,7 +19,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         `!welcomesettings "default" "Upper Text" "MainText" "My Wallpaper URL"`
       ],
       description:
-        'Allows you to toggle the welcome message for new members that join the server.',
+        'Allows you to customize the welcome message for new members that join the server.',
       args: [
         {
           key: 'embedTitle',
@@ -50,7 +50,8 @@ module.exports = class WecomeSettingsCommand extends Command {
           prompt:
             'What is the Width do you want the image to be sent? (in Pixels)',
           type: 'integer',
-          default: 700
+          default: 700,
+          min: 300
         },
         {
           key: 'imageHeight',
@@ -63,7 +64,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     });
   }
 
-  run(
+  async run(
     message,
     {
       embedTitle,
@@ -94,29 +95,49 @@ module.exports = class WecomeSettingsCommand extends Command {
     );
     //wallpaperURL
     //saving
+
     if (wallpaperURL == 'default')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
         './resources/welcome/wallpaper.jpg'
       );
-    else
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-        wallpaperURL
-      );
-    //imageWidth
-    //saving
+    // else {
+    //   if (
+    //     wallpaperURL.has(/.jpg/g) ||
+    //     wallpaperURL.has(/.jpeg/g) ||
+    //     wallpaperURL.has(/.png/g) ||
+    //     wallpaperURL.has(/.svg/g)
+    //   )
     db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
-      imageWidth
+      `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
+      wallpaperURL
     );
-    //imageHeight
-    //saving
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
-      imageHeight
-    );
+    // }
 
+    if (imageHeight > imageWidth) {
+      //swap if in the incorrect order
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
+        imageHeight
+      );
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
+        imageWidth
+      );
+    } else {
+      //imageWidth
+      //saving
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
+        imageWidth
+      );
+      //imageHeight
+      //saving
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
+        imageHeight
+      );
+    }
     const embed = new MessageEmbed()
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(

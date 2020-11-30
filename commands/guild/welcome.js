@@ -35,10 +35,14 @@ module.exports = class WecomeMessageCommand extends Command {
       `${message.member.guild.id}.serverSettings.welcomeMsg.status`,
       choice.toLowerCase()
     );
-    if (choice.toLowerCase() == 'yes') {
+
+    if (
+      db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.status`) ==
+      'yes'
+    ) {
       if (
         !db.get(message.member.guild.id).serverSettings ||
-        !db.get(message.member.guild.id).serverSettings.welcomeMsg
+        !db.get(message.member.guild.id).serverSettings.welcomeMsg.wallpaperURL // used wallpaperURL to trigger a Default set
       ) {
         //embedTitle
         //saving
@@ -62,7 +66,7 @@ module.exports = class WecomeMessageCommand extends Command {
         //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-          `default`
+          './resources/welcome/wallpaper.jpg'
         );
         //imageWidth
         //saving
