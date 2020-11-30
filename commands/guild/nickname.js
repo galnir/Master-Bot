@@ -44,7 +44,7 @@ if(nickname === 'remove') {
      }
      */
   		   
-  message.channel.send(nickRemoved);
+  return message.channel.send(nickRemoved);
   		
   	} else {
   		
