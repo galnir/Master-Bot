@@ -105,64 +105,100 @@ client.on('guildMemberAdd', async member => {
       return ctx.font;
     };
     // Custom Welcome Image for new members
+    // Canvas Size Options (Width, Height)
     const canvas = Canvas.createCanvas(
       welcomeMsgSettings.imageWidth,
       welcomeMsgSettings.imageHeight
     );
-    console.log(welcomeMsgSettings.imageWidth, welcomeMsgSettings.imageHeight); // Set the dimensions (Width, Height)
+    console.log(welcomeMsgSettings.imageWidth, welcomeMsgSettings.imageHeight);
     const ctx = canvas.getContext('2d');
 
-    const background = await Canvas.loadImage(
-      welcomeMsgSettings.wallpaperURL // can add what ever image you want for the Background just make sure that the filename matches
-    );
+    // Background Image Options
+    const background = await Canvas.loadImage(welcomeMsgSettings.wallpaperURL);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
+    // Background Image Border Options
     ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
-    ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
-    ctx.fillText(
-      `Welcome to ${member.guild.name}`,
-      canvas.width / 2.5,
-      canvas.height / 3.5
-    );
-    ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
-    ctx.strokeText(
-      `Welcome to ${member.guild.name}`,
-      canvas.width / 2.5,
-      canvas.height / 3.5
-    );
-
-    ctx.font = applyText(canvas, `${member.displayName}!`);
-    ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
-    ctx.fillText(
-      `${member.displayName}!`,
-      canvas.width / 2.5,
-      canvas.height / 1.8
-    );
-    ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
-    ctx.strokeText(
-      `${member.displayName}!`,
-      canvas.width / 2.5,
-      canvas.height / 1.8
-    );
-
+    // Upper Text Options
+    if (welcomeMsgSettings.topImageText == 'default') {
+      ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
+      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+      ctx.fillText(
+        `Welcome to ${member.guild.name}`,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+      ctx.strokeText(
+        `Welcome to ${member.guild.name}`,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+    } else {
+      ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
+      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+      ctx.fillText(
+        welcomeMsgSettings.topImageText,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+      ctx.strokeText(
+        welcomeMsgSettings.topImageText,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+    }
+    // Lower Text Options
+    if (welcomeMsgSettings.bottomImageText == 'default') {
+      ctx.font = applyText(canvas, `${member.displayName}!`);
+      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+      ctx.fillText(
+        `${member.displayName}!`,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+      ctx.strokeText(
+        `${member.displayName}!`,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+    } else {
+      ctx.font = applyText(canvas, `${member.displayName}!`);
+      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+      ctx.fillText(
+        welcomeMsgSettings.bottomImageText,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+      ctx.strokeText(
+        welcomeMsgSettings.bottomImageText,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+    }
+    // Avatar Shape Options
     ctx.beginPath();
-    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+    ctx.arc(125, 125, 100, 0, Math.PI * 2, true); // Shape option (circle)
     ctx.closePath();
     ctx.clip();
 
     const avatar = await Canvas.loadImage(
-      member.user.displayAvatarURL({ format: 'jpg' })
+      member.user.displayAvatarURL({
+        format: 'jpg'
+      })
     );
     ctx.drawImage(avatar, 25, 25, 200, 200);
-
+    // Image is Built and Ready
     const attachment = new MessageAttachment(
       canvas.toBuffer(),
       'welcome-image.png'
     );
-
+    // Welcome Embed Report
     var embed = new MessageEmbed()
       .setColor(`RANDOM`)
       .attachFiles(attachment)

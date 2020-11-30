@@ -14,7 +14,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       clientPermissions: ['ADMINISTRATOR'],
       examples: [
         `!welcomesettings - to restore Defaults`,
-        `!welcomesettings "My Title" "My Wallpaper URL" 700 250`
+        `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`
       ],
       description:
         'Allows you to toggle the welcome message for new members that join the server.',
@@ -39,10 +39,9 @@ module.exports = class WecomeSettingsCommand extends Command {
         },
         {
           key: 'wallpaperURL',
-          prompt:
-            'What Image URL do you want to use? (Currently: ***JPG Only***)',
+          prompt: 'What Image URL do you want to use?',
           type: 'string',
-          default: './resources/welcome/wallpaper.jpg'
+          default: 'default'
         },
         {
           key: 'imageWidth',
@@ -93,10 +92,16 @@ module.exports = class WecomeSettingsCommand extends Command {
     );
     //wallpaperURL
     //saving
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-      wallpaperURL
-    );
+    if (wallpaperURL == 'default')
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
+        './resources/welcome/wallpaper.jpg'
+      );
+    else
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
+        wallpaperURL
+      );
     //imageWidth
     //saving
     db.set(
@@ -112,6 +117,9 @@ module.exports = class WecomeSettingsCommand extends Command {
 
     const embed = new MessageEmbed()
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
+      .setDescription(
+        'You can run the Join Command to see what it will look like!'
+      )
       .addField(
         `Title: `,
         db.get(
@@ -131,7 +139,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         )
       )
       .addField(
-        `Image Used: `,
+        `Image Path: `,
         db.get(
           `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
         )
@@ -145,8 +153,8 @@ module.exports = class WecomeSettingsCommand extends Command {
           db.get(
             `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`
           )
-      );
-
+      )
+      .setColor('#420626');
     return message.say(embed);
   }
 };
