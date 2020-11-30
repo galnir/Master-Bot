@@ -7,9 +7,7 @@ module.exports = class WecomeMessageTestCommand extends Command {
       memberName: 'join',
       group: 'guild',
       guildOnly: true,
-      userPermissions: ['ADMINISTRATOR'],
-      clientPermissions: ['ADMINISTRATOR'],
-      description: 'Lets you see the Join Image to see your current settings'
+      description: 'Lets you see the Welcome Image with its current settings'
     });
   }
 

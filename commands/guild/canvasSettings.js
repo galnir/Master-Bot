@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
+//const { prefix } = require('./config.json');
 
 module.exports = class WecomeSettingsCommand extends Command {
   constructor(client) {
@@ -16,7 +17,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         `!welcomesettings - to restore Defaults`,
         `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
         `!welcomesettings "My Title" "Upper Text" "default" "default" 800 400`,
-        `!welcomesettings "default" "Upper Text" "MainText" "My Wallpaper URL"`
+        `!welcomesettings " "  " " "MainText" "My Wallpaper URL" " "  " " - to only change the Main Text and Wallpaper settings`
       ],
       description:
         'Allows you to customize the welcome message for new members that join the server.',
@@ -43,15 +44,23 @@ module.exports = class WecomeSettingsCommand extends Command {
           key: 'wallpaperURL',
           prompt: 'What Image URL do you want to use?',
           type: 'string',
-          default: 'default'
+          validate: function isValidUrl(wallpaperURL) {
+            try {
+              new URL(wallpaperURL);
+            } catch (_) {
+              return false;
+            }
+
+            return true;
+          },
+          default: './resources/welcome/wallpaper.jpg'
         },
         {
           key: 'imageWidth',
           prompt:
             'What is the Width do you want the image to be sent? (in Pixels)',
           type: 'integer',
-          default: 700,
-          min: 300
+          default: 700
         },
         {
           key: 'imageHeight',
@@ -64,7 +73,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     });
   }
 
-  async run(
+  run(
     message,
     {
       embedTitle,
@@ -77,68 +86,61 @@ module.exports = class WecomeSettingsCommand extends Command {
   ) {
     //embedTitle
     //saving
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
-      embedTitle
-    );
+    if (embedTitle != ' ' || 's')
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
+        embedTitle
+      );
     //topImageText
     //saving
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
-      topImageText
-    );
+    if (topImageText != ' ' || 's')
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
+        topImageText
+      );
     //bottomImageText
     //saving
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
-      bottomImageText
-    );
+    if (bottomImageText != ' ' || 's')
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
+        bottomImageText
+      );
     //wallpaperURL
     //saving
-
-    if (wallpaperURL == 'default')
+    if (wallpaperURL != ' ' || 's') {
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-        './resources/welcome/wallpaper.jpg'
-      );
-    // else {
-    //   if (
-    //     wallpaperURL.has(/.jpg/g) ||
-    //     wallpaperURL.has(/.jpeg/g) ||
-    //     wallpaperURL.has(/.png/g) ||
-    //     wallpaperURL.has(/.svg/g)
-    //   )
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-      wallpaperURL
-    );
-    // }
-
-    if (imageHeight > imageWidth) {
-      //swap if in the incorrect order
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
-        imageHeight
-      );
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
-        imageWidth
-      );
-    } else {
-      //imageWidth
-      //saving
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
-        imageWidth
-      );
-      //imageHeight
-      //saving
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
-        imageHeight
+        wallpaperURL
       );
     }
+    if (imageHeight && imageWidth != ' ') {
+      if (imageHeight > imageWidth) {
+        //swap if in the incorrect order
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
+          imageHeight
+        );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
+          imageWidth
+        );
+      } else {
+        //imageWidth
+        //saving
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
+          imageWidth
+        );
+        //imageHeight
+        //saving
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
+          imageHeight
+        );
+      }
+    }
     const embed = new MessageEmbed()
+
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
         'You can run the Join Command to see what it will look like!'
@@ -178,6 +180,8 @@ module.exports = class WecomeSettingsCommand extends Command {
           )
       )
       .setColor('#420626');
+    if (message.contents == '')
+      embed.setTitle(`:white_check_mark: Defaults restored!!!`);
     return message.say(embed);
   }
 };

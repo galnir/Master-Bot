@@ -110,7 +110,6 @@ client.on('guildMemberAdd', async member => {
       welcomeMsgSettings.imageWidth,
       welcomeMsgSettings.imageHeight
     );
-    console.log(welcomeMsgSettings.imageWidth, welcomeMsgSettings.imageHeight);
     var ctx = canvas.getContext('2d');
 
     // Background Image Options
