@@ -14,7 +14,9 @@ module.exports = class WecomeSettingsCommand extends Command {
       clientPermissions: ['ADMINISTRATOR'],
       examples: [
         `!welcomesettings - to restore Defaults`,
-        `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`
+        `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
+        `!welcomesettings "My Title" "Upper Text" "default" "default" 800 400`,
+        `!welcomesettings "default" "Upper Text" "MainText" "My Wallpaper URL"`
       ],
       description:
         'Allows you to toggle the welcome message for new members that join the server.',

@@ -12,6 +12,7 @@ module.exports = class WecomeMessageCommand extends Command {
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['ADMINISTRATOR'],
+      examples: ['!welcome yes', '!welcome no'],
       description:
         'Allows you to toggle the welcome message for new members that join the server.',
       args: [
