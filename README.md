@@ -20,7 +20,9 @@ Make a config.json file in the root directory of the project and add:
   "newsAPI": "news-api-key",
   "youtubeAPI": "youtube-api-key",
   "yandexAPI": "yandex-api-key",
-  "geniusLyricsAPI": "genius-api-key"
+  "geniusLyricsAPI": "genius-api-key",
+  "twitchClientID": "Your-Client-ID",
+  "twitchToken": "Secret-Token"
 }
 ```
 
@@ -86,7 +88,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !urban dictionary      | Get definitions from urban dictonary                                                                                                                                | !urban javascript               |
 | !poll         | Creates a poll with up to 10 choices.                                                                                                                                         | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
 | !vote         | Starts a yes/no/don't care vote.                                                                                                                                              | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                 |
-
+| !twitchstatus | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                                    | !twitchstatus MasterBot or !tso MasterBot |
 
 - Gifs
 
@@ -131,7 +133,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
