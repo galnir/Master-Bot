@@ -21,7 +21,7 @@ Make a config.json file in the root directory of the project and add:
   "youtubeAPI": "youtube-api-key",
   "yandexAPI": "yandex-api-key",
   "geniusLyricsAPI": "genius-api-key",
-  "twitchCleintID": "Your-Client-ID",
+  "twitchClientID": "Your-Client-ID",
   "twitchToken": "Secret-Token"
 }
 ```
