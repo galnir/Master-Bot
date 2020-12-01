@@ -11,7 +11,6 @@ module.exports = class WecomeMessageCommand extends Command {
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
-      clientPermissions: ['ADMINISTRATOR'],
       examples: ['!welcome yes', '!welcome no'],
       description:
         'Allows you to toggle the welcome message for new members that join the server.',
@@ -42,40 +41,30 @@ module.exports = class WecomeMessageCommand extends Command {
     ) {
       if (
         !db.get(message.member.guild.id).serverSettings ||
-        !db.get(message.member.guild.id).serverSettings.welcomeMsg.wallpaperURL // used wallpaperURL to trigger a Default set
+        !db.get(message.member.guild.id).serverSettings.welcomeMsg.changedByUser // Double sure it triggers on DB Wipe
       ) {
-        //embedTitle
-        //saving
+        // Saving Default if none is present
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
           'default'
         );
-        //topImageText
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
           'default'
         );
-        //bottomImageText
-        //saving
+
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
           `default`
         );
-        //wallpaperURL
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
           './resources/welcome/wallpaper.jpg'
         );
-        //imageWidth
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
           700
         );
-        //imageHeight
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
           250
@@ -91,6 +80,7 @@ module.exports = class WecomeMessageCommand extends Command {
           })
         );
       }
+
       // Report Back Current Settings
       const embed = new MessageEmbed()
         .setTitle(
@@ -117,7 +107,6 @@ module.exports = class WecomeMessageCommand extends Command {
             `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`
           )
         )
-
         .addField(
           `Image Size: `,
           db.get(
@@ -128,7 +117,6 @@ module.exports = class WecomeMessageCommand extends Command {
               `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`
             )
         )
-
         .addField(
           `Image Path: `,
           db.get(
@@ -144,7 +132,6 @@ module.exports = class WecomeMessageCommand extends Command {
             `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
           )
         );
-
       if (
         db.get(
           `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`

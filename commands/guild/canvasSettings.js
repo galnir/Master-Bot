@@ -1,7 +1,6 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
-//const { prefix } = require('./config.json');
 
 module.exports = class WecomeSettingsCommand extends Command {
   constructor(client) {
@@ -12,7 +11,6 @@ module.exports = class WecomeSettingsCommand extends Command {
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
-      clientPermissions: ['ADMINISTRATOR'],
       examples: [
         `!welcomesettings - to restore Defaults`,
         `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
@@ -53,8 +51,13 @@ module.exports = class WecomeSettingsCommand extends Command {
             } catch (_) {
               return false;
             }
-            wallpaperURL => wallpaperURL.includes(/.jpg/g);
             return true;
+          },
+          validate: function checkFile(file) {
+            var extension = file.substr(file.lastIndexOf('.') + 1);
+            if (/(jpg|jpeg|svg|png)$/gi.test(extension)) {
+              return true;
+            }
           },
           default: './resources/welcome/wallpaper.jpg'
         },
@@ -76,7 +79,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     });
   }
 
-  async run(
+  run(
     message,
     {
       embedTitle,
@@ -92,19 +95,16 @@ module.exports = class WecomeSettingsCommand extends Command {
         `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
         embedTitle
       );
-
     if (topImageText != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
         topImageText
       );
-
     if (bottomImageText != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
         bottomImageText
       );
-
     if (wallpaperURL != ' ' || 's') {
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
