@@ -5,7 +5,7 @@ const Twitch = require('simple-twitch-api');
 
 if (twitchClientID == null || twitchToken == null)
   return console.log(
-    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command'
+    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
   );
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
@@ -50,25 +50,31 @@ module.exports = class TwitchStatusCommand extends Command {
         textFiltered
       );
 
-      if (user.status == `400`)
-        return message.reply(
-          `:x: ${textFiltered} was Invaild, Please try again.`
-        );
+      if (user.status == `400`) {
+        message.reply(`:x: ${textFiltered} was Invaild, Please try again.`);
+        return;
+      }
 
-      if (user.status == `429`)
-        return message.reply(
+      if (user.status == `429`) {
+        message.reply(
           `:x: Rate Limit exceeded. Please try again in a few minutes.`
         );
+        return;
+      }
 
-      if (user.status == `503`)
-        return message.reply(
+      if (user.status == `503`) {
+        message.reply(
           `:x: Twitch service's are currently unavailable. Please try again later.`
         );
+        return;
+      }
 
-      if (user.data[0] == null)
-        return message.reply(
+      if (user.data[0] == null) {
+        message.reply(
           `:x: Streamer ${textFiltered} was not found, Please try again.`
         );
+        return;
+      }
 
       const user_id = user.data[0].id;
 
@@ -109,7 +115,8 @@ module.exports = class TwitchStatusCommand extends Command {
             true
           );
         }
-        return message.say(offlineEmbed);
+        message.say(offlineEmbed);
+        return;
       }
 
       const gameInfo = await Twitch.getGames(
@@ -126,27 +133,26 @@ module.exports = class TwitchStatusCommand extends Command {
         )
         .setURL('https://twitch.tv/' + user.data[0].display_name)
         .setTitle('Looks like ' + user.data[0].display_name + ' is: Online!')
-          .addField('Stream Title:', streamInfo.data[0].title)
-          .addField('Currently Playing:', streamInfo.data[0].game_name, true)
-          .addField('Viewers:', streamInfo.data[0].viewer_count, true)
-          .setColor('#6441A4')
-          .setFooter(
-            'Stream Started',
-            'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
-          )
-          .setImage(
-            streamInfo.data[0].thumbnail_url
-              .replace(/{width}x{height}/g, '1280x720')
-              .concat('?r=' + Math.floor(Math.random() * 10000 + 1))
-          )
-          .setTimestamp(streamInfo.data[0].started_at);
-          if (gameInfo.data[0].box_art_url.search(/.jpg/g))
-          onlineEmbed.setThumbnail(user.data[0].profile_image_url);
-        else
-          onlineEmbed
-            .setThumbnail(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            )
+        .addField('Stream Title:', streamInfo.data[0].title)
+        .addField('Currently Playing:', streamInfo.data[0].game_name, true)
+        .addField('Viewers:', streamInfo.data[0].viewer_count, true)
+        .setColor('#6441A4')
+        .setFooter(
+          'Stream Started',
+          'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
+        )
+        .setImage(
+          streamInfo.data[0].thumbnail_url
+            .replace(/{width}x{height}/g, '1280x720')
+            .concat('?r=' + Math.floor(Math.random() * 10000 + 1))
+        )
+        .setTimestamp(streamInfo.data[0].started_at);
+      if (gameInfo.data[0].box_art_url.search(/.jpg/g))
+        onlineEmbed.setThumbnail(user.data[0].profile_image_url);
+      else
+        onlineEmbed.setThumbnail(
+          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+        );
       if (user.data[0].broadcaster_type == '')
         onlineEmbed.addField('Rank:', 'BASE!', true);
       else {
@@ -156,7 +162,8 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       }
-      return message.say(onlineEmbed);
+      message.say(onlineEmbed);
+      return;
     });
   }
 };
