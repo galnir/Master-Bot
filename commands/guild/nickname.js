@@ -5,8 +5,8 @@ module.exports = class NicknameCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'nickname',
-      aliases: ['set-nick', 'set-nickname'],
-      group: 'guild',
+      aliases: ['nick'],
+      group: 'moderation',
       memberName: 'nickname',
       description: 'Sets the selected member\'s nickname with the provided nickname',
       clientPermissions: ['MANAGE_NICKNAMES'],
@@ -28,21 +28,23 @@ module.exports = class NicknameCommand extends Command {
   }
 
 async run (message, { member, nickname }) {
-if(nickname === 'remove') {
-  await member.setNickname('');
+     if(nickname === 'remove') {
+        const nickRemoved = new MessageEmbed();
+		
+  	await member.setNickname('');
   		
-  const nickRemoved = new MessageEmbed()
-      .setColor('RANDOM')
-      .setTitle('Nickname Cleared!')
-      .addField('Member', `<@${member.id}>`)
-      .addField('Moderator', `${message.author}`);
+  	nickRemoved	
+  	  .setColor('RANDOM')
+  	  .setTitle('Nickname Cleared!')
+  	  .addField('Member', `<@${member.id}>`)
+  	  .addField('Moderator', `${message.author}`);
   		   
-     //deletes message from author
-     /* 
-     if(message.deletable) {
+        //deletes message from author
+  	/* 
+  	if(message.deletable) {
   	message.delete();
-     }
-     */
+        }
+        */ 
   		   
   return message.channel.send(nickRemoved);
   		
@@ -51,14 +53,14 @@ if(nickname === 'remove') {
     const oldName = member.displayName;
     const nicknameEmbed = new MessageEmbed();
 
-    member.setNickname(nickname);
+    await member.setNickname(nickname);
 
     nicknameEmbed
       .setColor('RANDOM')
       .setTitle('Nickname Changed!')
       .addField('Member', `<@${member.id}>`)
-      .addField('Old Name',`• ${oldName}`)
-      .addField('New Name',`• ${nickname}`)
+      .addField('Old Name', `${oldName}`)
+      .addField('New Name', `${nickname}`)
       .addField('Moderator', `${message.author}`);
 
     //deletes message from author
@@ -68,7 +70,7 @@ if(nickname === 'remove') {
     }
     */
 
-    message.say(nicknameEmbed);
+    return message.channel.send(nicknameEmbed);
     }
   }
 };
