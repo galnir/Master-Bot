@@ -1,9 +1,9 @@
+const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
-const { twitchClientID, twitchToken } = require('../../config.json');
+const { twitchClientID, twitchClientSecret } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
-const Twitch = require('simple-twitch-api');
 
-if (twitchClientID == null || twitchToken == null)
+if (twitchClientID == null || twitchClientSecret == null)
   return console.log(
     'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
   );
@@ -30,140 +30,216 @@ module.exports = class TwitchStatusCommand extends Command {
     });
   }
 
-  run(message, { textRaw }) {
-    const SCOPE = 'user:read:email';
-    Twitch.getToken(twitchClientID, twitchToken, SCOPE).then(async result => {
-      const access_token = result.access_token;
+  async run(message, { textRaw }) {
+    const scope = 'user:read:email';
+    const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
+    let access_token;
+    try {
+      access_token = await TwitchStatusCommand.getToken(
+        twitchClientID,
+        twitchClientSecret,
+        scope
+      );
+    } catch (e) {
+      message.say(e);
+      return;
+    }
 
-      if (access_token == null)
-        return (
-          console.log(
-            'ERROR: Double check the values of twitchCLIENTID and twitchToken in your config.json'
-          ) + message.say(':x: Something went wrong!')
-        );
-
-      const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
-
-      const user = await Twitch.getUserInfo(
+    let user;
+    try {
+      user = await TwitchStatusCommand.getUserInfo(
         access_token,
         twitchClientID,
         textFiltered
       );
+    } catch (e) {
+      message.say(e);
+      return;
+    }
 
-      if (user.status == `400`) {
-        message.reply(`:x: ${textFiltered} was Invaild, Please try again.`);
-        return;
-      }
-
-      if (user.status == `429`) {
-        message.reply(
-          `:x: Rate Limit exceeded. Please try again in a few minutes.`
-        );
-        return;
-      }
-
-      if (user.status == `503`) {
-        message.reply(
-          `:x: Twitch service's are currently unavailable. Please try again later.`
-        );
-        return;
-      }
-
-      if (user.data[0] == null) {
-        message.reply(
-          `:x: Streamer ${textFiltered} was not found, Please try again.`
-        );
-        return;
-      }
-
-      const user_id = user.data[0].id;
-
-      const streamInfo = await Twitch.getStream(
+    const user_id = user.data[0].id;
+    let streamInfo;
+    try {
+      streamInfo = await TwitchStatusCommand.getStream(
         access_token,
         twitchClientID,
         user_id
       );
+    } catch (e) {
+      message.say(e);
+      return;
+    }
 
-      if (streamInfo.data[0] == null) {
-        const offlineEmbed = new MessageEmbed()
-          .setAuthor(
-            'Streamer Status Check',
-            user.data[0].profile_image_url,
-            'https://twitch.tv/' + user.data[0].display_name
-          )
-          .setURL('https://twitch.tv/' + user.data[0].display_name)
-          .setTitle('Looks like ' + user.data[0].display_name + ' is: Offline.')
-          .setColor('#6441A4')
-          .setTimestamp(user.data[0].created_at)
-          .setFooter(
-            'Joined Twitch',
-            'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
-          )
-          .setThumbnail(user.data[0].profile_image_url);
-
-        if (!user.data[0].description == '')
-          offlineEmbed
-            .addField('Profile Description:', user.data[0].description)
-
-            .addField('View Counter:', user.data[0].view_count, true);
-        if (user.data[0].broadcaster_type == '')
-          offlineEmbed.addField('Rank:', 'BASE!', true);
-        else {
-          offlineEmbed.addField(
-            'Rank:',
-            user.data[0].broadcaster_type.toUpperCase() + '!',
-            true
-          );
-        }
-        message.say(offlineEmbed);
-        return;
-      }
-
-      const gameInfo = await Twitch.getGames(
-        access_token,
-        twitchClientID,
-        streamInfo.data[0].game_id
-      );
-
-      const onlineEmbed = new MessageEmbed()
+    if (streamInfo.data[0] == null) {
+      const offlineEmbed = new MessageEmbed()
         .setAuthor(
           'Streamer Status Check',
           user.data[0].profile_image_url,
           'https://twitch.tv/' + user.data[0].display_name
         )
         .setURL('https://twitch.tv/' + user.data[0].display_name)
-        .setTitle('Looks like ' + user.data[0].display_name + ' is: Online!')
-        .addField('Stream Title:', streamInfo.data[0].title)
-        .addField('Currently Playing:', streamInfo.data[0].game_name, true)
-        .addField('Viewers:', streamInfo.data[0].viewer_count, true)
+        .setTitle('Looks like ' + user.data[0].display_name + ' is: Offline.')
         .setColor('#6441A4')
+        .setTimestamp(user.data[0].created_at)
         .setFooter(
-          'Stream Started',
+          'Joined Twitch',
           'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
         )
-        .setImage(
-          streamInfo.data[0].thumbnail_url
-            .replace(/{width}x{height}/g, '1280x720')
-            .concat('?r=' + Math.floor(Math.random() * 10000 + 1))
-        )
-        .setTimestamp(streamInfo.data[0].started_at);
-      if (gameInfo.data[0].box_art_url.search(/.jpg/g))
-        onlineEmbed.setThumbnail(user.data[0].profile_image_url);
-      else
-        onlineEmbed.setThumbnail(
-          gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-        );
+        .setThumbnail(user.data[0].profile_image_url);
+
+      if (!user.data[0].description == '')
+        offlineEmbed
+          .addField('Profile Description:', user.data[0].description)
+
+          .addField('View Counter:', user.data[0].view_count, true);
       if (user.data[0].broadcaster_type == '')
-        onlineEmbed.addField('Rank:', 'BASE!', true);
+        offlineEmbed.addField('Rank:', 'BASE!', true);
       else {
-        onlineEmbed.addField(
+        offlineEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         );
       }
-      message.say(onlineEmbed);
+      message.say(offlineEmbed);
       return;
+    }
+    let gameInfo;
+    try {
+      gameInfo = await TwitchStatusCommand.getGames(
+        access_token,
+        twitchClientID,
+        streamInfo.data[0].game_id
+      );
+    } catch (e) {
+      message.say(e);
+      return;
+    }
+
+    const onlineEmbed = new MessageEmbed()
+      .setAuthor(
+        'Streamer Status Check',
+        user.data[0].profile_image_url,
+        'https://twitch.tv/' + user.data[0].display_name
+      )
+      .setURL('https://twitch.tv/' + user.data[0].display_name)
+      .setTitle('Looks like ' + user.data[0].display_name + ' is: Online!')
+      .addField('Stream Title:', streamInfo.data[0].title)
+      .addField('Currently Playing:', streamInfo.data[0].game_name, true)
+      .addField('Viewers:', streamInfo.data[0].viewer_count, true)
+      .setColor('#6441A4')
+      .setFooter(
+        'Stream Started',
+        'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
+      )
+      .setImage(
+        streamInfo.data[0].thumbnail_url
+          .replace(/{width}x{height}/g, '1280x720')
+          .concat('?r=' + Math.floor(Math.random() * 10000 + 1))
+      )
+      .setTimestamp(streamInfo.data[0].started_at);
+    if (gameInfo.data[0].box_art_url.search(/.jpg/g))
+      onlineEmbed.setThumbnail(user.data[0].profile_image_url);
+    else
+      onlineEmbed.setThumbnail(
+        gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+      );
+    if (user.data[0].broadcaster_type == '')
+      onlineEmbed.addField('Rank:', 'BASE!', true);
+    else {
+      onlineEmbed.addField(
+        'Rank:',
+        user.data[0].broadcaster_type.toUpperCase() + '!',
+        true
+      );
+    }
+    message.say(onlineEmbed);
+    return;
+  }
+  static getToken(twitchClientID, twitchClientSecret, scope) {
+    return new Promise(async function fetchToken(resolve, reject) {
+      try {
+        const response = await fetch(
+          `https://id.twitch.tv/oauth2/token?client_id=${twitchClientID}&client_secret=${twitchClientSecret}&grant_type=client_credentials&scope=${scope}`,
+          {
+            method: 'POST'
+          }
+        );
+        const json = await response.json();
+        if (json.status == 400) {
+          reject(
+            'Something went wrong when trying to fetch a twitch access token'
+          );
+        } else {
+          resolve(json.access_token);
+        }
+      } catch (e) {
+        console.error(e);
+        reject('There was a problem fetching a token from the Twitch API');
+      }
+    });
+  }
+  static getUserInfo(token, client_id, username) {
+    return new Promise(async function fetchUserInfo(resolve, reject) {
+      try {
+        const response = await fetch(
+          `https://api.twitch.tv/helix/users?login=${username}`,
+          {
+            method: 'GET',
+            headers: {
+              'client-id': `${client_id}`,
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const json = await response.json();
+        if (json.status == `400`) {
+          reject(`:x: ${username} was Invaild, Please try again.`);
+          return;
+        }
+
+        if (json.status == `429`) {
+          reject(`:x: Rate Limit exceeded. Please try again in a few minutes.`);
+          return;
+        }
+
+        if (json.status == `503`) {
+          reject(
+            `:x: Twitch service's are currently unavailable. Please try again later.`
+          );
+          return;
+        }
+
+        if (json.data[0] == null) {
+          reject(`:x: Streamer ${username} was not found, Please try again.`);
+          return;
+        }
+        resolve(json);
+      } catch (e) {
+        console.error(e);
+        reject('There was a problem fetching user info from the Twitch API');
+      }
+    });
+  }
+  static getStream(token, client_id, userID) {
+    return new Promise(async function fetchStream(resolve, reject) {
+      try {
+        const response = await fetch(
+          `https://api.twitch.tv/helix/streams?user_id=${userID}`,
+          {
+            method: 'GET',
+            headers: {
+              'client-id': `${client_id}`,
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const json = await response.json();
+        resolve(json);
+      } catch (e) {
+        console.error(e);
+        reject('There was a problem fetching stream info from the Twitch API');
+      }
     });
   }
 };
