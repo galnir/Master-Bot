@@ -39,10 +39,7 @@ module.exports = class WecomeMessageCommand extends Command {
       db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.status`) ==
       'yes'
     ) {
-      if (
-        !db.get(message.member.guild.id).serverSettings ||
-        !db.get(message.member.guild.id).serverSettings.welcomeMsg.changedByUser // Double sure it triggers on DB Wipe
-      ) {
+      if (!db.get(message.member.guild.id).serverSettings.welcomeMsg.cmdUsed) {
         // Saving Default if none is present
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
@@ -79,6 +76,14 @@ module.exports = class WecomeMessageCommand extends Command {
             format: 'jpg'
           })
         );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`,
+          message.createdAt
+        );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`,
+          message.content
+        );
       }
 
       // Report Back Current Settings
@@ -88,6 +93,10 @@ module.exports = class WecomeMessageCommand extends Command {
         )
         .setDescription(
           'You can run the Join Command to see what it will look like!'
+        )
+        .addField(
+          'Command Used For Settings',
+          db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
         )
         .addField(
           `Title: `,
@@ -130,6 +139,11 @@ module.exports = class WecomeMessageCommand extends Command {
           ),
           db.get(
             `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
+          )
+        )
+        .setTimestamp(
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`
           )
         );
       if (

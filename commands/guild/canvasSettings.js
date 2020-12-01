@@ -11,6 +11,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
+      clientPermissions: ['MANAGE_MESSAGES', 'ATTACH_FILES', 'SEND_MESSAGES'],
       examples: [
         `!welcomesettings - to restore Defaults`,
         `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
@@ -79,7 +80,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     });
   }
 
-  run(
+  async run(
     message,
     {
       embedTitle,
@@ -90,6 +91,11 @@ module.exports = class WecomeSettingsCommand extends Command {
       imageHeight
     }
   ) {
+    try {
+      await message.delete();
+    } catch {
+      return;
+    }
     if (embedTitle != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
@@ -143,11 +149,24 @@ module.exports = class WecomeSettingsCommand extends Command {
         format: 'jpg'
       })
     );
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`,
+      message.createdAt
+    );
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`,
+      message.content
+    );
+
     const embed = new MessageEmbed()
       .setColor('#420626')
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
         'You can run the Join Command to see what it will look like!'
+      )
+      .addField(
+        'Command Used For Settings',
+        db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
       )
       .addField(
         `Title: `,
@@ -191,7 +210,9 @@ module.exports = class WecomeSettingsCommand extends Command {
           `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
         )
       )
-      .setTimestamp();
+      .setTimestamp(
+        db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`)
+      );
     if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
       const attachment = new MessageAttachment(
         '././resources/welcome/wallpaper.jpg'
@@ -203,7 +224,6 @@ module.exports = class WecomeSettingsCommand extends Command {
           `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
         )
       );
-
     return message.say(embed);
   }
 };
