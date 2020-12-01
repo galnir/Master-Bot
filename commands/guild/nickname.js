@@ -5,8 +5,8 @@ module.exports = class NicknameCommand extends Command {
   constructor (client) {
     super(client, {
       name: 'nickname',
-      aliases: ['nick'],
-      group: 'moderation',
+      aliases: ['set-nick', 'set-nickname'],
+      group: 'guild',
       memberName: 'nickname',
       description: 'Sets the selected member\'s nickname with the provided nickname',
       clientPermissions: ['MANAGE_NICKNAMES'],
