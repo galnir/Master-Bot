@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 
@@ -80,6 +80,16 @@ module.exports = class WecomeMessageCommand extends Command {
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
           250
         );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`,
+          message.member.displayName
+        );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`,
+          message.member.user.displayAvatarURL({
+            format: 'jpg'
+          })
+        );
       }
       // Report Back Current Settings
       const embed = new MessageEmbed()
@@ -107,12 +117,7 @@ module.exports = class WecomeMessageCommand extends Command {
             `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`
           )
         )
-        .addField(
-          `Image Path: `,
-          db.get(
-            `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
-          )
-        )
+
         .addField(
           `Image Size: `,
           db.get(
@@ -123,8 +128,39 @@ module.exports = class WecomeMessageCommand extends Command {
               `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`
             )
         )
-        .setColor('#420626');
 
+        .addField(
+          `Image Path: `,
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
+          )
+        )
+        .setColor('#420626')
+        .setFooter(
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`
+          ),
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
+          )
+        );
+
+      if (
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
+        ) == './resources/welcome/wallpaper.jpg'
+      ) {
+        const attachment = new MessageAttachment(
+          '././resources/welcome/wallpaper.jpg'
+        );
+        embed.attachFiles(attachment);
+        embed.setImage('attachment://wallpaper.jpg');
+      } else
+        embed.setImage(
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
+          )
+        );
       return message.say(embed);
     }
     // Report Settings are Disabled

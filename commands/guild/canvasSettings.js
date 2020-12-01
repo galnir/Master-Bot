@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 //const { prefix } = require('./config.json');
@@ -17,7 +17,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         `!welcomesettings - to restore Defaults`,
         `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
         `!welcomesettings "My Title" "Upper Text" "default" "default" 800 400`,
-        `!welcomesettings " "  " " "MainText" "My Wallpaper URL" " "  " " - to only change the Main Text and Wallpaper settings`
+        `!welcomesettings " "  " " "Upper Text" "My Wallpaper URL" " "  " " - to only change the Main Text and Wallpaper settings`
       ],
       description:
         'Allows you to customize the welcome message for new members that join the server.',
@@ -26,19 +26,22 @@ module.exports = class WecomeSettingsCommand extends Command {
           key: 'embedTitle',
           prompt: 'What would you like the title to say?',
           type: 'string',
-          default: `default`
+          default: `default`,
+          validate: embedTitle => embedTitle.length > 0
         },
         {
           key: 'topImageText',
           prompt: 'What would you like the top text of the image to say?',
           type: 'string',
-          default: `default`
+          default: `default`,
+          validate: topImageText => topImageText.length > 0
         },
         {
           key: 'bottomImageText',
           prompt: 'What would you like the lower text of the image to say?',
           type: 'string',
-          default: `default`
+          default: `default`,
+          validate: bottomImageText => bottomImageText.length > 0
         },
         {
           key: 'wallpaperURL',
@@ -50,7 +53,7 @@ module.exports = class WecomeSettingsCommand extends Command {
             } catch (_) {
               return false;
             }
-
+            wallpaperURL => wallpaperURL.includes(/.jpg/g);
             return true;
           },
           default: './resources/welcome/wallpaper.jpg'
@@ -73,7 +76,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     });
   }
 
-  run(
+  async run(
     message,
     {
       embedTitle,
@@ -84,29 +87,24 @@ module.exports = class WecomeSettingsCommand extends Command {
       imageHeight
     }
   ) {
-    //embedTitle
-    //saving
     if (embedTitle != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
         embedTitle
       );
-    //topImageText
-    //saving
+
     if (topImageText != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
         topImageText
       );
-    //bottomImageText
-    //saving
+
     if (bottomImageText != ' ' || 's')
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
         bottomImageText
       );
-    //wallpaperURL
-    //saving
+
     if (wallpaperURL != ' ' || 's') {
       db.set(
         `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
@@ -125,22 +123,28 @@ module.exports = class WecomeSettingsCommand extends Command {
           imageWidth
         );
       } else {
-        //imageWidth
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
           imageWidth
         );
-        //imageHeight
-        //saving
         db.set(
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
           imageHeight
         );
       }
     }
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`,
+      message.member.displayName
+    );
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`,
+      message.member.user.displayAvatarURL({
+        format: 'jpg'
+      })
+    );
     const embed = new MessageEmbed()
-
+      .setColor('#420626')
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
         'You can run the Join Command to see what it will look like!'
@@ -164,12 +168,6 @@ module.exports = class WecomeSettingsCommand extends Command {
         )
       )
       .addField(
-        `Image Path: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
-        )
-      )
-      .addField(
         `Image Size: `,
         db.get(
           `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`
@@ -179,9 +177,33 @@ module.exports = class WecomeSettingsCommand extends Command {
             `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`
           )
       )
-      .setColor('#420626');
-    if (message.contents == '')
-      embed.setTitle(`:white_check_mark: Defaults restored!!!`);
+      .addField(
+        `Image Path: `,
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
+        )
+      )
+      .setFooter(
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`
+        ),
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
+        )
+      )
+      .setTimestamp();
+    if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
+      const attachment = new MessageAttachment(
+        '././resources/welcome/wallpaper.jpg'
+      );
+      embed.attachFiles(attachment).setImage('attachment://wallpaper.jpg');
+    } else
+      embed.setImage(
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
+        )
+      );
+
     return message.say(embed);
   }
 };

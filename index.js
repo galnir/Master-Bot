@@ -104,7 +104,7 @@ client.on('guildMemberAdd', async member => {
 
       return ctx.font;
     };
-    // Custom Welcome Image for new members
+    // Customizable Welcome Image Options
     // Canvas Size Options (Width, Height)
     var canvas = await Canvas.createCanvas(
       welcomeMsgSettings.imageWidth,
@@ -117,7 +117,7 @@ client.on('guildMemberAdd', async member => {
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
     // Background Image Border Options
-    ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
+    ctx.strokeStyle = '#000000';
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
     // Upper Text Options
@@ -125,13 +125,13 @@ client.on('guildMemberAdd', async member => {
       ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
       ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
       ctx.fillText(
-        `Welcome to ${member.guild.name}`,
+        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB
         canvas.width / 2.5,
         canvas.height / 3.5
       );
       ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
       ctx.strokeText(
-        `Welcome to ${member.guild.name}`,
+        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB
         canvas.width / 2.5,
         canvas.height / 3.5
       );
@@ -150,18 +150,18 @@ client.on('guildMemberAdd', async member => {
         canvas.height / 3.5
       );
     }
-    // Lower Text Options
+    // Lower Text Options Defaults
     if (welcomeMsgSettings.bottomImageText == 'default') {
       ctx.font = applyText(canvas, `${member.displayName}!`);
       ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
       ctx.fillText(
-        `${member.displayName}!`,
+        `${member.displayName}!`, //<-- didn't play nice being stored in DB
         canvas.width / 2.5,
         canvas.height / 1.8
       );
       ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
       ctx.strokeText(
-        `${member.displayName}!`,
+        `${member.displayName}!`, //<-- didn't play nice being stored in DB
         canvas.width / 2.5,
         canvas.height / 1.8
       );
@@ -206,7 +206,7 @@ client.on('guildMemberAdd', async member => {
       .setTimestamp();
     if (welcomeMsgSettings.embedTitle == 'default') {
       embed.setTitle(
-        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
+        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
     try {
@@ -216,6 +216,7 @@ client.on('guildMemberAdd', async member => {
     }
   }
 });
+// To see your welcome message as if you just joined the Server
 client.on('message', message => {
   if (message.content === `${prefix}join`) {
     client.emit('guildMemberAdd', message.member);
