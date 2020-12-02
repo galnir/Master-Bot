@@ -45,9 +45,8 @@ module.exports = class TwitchStatusCommand extends Command {
       return;
     }
 
-    let user;
     try {
-      user = await TwitchStatusCommand.getUserInfo(
+      var user = await TwitchStatusCommand.getUserInfo(
         access_token,
         twitchClientID,
         textFiltered
@@ -58,9 +57,8 @@ module.exports = class TwitchStatusCommand extends Command {
     }
 
     const user_id = user.data[0].id;
-    let streamInfo;
     try {
-      streamInfo = await TwitchStatusCommand.getStream(
+      var streamInfo = await TwitchStatusCommand.getStream(
         access_token,
         twitchClientID,
         user_id
@@ -104,9 +102,8 @@ module.exports = class TwitchStatusCommand extends Command {
       message.say(offlineEmbed);
       return;
     }
-    let gameInfo;
     try {
-      gameInfo = await TwitchStatusCommand.getGames(
+      var gameInfo = await TwitchStatusCommand.getGames(
         access_token,
         twitchClientID,
         streamInfo.data[0].game_id
