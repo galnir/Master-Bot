@@ -23,7 +23,7 @@ module.exports = class AvatarCommand extends Command {
 	run(msg, { user }) {
 		const embed = new MessageEmbed()
 			.setTitle(user.tag)
-			.setImage(user.displayAvatarURL())
+			.setImage(user.displayAvatarURL({ dynamic: true }))
 			.setColor(0x00AE86);
 		return msg.embed(embed);
 	}
