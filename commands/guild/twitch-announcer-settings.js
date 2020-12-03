@@ -27,7 +27,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         `${prefix}twitch-announcer-settings Bacon-Fixation general`,
         `${prefix}tasettings bacon-fixation stream-channel 3`
       ],
-      description: 'configure Twitch Announcer.',
+      description: 'Configures the Twitch announcer command.',
       args: [
         {
           key: 'textRaw',
