@@ -17,12 +17,16 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     super(client, {
       name: 'twitch-announcer',
       memberName: 'twitch-announcer',
-      aliases: ['twitch-announcer', 'twitchannounce', 'ta'],
+      aliases: ['twitchannouncer', 'twitchannounce', 'ta'],
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['SEND_MESSAGES', 'MENTION_EVERYONE'],
-      description: 'Allows you to start and stop the Twitch Announcer.',
+      examples: [
+        `${prefix}twitch-announcer enable`,
+        `${prefix}twitch-announcer disable`
+      ],
+      description: 'Allows you to Enable or Disable the Twitch Announcer.',
       args: [
         {
           key: 'textRaw',
@@ -78,7 +82,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(e);
+          message.say(':x: ' + e);
           return;
         }
 
@@ -90,7 +94,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(e);
+          message.say(':x: ' + e);
           return;
         }
 
@@ -103,7 +107,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(e);
+          message.say(':x: ' + e);
           return;
         }
 
@@ -112,11 +116,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
           );
-        else {
+        if (
+          (statusCheck != 'sent' || statusCheck == 'enable') &&
+          streamInfo.data[0]
+        ) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
         }
         //Online Embed Post
-        if (statusCheck == 'online' || statusCheck == 'enable') {
+        if (statusCheck == 'online' || statusCheck != 'sent') {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -175,7 +182,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
 
           announcedChannel.send(
-            'Hey @everyone, ' + user.data[0].display_name + ' is Online!'
+            'Hey everyone, ' + user.data[0].display_name + ' is Online!'
           ),
             announcedChannel.send(onlineEmbed);
         }
@@ -196,7 +203,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           } catch (e) {
             clearInterval(Ticker);
-            message.say(e);
+            message.say(':x: ' + e);
             return;
           }
           const changedEmbed = new MessageEmbed()

@@ -69,7 +69,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         scope
       );
     } catch (e) {
-      message.say(e);
+      message.say(':x: ' + e);
       return;
     }
 
@@ -80,7 +80,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.say(e);
+      message.say(':x: ' + e);
       return;
     }
 
