@@ -3,7 +3,10 @@ const { Command } = require('discord.js-commando');
 const { twitchClientID, twitchClientSecret } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 
-if (twitchClientID == null || twitchClientSecret == null) return;
+if (twitchClientID == null || twitchClientSecret == null)
+  return console.log(
+    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
+  );
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
     super(client, {
@@ -150,8 +153,6 @@ module.exports = class TwitchStatusCommand extends Command {
     message.say(onlineEmbed);
     return;
   }
-
-  //Twitch API handling
   static getToken(twitchClientID, twitchClientSecret, scope) {
     return new Promise(async function fetchToken(resolve, reject) {
       try {
