@@ -3,10 +3,7 @@ const { Command } = require('discord.js-commando');
 const { twitchClientID, twitchClientSecret } = require('../../config.json');
 const { MessageEmbed } = require('discord.js');
 
-if (twitchClientID == null || twitchClientSecret == null)
-  return console.log(
-    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
-  );
+if (twitchClientID == null || twitchClientSecret == null) return;
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
     super(client, {
@@ -45,9 +42,8 @@ module.exports = class TwitchStatusCommand extends Command {
       return;
     }
 
-    let user;
     try {
-      user = await TwitchStatusCommand.getUserInfo(
+      var user = await TwitchStatusCommand.getUserInfo(
         access_token,
         twitchClientID,
         textFiltered
@@ -58,9 +54,8 @@ module.exports = class TwitchStatusCommand extends Command {
     }
 
     const user_id = user.data[0].id;
-    let streamInfo;
     try {
-      streamInfo = await TwitchStatusCommand.getStream(
+      var streamInfo = await TwitchStatusCommand.getStream(
         access_token,
         twitchClientID,
         user_id
@@ -104,9 +99,8 @@ module.exports = class TwitchStatusCommand extends Command {
       message.say(offlineEmbed);
       return;
     }
-    let gameInfo;
     try {
-      gameInfo = await TwitchStatusCommand.getGames(
+      var gameInfo = await TwitchStatusCommand.getGames(
         access_token,
         twitchClientID,
         streamInfo.data[0].game_id
@@ -156,6 +150,8 @@ module.exports = class TwitchStatusCommand extends Command {
     message.say(onlineEmbed);
     return;
   }
+
+  //Twitch API handling
   static getToken(twitchClientID, twitchClientSecret, scope) {
     return new Promise(async function fetchToken(resolve, reject) {
       try {
@@ -226,6 +222,27 @@ module.exports = class TwitchStatusCommand extends Command {
       try {
         const response = await fetch(
           `https://api.twitch.tv/helix/streams?user_id=${userID}`,
+          {
+            method: 'GET',
+            headers: {
+              'client-id': `${client_id}`,
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const json = await response.json();
+        resolve(json);
+      } catch (e) {
+        console.error(e);
+        reject('There was a problem fetching stream info from the Twitch API');
+      }
+    });
+  }
+  static getGames(token, client_id, game_id) {
+    return new Promise(async function fetchGames(resolve, reject) {
+      try {
+        const response = await fetch(
+          `https://api.twitch.tv/helix/games?id=${game_id}`,
           {
             method: 'GET',
             headers: {
