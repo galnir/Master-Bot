@@ -112,7 +112,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
           );
-
+        else {
+          Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
+        }
         //Online Embed Post
         if (statusCheck == 'online' || statusCheck == 'enable') {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
