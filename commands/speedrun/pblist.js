@@ -8,7 +8,7 @@ module.exports = class MySplitsIOCommand extends Command {
     super(client, {
       name: 'speedrunner-stats',
       aliases: ['personal-bests', 'pbs'],
-      group: 'music',
+      group: 'speedrun',
       memberName: 'speedrunner-stats',
       description: 'Show off your splits from Splits.io',
       args: [
