@@ -1,5 +1,9 @@
 const { Command } = require('discord.js-commando');
-const { twitchClientID, twitchClientSecret } = require('../../config.json');
+const {
+  twitchClientID,
+  twitchClientSecret,
+  prefix
+} = require('../../config.json');
 const db = require('quick.db');
 const TwitchStatusCommand = require('../other/twitchstatus');
 
@@ -9,12 +13,21 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     super(client, {
       name: 'twitch-announcer-settings',
       memberName: 'twitch-announcer-settings',
-      aliases: ['twitch-announcer-config', 'twitchanouncesetting', 'tas'],
+      aliases: [
+        'twitch-announcer-config',
+        'twitchannouncesetting',
+        'taconfig',
+        'tasettings'
+      ],
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['SEND_MESSAGES', 'MENTION_EVERYONE'],
-      description: 'Setup an auto twitch announcer.',
+      examples: [
+        `${prefix}twitch-announcer-settings Bacon-Fixation general`,
+        `${prefix}tasettings bacon-fixation stream-channel 3`
+      ],
+      description: 'configure Twitch Announcer.',
       args: [
         {
           key: 'textRaw',
@@ -25,9 +38,6 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
           key: 'streamChannel',
           prompt: 'What channel would you like my to announe in?',
           type: 'string'
-          // validate: streamChannel => streamChannel = message.guild.channels.cache.find(
-          //   c => c.name == streamChannel
-          // )
         },
         {
           key: 'timer',
@@ -43,10 +53,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   }
 
   async run(message, { textRaw, streamChannel, timer }) {
-    let anouncedChannel = message.guild.channels.cache.find(
+    let announcedChannel = message.guild.channels.cache.find(
       c => c.name == streamChannel
     );
-    if (!anouncedChannel)
+    if (!announcedChannel)
       return message.reply(':x: ' + streamChannel + ' could not be found.');
 
     const scope = 'user:read:email';

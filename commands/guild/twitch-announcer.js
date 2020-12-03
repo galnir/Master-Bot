@@ -17,7 +17,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     super(client, {
       name: 'twitch-announcer',
       memberName: 'twitch-announcer',
-      aliases: ['twitch-announcer', 'twitchanounce', 'tac'],
+      aliases: ['twitch-announcer', 'twitchannounce', 'ta'],
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
