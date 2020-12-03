@@ -36,12 +36,12 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         },
         {
           key: 'streamChannel',
-          prompt: 'What channel would you like my to announe in?',
+          prompt: 'What channel would you like to announce in?',
           type: 'string'
         },
         {
           key: 'timer',
-          prompt: 'How Often do you want me to check? 1 to 60 Minute',
+          prompt: '(Optional) How often do you want to check? 1 to 60 Minute',
           type: 'integer',
           default: 2,
           validate: function validate(timer) {
