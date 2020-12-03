@@ -182,7 +182,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
 
           announcedChannel.send(
-            'Hey everyone, ' + user.data[0].display_name + ' is Online!'
+            'Hey @everyone, ' + user.data[0].display_name + ' is Online!'
           ),
             announcedChannel.send(onlineEmbed);
         }
