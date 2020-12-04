@@ -23,16 +23,17 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
-        `${prefix}twitch-announcer enable`,
+        '```' + `${prefix}twitch-announcer enable`,
         `${prefix}twitch-announcer disable`,
-        `${prefix}ta check`
+        `${prefix}ta check` + '```'
       ],
-      description: 'Allows you to Enable or Disable the Twitch Announcer.',
+      description:
+        'Allows you to ***Enable***, ***Disable*** or ***Check*** the Twitch Announcer.',
       args: [
         {
           key: 'textRaw',
           prompt:
-            'Would You like to ***Enable***, ***Disable*** or ***Check*** Twitch Announcer?',
+            'Would you like to ***Enable***, ***Disable*** or ***Check*** the Twitch Announcer?',
           type: 'string',
           oneOf: ['enable', 'disable', 'check']
         }
@@ -42,14 +43,13 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
   async run(message, { textRaw }) {
     var Twitch_DB = new db.table('Twitch_DB');
-    message.delete();
-
     var textFiltered = textRaw.toLowerCase();
     //Error Missing DB
     if (Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`) == undefined)
       return message.reply(
         `:no_entry: No Settings were found, Please run ${prefix}twitch-announcer-settings command first`
       );
+    message.delete();
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
     let access_token;
@@ -86,9 +86,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       .setURL('https://twitch.tv/' + user.data[0].display_name)
       .setTitle(`:white_check_mark: Twitch Announcer Enabled!`)
       .setColor('#6441A4')
-      .setTimestamp()
-
       .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        'Pre-Notification Message',
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.botSay}`
+      )
       .addField(
         `Streamer`,
         `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
@@ -132,9 +134,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       )
       .setTitle(`:x: Twitch Announcer Disabled!`)
       .setColor('#6441A4')
-      .setTimestamp()
-
       .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        'Pre-Notification Message',
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.botSay}`
+      )
       .addField(
         `Streamer`,
         `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
@@ -311,11 +315,18 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             onlineEmbed.setThumbnail(
               gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
             );
-
-          announcedChannel.send(
-            'Hey @everyone, ' + user.data[0].display_name + ' is Online!'
-          ),
+          if (
+            Twitch_DB.get(
+              `${message.guild.id}.twitchAnnouncer.botSay`
+            ).toLowerCase() != 'none'
+          ) {
+            announcedChannel.send(
+              Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.botSay`)
+            ),
+              announcedChannel.send(onlineEmbed);
+          } else {
             announcedChannel.send(onlineEmbed);
+          }
         }
         //Game Change Embed Edit
         if (
@@ -377,7 +388,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
             );
           try {
-            changedEmbed.edit(changedEmbed);
+            await changedEmbed.edit(changedEmbed);
           } catch {
             return;
           }
@@ -421,7 +432,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
           try {
-            announcedChannel.edit(offlineEmbed);
+            await announcedChannel.edit(offlineEmbed);
           } catch {
             return;
           }

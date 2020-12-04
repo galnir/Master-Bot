@@ -15,20 +15,32 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       name: 'twitch-announcer-settings',
       memberName: 'twitch-announcer-settings',
       aliases: [
-        'twitch-announcer-config',
         'twitchannouncesetting',
-        'taconfig',
-        'tasettings'
+        'tasetting',
+        'tasettings',
+        'twitch-announcer-config',
+        'twitchannouncerconfig',
+        'taconfig'
       ],
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
-        `${prefix}twitch-announcer-settings Bacon-Fixation general`,
-        `${prefix}tasettings bacon-fixation stream-channel 3`
+        '(Basic Setup)',
+        '```' +
+          `${prefix}twitch-announcer-settings streamer-name  text-channel-name` +
+          '```',
+        '(Optional Timer)',
+        '```' + `${prefix}tasettings bacon-fixation general 3` + '```',
+        `(Optional Message)`,
+        '```' +
+          `${prefix}tasettings bacon-fixation 2 "Check out my stream"` +
+          '```',
+        '(Optional No Message)',
+        '```' + `${prefix}tasettings bacon-fixation 2 none` + '```'
       ],
-      description: 'Configures the Twitch announcer command.',
+      description: 'Settings for the Twitch Announcer.',
       args: [
         {
           key: 'textRaw',
@@ -48,12 +60,28 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
           validate: function validate(timer) {
             return timer <= 60 && timer >= 0;
           }
+        },
+        {
+          key: 'sayMsg',
+          prompt:
+            '(Optional)Change the default message that comes before the notification.',
+          default: 'Hey @everyone',
+          type: 'string',
+          validate: sayMsg => sayMsg.length > 0
         }
       ]
     });
   }
 
-  async run(message, { textRaw, streamChannel, timer }) {
+  async run(message, { textRaw, streamChannel, timer, sayMsg }) {
+    try {
+      await message.delete();
+    } catch {
+      return message.reply(
+        `:no_entry: Bot needs permission to manage messages in order to use Twitch Announcer Feature`
+      );
+    }
+
     let announcedChannel = message.guild.channels.cache.find(
       c => c.name == streamChannel
     );
@@ -93,6 +121,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     //Saving to DB
     var Twitch_DB = new db.table('Twitch_DB');
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
+      botSay: sayMsg,
       name: user.data[0].display_name,
       channel: announcedChannel.name,
       status: 'disable',
@@ -116,6 +145,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       )
       .setColor('#6441A4')
       .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        'Pre-Notification Message',
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.botSay}`
+      )
       .addField(
         `Streamer`,
         `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
