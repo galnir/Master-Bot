@@ -6,6 +6,7 @@ const {
 } = require('../../config.json');
 const db = require('quick.db');
 const TwitchStatusCommand = require('../other/twitchstatus');
+const { MessageEmbed } = require('discord.js');
 
 if (twitchClientID == null || twitchClientSecret == null) return;
 module.exports = class TwitchAnnouncerSettingsCommand extends Command {
@@ -56,6 +57,8 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     let announcedChannel = message.guild.channels.cache.find(
       c => c.name == streamChannel
     );
+    if (message.guild.channels.cache.get(streamChannel))
+      announcedChannel = message.guild.channels.cache.get(streamChannel);
     if (!announcedChannel)
       return message.reply(':x: ' + streamChannel + ' could not be found.');
 
@@ -87,17 +90,55 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     var Twitch_DB = new db.table('Twitch_DB');
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
       name: user.data[0].display_name,
-      channel: streamChannel,
+      channel: announcedChannel.name,
       status: 'enable',
       timer: timer
     });
-    message.say(`:white_check_mark: Your settings were saved!
-        Streamer: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***
-        Channel: ***${
-          Twitch_DB.get(message.guild.id).twitchAnnouncer.channel
-        }***
-        Timer: ***${
+    const embed = new MessageEmbed()
+      .setAuthor(
+        message.member.guild.name + ' Announcer Settings',
+        `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
+        'https://twitch.tv/' + user.data[0].display_name
+      )
+      .setURL('https://twitch.tv/' + user.data[0].display_name)
+      .setTitle(`:white_check_mark: Your settings were saved!`)
+      .setDescription(
+        'Remember to run ```' +
+          `${prefix}twitch-announcer enable` +
+          '``` to start your timer.'
+      )
+      .setColor('#6441A4')
+      .setTimestamp()
+
+      .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        `Streamer`,
+        `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
+        true
+      )
+      .addField(
+        `Channel`,
+        `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
+        true
+      )
+      .addField(
+        `Checking Interval`,
+        `***${
           Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-        }*** minute(s)`);
+        }*** minute(s)`,
+        true
+      )
+
+      .addField('View Counter:', user.data[0].view_count, true);
+    if (user.data[0].broadcaster_type == '')
+      embed.addField('Rank:', 'BASE!', true);
+    else {
+      embed.addField(
+        'Rank:',
+        user.data[0].broadcaster_type.toUpperCase() + '!',
+        true
+      );
+    }
+    message.say(embed);
   }
 };

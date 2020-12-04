@@ -48,16 +48,147 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     var textFiltered = textRaw.toLowerCase();
     if (textFiltered == 'disable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
-      return message.say('Announcer has been Disabled.');
+      const scope = 'user:read:email';
+      let access_token;
+      try {
+        access_token = await TwitchStatusCommand.getToken(
+          twitchClientID,
+          twitchClientSecret,
+          scope
+        );
+      } catch (e) {
+        clearInterval(Ticker);
+        message.say(':x: ' + e);
+        return;
+      }
+
+      try {
+        var user = await TwitchStatusCommand.getUserInfo(
+          access_token,
+          twitchClientID,
+          `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
+        );
+      } catch (e) {
+        clearInterval(Ticker);
+        message.say(':x: ' + e);
+        return;
+      }
+      const disabledEmbed = new MessageEmbed()
+        .setAuthor(
+          message.member.guild.name + ' Announcer Settings',
+          `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
+          'https://twitch.tv/' + user.data[0].display_name
+        )
+        .setTitle(`:x: Twitch Announcer Disabled!`)
+        .setColor('#6441A4')
+        .setTimestamp()
+
+        .setThumbnail(user.data[0].profile_image_url)
+        .addField(
+          `Streamer`,
+          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
+          true
+        )
+        .addField(
+          `Channel`,
+          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
+          true
+        )
+        .addField(
+          `Checking Interval`,
+          `***${
+            Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
+          }*** minute(s)`,
+          true
+        )
+
+        .addField('View Counter:', user.data[0].view_count, true);
+      if (user.data[0].broadcaster_type == '')
+        disabledEmbed.addField('Rank:', 'BASE!', true);
+      else {
+        disabledEmbed.addField(
+          'Rank:',
+          user.data[0].broadcaster_type.toUpperCase() + '!',
+          true
+        );
+      }
+      message.say(disabledEmbed);
     }
+
     if (textFiltered == 'enable') {
+      const scope = 'user:read:email';
+      let access_token;
+      try {
+        access_token = await TwitchStatusCommand.getToken(
+          twitchClientID,
+          twitchClientSecret,
+          scope
+        );
+      } catch (e) {
+        clearInterval(Ticker);
+        message.say(':x: ' + e);
+        return;
+      }
+
+      try {
+        var user = await TwitchStatusCommand.getUserInfo(
+          access_token,
+          twitchClientID,
+          `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
+        );
+      } catch (e) {
+        clearInterval(Ticker);
+        message.say(':x: ' + e);
+        return;
+      }
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'enable');
-      message.say(`:white_check_mark: Announcer has been Enabled!
-      Streamer: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***
-      Channel: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***
-      Timer: ***${
-        Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-      }*** minutes`);
+      const enabledEmbed = new MessageEmbed()
+        .setAuthor(
+          message.member.guild.name + ' Announcer Settings',
+          `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
+          'https://twitch.tv/' + user.data[0].display_name
+        )
+        .setURL('https://twitch.tv/' + user.data[0].display_name)
+        .setTitle(`:white_check_mark: Twitch Announcer Enabled!`)
+        .setColor('#6441A4')
+        .setTimestamp()
+
+        .setThumbnail(user.data[0].profile_image_url)
+        .addField(
+          `Streamer`,
+          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
+          true
+        )
+        .addField(
+          `Channel`,
+          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
+          true
+        )
+        .addField(
+          `Checking Interval`,
+          `***${
+            Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
+          }*** minute(s)`,
+          true
+        )
+
+        .addField('View Counter:', user.data[0].view_count, true);
+      if (user.data[0].broadcaster_type == '')
+        enabledEmbed.addField('Rank:', 'BASE!', true);
+      else {
+        enabledEmbed.addField(
+          'Rank:',
+          user.data[0].broadcaster_type.toUpperCase() + '!',
+          true
+        );
+      }
+      message.say(enabledEmbed);
+      // message.say(`:white_check_mark: Announcer has been Enabled!
+      // Streamer: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***
+      // Channel: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***
+      // Timer: ***${
+      //   Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
+      // }*** minutes`);
 
       var Ticker = setInterval(async function() {
         let statusCheck = Twitch_DB.get(
