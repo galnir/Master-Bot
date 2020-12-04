@@ -23,7 +23,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
-      clientPermissions: ['SEND_MESSAGES', 'MENTION_EVERYONE'],
+      clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
         `${prefix}twitch-announcer-settings Bacon-Fixation general`,
         `${prefix}tasettings bacon-fixation stream-channel 3`
@@ -57,11 +57,14 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     let announcedChannel = message.guild.channels.cache.find(
       c => c.name == streamChannel
     );
+
     if (message.guild.channels.cache.get(streamChannel))
       announcedChannel = message.guild.channels.cache.get(streamChannel);
+
     if (!announcedChannel)
       return message.reply(':x: ' + streamChannel + ' could not be found.');
 
+    //Twitch Section
     const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
     let access_token;
@@ -87,12 +90,16 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       return;
     }
 
+    //Saving to DB
     var Twitch_DB = new db.table('Twitch_DB');
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
       name: user.data[0].display_name,
       channel: announcedChannel.name,
-      status: 'enable',
-      timer: timer
+      status: 'disable',
+      timer: timer,
+      savedName: message.member.displayName,
+      savedAvatar: message.author.displayAvatarURL(),
+      date: Date.now()
     });
     const embed = new MessageEmbed()
       .setAuthor(
@@ -108,17 +115,15 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
           '``` to start your timer.'
       )
       .setColor('#6441A4')
-      .setTimestamp()
-
       .setThumbnail(user.data[0].profile_image_url)
       .addField(
         `Streamer`,
-        `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
         true
       )
       .addField(
         `Channel`,
-        `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}`,
         true
       )
       .addField(
@@ -128,16 +133,21 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         }*** minute(s)`,
         true
       )
-
       .addField('View Counter:', user.data[0].view_count, true);
     if (user.data[0].broadcaster_type == '')
       embed.addField('Rank:', 'BASE!', true);
     else {
-      embed.addField(
-        'Rank:',
-        user.data[0].broadcaster_type.toUpperCase() + '!',
-        true
-      );
+      embed
+        .addField(
+          'Rank:',
+          user.data[0].broadcaster_type.toUpperCase() + '!',
+          true
+        )
+        .setFooter(
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedName,
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedAvatar
+        )
+        .setTimestamp(Twitch_DB.get(message.guild.id).twitchAnnouncer.date);
     }
     message.say(embed);
   }

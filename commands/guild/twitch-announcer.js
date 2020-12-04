@@ -21,19 +21,20 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
-      clientPermissions: ['SEND_MESSAGES', 'MENTION_EVERYONE'],
+      clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
         `${prefix}twitch-announcer enable`,
-        `${prefix}twitch-announcer disable`
+        `${prefix}twitch-announcer disable`,
+        `${prefix}ta check`
       ],
       description: 'Allows you to Enable or Disable the Twitch Announcer.',
       args: [
         {
           key: 'textRaw',
           prompt:
-            'Would You like to ***Enable*** or ***Disable*** the Twitch Announcer?',
+            'Would You like to ***Enable***, ***Disable*** or ***Check*** Twitch Announcer?',
           type: 'string',
-          oneOf: ['enable', 'disable']
+          oneOf: ['enable', 'disable', 'check']
         }
       ]
     });
@@ -41,155 +42,153 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
   async run(message, { textRaw }) {
     var Twitch_DB = new db.table('Twitch_DB');
+    message.delete();
+
+    var textFiltered = textRaw.toLowerCase();
+    //Error Missing DB
     if (Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`) == undefined)
       return message.reply(
         `:no_entry: No Settings were found, Please run ${prefix}twitch-announcer-settings command first`
       );
-    var textFiltered = textRaw.toLowerCase();
-    if (textFiltered == 'disable') {
-      Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
-      const scope = 'user:read:email';
-      let access_token;
-      try {
-        access_token = await TwitchStatusCommand.getToken(
-          twitchClientID,
-          twitchClientSecret,
-          scope
-        );
-      } catch (e) {
-        clearInterval(Ticker);
-        message.say(':x: ' + e);
-        return;
-      }
+    //Get Twitch Ready for Response Embeds
+    const scope = 'user:read:email';
+    let access_token;
+    try {
+      access_token = await TwitchStatusCommand.getToken(
+        twitchClientID,
+        twitchClientSecret,
+        scope
+      );
+    } catch (e) {
+      clearInterval(Ticker);
+      message.say(':x: ' + e);
+      return;
+    }
 
-      try {
-        var user = await TwitchStatusCommand.getUserInfo(
-          access_token,
-          twitchClientID,
-          `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
-        );
-      } catch (e) {
-        clearInterval(Ticker);
-        message.say(':x: ' + e);
-        return;
-      }
-      const disabledEmbed = new MessageEmbed()
-        .setAuthor(
-          message.member.guild.name + ' Announcer Settings',
-          `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
-          'https://twitch.tv/' + user.data[0].display_name
-        )
-        .setTitle(`:x: Twitch Announcer Disabled!`)
-        .setColor('#6441A4')
-        .setTimestamp()
+    try {
+      var user = await TwitchStatusCommand.getUserInfo(
+        access_token,
+        twitchClientID,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
+      );
+    } catch (e) {
+      clearInterval(Ticker);
+      message.say(':x: ' + e);
+      return;
+    }
+    //Enable Embed
+    const enabledEmbed = new MessageEmbed()
+      .setAuthor(
+        message.member.guild.name + ' Announcer Settings',
+        `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
+        'https://twitch.tv/' + user.data[0].display_name
+      )
+      .setURL('https://twitch.tv/' + user.data[0].display_name)
+      .setTitle(`:white_check_mark: Twitch Announcer Enabled!`)
+      .setColor('#6441A4')
+      .setTimestamp()
 
-        .setThumbnail(user.data[0].profile_image_url)
+      .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        `Streamer`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
+        true
+      )
+      .addField(
+        `Channel`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}`,
+        true
+      )
+      .addField(
+        `Checking Interval`,
+        `***${
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
+        }*** minute(s)`,
+        true
+      )
+      .addField('View Counter:', user.data[0].view_count, true);
+    if (user.data[0].broadcaster_type == '')
+      enabledEmbed.addField('Rank:', 'BASE!', true);
+    else {
+      enabledEmbed
         .addField(
-          `Streamer`,
-          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
-          true
-        )
-        .addField(
-          `Channel`,
-          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
-          true
-        )
-        .addField(
-          `Checking Interval`,
-          `***${
-            Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-          }*** minute(s)`,
-          true
-        )
-
-        .addField('View Counter:', user.data[0].view_count, true);
-      if (user.data[0].broadcaster_type == '')
-        disabledEmbed.addField('Rank:', 'BASE!', true);
-      else {
-        disabledEmbed.addField(
           'Rank:',
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
-        );
+        )
+        .setFooter(
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedName,
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedAvatar
+        )
+        .setTimestamp(Twitch_DB.get(message.guild.id).twitchAnnouncer.date);
+    }
+
+    //Disable Embed
+    const disabledEmbed = new MessageEmbed()
+      .setAuthor(
+        message.member.guild.name + ' Announcer Settings',
+        `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
+        'https://twitch.tv/' + user.data[0].display_name
+      )
+      .setTitle(`:x: Twitch Announcer Disabled!`)
+      .setColor('#6441A4')
+      .setTimestamp()
+
+      .setThumbnail(user.data[0].profile_image_url)
+      .addField(
+        `Streamer`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
+        true
+      )
+      .addField(
+        `Channel`,
+        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}`,
+        true
+      )
+      .addField(
+        `Checking Interval`,
+        `***${
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
+        }*** minute(s)`,
+        true
+      )
+      .addField('View Counter:', user.data[0].view_count, true);
+    if (user.data[0].broadcaster_type == '')
+      disabledEmbed.addField('Rank:', 'BASE!', true);
+    else {
+      disabledEmbed
+        .addField(
+          'Rank:',
+          user.data[0].broadcaster_type.toUpperCase() + '!',
+          true
+        )
+        .setFooter(
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedName,
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedAvatar
+        )
+        .setTimestamp(Twitch_DB.get(message.guild.id).twitchAnnouncer.date);
+    }
+    //Check Sttings
+    if (textFiltered == 'check') {
+      if (Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'disable')
+        message.say(disabledEmbed);
+      else {
+        return message.say(enabledEmbed);
       }
+      return;
+    }
+    //Disable Setting
+    if (textFiltered == 'disable') {
+      Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
       message.say(disabledEmbed);
     }
 
+    //Enabled Setting
     if (textFiltered == 'enable') {
-      const scope = 'user:read:email';
-      let access_token;
-      try {
-        access_token = await TwitchStatusCommand.getToken(
-          twitchClientID,
-          twitchClientSecret,
-          scope
-        );
-      } catch (e) {
-        clearInterval(Ticker);
-        message.say(':x: ' + e);
-        return;
-      }
-
-      try {
-        var user = await TwitchStatusCommand.getUserInfo(
-          access_token,
-          twitchClientID,
-          `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
-        );
-      } catch (e) {
-        clearInterval(Ticker);
-        message.say(':x: ' + e);
-        return;
-      }
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'enable');
-      const enabledEmbed = new MessageEmbed()
-        .setAuthor(
-          message.member.guild.name + ' Announcer Settings',
-          `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
-          'https://twitch.tv/' + user.data[0].display_name
-        )
-        .setURL('https://twitch.tv/' + user.data[0].display_name)
-        .setTitle(`:white_check_mark: Twitch Announcer Enabled!`)
-        .setColor('#6441A4')
-        .setTimestamp()
-
-        .setThumbnail(user.data[0].profile_image_url)
-        .addField(
-          `Streamer`,
-          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***`,
-          true
-        )
-        .addField(
-          `Channel`,
-          `***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***`,
-          true
-        )
-        .addField(
-          `Checking Interval`,
-          `***${
-            Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-          }*** minute(s)`,
-          true
-        )
-
-        .addField('View Counter:', user.data[0].view_count, true);
-      if (user.data[0].broadcaster_type == '')
-        enabledEmbed.addField('Rank:', 'BASE!', true);
-      else {
-        enabledEmbed.addField(
-          'Rank:',
-          user.data[0].broadcaster_type.toUpperCase() + '!',
-          true
-        );
-      }
       message.say(enabledEmbed);
-      // message.say(`:white_check_mark: Announcer has been Enabled!
-      // Streamer: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}***
-      // Channel: ***${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}***
-      // Timer: ***${
-      //   Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-      // }*** minutes`);
 
+      //Ticker Section
       var Ticker = setInterval(async function() {
         let statusCheck = Twitch_DB.get(
           `${message.guild.id}.twitchAnnouncer.status`
@@ -197,6 +196,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         if (statusCheck == 'disable') {
           clearInterval(Ticker);
+          return;
         }
 
         let announcedChannel = message.guild.channels.cache.find(
