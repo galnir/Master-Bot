@@ -5,7 +5,7 @@ const { MessageEmbed } = require('discord.js');
 
 if (twitchClientID == null || twitchClientSecret == null)
   return console.log(
-    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
+    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchClientID and twitchToken in your config.json to use TwitchStatus command!'
   );
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
