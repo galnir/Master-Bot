@@ -52,7 +52,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     message.delete();
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
-    let access_token;
+    let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -61,7 +61,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
     } catch (e) {
       clearInterval(Ticker);
-      message.say(':x: ' + e);
+      message.say(':x: Twitch Announcer Stopped\n' + e);
       return;
     }
 
@@ -73,9 +73,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
     } catch (e) {
       clearInterval(Ticker);
-      message.say(':x: ' + e);
+      message.say(':x: Twitch Announcer Stopped\n' + e);
       return;
     }
+
     //Enable Embed
     const enabledEmbed = new MessageEmbed()
       .setAuthor(
@@ -83,7 +84,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         `https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png`,
         'https://twitch.tv/' + user.data[0].display_name
       )
-      .setURL('https://twitch.tv/' + user.data[0].display_name)
       .setTitle(`:white_check_mark: Twitch Announcer Enabled!`)
       .setColor('#6441A4')
       .setThumbnail(user.data[0].profile_image_url)
@@ -172,7 +172,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         )
         .setTimestamp(Twitch_DB.get(message.guild.id).twitchAnnouncer.date);
     }
-    //Check Sttings
+    //Check Post
     if (textFiltered == 'check') {
       if (Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'disable')
         message.say(disabledEmbed);
@@ -181,20 +181,20 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       }
       return;
     }
-    //Disable Setting
+    //Disable Set
     if (textFiltered == 'disable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
       message.say(disabledEmbed);
     }
 
-    //Enabled Setting
+    //Enable Set
     if (textFiltered == 'enable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'enable');
       message.say(enabledEmbed);
 
-      //Ticker Section
+      //Ticker Section (Loop)
       var Ticker = setInterval(async function() {
-        let statusCheck = Twitch_DB.get(
+        var statusCheck = Twitch_DB.get(
           `${message.guild.id}.twitchAnnouncer.status`
         );
 
@@ -217,7 +217,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: ' + e);
+          message.say(':x: Twitch Announcer Stopped\n' + e);
           return;
         }
 
@@ -229,7 +229,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: ' + e);
+          message.say(':x: Twitch Announcer Stopped\n' + e);
           return;
         }
 
@@ -242,23 +242,27 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: ' + e);
+          message.say(':x: Twitch Announcer Stopped\n' + e);
           return;
         }
-
-        if (!streamInfo.data[0])
-          return Twitch_DB.set(
+        //Offline Status Set
+        if (
+          !streamInfo.data[0] ||
+          user.data[0].display_name !=
+            Twitch_DB.get(message.guild.id).twitchAnnouncer.name
+        )
+          Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
           );
-        if (
-          (statusCheck != 'sent' || statusCheck == 'enable') &&
-          streamInfo.data[0]
-        ) {
+
+        //Online Status set
+        if (statusCheck != 'sent' || statusCheck == 'enable') {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
         }
+
         //Online Embed Post
-        if (statusCheck == 'online' || statusCheck != 'sent') {
+        if (statusCheck == 'online') {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -272,7 +276,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           } catch (e) {
             clearInterval(Ticker);
-            message.say(e);
+            message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
 
@@ -299,6 +303,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
+            .setThumbnail(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            )
             .setTimestamp(streamInfo.data[0].started_at);
           if (user.data[0].broadcaster_type == '')
             onlineEmbed.addField('Rank:', 'BASE!', true);
@@ -309,12 +316,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               true
             );
           }
-          if (gameInfo.data[0].box_art_url.search(/.jpg/g))
-            onlineEmbed.setThumbnail(user.data[0].profile_image_url);
-          else
-            onlineEmbed.setThumbnail(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            );
+
           if (
             Twitch_DB.get(
               `${message.guild.id}.twitchAnnouncer.botSay`
@@ -328,10 +330,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             announcedChannel.send(onlineEmbed);
           }
         }
+
         //Game Change Embed Edit
         if (
+          streamInfo.data[0] &&
           streamInfo.data[0].game_name !=
-          Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`)
+            Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`)
         ) {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -345,7 +349,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           } catch (e) {
             clearInterval(Ticker);
-            message.say(':x: ' + e);
+            message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
           const changedEmbed = new MessageEmbed()
@@ -356,14 +360,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             )
             .setURL('https://twitch.tv/' + user.data[0].display_name)
             .setTitle(
-              'Looks like ' + user.data[0].display_name + ' is: Online!'
+              'Looks like ' + user.data[0].display_name + ': Changed Games!'
             )
             .addField('Stream Title:', streamInfo.data[0].title)
             .addField('Currently Playing:', streamInfo.data[0].game_name, true)
             .addField('Viewers:', streamInfo.data[0].viewer_count, true)
             .setColor('#6441A4')
             .setFooter(
-              'Stream Started',
+              'Changed Game',
               'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png' // Official icon link from Twitch.tv
             )
             .setImage(
@@ -371,7 +375,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
-            .setTimestamp(streamInfo.data[0].started_at);
+            .setThumbnail(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            )
+            .setTimestamp();
           if (user.data[0].broadcaster_type == '')
             changedEmbed.addField('Rank:', 'BASE!', true);
           else {
@@ -381,16 +388,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               true
             );
           }
-          if (gameInfo.data[0].box_art_url.search(/.jpg/g))
-            changedEmbed.setThumbnail(user.data[0].profile_image_url);
-          else
-            changedEmbed.setThumbnail(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            );
+
           try {
-            await changedEmbed.edit(changedEmbed);
-          } catch {
-            return;
+            await announcedChannel.edit(changedEmbed);
+          } catch (e) {
+            return console.log(e);
           }
         }
         //Offline Embed Edit
@@ -400,19 +402,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             'offline'
           );
           const offlineEmbed = new MessageEmbed()
-            .setAuthor(
-              'Streamer Status Check',
-              user.data[0].profile_image_url,
-              'https://twitch.tv/' + user.data[0].display_name
-            )
+            .setAuthor('Streamer ', user.data[0].profile_image_url)
             .setURL('https://twitch.tv/' + user.data[0].display_name)
             .setTitle(
               'Looks like ' + user.data[0].display_name + ' is: Offline.'
             )
             .setColor('#6441A4')
-            .setTimestamp(user.data[0].created_at)
+            .setTimestamp()
             .setFooter(
-              'Joined Twitch',
+              'Stream Ended',
               'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
             )
             .setThumbnail(user.data[0].profile_image_url);
@@ -433,8 +431,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
           try {
             await announcedChannel.edit(offlineEmbed);
-          } catch {
-            return;
+          } catch (e) {
+            return console.log(e);
           }
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60 * 1000);
