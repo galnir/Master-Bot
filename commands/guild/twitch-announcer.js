@@ -44,15 +44,19 @@ module.exports = class TwitchAnnouncerCommand extends Command {
   async run(message, { textRaw }) {
     var Twitch_DB = new db.table('Twitch_DB');
     var textFiltered = textRaw.toLowerCase();
+
     //Error Missing DB
     if (Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`) == undefined)
       return message.reply(
         `:no_entry: No Settings were found, Please run ${prefix}twitch-announcer-settings command first`
       );
     message.delete();
+
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
     let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
+    let streamInfo;
+    let gameInfo;
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -194,10 +198,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
       //Ticker Section (Loop)
       var Ticker = setInterval(async function() {
-        var statusCheck = Twitch_DB.get(
-          `${message.guild.id}.twitchAnnouncer.status`
-        );
-
+        let statusCheck = Twitch_DB.get(message.guild.id).twitchAnnouncer
+          .status;
         if (statusCheck == 'disable') {
           clearInterval(Ticker);
           return;
@@ -206,9 +208,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         let announcedChannel = message.guild.channels.cache.find(
           c => c.name == Twitch_DB.get(message.guild.id).twitchAnnouncer.channel
         );
-
-        const scope = 'user:read:email';
-        let access_token;
         try {
           access_token = await TwitchStatusCommand.getToken(
             twitchClientID,
@@ -222,7 +221,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         try {
-          var user = await TwitchStatusCommand.getUserInfo(
+          user = await TwitchStatusCommand.getUserInfo(
             access_token,
             twitchClientID,
             `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`
@@ -233,9 +232,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           return;
         }
 
-        const user_id = user.data[0].id;
+        var user_id = user.data[0].id;
         try {
-          var streamInfo = await TwitchStatusCommand.getStream(
+          streamInfo = await TwitchStatusCommand.getStream(
             access_token,
             twitchClientID,
             user_id
@@ -245,31 +244,29 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           message.say(':x: Twitch Announcer Stopped\n' + e);
           return;
         }
+
         //Offline Status Set
-        if (
-          !streamInfo.data[0] ||
-          user.data[0].display_name !=
-            Twitch_DB.get(message.guild.id).twitchAnnouncer.name
-        )
+        if (!streamInfo.data[0] && statusCheck != 'end') {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
           );
-
+        }
         //Online Status set
-        if (statusCheck != 'sent' || statusCheck == 'enable') {
+        if (statusCheck != 'sent' && streamInfo.data[0]) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
         }
 
-        //Online Embed Post
+        //Online Trigger
         if (statusCheck == 'online') {
+          console.log(streamInfo.data[0]);
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
             streamInfo.data[0].game_name
           );
           try {
-            var gameInfo = await TwitchStatusCommand.getGames(
+            gameInfo = await TwitchStatusCommand.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id
@@ -280,6 +277,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             return;
           }
 
+          //Online Embed
           const onlineEmbed = new MessageEmbed()
             .setAuthor(
               'Twitch Announcement',
@@ -303,9 +301,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
-            .setThumbnail(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            )
+            .setThumbnail(user.data[0].profile_image_url)
             .setTimestamp(streamInfo.data[0].started_at);
           if (user.data[0].broadcaster_type == '')
             onlineEmbed.addField('Rank:', 'BASE!', true);
@@ -317,12 +313,13 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
 
+          //Online Send
           if (
             Twitch_DB.get(
               `${message.guild.id}.twitchAnnouncer.botSay`
             ).toLowerCase() != 'none'
           ) {
-            announcedChannel.send(
+            announcedChannel.message.say(
               Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.botSay`)
             ),
               announcedChannel.send(onlineEmbed);
@@ -331,7 +328,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
         }
 
-        //Game Change Embed Edit
+        //Game Change Trigger
         if (
           streamInfo.data[0] &&
           streamInfo.data[0].game_name !=
@@ -342,7 +339,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             streamInfo.data[0].game_name
           );
           try {
-            var gameInfo = await TwitchStatusCommand.getGames(
+            gameInfo = await TwitchStatusCommand.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id
@@ -352,6 +349,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
+
+          //Game Change Embed
           const changedEmbed = new MessageEmbed()
             .setAuthor(
               'Twitch Announcement',
@@ -375,9 +374,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
-            .setThumbnail(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            )
+            .setThumbnail(user.data[0].profile_image_url)
             .setTimestamp();
           if (user.data[0].broadcaster_type == '')
             changedEmbed.addField('Rank:', 'BASE!', true);
@@ -389,13 +386,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
 
+          //Game Change Edit Attempt
           try {
-            await announcedChannel.edit(changedEmbed);
-          } catch (e) {
-            return console.log(e);
+            await announcedChannel.lastMessage.edit(changedEmbed);
+          } catch {
+            return;
           }
         }
-        //Offline Embed Edit
+
+        //Offline Edit
         if (statusCheck == 'offline') {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
@@ -429,10 +428,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               true
             );
           }
+          //Offline Edit Attempt
           try {
-            await announcedChannel.edit(offlineEmbed);
-          } catch (e) {
-            return console.log(e);
+            await announcedChannel.lastMessage.edit(offlineEmbed);
+            return Twitch_DB.set(
+              `${message.guild.id}.twitchAnnouncer.status`,
+              'end'
+            );
+          } catch {
+            return;
           }
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60 * 1000);
