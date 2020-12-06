@@ -252,6 +252,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             'offline'
           );
         }
+
         //Online Status set
         if (statusCheck != 'sent' && streamInfo.data[0]) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
@@ -428,6 +429,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               true
             );
           }
+
           //Offline Edit Attempt
           try {
             await announcedChannel.lastMessage.edit(offlineEmbed);

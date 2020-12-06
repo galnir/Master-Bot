@@ -64,7 +64,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         {
           key: 'sayMsg',
           prompt:
-            '(Optional)Change the default message that comes before the notification.',
+            '(Optional) Change the default message that comes before the notification.',
           default: 'Hey @everyone',
           type: 'string',
           validate: sayMsg => sayMsg.length > 0
