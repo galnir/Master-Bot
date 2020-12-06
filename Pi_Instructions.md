@@ -2,8 +2,8 @@
 let's start by checking for updates and install them
 ```
 cd ~
-sudo apt-get update
-sudo apt-get updgrade
+sudo apt-get -y update
+sudo apt-get -y upgrade
 ```
 
 ### Checking and Installing needed Dependencies 
@@ -11,9 +11,9 @@ sudo apt-get updgrade
 ### Compiler
 Quick.db and Canvas both need a Compiler in order to install on a PI
 ```
-sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+sudo apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 ```
-to install a compliler and the image support for Canvas
+to install a compiler and the image support for Canvas
 
 ### Python
 ```
@@ -59,14 +59,14 @@ the newer armv7 Pi's are easier to install NodeJS, most users you just need the 
 ```
 cd ~
 curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-sudo apt install nodejs
+sudo apt-get install -y nodejs
 ```
 
 let's check the version with
 ```
 node -v
 ```
-this should output 14.15.0 if done correctly 
+this should output 14.15.1 if done correctly 
 
 For the versions of NodeJS. If you need a different version, just change `https://deb.nodesource.com/setup_14.x` to what ever version is needed example `https://deb.nodesource.com/setup_15.x` in the `curl` command
 
