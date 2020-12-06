@@ -259,7 +259,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         //Online Trigger
         if (statusCheck == 'online') {
-          console.log(streamInfo.data[0]);
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -332,7 +331,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         if (
           streamInfo.data[0] &&
           streamInfo.data[0].game_name !=
-            Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`)
+            Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`) &&
+          statusCheck == 'sent'
         ) {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -439,7 +439,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             return;
           }
         }
-      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60 * 1000);
+      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }
   }
 };
