@@ -5,11 +5,12 @@ module.exports = class SummonCommand extends Command {
     super(client, {
       name: 'summon',
       memberName: 'summon',
-      group: 'guild',
+      group: 'music',
       guildOnly: true,
       clientPermissions: ['SPEAK', 'CONNECT'],
       userPermissions: ['ADMINISTRATOR'],
-      description: 'Allows an Admin to Summon the Bot to your voice-channel.'
+      description:
+        'Allows an Admin to Summon the bot to your voice-channel when music is playing.'
     });
   }
 
