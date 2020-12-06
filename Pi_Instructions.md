@@ -40,7 +40,10 @@ Most likely v6.x
 cd ~
 git --version
 ```
-should output 2.20.1
+should output 2.20.1 
+
+install command
+`sudo apt-get install -y git`
 
 ### Installing FFmpeg
 ```
