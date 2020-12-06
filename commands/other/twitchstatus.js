@@ -5,7 +5,7 @@ const { MessageEmbed } = require('discord.js');
 
 if (twitchClientID == null || twitchClientSecret == null)
   return console.log(
-    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchCLIENTID and twitchToken in your config.json to use TwitchStatus command!'
+    'INFO: TwitchStatus command removed from the list. \nMake sure you have twitchClientID and twitchToken in your config.json to use TwitchStatus command!'
   );
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
@@ -223,6 +223,27 @@ module.exports = class TwitchStatusCommand extends Command {
       try {
         const response = await fetch(
           `https://api.twitch.tv/helix/streams?user_id=${userID}`,
+          {
+            method: 'GET',
+            headers: {
+              'client-id': `${client_id}`,
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const json = await response.json();
+        resolve(json);
+      } catch (e) {
+        console.error(e);
+        reject('There was a problem fetching stream info from the Twitch API');
+      }
+    });
+  }
+  static getGames(token, client_id, game_id) {
+    return new Promise(async function fetchGames(resolve, reject) {
+      try {
+        const response = await fetch(
+          `https://api.twitch.tv/helix/games?id=${game_id}`,
           {
             method: 'GET',
             headers: {
