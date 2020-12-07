@@ -105,9 +105,17 @@ module.exports = class MusicTriviaCommand extends Command {
 
           const filter = msg =>
             message.guild.triviaData.triviaScore.has(msg.author.username);
-          const collector = message.channel.createMessageCollector(filter, {
-            time: 30000
-          });
+          const collector = message.channel
+            .createMessageCollector(filter, {
+              time: 30000
+            })
+            .on('error', function(e) {
+              message.guild.me.voice.channel.leave();
+              message.guild.musicData.isPlaying = false;
+              message.guild.triviaData.isTriviaRunning = false;
+              message.say(':x: Music Trivia has stopped could not play song!');
+              console.log(e);
+            });
 
           collector.on('collect', msg => {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
