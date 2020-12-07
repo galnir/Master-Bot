@@ -1,6 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
+const prefix = require('../../config.json');
 
 module.exports = class WecomeSettingsCommand extends Command {
   constructor(client) {
@@ -13,10 +14,11 @@ module.exports = class WecomeSettingsCommand extends Command {
       userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'ATTACH_FILES', 'SEND_MESSAGES'],
       examples: [
-        `!welcomesettings - to restore Defaults`,
-        `!welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
-        `!welcomesettings "My Title" "Upper Text" "default" "default" 800 400`,
-        `!welcomesettings " "  " " "Upper Text" "My Wallpaper URL" " "  " " - to only change the Main Text and Wallpaper settings`
+        '```' + `${prefix}welcomesettings - to restore Defaults`,
+        `${prefix}welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
+        `${prefix}welcomesettings "My Title" "Upper Text" "" "" 800 400`,
+        `${prefix}welcomesettings "s" "s" "Upper Text" "My Wallpaper URL" "700"  "250" - to only change the Main Text and Wallpaper settings` +
+          '```'
       ],
       description:
         'Allows you to customize the welcome message for new members that join the server.',
@@ -26,38 +28,47 @@ module.exports = class WecomeSettingsCommand extends Command {
           prompt: 'What would you like the title to say?',
           type: 'string',
           default: `default`,
-          validate: embedTitle => embedTitle.length > 0
+          validate: embedTitle => embedTitle.length > 0 && embedTitle != ' '
         },
         {
           key: 'topImageText',
           prompt: 'What would you like the top text of the image to say?',
           type: 'string',
           default: `default`,
-          validate: topImageText => topImageText.length > 0
+          validate: topImageText =>
+            topImageText.length > 0 && topImageText != ' '
         },
         {
           key: 'bottomImageText',
           prompt: 'What would you like the lower text of the image to say?',
           type: 'string',
           default: `default`,
-          validate: bottomImageText => bottomImageText.length > 0
+          validate: bottomImageText =>
+            bottomImageText.length > 0 && bottomImageText != ' '
         },
         {
           key: 'wallpaperURL',
           prompt: 'What Image URL do you want to use?',
           type: 'string',
           validate: function isValidUrl(wallpaperURL) {
-            try {
-              new URL(wallpaperURL);
-            } catch (_) {
-              return false;
+            if (wallpaperURL == 's') {
+              return true;
+            } else {
+              try {
+                new URL(wallpaperURL);
+              } catch (_) {
+                return false;
+              }
+              return true;
             }
-            return true;
           },
           validate: function checkFile(file) {
-            var extension = file.substr(file.lastIndexOf('.') + 1);
-            if (/(jpg|jpeg|svg|png)$/gi.test(extension)) {
-              return true;
+            if (file == 's') return true;
+            else {
+              var extension = file.substr(file.lastIndexOf('.') + 1);
+              if (/(jpg|jpeg|svg|png)$/gi.test(extension)) {
+                return true;
+              }
             }
           },
           default: './resources/welcome/wallpaper.jpg'
@@ -96,28 +107,46 @@ module.exports = class WecomeSettingsCommand extends Command {
     } catch {
       return;
     }
-    if (embedTitle != ' ' || 's')
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
-        embedTitle
+    if (embedTitle == 's')
+      embedTitle = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`
       );
-    if (topImageText != ' ' || 's')
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
-        topImageText
+
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
+      embedTitle
+    );
+
+    if (topImageText == 's')
+      topImageText = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`
       );
-    if (bottomImageText != ' ' || 's')
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
-        bottomImageText
+
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
+      topImageText
+    );
+
+    if (bottomImageText == 's')
+      bottomImageText = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`
       );
-    if (wallpaperURL != ' ' || 's') {
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-        wallpaperURL
+
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
+      bottomImageText
+    );
+    if (wallpaperURL == 's')
+      wallpaperURL = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
       );
-    }
-    if (imageHeight && imageWidth != ' ') {
+
+    db.set(
+      `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
+      wallpaperURL
+    );
+
+    if (imageHeight && imageWidth) {
       if (imageHeight > imageWidth) {
         //swap if in the incorrect order
         db.set(
