@@ -42,13 +42,13 @@ client.registry
     ['gifs', ':film_frames: Gif Command Group:'],
     ['other', ':loud_sound: Other Command Group:'],
     ['guild', ':gear: Guild Related Commands:'],
-    ['speedrun', ':athletic_shoe: Speedrun Related Commands:' ]
+    ['speedrun', ':athletic_shoe: Speedrun Related Commands:']
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
     eval: false,
-    prefix: false,
-    commandState: false
+    prefix: false
+    //commandState: false
   })
   .registerCommandsIn(path.join(__dirname, 'commands'));
 
@@ -60,7 +60,9 @@ client.once('ready', () => {
   });
   const Guilds = client.guilds.cache.map(guild => guild.name);
   console.log(Guilds, 'Connected!');
-  Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', { family: 'Open Sans Light' }); // Registering font For Cloud Services
+  Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', {
+    family: 'Open Sans Light'
+  }); // Registering font For Cloud Services
 });
 
 client.on('voiceStateUpdate', async (___, newState) => {
