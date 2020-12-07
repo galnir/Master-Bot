@@ -17,7 +17,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         '```' + `${prefix}welcomesettings - to restore Defaults`,
         `${prefix}welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
         `${prefix}welcomesettings "My Title" "Upper Text" "" "" 800 400`,
-        `${prefix}welcomesettings "s" "s" "Upper Text" "My Wallpaper URL" "700"  "250" - to only change the Main Text and Wallpaper settings` +
+        `${prefix}welcomesettings "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
           '```'
       ],
       description:
