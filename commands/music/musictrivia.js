@@ -92,8 +92,9 @@ module.exports = class MusicTriviaCommand extends Command {
       const dispatcher = connection
         .play(
           ytdl(queue[0].url, {
+            filter: 'audio',
             quality: 'highestaudio',
-            highWaterMark: 1024 * 1024 * 1024
+            highWaterMark: 1 << 25
           })
         )
         .on('start', function() {
