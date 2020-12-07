@@ -246,7 +246,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         //Offline Status Set
-        if (!streamInfo.data[0] && statusCheck != 'end') {
+        if (!streamInfo.data[0] && (statusCheck != 'end' || 'disable')) {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
@@ -280,13 +280,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           //Online Embed
           const onlineEmbed = new MessageEmbed()
             .setAuthor(
-              'Twitch Announcement',
+              `Twitch Announcement: ${user.data[0].display_name} Online!`,
               user.data[0].profile_image_url,
               'https://twitch.tv/' + user.data[0].display_name
             )
             .setURL('https://twitch.tv/' + user.data[0].display_name)
             .setTitle(
-              'Looks like ' + user.data[0].display_name + ' is: Online!'
+              user.data[0].display_name +
+                ' is playing ' +
+                Twitch_DB.get(message.guild.id).twitchAnnouncer.gameName
             )
             .addField('Stream Title:', streamInfo.data[0].title)
             .addField('Currently Playing:', streamInfo.data[0].game_name, true)
@@ -354,13 +356,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           //Game Change Embed
           const changedEmbed = new MessageEmbed()
             .setAuthor(
-              'Twitch Announcement',
+              `Twitch Announcement: ${user.data[0].display_name} Changed Games!`,
               user.data[0].profile_image_url,
               'https://twitch.tv/' + user.data[0].display_name
             )
             .setURL('https://twitch.tv/' + user.data[0].display_name)
             .setTitle(
-              'Looks like ' + user.data[0].display_name + ': Changed Games!'
+              user.data[0].display_name +
+                ' is playing ' +
+                Twitch_DB.get(message.guild.id).twitchAnnouncer.gameName
             )
             .addField('Stream Title:', streamInfo.data[0].title)
             .addField('Currently Playing:', streamInfo.data[0].game_name, true)
@@ -393,16 +397,19 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         //Offline Trigger
         if (statusCheck == 'offline') {
-          Twitch_DB.set(
-            `${message.guild.id}.twitchAnnouncer.status`,
-            'offline'
-          );
+          Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'end');
           const offlineEmbed = new MessageEmbed()
-            .setAuthor('Streamer ', user.data[0].profile_image_url)
-            .setURL('https://twitch.tv/' + user.data[0].display_name)
-            .setTitle(
-              'Looks like ' + user.data[0].display_name + ' is: Offline.'
+            .setAuthor(
+              `Twitch Announcement: ${user.data[0].display_name} Offline`,
+              user.data[0].profile_image_url,
+              'https://twitch.tv/' + user.data[0].display_name
             )
+            .setTitle(
+              user.data[0].display_name +
+                ' was playing ' +
+                Twitch_DB.get(message.guild.id).twitchAnnouncer.gameName
+            )
+
             .setColor('#6441A4')
             .setTimestamp()
             .setFooter(
@@ -410,7 +417,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
             )
             .setThumbnail(user.data[0].profile_image_url);
-
           if (!user.data[0].description == '')
             offlineEmbed
               .addField('Profile Description:', user.data[0].description)
@@ -426,11 +432,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
 
-          //Offline Edit Attempt
-          try {
-            await announcedChannel.lastMessage.edit(offlineEmbed);
-            Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'end');
-          } catch {}
+          //Offline Edit
+          announcedChannel.lastMessage.edit(offlineEmbed);
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }

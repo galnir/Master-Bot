@@ -137,7 +137,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         'https://twitch.tv/' + user.data[0].display_name
       )
       .setURL('https://twitch.tv/' + user.data[0].display_name)
-      .setTitle(`:white_check_mark: Your settings were saved!`)
+      .setTitle(`Your settings were saved!`)
       .setDescription(
         'Remember to run ```' +
           `${prefix}twitch-announcer enable` +
