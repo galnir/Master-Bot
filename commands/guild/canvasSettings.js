@@ -1,7 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
-const prefix = require('../../config.json');
+const { prefix } = require('../../config.json');
 
 module.exports = class WecomeSettingsCommand extends Command {
   constructor(client) {
