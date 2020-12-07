@@ -387,15 +387,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
 
-          //Game Change Edit Attempt
-          try {
-            await announcedChannel.lastMessage.edit(changedEmbed);
-          } catch {
-            return;
-          }
+          //Game Change Edit
+          await announcedChannel.lastMessage.edit(changedEmbed);
         }
 
-        //Offline Edit
+        //Offline Trigger
         if (statusCheck == 'offline') {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
@@ -433,13 +429,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           //Offline Edit Attempt
           try {
             await announcedChannel.lastMessage.edit(offlineEmbed);
-            return Twitch_DB.set(
-              `${message.guild.id}.twitchAnnouncer.status`,
-              'end'
-            );
-          } catch {
-            return;
-          }
+            Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'end');
+          } catch {}
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }
