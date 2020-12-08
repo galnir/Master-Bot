@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
@@ -105,11 +106,27 @@ module.exports = class MusicTriviaCommand extends Command {
             classThis.playQuizSong(queue, message);
             return;
           }
-          message.guild.triviaData.wasTriviaEndCalled = true;
+          const sortedScoreMap = new Map(
+            [...message.guild.triviaData.triviaScore.entries()].sort(function(
+              a,
+              b
+            ) {
+              return b[1] - a[1];
+            })
+          );
+          const embed = new MessageEmbed()
+            .setColor('#ff7373')
+            .setTitle(`Music Quiz Results:`)
+            .setDescription(
+              classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+            );
+          message.channel.send(embed);
           message.guild.musicData.isPlaying = false;
           message.guild.triviaData.isTriviaRunning = false;
+          message.guild.triviaData.triviaScore.clear();
           message.guild.musicData.songDispatcher = null;
           message.guild.me.voice.channel.leave();
+          return;
         })
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
