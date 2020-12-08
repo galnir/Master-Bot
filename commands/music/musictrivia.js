@@ -97,6 +97,20 @@ module.exports = class MusicTriviaCommand extends Command {
             highWaterMark: 1 << 25
           })
         )
+        .on('error', async function(e) {
+          message.say(':x: Music Trivia has stopped could not play song!');
+          console.log(e);
+          if (queue.length > 1) {
+            queue.shift();
+            classThis.playQuizSong(queue, message);
+            return;
+          }
+          message.guild.musicData.isPlaying = false;
+          message.guild.triviaData.isTriviaRunning = false;
+          message.guild.triviaData.triviaScore.clear();
+          message.guild.musicData.songDispatcher = null;
+          message.guild.me.voice.channel.leave();
+        })
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
           dispatcher.setVolume(message.guild.musicData.volume);
@@ -105,19 +119,9 @@ module.exports = class MusicTriviaCommand extends Command {
 
           const filter = msg =>
             message.guild.triviaData.triviaScore.has(msg.author.username);
-          const collector = message.channel
-            .createMessageCollector(filter, {
-              time: 30000
-            })
-            .on('error', function(e) {
-              message.say(':x: Music Trivia has stopped could not play song!');
-              console.log(e);
-              message.guild.musicData.isPlaying = false;
-              message.guild.triviaData.isTriviaRunning = false;
-              message.guild.triviaData.triviaScore.clear();
-              message.guild.musicData.songDispatcher = null;
-              message.guild.me.voice.channel.leave();
-            });
+          const collector = message.channel.createMessageCollector(filter, {
+            time: 30000
+          });
 
           collector.on('collect', msg => {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
