@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
