@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando');
 
-module.exports = class WecomeMessageTestCommand extends Command {
+module.exports = class JoinCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'join',
