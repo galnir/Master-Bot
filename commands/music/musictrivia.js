@@ -92,22 +92,22 @@ module.exports = class MusicTriviaCommand extends Command {
       const dispatcher = connection
         .play(
           ytdl(queue[0].url, {
-            filter: 'audio',
+            // filter: 'audio',
             quality: 'highestaudio',
             highWaterMark: 1 << 25
           })
         )
         .on('error', async function(e) {
-          message.say(':x: Music Trivia has stopped could not play song!');
+          message.say(':x: Could not play that song!');
           console.log(e);
           if (queue.length > 1) {
             queue.shift();
             classThis.playQuizSong(queue, message);
             return;
           }
+          message.guild.triviaData.wasTriviaEndCalled = true;
           message.guild.musicData.isPlaying = false;
           message.guild.triviaData.isTriviaRunning = false;
-          message.guild.triviaData.triviaScore.clear();
           message.guild.musicData.songDispatcher = null;
           message.guild.me.voice.channel.leave();
         })
