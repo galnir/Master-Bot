@@ -42,7 +42,7 @@ client.registry
     ['gifs', ':film_frames: Gif Command Group:'],
     ['other', ':loud_sound: Other Command Group:'],
     ['guild', ':gear: Guild Related Commands:'],
-    ['speedrun', ':athletic_shoe: Speedrun Related Commands:' ]
+    ['speedrun', ':athletic_shoe: Speedrun Related Commands:']
   ])
   .registerDefaultGroups()
   .registerDefaultCommands({
@@ -60,9 +60,11 @@ client.once('ready', () => {
   });
   const Guilds = client.guilds.cache.map(guild => guild.name);
   console.log(Guilds, 'Connected!');
-  Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', { family: 'Open Sans Light' }); // Registering font For Cloud Services
+  // Registering font For Cloud Services
+  Canvas.registerFont('./resources/welcome/OpenSans-Light.ttf', {
+    family: 'Open Sans Light'
+  });
 });
-
 client.on('voiceStateUpdate', async (___, newState) => {
   if (
     newState.member.user.bot &&
@@ -85,14 +87,14 @@ client.on('voiceStateUpdate', async (___, newState) => {
 });
 
 client.on('guildMemberAdd', async member => {
-  const welcomeGuildFetch = db.get(member.guild.id);
-  if (!welcomeGuildFetch) return;
+  const serverSettingsFetch = db.get(member.guild.id);
+  if (!serverSettingsFetch || serverSettingsFetch == null) return;
 
-  const welcomeMessageSetting = welcomeGuildFetch.welcomeMsgStatus;
-  if (welcomeMessageSetting == 'no') return;
+  const welcomeMsgSettings = serverSettingsFetch.serverSettings.welcomeMsg;
+  if (welcomeMsgSettings.status == 'no') return;
 
-  if (welcomeMessageSetting == 'yes') {
-    const applyText = (canvas, text) => {
+  if (welcomeMsgSettings.status == 'yes') {
+    var applyText = (canvas, text) => {
       const ctx = canvas.getContext('2d');
       let fontSize = 70;
 
@@ -102,75 +104,122 @@ client.on('guildMemberAdd', async member => {
 
       return ctx.font;
     };
-    // Custom Welcome Image for new members
-    const canvas = Canvas.createCanvas(700, 250); // Set the dimensions (Width, Height)
-    const ctx = canvas.getContext('2d');
-
-    const background = await Canvas.loadImage(
-      './resources/welcome/wallpaper.jpg' // can add what ever image you want for the Background just make sure that the filename matches
+    // Customizable Welcome Image Options
+    // Canvas Size Options (Width, Height)
+    var canvas = await Canvas.createCanvas(
+      welcomeMsgSettings.imageWidth,
+      welcomeMsgSettings.imageHeight
     );
+    var ctx = canvas.getContext('2d');
+
+    // Background Image Options
+    var background = await Canvas.loadImage(welcomeMsgSettings.wallpaperURL);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = '#000000'; // the color of the trim on the outside of the welcome image
+    // Background Image Border Options
+    ctx.strokeStyle = '#000000';
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
-    ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
-    ctx.fillText(
-      `Welcome to ${member.guild.name}`,
-      canvas.width / 2.5,
-      canvas.height / 3.5
-    );
-    ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
-    ctx.strokeText(
-      `Welcome to ${member.guild.name}`,
-      canvas.width / 2.5,
-      canvas.height / 3.5
-    );
-
-    ctx.font = applyText(canvas, `${member.displayName}!`);
-    ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
-    ctx.fillText(
-      `${member.displayName}!`,
-      canvas.width / 2.5,
-      canvas.height / 1.8
-    );
-    ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
-    ctx.strokeText(
-      `${member.displayName}!`,
-      canvas.width / 2.5,
-      canvas.height / 1.8
-    );
-
+    // Upper Text Options
+    if (welcomeMsgSettings.topImageText == 'default') {
+      ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
+      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+      ctx.fillText(
+        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+      ctx.strokeText(
+        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+    } else {
+      ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 62
+      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+      ctx.fillText(
+        welcomeMsgSettings.topImageText,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+      ctx.strokeText(
+        welcomeMsgSettings.topImageText,
+        canvas.width / 2.5,
+        canvas.height / 3.5
+      );
+    }
+    // Lower Text Options Defaults
+    if (welcomeMsgSettings.bottomImageText == 'default') {
+      ctx.font = applyText(canvas, `${member.displayName}!`);
+      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+      ctx.fillText(
+        `${member.displayName}!`, //<-- didn't play nice being stored in DB
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+      ctx.strokeText(
+        `${member.displayName}!`, //<-- didn't play nice being stored in DB
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+    } else {
+      ctx.font = applyText(canvas, `${member.displayName}!`);
+      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+      ctx.fillText(
+        welcomeMsgSettings.bottomImageText,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+      ctx.strokeText(
+        welcomeMsgSettings.bottomImageText,
+        canvas.width / 2.5,
+        canvas.height / 1.8
+      );
+    }
+    // Avatar Shape Options
     ctx.beginPath();
-    ctx.arc(125, 125, 100, 0, Math.PI * 2, true);
+    ctx.arc(125, 125, 100, 0, Math.PI * 2, true); // Shape option (circle)
     ctx.closePath();
     ctx.clip();
 
     const avatar = await Canvas.loadImage(
-      member.user.displayAvatarURL({ format: 'jpg' })
+      member.user.displayAvatarURL({
+        format: 'jpg'
+      })
     );
     ctx.drawImage(avatar, 25, 25, 200, 200);
-
+    // Image is Built and Ready
     const attachment = new MessageAttachment(
       canvas.toBuffer(),
       'welcome-image.png'
     );
-
+    // Welcome Embed Report
     var embed = new MessageEmbed()
-      .setTitle(
-        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
-      )
       .setColor(`RANDOM`)
       .attachFiles(attachment)
       .setImage('attachment://welcome-image.png')
       .setFooter(`Type help for a feature list!`)
       .setTimestamp();
+    if (welcomeMsgSettings.embedTitle == 'default') {
+      embed.setTitle(
+        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB
+      );
+    } else embed.setTitle(welcomeMsgSettings.embedTitle);
     try {
       await member.user.send(embed);
     } catch {
       console.log(`${member.user.username}'s dms are private`);
     }
+  }
+});
+// To see your welcome message as if you just joined the Server
+client.on('message', message => {
+  if (message.content === `${prefix}join`) {
+    client.emit('guildMemberAdd', message.member);
   }
 });
 

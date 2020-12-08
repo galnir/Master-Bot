@@ -113,7 +113,14 @@ module.exports = class MusicTriviaCommand extends Command {
         })
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
-          dispatcher.setVolume(message.guild.musicData.volume);
+
+          if (!db.get(`${message.guild.id}.serverSettings.volume`))
+            dispatcher.setVolume(message.guild.musicData.volume);
+          else
+            dispatcher.setVolume(
+              db.get(`${message.guild.id}.serverSettings.volume`)
+            );
+
           let songNameFound = false;
           let songSingerFound = false;
 
