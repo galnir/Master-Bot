@@ -32,7 +32,6 @@ module.exports = class ResumeCommand extends Command {
     }
 
     message.say(':play_pause: Song resumed!');
-
     message.guild.musicData.songDispatcher.resume();
   }
 };
