@@ -91,6 +91,8 @@ client.on('guildMemberAdd', async member => {
   if (!serverSettingsFetch || serverSettingsFetch == null) return;
 
   const welcomeMsgSettings = serverSettingsFetch.serverSettings.welcomeMsg;
+  if (welcomeMsgSettings == undefined) return;
+
   if (welcomeMsgSettings.status == 'no') return;
 
   if (welcomeMsgSettings.status == 'yes') {
