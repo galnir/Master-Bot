@@ -56,7 +56,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     const scope = 'user:read:email';
     let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
     let streamInfo;
-    let gameInfo;
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -206,7 +205,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         let announcedChannel = message.guild.channels.cache.find(
-          c => c.name == Twitch_DB.get(message.guild.id).twitchAnnouncer.channel
+          channel =>
+            channel.name ==
+            Twitch_DB.get(message.guild.id).twitchAnnouncer.channel
         );
         try {
           access_token = await TwitchStatusCommand.getToken(
@@ -266,7 +267,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             streamInfo.data[0].game_name
           );
           try {
-            gameInfo = await TwitchStatusCommand.getGames(
+            let gameInfo = await TwitchStatusCommand.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id
@@ -342,7 +343,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             streamInfo.data[0].game_name
           );
           try {
-            gameInfo = await TwitchStatusCommand.getGames(
+            let gameInfo = await TwitchStatusCommand.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id
@@ -433,9 +434,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Offline Edit
-          try {
-            announcedChannel.lastMessage.edit(offlineEmbed);
-          } catch {}
+          announcedChannel.lastMessage.edit(offlineEmbed);
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }
