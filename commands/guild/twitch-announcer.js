@@ -55,7 +55,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
     let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
-    let streamInfo;
+
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -235,7 +235,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         var user_id = user.data[0].id;
         try {
-          streamInfo = await TwitchStatusCommand.getStream(
+          let streamInfo = await TwitchStatusCommand.getStream(
             access_token,
             twitchClientID,
             user_id
