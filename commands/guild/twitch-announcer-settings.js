@@ -124,6 +124,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       botSay: sayMsg,
       name: user.data[0].display_name,
       channel: announcedChannel.name,
+      gameName: 'new config',
       status: 'disable',
       timer: timer,
       savedName: message.member.displayName,
