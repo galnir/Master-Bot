@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
@@ -98,7 +99,14 @@ module.exports = class MusicTriviaCommand extends Command {
         )
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
-          dispatcher.setVolume(message.guild.musicData.volume);
+
+          if (!db.get(`${message.guild.id}.serverSettings.volume`))
+            dispatcher.setVolume(message.guild.musicData.volume);
+          else
+            dispatcher.setVolume(
+              db.get(`${message.guild.id}.serverSettings.volume`)
+            );
+
           let songNameFound = false;
           let songSingerFound = false;
 

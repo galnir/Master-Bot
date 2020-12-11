@@ -15,13 +15,13 @@
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.3",
     "discord-paginationembed": "^2.1.0",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:discordjs/discord.js#stable",
     "discord.js-commando": "github:discordjs/Commando",
     "ffmpeg-static": "^2.7.0",
     "iso-639-1": "^2.1.4",
     "quick.db": "^7.1.3",
     "simple-youtube-api": "^5.2.1",
-    "ytdl-core": "^4.1.2"
+    "ytdl-core": "^4.1.4"
   },
   "devDependencies": {
     "@getify/eslint-plugin-proper-arrows": "^8.0.1",
