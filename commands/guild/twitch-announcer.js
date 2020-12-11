@@ -444,7 +444,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             //Offline Edit
             announcedChannel.lastMessage.edit(offlineEmbed);
           }
-      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 1000);
+      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }
   }
 };
