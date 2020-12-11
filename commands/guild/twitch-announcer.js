@@ -55,7 +55,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
     let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
-
+    let streamInfo;
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -235,7 +235,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         var user_id = user.data[0].id;
         try {
-          let streamInfo = await TwitchStatusCommand.getStream(
+          streamInfo = await TwitchStatusCommand.getStream(
             access_token,
             twitchClientID,
             user_id
@@ -253,38 +253,18 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             'offline'
           );
         }
-
         //Online Status set
-        if (statusCheck != 'sent' && streamInfo.data[0]) {
+        else if (statusCheck != 'sent' && streamInfo.data[0]) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
         }
 
         //Online Trigger
         if (statusCheck == 'online') {
-          if (
-            user.data[0].display_name !=
-            Twitch_DB.get(message.guild.id).twitchAnnouncer.name
-          )
-            return Twitch_DB.set(
-              `${message.guild.id}.twitchAnnouncer.status`,
-              'offline'
-            );
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
             streamInfo.data[0].game_name
           );
-          try {
-            let gameInfo = await TwitchStatusCommand.getGames(
-              access_token,
-              twitchClientID,
-              streamInfo.data[0].game_id
-            );
-          } catch (e) {
-            clearInterval(Ticker);
-            message.say(':x: Twitch Announcer Stopped\n' + e);
-            return;
-          }
 
           //Online Embed
           const onlineEmbed = new MessageEmbed()
@@ -350,17 +330,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             `${message.guild.id}.twitchAnnouncer.gameName`,
             streamInfo.data[0].game_name
           );
-          try {
-            let gameInfo = await TwitchStatusCommand.getGames(
-              access_token,
-              twitchClientID,
-              streamInfo.data[0].game_id
-            );
-          } catch (e) {
-            clearInterval(Ticker);
-            message.say(':x: Twitch Announcer Stopped\n' + e);
-            return;
-          }
 
           //Game Change Embed
           const changedEmbed = new MessageEmbed()
