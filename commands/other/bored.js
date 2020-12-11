@@ -22,7 +22,11 @@ module.exports = class BoredCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#6BA3FF')
-          .setAuthor('Bored Activites', 'https://i.imgur.com/7Y2F38n.png', 'boredapi.com')
+          .setAuthor(
+            'Bored Activites',
+            'https://i.imgur.com/7Y2F38n.png',
+            'https://www.boredapi.com/'
+          )
           .setDescription(json.activity)
           .setTimestamp()
           .setFooter('Powered by boredapi.com', '');
