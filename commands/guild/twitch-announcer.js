@@ -187,12 +187,20 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     //Disable Set
     if (textFiltered == 'disable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
+      Twitch_DB.set(
+        `${message.guild.id}.twitchAnnouncer.gameName`,
+        'new config'
+      );
       message.say(disabledEmbed);
     }
 
     //Enable Set
     if (textFiltered == 'enable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'enable');
+      Twitch_DB.set(
+        `${message.guild.id}.twitchAnnouncer.gameName`,
+        'new config'
+      );
       message.say(enabledEmbed);
 
       //Ticker Section (Loop)
@@ -253,6 +261,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             'offline'
           );
         }
+
         //Online Status set
         if (statusCheck != 'sent' && streamInfo.data[0]) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
@@ -419,7 +428,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           //Offline Edit
           await announcedChannel.lastMessage.edit(offlineEmbed);
         }
-      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
+      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 1000);
     }
   }
 };
