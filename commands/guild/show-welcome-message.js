@@ -1,10 +1,10 @@
 const { Command } = require('discord.js-commando');
 
-module.exports = class JoinCommand extends Command {
+module.exports = class ShowWelcomeCommand extends Command {
   constructor(client) {
     super(client, {
-      name: 'join',
-      memberName: 'join',
+      name: 'show-welcome-message',
+      memberName: 'show-welcome-message',
       group: 'guild',
       guildOnly: true,
       description: 'Lets you see the Welcome Image with its current settings'
@@ -13,6 +13,7 @@ module.exports = class JoinCommand extends Command {
 
   run() {
     return;
+
     /*
     //place holder file
     //The Following is inside index.js
