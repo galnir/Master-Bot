@@ -220,8 +220,8 @@ client.on('guildMemberAdd', async member => {
         );
         channel.send(embed);
       }
-    } catch (e) {
-      console.log(e + `${member.user.username}'s dms are private`);
+    } catch {
+      console.log(`${member.user.username}'s dms are private`);
     }
   }
 });
