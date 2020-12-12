@@ -225,7 +225,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       .setColor('#420626')
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
-        'You can run the Join Command to see what it will look like!'
+        'You can run the show-welcome-message Command to see what it will look like!'
       )
       .addField(
         'Command Used For Settings',

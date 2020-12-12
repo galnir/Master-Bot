@@ -84,6 +84,10 @@ module.exports = class WecomeMessageCommand extends Command {
           `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`,
           message.content
         );
+        db.set(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.destination`,
+          `direct message`
+        );
       }
 
       // Report Back Current Settings
@@ -92,11 +96,17 @@ module.exports = class WecomeMessageCommand extends Command {
           `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
         )
         .setDescription(
-          'You can run the Join Command to see what it will look like!'
+          'You can run the show-welcome-message Command to see what it will look like!'
         )
         .addField(
           'Command Used For Settings',
           db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
+        )
+        .addField(
+          'Message Destination',
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.destination`
+          )
         )
         .addField(
           `Title: `,
