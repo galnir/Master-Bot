@@ -225,11 +225,17 @@ module.exports = class WecomeSettingsCommand extends Command {
       .setColor('#420626')
       .setTitle(`:white_check_mark: Welcome Settings Were saved`)
       .setDescription(
-        'You can run the show-welcome-message Command to see what it will look like!'
+        'You can run the `' +
+          `${prefix}show-welcome-message` +
+          '` command to see what it will look like!'
       )
       .addField(
         'Command Used For Settings',
-        db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
+        '`' +
+          db.get(
+            `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`
+          ) +
+          '`'
       )
       .addField(
         'Message Destination',

@@ -1,6 +1,7 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const db = require('quick.db');
+const { prefix } = require('../../config.json');
 
 module.exports = class WecomeMessageCommand extends Command {
   constructor(client) {
@@ -96,11 +97,17 @@ module.exports = class WecomeMessageCommand extends Command {
           `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
         )
         .setDescription(
-          'You can run the show-welcome-message Command to see what it will look like!'
+          'You can run the `' +
+            `${prefix}show-welcome-message` +
+            '` command to see what it will look like!'
         )
         .addField(
           'Command Used For Settings',
-          db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
+          '`' +
+            db.get(
+              `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`
+            ) +
+            '`'
         )
         .addField(
           'Message Destination',
