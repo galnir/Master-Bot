@@ -95,7 +95,7 @@ module.exports = class MusicTriviaCommand extends Command {
           ytdl(queue[0].url, {
             // filter: 'audio',
             quality: 'highestaudio',
-            highWaterMark: 1 << 25
+            highWaterMark: 1024 * 1024 * 1024
           })
         )
         .on('error', async function(e) {
