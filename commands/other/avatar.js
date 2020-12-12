@@ -22,11 +22,12 @@ module.exports = class AvatarCommand extends Command {
     });
   }
 
-  run(msg, { user }) {
+  run(message, { user }) {
     const embed = new MessageEmbed()
       .setTitle(user.tag)
       .setImage(user.displayAvatarURL({ dynamic: true }))
       .setColor(0x00ae86);
-    return msg.embed(embed);
+    message.embed(embed);
+    return;
   }
 };
