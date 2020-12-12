@@ -15,14 +15,20 @@ module.exports = class WecomeSettingsCommand extends Command {
       clientPermissions: ['MANAGE_MESSAGES', 'ATTACH_FILES', 'SEND_MESSAGES'],
       examples: [
         '```' + `${prefix}welcomesettings - to restore Defaults`,
-        `${prefix}welcomesettings "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
-        `${prefix}welcomesettings "My Title" "Upper Text" "" "" 800 400`,
-        `${prefix}welcomesettings "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
+        `${prefix}welcomesettings "Channel-name" "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
+        `${prefix}welcomesettings "" "My Title" "Upper Text" "" "" 800 400`,
+        `${prefix}welcomesettings "s" "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
           '```'
       ],
       description:
         'Allows you to customize the welcome message for new members that join the server.',
       args: [
+        {
+          key: 'destination',
+          prompt: 'Where would you like the message to be sent',
+          type: 'string',
+          default: `direct message`
+        },
         {
           key: 'embedTitle',
           prompt: 'What would you like the title to say?',
@@ -94,6 +100,7 @@ module.exports = class WecomeSettingsCommand extends Command {
   async run(
     message,
     {
+      destination,
       embedTitle,
       topImageText,
       bottomImageText,
@@ -102,11 +109,38 @@ module.exports = class WecomeSettingsCommand extends Command {
       imageHeight
     }
   ) {
+    let destinationChannel;
     try {
       await message.delete();
     } catch {
       return;
     }
+    if (destination == 's')
+      destination = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`
+      );
+    if (destination != `direct message`) {
+      destinationChannel = message.guild.channels.cache.find(
+        channel => channel.name == destination
+      );
+
+      if (message.guild.channels.cache.get(destination))
+        destinationChannel = message.guild.channels.cache.get(destination);
+
+      if (!destinationChannel)
+        return message.reply(':x: ' + destination + ' could not be found.');
+    }
+    if (destination == `direct message`)
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`,
+        destination
+      );
+    else
+      db.set(
+        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`,
+        destinationChannel.name
+      );
+
     if (embedTitle == 's')
       embedTitle = db.get(
         `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`
@@ -196,6 +230,12 @@ module.exports = class WecomeSettingsCommand extends Command {
       .addField(
         'Command Used For Settings',
         db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`)
+      )
+      .addField(
+        'Message Destination',
+        db.get(
+          `${message.member.guild.id}.serverSettings.welcomeMsg.destination`
+        )
       )
       .addField(
         `Title: `,

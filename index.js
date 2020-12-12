@@ -212,9 +212,16 @@ client.on('guildMemberAdd', async member => {
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
     try {
-      await member.user.send(embed);
-    } catch {
-      console.log(`${member.user.username}'s dms are private`);
+      if (welcomeMsgSettings.destination == 'direct message')
+        await member.user.send(embed);
+      else {
+        const channel = member.guild.channels.cache.find(
+          channel => channel.name === welcomeMsgSettings.destination
+        );
+        channel.send(embed);
+      }
+    } catch (e) {
+      console.log(e + `${member.user.username}'s dms are private`);
     }
   }
 });
