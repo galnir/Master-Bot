@@ -218,9 +218,10 @@ client.on('guildMemberAdd', async member => {
     }
   }
 });
+
 // To see your welcome message as if you just joined the Server
 client.on('message', message => {
-  if (message.content === `${prefix}join`) {
+  if (message.content === `${prefix}show-welcome-message`) {
     client.emit('guildMemberAdd', message.member);
   }
 });
