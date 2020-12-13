@@ -8,7 +8,11 @@ module.exports = class WecomeSettingsCommand extends Command {
     super(client, {
       name: 'welcome-message-settings',
       memberName: 'welcome-message-settings',
-      aliases: ['welcomemessagesettings', 'welcomesettings'],
+      aliases: [
+        'welcomemessagesettings',
+        'welcomesettings',
+        'welcome-settings'
+      ],
       group: 'guild',
       guildOnly: true,
       userPermissions: ['ADMINISTRATOR'],
