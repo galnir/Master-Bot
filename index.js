@@ -211,6 +211,7 @@ client.on('guildMemberAdd', async member => {
         `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
+
     if (welcomeMsgSettings.destination == 'direct message')
       try {
         await member.user.send(embed);
