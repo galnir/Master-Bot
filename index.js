@@ -221,8 +221,8 @@ client.on('guildMemberAdd', async member => {
       const channel = member.guild.channels.cache.find(
         channel => channel.name === welcomeMsgSettings.destination
       );
-      channel.send(`${member}`);
-      channel.send(embed);
+      await channel.send(`${member}`);
+      await channel.send(embed);
     }
   }
 });
