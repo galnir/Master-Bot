@@ -11,6 +11,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       aliases: ['welcomemessagesettings', 'welcomesettings'],
       group: 'guild',
       guildOnly: true,
+      userPermissions: ['ADMINISTRATOR'],
       clientPermissions: ['MANAGE_MESSAGES', 'ATTACH_FILES', 'SEND_MESSAGES'],
       examples: [
         '```' + `${prefix}welcomesettings - to restore Defaults`,
