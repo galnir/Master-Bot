@@ -59,8 +59,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
     let streamInfo;
     let gameInfo;
-    let result;
-
     try {
       access_token = await TwitchStatusCommand.getToken(
         twitchClientID,
@@ -192,27 +190,19 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     //Disable Set
     if (textFiltered == 'disable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'disable');
-      Twitch_DB.set(
-        `${message.guild.id}.twitchAnnouncer.gameName`,
-        'new config'
-      );
       message.say(disabledEmbed);
     }
 
     //Enable Set
     if (textFiltered == 'enable') {
       Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'enable');
-      Twitch_DB.set(
-        `${message.guild.id}.twitchAnnouncer.gameName`,
-        'new config'
-      );
       message.say(enabledEmbed);
 
       //Ticker Section (Loop)
       var Ticker = setInterval(async function() {
-        let statusCheck = Twitch_DB.get(message.guild.id).twitchAnnouncer
-          .status;
-        if (statusCheck == 'disable') {
+        if (
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'disable'
+        ) {
           clearInterval(Ticker);
           return;
         }
@@ -258,44 +248,66 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           message.say(':x: Twitch Announcer Stopped\n' + e);
           return;
         }
+        if (streamInfo.data[0]) {
+        }
 
         //Offline Status Set
-        if (!streamInfo.data[0] && statusCheck != 'end') {
+        if (
+          !streamInfo.data[0] &&
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status != 'end'
+        ) {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.status`,
             'offline'
           );
         }
-
         //Online Status set
         if (
-          statusCheck != 'sent' &&
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status != 'sent' &&
           streamInfo.data[0] &&
-          statusCheck != 'disable'
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status != 'disable'
         ) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'online');
         }
 
         //Online Trigger
-        if (statusCheck == 'online') {
+        if (
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'online'
+        ) {
           Twitch_DB.set(`${message.guild.id}.twitchAnnouncer.status`, 'sent');
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
             streamInfo.data[0].game_name
           );
+
           try {
             gameInfo = await TwitchStatusCommand.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id
             );
+
+            var result = await probe(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            );
+            var canvas = Canvas.createCanvas(result.width, result.height);
+            var ctx = canvas.getContext('2d');
+            // Since the image takes time to load, you should await it
+            var background = await Canvas.loadImage(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            );
+            // This uses the canvas dimensions to stretch the image onto the entire canvas
+            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+            // Use helpful Attachment class structure to process the file for you
+            var attachment = new MessageAttachment(
+              canvas.toBuffer(),
+              'box_art.png'
+            );
           } catch (e) {
             clearInterval(Ticker);
-            z;
             message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
-
           //Online Embed
           const onlineEmbed = new MessageEmbed()
             .setAuthor(
@@ -323,7 +335,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
-            .setTimestamp(streamInfo.data[0].started_at);
+            .setTimestamp(streamInfo.data[0].started_at)
+            .attachFiles(attachment)
+            .setThumbnail('attachment://box_art.png');
 
           if (user.data[0].broadcaster_type == '')
             onlineEmbed.addField('Rank:', 'BASE!', true);
@@ -335,39 +349,18 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           }
 
-          // Get by URL
-          result = await probe(
-            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-          );
-          var canvas = Canvas.createCanvas(result.width, result.height);
-          var ctx = canvas.getContext('2d');
-          // Since the image takes time to load, you should await it
-          var background = await Canvas.loadImage(
-            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-          );
-          // This uses the canvas dimensions to stretch the image onto the entire canvas
-          ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-          // Use helpful Attachment class structure to process the file for you
-          var attachment = new MessageAttachment(
-            canvas.toBuffer(),
-            'box_art.png'
-          );
-          onlineEmbed
-            .attachFiles(attachment)
-            .setThumbnail('attachment://box_art.png');
-
           //Online Send
           if (
             Twitch_DB.get(
               `${message.guild.id}.twitchAnnouncer.botSay`
             ).toLowerCase() != 'none'
           ) {
-            announcedChannel.message.say(
+            await announcedChannel.message.say(
               Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.botSay`)
             ),
-              announcedChannel.send(onlineEmbed);
+              await announcedChannel.send(onlineEmbed);
           } else {
-            announcedChannel.send(onlineEmbed);
+            await announcedChannel.send(onlineEmbed);
           }
         }
 
@@ -376,8 +369,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           streamInfo.data[0] &&
           streamInfo.data[0].game_name !=
             Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`) &&
-          statusCheck == 'sent' &&
-          statusCheck != 'disable'
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'sent' &&
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status != 'disable'
         ) {
           Twitch_DB.set(
             `${message.guild.id}.twitchAnnouncer.gameName`,
@@ -389,13 +382,28 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               twitchClientID,
               streamInfo.data[0].game_id
             );
+
+            result = await probe(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            );
+            canvas = Canvas.createCanvas(result.width, result.height);
+            ctx = canvas.getContext('2d');
+            // Since the image takes time to load, you should await it
+            background = await Canvas.loadImage(
+              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+            );
+            // This uses the canvas dimensions to stretch the image onto the entire canvas
+            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+            // Use helpful Attachment class structure to process the file for you
+            attachment = new MessageAttachment(
+              canvas.toBuffer(),
+              'box_art.png'
+            );
           } catch (e) {
             clearInterval(Ticker);
-            z;
             message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
-
           //Game Change Embed
           const changedEmbed = new MessageEmbed()
             .setAuthor(
@@ -422,7 +430,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .replace(/{width}x{height}/g, '1280x720')
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
-            .setTimestamp();
+            .setTimestamp()
+            .attachFiles(attachment)
+            .setThumbnail('attachment://box_art.png');
 
           if (user.data[0].broadcaster_type == '')
             changedEmbed.addField('Rank:', 'BASE!', true);
@@ -433,26 +443,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               true
             );
           }
-          // Get by URL of box_art deminsions
-          result = await probe(
-            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-          );
-          var canvas = Canvas.createCanvas(result.width, result.height);
-          var ctx = canvas.getContext('2d');
-          // Since the image takes time to load, you should await it
-          var background = await Canvas.loadImage(
-            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-          );
-          // This uses the canvas dimensions to stretch the image onto the entire canvas
-          ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-          // Use helpful Attachment class structure to process the file for you
-          var attachment = new MessageAttachment(
-            canvas.toBuffer(),
-            'box_art.png'
-          );
-          changedEmbed
-            .attachFiles(attachment)
-            .setThumbnail('attachment://box_art.png');
 
           //Game Change Edit
           await announcedChannel.lastMessage.edit(changedEmbed);
@@ -460,7 +450,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         //Offline Trigger
         if (
-          statusCheck == 'offline' &&
+          Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'offline' &&
           Twitch_DB.get(message.guild.id).twitchAnnouncer.gameName !=
             'new config'
         ) {
@@ -503,7 +493,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           //Offline Edit
           await announcedChannel.lastMessage.edit(offlineEmbed);
         }
-      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
+      }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 30000);
     }
   }
 };
