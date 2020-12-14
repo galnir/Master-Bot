@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
 module.exports = class MusicTriviaCommand extends Command {
@@ -92,13 +93,51 @@ module.exports = class MusicTriviaCommand extends Command {
       const dispatcher = connection
         .play(
           ytdl(queue[0].url, {
+            // filter: 'audio',
             quality: 'highestaudio',
             highWaterMark: 1024 * 1024 * 1024
           })
         )
+        .on('error', async function(e) {
+          message.say(':x: Could not play that song!');
+          console.log(e);
+          if (queue.length > 1) {
+            queue.shift();
+            classThis.playQuizSong(queue, message);
+            return;
+          }
+          const sortedScoreMap = new Map(
+            [...message.guild.triviaData.triviaScore.entries()].sort(function(
+              a,
+              b
+            ) {
+              return b[1] - a[1];
+            })
+          );
+          const embed = new MessageEmbed()
+            .setColor('#ff7373')
+            .setTitle(`Music Quiz Results:`)
+            .setDescription(
+              classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+            );
+          message.channel.send(embed);
+          message.guild.musicData.isPlaying = false;
+          message.guild.triviaData.isTriviaRunning = false;
+          message.guild.triviaData.triviaScore.clear();
+          message.guild.musicData.songDispatcher = null;
+          message.guild.me.voice.channel.leave();
+          return;
+        })
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
-          dispatcher.setVolume(message.guild.musicData.volume);
+
+          if (!db.get(`${message.guild.id}.serverSettings.volume`))
+            dispatcher.setVolume(message.guild.musicData.volume);
+          else
+            dispatcher.setVolume(
+              db.get(`${message.guild.id}.serverSettings.volume`)
+            );
+
           let songNameFound = false;
           let songSingerFound = false;
 

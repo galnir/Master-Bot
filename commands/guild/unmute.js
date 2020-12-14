@@ -17,8 +17,8 @@ module.exports = class UnmuteCommand extends Command {
         {
           key: 'userToUnmute',
           prompt:
-            'Please mention the user you want to unmute with @ or provide their ID.',
-          type: 'string'
+            'Please mention the member that you want to unmute them.',
+          type: 'member'
         }
       ]
     });
@@ -26,21 +26,12 @@ module.exports = class UnmuteCommand extends Command {
 
   async run(message, { userToUnmute }) {
     const mutedRole = message.guild.roles.cache.find(role => role.name === 'Muted');
-    if (mutedRole == null)
+    if (!mutedRole)
       return message.channel.send(
         ':x: No "Muted" role was found, create one and try again.'
       );
-
-    const extractNumber = /\d+/g;
-
-    if (userToUnmute.match(extractNumber) == undefined)
-      return message.channel.send(':x: Please try again with a valid user.');
-
-    const userToUnmuteID = userToUnmute.match(extractNumber)[0];
-    const user =
-      message.mentions.members.first() ||
-      (await message.guild.members.fetch(userToUnmuteID));
-    if (user == undefined)
+    const user = userToUnmute;
+    if (!user)
       return message.channel.send(':x: Please try again with a valid user.');
     user.roles
       .remove(mutedRole)

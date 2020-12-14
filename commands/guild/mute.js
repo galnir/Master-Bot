@@ -17,14 +17,14 @@ module.exports = class MuteCommand extends Command {
         {
           key: 'userToMute',
           prompt:
-            'Please mention the user you want to mute with @ or provide their ID.',
-          type: 'string'
+            'Please mention the member that you want to mute them.',
+          type: 'member'
         },
         {
           key: 'reason',
           prompt: 'Why do you want to mute this user?',
           type: 'string',
-          default: 'no reason'
+          default: message => `${message.author.tag} Requested, no reason was given`
         }
       ]
     });
@@ -34,27 +34,18 @@ module.exports = class MuteCommand extends Command {
     const mutedRole = message.guild.roles.cache.find(
       role => role.name === 'Muted'
     );
-    if (mutedRole == null)
+    if (!mutedRole)
       return message.channel.send(
         ':x: No "Muted" role found, create one and try again.'
       );
-
-    const extractNumber = /\d+/g;
-
-    if (userToMute.match(extractNumber) == undefined)
-      return message.channel.send(':x: Please try again with a valid user.');
-
-    const userToMuteID = userToMute.match(extractNumber)[0];
-    const user =
-      message.mentions.members.first() ||
-      (await message.guild.members.fetch(userToMuteID));
-    if (user == undefined)
+    const user = userToMute;
+    if (!user)
       return message.channel.send(':x: Please try again with a valid user.');
     user.roles
       .add(mutedRole)
       .then(() => {
         const muteEmbed = new MessageEmbed()
-          .addField('Muted:', userToMute)
+          .addField('Muted:', user)
           .addField('Reason', reason)
           .setColor('#420626');
         message.channel.send(muteEmbed);
