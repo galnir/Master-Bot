@@ -363,7 +363,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             await announcedChannel.send(onlineEmbed);
           }
         }
-
         //Game Change Trigger
         if (
           streamInfo.data[0] &&
@@ -445,6 +444,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Game Change Edit
+          await announcedChannel.lastMessage.delete('attachment://box_art.png');
           await announcedChannel.lastMessage.edit(changedEmbed);
         }
 
@@ -473,7 +473,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               'Stream Ended',
               'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
             )
-            .setThumbnail(user.data[0].profile_image_url);
+            .setThumbnail('attachment://box_art.png');
 
           if (!user.data[0].description == '')
             offlineEmbed
