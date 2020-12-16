@@ -212,7 +212,10 @@ client.on('guildMemberAdd', async member => {
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
 
-    if (welcomeMsgSettings.destination == 'direct message')
+    if (
+      welcomeMsgSettings.destination == 'direct message' ||
+      !welcomeMsgSettings.destination
+    )
       try {
         await member.user.send(embed);
       } catch {
