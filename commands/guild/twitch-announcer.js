@@ -308,6 +308,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
+
           //Online Embed
           const onlineEmbed = new MessageEmbed()
             .setAuthor(
@@ -363,12 +364,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             await announcedChannel.send(onlineEmbed);
           }
         }
+
         //Game Change Trigger
         if (
           streamInfo.data[0] &&
           streamInfo.data[0].game_name !=
             Twitch_DB.get(`${message.guild.id}.twitchAnnouncer.gameName`) &&
-          Twitch_DB.get(message.guild.id).twitchAnnouncer.status == 'sent' &&
           Twitch_DB.get(message.guild.id).twitchAnnouncer.status != 'disable'
         ) {
           Twitch_DB.set(
@@ -394,7 +395,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             // This uses the canvas dimensions to stretch the image onto the entire canvas
             ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
             // Use helpful Attachment class structure to process the file for you
-            attachment = new MessageAttachment(
+            var attachment2 = new MessageAttachment(
               canvas.toBuffer(),
               'box_art.png'
             );
@@ -430,7 +431,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
             )
             .setTimestamp()
-            .attachFiles(attachment)
+            .attachFiles(attachment2)
             .setThumbnail('attachment://box_art.png');
 
           if (user.data[0].broadcaster_type == '')
@@ -444,7 +445,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Game Change Edit
-          await announcedChannel.lastMessage.delete('attachment://box_art.png');
           await announcedChannel.lastMessage.edit(changedEmbed);
         }
 
