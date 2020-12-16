@@ -363,6 +363,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           } else {
             await announcedChannel.send(onlineEmbed);
           }
+          console.log(announcedChannel.lastMessage.id);
+          Twitch_DB.set(
+            `${message.guild.id}.twitchAnnouncer.msgID`,
+            announcedChannel.lastMessage.id
+          );
         }
 
         //Game Change Trigger
@@ -404,6 +409,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             message.say(':x: Twitch Announcer Stopped\n' + e);
             return;
           }
+
           //Game Change Embed
           const changedEmbed = new MessageEmbed()
             .setAuthor(
@@ -445,7 +451,21 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Game Change Edit
-          await announcedChannel.lastMessage.edit(changedEmbed);
+          await announcedChannel
+            .fetchMessages({
+              around: Twitch_DB.get(
+                `${message.guild.id}.twitchAnnouncer.msgID`
+              ),
+              limit: 1
+            })
+            .then(msg => {
+              const fetchedMsg = msg.first();
+              fetchedMsg.edit(changedEmbed);
+            });
+          Twitch_DB.set(
+            `${message.guild.id}.twitchAnnouncer.msgID`,
+            announcedChannel.lastMessage.id
+          );
         }
 
         //Offline Trigger
@@ -466,7 +486,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 ' was playing ' +
                 Twitch_DB.get(message.guild.id).twitchAnnouncer.gameName
             )
-
             .setColor('#6441A4')
             .setTimestamp()
             .setFooter(
@@ -491,7 +510,17 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Offline Edit
-          await announcedChannel.lastMessage.edit(offlineEmbed);
+          await announcedChannel
+            .fetchMessages({
+              around: Twitch_DB.get(
+                `${message.guild.id}.twitchAnnouncer.msgID`
+              ),
+              limit: 1
+            })
+            .then(msg => {
+              const fetchedMsg = msg.first();
+              fetchedMsg.edit(offlineEmbed);
+            });
         }
       }, Twitch_DB.get(message.guild.id).twitchAnnouncer.timer * 60000);
     }
