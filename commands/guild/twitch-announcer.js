@@ -212,7 +212,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         //Offline Status Set
-        if (!streamInfo.data[0] && currentMsgStatus != 'end') {
+        if (!streamInfo.data[0] && currentMsgStatus == 'sent') {
           currentMsgStatus = 'offline';
         }
         //Online Status set
@@ -226,7 +226,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         //Online Trigger
         if (currentMsgStatus == 'online') {
-          currentMsgStatus = 'sent';
           currentGame = streamInfo.data[0].game_name;
 
           try {
@@ -304,11 +303,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             await announcedChannel.send(onlineEmbed);
             var embedID = announcedChannel.lastMessage.id;
           }
+          currentMsgStatus = 'sent';
         }
 
         //Offline Trigger
-        if (currentMsgStatus == 'offline' && currentMsgStatus != 'end') {
-          currentMsgStatus = 'end';
+        if (currentMsgStatus == 'offline') {
           const offlineEmbed = new MessageEmbed()
             .setAuthor(
               `Twitch Announcement: ${user.data[0].display_name} Offline`,
