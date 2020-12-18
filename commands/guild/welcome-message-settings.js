@@ -183,9 +183,6 @@ module.exports = class WecomeSettingsCommand extends Command {
       timeStamp: message.createdAt,
       cmdUsed: message.content
     });
-    const grabNewDB = db.get(
-      `${message.member.guild.id}.serverSettings.welcomeMsg`
-    );
 
     const embed = new MessageEmbed()
       .setColor('#420626')
@@ -195,24 +192,24 @@ module.exports = class WecomeSettingsCommand extends Command {
           `${prefix}show-welcome-message` +
           '` command to see what it will look like!'
       )
-      .addField('Command Used For Settings', '`' + grabNewDB.cmdUsed + '`')
-      .addField('Message Destination', grabNewDB.destination)
-      .addField(`Title: `, grabNewDB.embedTitle)
-      .addField(`Upper Text: `, grabNewDB.topImageText)
-      .addField(`Lower Text: `, grabNewDB.bottomImageText)
-      .addField(
-        `Image Size: `,
-        grabNewDB.imageWidth + ` X ` + grabNewDB.imageHeight
+      .addField('Command Used For Settings', '`' + message.content + '`')
+      .addField('Message Destination', destination)
+      .addField(`Title: `, embedTitle)
+      .addField(`Upper Text: `, topImageText)
+      .addField(`Lower Text: `, bottomImageText)
+      .addField(`Image Size: `, imageWidth + ` X ` + imageHeight)
+      .addField(`Image Path: `, wallpaperURL)
+      .setFooter(
+        message.member.displayName,
+        message.member.user.displayAvatarURL()
       )
-      .addField(`Image Path: `, grabNewDB.wallpaperURL)
-      .setFooter(grabNewDB.changedByUser, grabNewDB.changedByUserURL)
-      .setTimestamp(grabNewDB.timeStamp);
+      .setTimestamp();
     if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
       const attachment = new MessageAttachment(
         '././resources/welcome/wallpaper.jpg'
       );
       embed.attachFiles(attachment).setImage('attachment://wallpaper.jpg');
-    } else embed.setImage(grabNewDB.wallpaperURL);
+    } else embed.setImage(wallpaperURL);
     return message.say(embed);
   }
 };
