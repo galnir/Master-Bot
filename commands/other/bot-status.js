@@ -30,7 +30,6 @@ module.exports = class BotStatusCommand extends Command {
       .replace(/github\:discordjs\/Commando/, `${version}`)
       .replace(/github\:discordjs\/discord.js#stable/, `${Discord.version}`)
       .replace(/:/g, ': ');
-    //console.log(discord);
 
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
 
