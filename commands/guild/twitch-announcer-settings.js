@@ -83,7 +83,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     let announcedChannel = message.guild.channels.cache.find(
-      c => c.name == streamChannel
+      cchannel => cchannel.name == streamChannel
     );
 
     if (message.guild.channels.cache.get(streamChannel))
@@ -124,13 +124,14 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       botSay: sayMsg,
       name: user.data[0].display_name,
       channel: announcedChannel.name,
-      gameName: 'new config',
-      status: 'disable',
       timer: timer,
       savedName: message.member.displayName,
       savedAvatar: message.author.displayAvatarURL(),
       date: Date.now()
     });
+
+    const DBInfo = Twitch_DB.get(message.guild.id).twitchAnnouncer;
+
     const embed = new MessageEmbed()
       .setAuthor(
         message.member.guild.name + ' Announcer Settings',
@@ -146,27 +147,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       )
       .setColor('#6441A4')
       .setThumbnail(user.data[0].profile_image_url)
-      .addField(
-        'Pre-Notification Message',
-        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.botSay}`
-      )
-      .addField(
-        `Streamer`,
-        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.name}`,
-        true
-      )
-      .addField(
-        `Channel`,
-        `${Twitch_DB.get(message.guild.id).twitchAnnouncer.channel}`,
-        true
-      )
-      .addField(
-        `Checking Interval`,
-        `***${
-          Twitch_DB.get(message.guild.id).twitchAnnouncer.timer
-        }*** minute(s)`,
-        true
-      )
+      .addField('Pre-Notification Message', DBInfo.botSay)
+      .addField(`Streamer`, DBInfo.name, true)
+      .addField(`Channel`, DBInfo.channel, true)
+      .addField(`Checking Interval`, `***${DBInfo.timer}*** minute(s)`, true)
       .addField('View Counter:', user.data[0].view_count, true);
     if (user.data[0].broadcaster_type == '')
       embed.addField('Rank:', 'BASE!', true);
@@ -177,11 +161,8 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         )
-        .setFooter(
-          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedName,
-          Twitch_DB.get(message.guild.id).twitchAnnouncer.savedAvatar
-        )
-        .setTimestamp(Twitch_DB.get(message.guild.id).twitchAnnouncer.date);
+        .setFooter(DBInfo.savedName, DBInfo.savedAvatar)
+        .setTimestamp(DBInfo.date);
     }
     message.say(embed);
   }
