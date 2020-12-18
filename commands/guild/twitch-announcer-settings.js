@@ -130,8 +130,6 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       date: Date.now()
     });
 
-    const DBInfo = Twitch_DB.get(message.guild.id).twitchAnnouncer;
-
     const embed = new MessageEmbed()
       .setAuthor(
         message.member.guild.name + ' Announcer Settings',
@@ -147,10 +145,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       )
       .setColor('#6441A4')
       .setThumbnail(user.data[0].profile_image_url)
-      .addField('Pre-Notification Message', DBInfo.botSay)
-      .addField(`Streamer`, DBInfo.name, true)
-      .addField(`Channel`, DBInfo.channel, true)
-      .addField(`Checking Interval`, `***${DBInfo.timer}*** minute(s)`, true)
+      .addField('Pre-Notification Message', sayMsg)
+      .addField(`Streamer`, user.data[0].display_name, true)
+      .addField(`Channel`, announcedChannel.name, true)
+      .addField(`Checking Interval`, `***${timer}*** minute(s)`, true)
       .addField('View Counter:', user.data[0].view_count, true);
     if (user.data[0].broadcaster_type == '')
       embed.addField('Rank:', 'BASE!', true);
@@ -161,8 +159,11 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
           user.data[0].broadcaster_type.toUpperCase() + '!',
           true
         )
-        .setFooter(DBInfo.savedName, DBInfo.savedAvatar)
-        .setTimestamp(DBInfo.date);
+        .setFooter(
+          message.member.displayName,
+          message.author.displayAvatarURL()
+        )
+        .setTimestamp();
     }
     message.say(embed);
   }
