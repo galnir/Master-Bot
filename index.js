@@ -211,10 +211,22 @@ client.on('guildMemberAdd', async member => {
         `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
-    try {
-      await member.user.send(embed);
-    } catch {
-      console.log(`${member.user.username}'s dms are private`);
+
+    if (
+      welcomeMsgSettings.destination == 'direct message' ||
+      !welcomeMsgSettings.destination
+    )
+      try {
+        await member.user.send(embed);
+      } catch {
+        console.log(`${member.user.username}'s dms are private`);
+      }
+    if (welcomeMsgSettings.destination != 'direct message') {
+      const channel = member.guild.channels.cache.find(
+        channel => channel.name === welcomeMsgSettings.destination
+      );
+      await channel.send(`${member}`);
+      await channel.send(embed);
     }
   }
 });
