@@ -120,7 +120,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       return;
     }
 
-    const oldDB = db.get(
+    const grabOldDB = db.get(
       `${message.member.guild.id}.serverSettings.welcomeMsg`
     );
 
@@ -130,13 +130,13 @@ module.exports = class WecomeSettingsCommand extends Command {
         topImageText ||
         bottomImageText ||
         wallpaperURL) == 's' &&
-      !oldDB
+      !grabOldDB
     )
       return message.reply(
         ':x: No saved values were found: Cannot use "s" this time'
       );
 
-    if (destination == 's') destination = oldDB.destination;
+    if (destination == 's') destination = grabOldDB.destination;
     if (destination != `direct message`) {
       destinationChannel = message.guild.channels.cache.find(
         channel => channel.name == destination
@@ -151,13 +151,13 @@ module.exports = class WecomeSettingsCommand extends Command {
     if (destination == `direct message`) destination = destination;
     else destination = destinationChannel.name;
 
-    if (embedTitle == 's') embedTitle = oldDB.embedTitle;
+    if (embedTitle == 's') embedTitle = grabOldDB.embedTitle;
 
-    if (topImageText == 's') topImageText = oldDB.topImageText;
+    if (topImageText == 's') topImageText = grabOldDB.topImageText;
 
-    if (bottomImageText == 's') bottomImageText = oldDB.bottomImageText;
+    if (bottomImageText == 's') bottomImageText = grabOldDB.bottomImageText;
 
-    if (wallpaperURL == 's') wallpaperURL = oldDB.wallpaperURL;
+    if (wallpaperURL == 's') wallpaperURL = grabOldDB.wallpaperURL;
 
     if (imageHeight && imageWidth) {
       if (imageHeight > imageWidth) {
@@ -183,7 +183,7 @@ module.exports = class WecomeSettingsCommand extends Command {
       timeStamp: message.createdAt,
       cmdUsed: message.content
     });
-    const grabDB = db.get(
+    const grabNewDB = db.get(
       `${message.member.guild.id}.serverSettings.welcomeMsg`
     );
 
@@ -195,21 +195,24 @@ module.exports = class WecomeSettingsCommand extends Command {
           `${prefix}show-welcome-message` +
           '` command to see what it will look like!'
       )
-      .addField('Command Used For Settings', '`' + grabDB.cmdUsed + '`')
-      .addField('Message Destination', grabDB.destination)
-      .addField(`Title: `, grabDB.embedTitle)
-      .addField(`Upper Text: `, grabDB.topImageText)
-      .addField(`Lower Text: `, grabDB.bottomImageText)
-      .addField(`Image Size: `, grabDB.imageWidth + ` X ` + grabDB.imageHeight)
-      .addField(`Image Path: `, grabDB.wallpaperURL)
-      .setFooter(grabDB.changedByUser, grabDB.changedByUserURL)
-      .setTimestamp(grabDB.timeStamp);
+      .addField('Command Used For Settings', '`' + grabNewDB.cmdUsed + '`')
+      .addField('Message Destination', grabNewDB.destination)
+      .addField(`Title: `, grabNewDB.embedTitle)
+      .addField(`Upper Text: `, grabNewDB.topImageText)
+      .addField(`Lower Text: `, grabNewDB.bottomImageText)
+      .addField(
+        `Image Size: `,
+        grabNewDB.imageWidth + ` X ` + grabNewDB.imageHeight
+      )
+      .addField(`Image Path: `, grabNewDB.wallpaperURL)
+      .setFooter(grabNewDB.changedByUser, grabNewDB.changedByUserURL)
+      .setTimestamp(grabNewDB.timeStamp);
     if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
       const attachment = new MessageAttachment(
         '././resources/welcome/wallpaper.jpg'
       );
       embed.attachFiles(attachment).setImage('attachment://wallpaper.jpg');
-    } else embed.setImage(grabDB.wallpaperURL);
+    } else embed.setImage(grabNewDB.wallpaperURL);
     return message.say(embed);
   }
 };
