@@ -202,7 +202,7 @@ module.exports = class PlayCommand extends Command {
         return;
       }
     }
-    if (query.match(/^(http(s)?:\/\/)?(m.)?/))
+    if (query.match(/^(http(s)?:\/\/)?(m.)?youtu(be|.be)?(\.com)?\/.+/))
       query = query
         .replace(/https:\/\/m./g, `https://www.`)
         .replace(/http:\/\/m./g, `http://www.`);
