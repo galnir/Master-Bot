@@ -129,9 +129,7 @@ module.exports = class WecomeSettingsCommand extends Command {
         embedTitle ||
         topImageText ||
         bottomImageText ||
-        wallpaperURL ||
-        imageWidth ||
-        imageHeight) == 's' &&
+        wallpaperURL) == 's' &&
       !oldDB
     )
       return message.reply(
