@@ -119,10 +119,26 @@ module.exports = class WecomeSettingsCommand extends Command {
     } catch {
       return;
     }
-    if (destination == 's')
-      destination = db.get(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`
+
+    const oldDB = db.get(
+      `${message.member.guild.id}.serverSettings.welcomeMsg`
+    );
+
+    if (
+      (destination ||
+        embedTitle ||
+        topImageText ||
+        bottomImageText ||
+        wallpaperURL ||
+        imageWidth ||
+        imageHeight) == 's' &&
+      !oldDB
+    )
+      return message.reply(
+        ':x: No saved values were found: Cannot use "s" this time'
       );
+
+    if (destination == 's') destination = oldDB.destination;
     if (destination != `direct message`) {
       destinationChannel = message.guild.channels.cache.find(
         channel => channel.name == destination
@@ -134,95 +150,43 @@ module.exports = class WecomeSettingsCommand extends Command {
       if (!destinationChannel)
         return message.reply(':x: ' + destination + ' could not be found.');
     }
-    if (destination == `direct message`)
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`,
-        destination
-      );
-    else
-      db.set(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.destination`,
-        destinationChannel.name
-      );
+    if (destination == `direct message`) destination = destination;
+    else destination = destinationChannel.name;
 
-    if (embedTitle == 's')
-      embedTitle = db.get(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`
-      );
+    if (embedTitle == 's') embedTitle = oldDB.embedTitle;
 
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`,
-      embedTitle
-    );
+    if (topImageText == 's') topImageText = oldDB.topImageText;
 
-    if (topImageText == 's')
-      topImageText = db.get(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`
-      );
+    if (bottomImageText == 's') bottomImageText = oldDB.bottomImageText;
 
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`,
-      topImageText
-    );
-
-    if (bottomImageText == 's')
-      bottomImageText = db.get(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`
-      );
-
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`,
-      bottomImageText
-    );
-    if (wallpaperURL == 's')
-      wallpaperURL = db.get(
-        `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
-      );
-
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`,
-      wallpaperURL
-    );
+    if (wallpaperURL == 's') wallpaperURL = oldDB.wallpaperURL;
 
     if (imageHeight && imageWidth) {
       if (imageHeight > imageWidth) {
         //swap if in the incorrect order
-        db.set(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
-          imageHeight
-        );
-        db.set(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
-          imageWidth
-        );
-      } else {
-        db.set(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`,
-          imageWidth
-        );
-        db.set(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`,
-          imageHeight
-        );
+        imageWidth = imageHeight;
+
+        imageHeight = imageWidth;
       }
     }
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`,
-      message.member.displayName
-    );
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`,
-      message.member.user.displayAvatarURL({
+
+    db.set(`${message.member.guild.id}.serverSettings.welcomeMsg`, {
+      destination: destination,
+      embedTitle: embedTitle,
+      topImageText: topImageText,
+      bottomImageText: bottomImageText,
+      wallpaperURL: wallpaperURL,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+      changedByUser: message.member.displayName,
+      changedByUserURL: message.member.user.displayAvatarURL({
         format: 'jpg'
-      })
-    );
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`,
-      message.createdAt
-    );
-    db.set(
-      `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`,
-      message.content
+      }),
+      timeStamp: message.createdAt,
+      cmdUsed: message.content
+    });
+    const grabDB = db.get(
+      `${message.member.guild.id}.serverSettings.welcomeMsg`
     );
 
     const embed = new MessageEmbed()
@@ -233,76 +197,21 @@ module.exports = class WecomeSettingsCommand extends Command {
           `${prefix}show-welcome-message` +
           '` command to see what it will look like!'
       )
-      .addField(
-        'Command Used For Settings',
-        '`' +
-          db.get(
-            `${message.member.guild.id}.serverSettings.welcomeMsg.cmdUsed`
-          ) +
-          '`'
-      )
-      .addField(
-        'Message Destination',
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.destination`
-        )
-      )
-      .addField(
-        `Title: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.embedTitle`
-        )
-      )
-      .addField(
-        `Upper Text: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.topImageText`
-        )
-      )
-      .addField(
-        `Lower Text: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.bottomImageText`
-        )
-      )
-      .addField(
-        `Image Size: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.imageWidth`
-        ) +
-          ` X ` +
-          db.get(
-            `${message.member.guild.id}.serverSettings.welcomeMsg.imageHeight`
-          )
-      )
-      .addField(
-        `Image Path: `,
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
-        )
-      )
-      .setFooter(
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUser`
-        ),
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.changedByUserURL`
-        )
-      )
-      .setTimestamp(
-        db.get(`${message.member.guild.id}.serverSettings.welcomeMsg.timeStamp`)
-      );
+      .addField('Command Used For Settings', '`' + grabDB.cmdUsed + '`')
+      .addField('Message Destination', grabDB.destination)
+      .addField(`Title: `, grabDB.embedTitle)
+      .addField(`Upper Text: `, grabDB.topImageText)
+      .addField(`Lower Text: `, grabDB.bottomImageText)
+      .addField(`Image Size: `, grabDB.imageWidth + ` X ` + grabDB.imageHeight)
+      .addField(`Image Path: `, grabDB.wallpaperURL)
+      .setFooter(grabDB.changedByUser, grabDB.changedByUserURL)
+      .setTimestamp(grabDB.timeStamp);
     if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
       const attachment = new MessageAttachment(
         '././resources/welcome/wallpaper.jpg'
       );
       embed.attachFiles(attachment).setImage('attachment://wallpaper.jpg');
-    } else
-      embed.setImage(
-        db.get(
-          `${message.member.guild.id}.serverSettings.welcomeMsg.wallpaperURL`
-        )
-      );
+    } else embed.setImage(grabDB.wallpaperURL);
     return message.say(embed);
   }
 };
