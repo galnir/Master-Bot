@@ -202,11 +202,10 @@ module.exports = class PlayCommand extends Command {
         return;
       }
     }
-    if (query.match(/^(http(s)?:\/\/)?(m.)?youtu(be|.be)?(\.com)?\/.+/))
-      query = query
-        .replace(/https:\/\/m./g, `https://www.`)
-        .replace(/http:\/\/m./g, `http://www.`);
-    if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
+
+    if (
+      query.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
+    ) {
       // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
       query = query
         .replace(/(>|<)/gi, '')
