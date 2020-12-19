@@ -39,6 +39,16 @@ module.exports = class BotStatusCommand extends Command {
     let hours = Math.floor((totalSeconds / 3600) % 24);
     let mins = Math.floor((totalSeconds / 60) % 60);
 
+    const guildCacheMap = this.client.guilds.cache;
+    const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({
+      name,
+      value
+    }));
+    let memberCount = 0;
+    for (let i = 0; i < guildCacheArray.length; i++) {
+      memberCount = memberCount + guildCacheArray[i].value.memberCount;
+    }
+
     const StatusEmbed = new Discord.MessageEmbed()
       .setThumbnail(this.client.user.displayAvatarURL())
       .setTitle(`Status of ${this.client.user.username}`)
@@ -60,7 +70,7 @@ module.exports = class BotStatusCommand extends Command {
       )
       .addField(
         'Servers, Users',
-        `On ${this.client.guilds.cache.size} servers, with a total of ${this.client.users.cache.size} users.`
+        `On ${this.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
       )
       .addField(
         'Dependency List',
