@@ -67,7 +67,9 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
             '(Optional) Change the default message that comes before the notification.',
           default: 'Hey @everyone',
           type: 'string',
-          validate: sayMsg => sayMsg.length > 0
+          validate: function validateInput(sayMsg) {
+            return sayMsg.length > 0;
+          }
         }
       ]
     });
@@ -77,9 +79,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     try {
       await message.delete();
     } catch {
-      return message.reply(
+      message.reply(
         `:no_entry: Bot needs permission to manage messages in order to use Twitch Announcer Feature`
       );
+      return;
     }
 
     let announcedChannel = message.guild.channels.cache.find(
@@ -89,8 +92,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     if (message.guild.channels.cache.get(streamChannel))
       announcedChannel = message.guild.channels.cache.get(streamChannel);
 
-    if (!announcedChannel)
-      return message.reply(':x: ' + streamChannel + ' could not be found.');
+    if (!announcedChannel) {
+      message.reply(':x: ' + streamChannel + ' could not be found.');
+      return;
+    }
 
     //Twitch Section
     const scope = 'user:read:email';
