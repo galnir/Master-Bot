@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class ShuffleQueueCommand extends Command {
   constructor(client) {
@@ -39,19 +39,20 @@ module.exports = class ShuffleQueueCommand extends Command {
 
     shuffleQueue(message.guild.musicData.queue);
 
-    const titleArray = [];
-    message.guild.musicData.queue.slice(0, 10).forEach(obj => {
-      titleArray.push(obj.title);
-    });
-    var numOfEmbedFields = 10;
-    if (titleArray.length < 10) numOfEmbedFields = titleArray.length;
-    var queueEmbed = new MessageEmbed()
+    const queueClone = message.guild.musicData.queue;
+    const queueEmbed = new Pagination.FieldsEmbed()
+      .setArray(queueClone)
+      .setAuthorizedUsers([message.author.id])
+      .setChannel(message.channel)
+      .setElementsPerPage(10)
+      .formatField('# - Song', function(e) {
+        return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
+      });
+
+    queueEmbed.embed
       .setColor('#ff7373')
       .setTitle(':twisted_rightwards_arrows: New Music Queue!');
-    for (let i = 0; i < numOfEmbedFields; i++) {
-      queueEmbed.addField(`${i + 1}:`, `${titleArray[i]}`);
-    }
-    return message.say(queueEmbed);
+    queueEmbed.build();
   }
 };
 
