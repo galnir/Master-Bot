@@ -58,7 +58,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           `${prefix}twitch-announcer-settings` +
           '` first'
       );
-    message.delete();
 
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
@@ -171,7 +170,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         let announcedChannel = message.guild.channels.cache.find(
-          channel => channel.name == DBInfo.channel
+          channel => channel.id == DBInfo.channelID
         );
         try {
           access_token = await TwitchStatusCommand.getToken(
@@ -307,6 +306,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         //Offline Trigger
         if (currentMsgStatus == 'offline') {
+          currentMsgStatus = 'end';
           const offlineEmbed = new MessageEmbed()
             .setAuthor(
               `Twitch Announcement: ${user.data[0].display_name} Offline`,

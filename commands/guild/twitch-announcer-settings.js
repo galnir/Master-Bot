@@ -128,6 +128,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
       botSay: sayMsg,
       name: user.data[0].display_name,
+      channelID: announcedChannel.id,
       channel: announcedChannel.name,
       timer: timer,
       savedName: message.member.displayName,
