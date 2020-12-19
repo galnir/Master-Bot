@@ -200,7 +200,9 @@ module.exports = class PlayCommand extends Command {
     }
 
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
-    if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
+    if (
+      query.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
+    ) {
       query = query
         .replace(/(>|<)/gi, '')
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
