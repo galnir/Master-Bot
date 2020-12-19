@@ -30,14 +30,16 @@ module.exports = class WecomeMessageCommand extends Command {
     if (choice.toLowerCase() == 'enable') choice = 'yes';
 
     if (choice.toLowerCase() == 'disable') choice = 'no';
-
     db.set(
       `${message.member.guild.id}.serverSettings.welcomeMsg.status`,
       choice.toLowerCase()
     );
-    const DBInfo = db.get(message.member.guild.id).serverSettings.welcomeMsg;
+    const DBInfo = db.get(
+      `${message.member.guild.id}.serverSettings.welcomeMsg`
+    );
+
     if (choice == 'yes') {
-      if (!DBInfo) {
+      if (DBInfo.cmdUsed == null) {
         // Saving Defaults if none are present
         db.set(`${message.member.guild.id}.serverSettings.welcomeMsg`, {
           destination: 'direct message',
@@ -52,35 +54,67 @@ module.exports = class WecomeMessageCommand extends Command {
           timeStamp: message.createdAt,
           cmdUsed: message.content
         });
-      }
-      // Report Back Current Settings
-      const embed = new MessageEmbed()
-        .setTitle(
-          `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
-        )
-        .setDescription(
-          'You can run the `' +
-            `${prefix}show-welcome-message` +
-            '` command to see what it will look like!'
-        )
-        .addField('Command Used For Settings', '`' + DBInfo.cmdUsed + '`')
-        .addField('Message Destination', DBInfo.destination)
-        .addField(`Title`, DBInfo.embedTitle)
-        .addField(`Upper Text`, DBInfo.topImageText)
-        .addField(`Lower Text`, DBInfo.bottomImageText)
-        .addField(`Image Size`, DBInfo.imageWidth + ` X ` + DBInfo.imageHeight)
-        .addField(`Image Path`, DBInfo.wallpaperURL)
-        .setColor('#420626')
-        .setFooter(DBInfo.changedByUser, DBInfo.changedByUserURL)
-        .setTimestamp(DBInfo.timeStamp);
-      if (DBInfo.wallpaperURL == './resources/welcome/wallpaper.jpg') {
         const attachment = new MessageAttachment(
           '././resources/welcome/wallpaper.jpg'
         );
-        embed.attachFiles(attachment);
-        embed.setImage('attachment://wallpaper.jpg');
-      } else embed.setImage(DBInfo.wallpaperURL);
-      return message.say(embed);
+        const embed = new MessageEmbed()
+          .setTitle(
+            `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
+          )
+          .setDescription(
+            'You can run the `' +
+              `${prefix}show-welcome-message` +
+              '` command to see what it will look like!'
+          )
+          .addField('Message Destination', 'direct message')
+          .addField(`Title`, 'default')
+          .addField(`Upper Text`, 'default')
+          .addField(`Lower Text`, 'defualt')
+          .addField(`Image Size`, 700 + ` X ` + 250)
+          .addField(`Image Path`, './resources/welcome/wallpaper.jpg')
+          .setColor('#420626')
+          .setTimestamp()
+          .attachFiles(attachment)
+          .setImage('attachment://wallpaper.jpg')
+          .setFooter(
+            message.member.displayName,
+            message.member.user.displayAvatarURL()
+          );
+
+        return message.say(embed);
+      } else {
+        // Report Back Current Settings
+        const embed = new MessageEmbed()
+          .setTitle(
+            `:white_check_mark: Welcome Message ***Enabled*** on ${message.member.guild.name}`
+          )
+          .setDescription(
+            'You can run the `' +
+              `${prefix}show-welcome-message` +
+              '` command to see what it will look like!'
+          )
+          .addField('Command Used For Settings', '`' + DBInfo.cmdUsed + '`')
+          .addField('Message Destination', DBInfo.destination)
+          .addField(`Title`, DBInfo.embedTitle)
+          .addField(`Upper Text`, DBInfo.topImageText)
+          .addField(`Lower Text`, DBInfo.bottomImageText)
+          .addField(
+            `Image Size`,
+            DBInfo.imageWidth + ` X ` + DBInfo.imageHeight
+          )
+          .addField(`Image Path`, DBInfo.wallpaperURL)
+          .setColor('#420626')
+          .setFooter(DBInfo.changedByUser, DBInfo.changedByUserURL)
+          .setTimestamp(DBInfo.timeStamp);
+        if (DBInfo.wallpaperURL == './resources/welcome/wallpaper.jpg') {
+          const attachment = new MessageAttachment(
+            '././resources/welcome/wallpaper.jpg'
+          );
+          embed.attachFiles(attachment);
+          embed.setImage('attachment://wallpaper.jpg');
+        } else embed.setImage(DBInfo.wallpaperURL);
+        return message.say(embed);
+      }
     }
     // Report Settings are Disabled
     if (choice.toLowerCase() == 'no')
