@@ -34,11 +34,12 @@ module.exports = class WecomeMessageCommand extends Command {
       `${message.member.guild.id}.serverSettings.welcomeMsg.status`,
       choice.toLowerCase()
     );
-    const DBInfo = db.get(
-      `${message.member.guild.id}.serverSettings.welcomeMsg`
-    );
+    
 
     if (choice == 'yes') {
+      const DBInfo = db.get(
+        `${message.member.guild.id}.serverSettings.welcomeMsg`
+      );
       if (DBInfo.cmdUsed == null) {
         // Saving Defaults if none are present
         db.set(`${message.member.guild.id}.serverSettings.welcomeMsg`, {
