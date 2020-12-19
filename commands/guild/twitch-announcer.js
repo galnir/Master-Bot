@@ -348,7 +348,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               fetchedMsg.edit(offlineEmbed);
             });
         }
-      }, DBInfo.timer * 10000);
+      }, DBInfo.timer * 60000);
     }
   }
 };
