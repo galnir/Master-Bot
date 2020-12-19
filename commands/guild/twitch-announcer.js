@@ -208,8 +208,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           message.say(':x: Twitch Announcer has stopped!\n' + e);
           return;
         }
-        if (streamInfo.data[0]) {
-        }
 
         //Offline Status Set
         if (!streamInfo.data[0] && currentMsgStatus == 'sent') {
