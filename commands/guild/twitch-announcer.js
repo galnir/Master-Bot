@@ -49,6 +49,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     const DBInfo = Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`);
     var currentMsgStatus;
     var currentGame;
+    var embedID;
 
     //Error Missing DB
     if (DBInfo == undefined)
@@ -296,10 +297,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           if (DBInfo.botSay.toLowerCase() != 'none') {
             await announcedChannel.message.say(DBInfo.botSay),
               await announcedChannel.send(onlineEmbed);
-            var embedID = announcedChannel.lastMessage.id;
+            embedID = announcedChannel.lastMessage.id;
           } else {
             await announcedChannel.send(onlineEmbed);
-            var embedID = announcedChannel.lastMessage.id;
+            embedID = announcedChannel.lastMessage.id;
           }
           currentMsgStatus = 'sent';
         }
