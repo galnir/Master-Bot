@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
 const { twitchClientID, twitchClientSecret } = require('../../config.json');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
+const Canvas = require('canvas');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 if (twitchClientID == null || twitchClientSecret == null) return;
 module.exports = class TwitchStatusCommand extends Command {
