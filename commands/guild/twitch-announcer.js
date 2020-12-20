@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
-const TwitchStatusCommand = require('../other/twitchstatus');
+const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const db = require('quick.db');
 const probe = require('probe-image-size');
 const Canvas = require('canvas');
@@ -10,10 +10,7 @@ const {
   prefix
 } = require('../../config.json');
 
-if (twitchClientID == null || twitchClientSecret == null)
-  return console.log(
-    `INFO: Twitch Commands removed from the list.\nMake sure you have twitchClientID and twitchClientSecret in your config.json to use Twitch Features`
-  );
+if (twitchClientID == null || twitchClientSecret == null) return;
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {
     super(client, {
@@ -65,7 +62,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     let streamInfo;
     let gameInfo;
     try {
-      access_token = await TwitchStatusCommand.getToken(
+      access_token = await TwitchAPI.getToken(
         twitchClientID,
         twitchClientSecret,
         scope
@@ -77,7 +74,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     }
 
     try {
-      var user = await TwitchStatusCommand.getUserInfo(
+      var user = await TwitchAPI.getUserInfo(
         access_token,
         twitchClientID,
         `${DBInfo.name}`
@@ -173,7 +170,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           channel => channel.id == DBInfo.channelID
         );
         try {
-          access_token = await TwitchStatusCommand.getToken(
+          access_token = await TwitchAPI.getToken(
             twitchClientID,
             twitchClientSecret,
             scope
@@ -185,7 +182,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         }
 
         try {
-          user = await TwitchStatusCommand.getUserInfo(
+          user = await TwitchAPI.getUserInfo(
             access_token,
             twitchClientID,
             `${DBInfo.name}`
@@ -198,7 +195,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
         var user_id = user.data[0].id;
         try {
-          streamInfo = await TwitchStatusCommand.getStream(
+          streamInfo = await TwitchAPI.getStream(
             access_token,
             twitchClientID,
             user_id
@@ -227,7 +224,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           currentGame = streamInfo.data[0].game_name;
 
           try {
-            gameInfo = await TwitchStatusCommand.getGames(
+            gameInfo = await TwitchAPI.getGames(
               access_token,
               twitchClientID,
               streamInfo.data[0].game_id

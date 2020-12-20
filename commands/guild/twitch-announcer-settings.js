@@ -5,7 +5,7 @@ const {
   prefix
 } = require('../../config.json');
 const db = require('quick.db');
-const TwitchStatusCommand = require('../other/twitchstatus');
+const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const { MessageEmbed } = require('discord.js');
 
 if (twitchClientID == null || twitchClientSecret == null) return;
@@ -102,7 +102,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
     let access_token;
     try {
-      access_token = await TwitchStatusCommand.getToken(
+      access_token = await TwitchAPI.getToken(
         twitchClientID,
         twitchClientSecret,
         scope
@@ -113,7 +113,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     try {
-      var user = await TwitchStatusCommand.getUserInfo(
+      var user = await TwitchAPI.getUserInfo(
         access_token,
         twitchClientID,
         textFiltered
