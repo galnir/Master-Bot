@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const { twitchClientID, twitchClientSecret } = require('../../config.json');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const Canvas = require('canvas');
+const probe = require('probe-image-size');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 if (twitchClientID == null || twitchClientSecret == null) return;
 module.exports = class TwitchStatusCommand extends Command {
