@@ -3,7 +3,7 @@ const { MessageEmbed, MessageAttachment } = require('discord.js');
 const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const db = require('quick.db');
 const probe = require('probe-image-size');
-const Canvas = require('canvas');
+
 const {
   twitchClientID,
   twitchClientSecret,
