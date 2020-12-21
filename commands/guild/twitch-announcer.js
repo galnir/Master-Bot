@@ -335,8 +335,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Offline Edit
-          await announcedChannel
-            .fetchMessages({
+          await announcedChannel.messages
+            .fetch({
               around: embedID,
               limit: 1
             })
