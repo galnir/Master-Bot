@@ -1,14 +1,16 @@
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
+const db = require('quick.db');
+const TwitchAPI = require('../../resources/twitch/twitch-api.js');
 const {
   twitchClientID,
   twitchClientSecret,
   prefix
 } = require('../../config.json');
-const db = require('quick.db');
-const TwitchStatusCommand = require('../other/twitchstatus');
-const { MessageEmbed } = require('discord.js');
 
+// Skips loading if not found in config.json
 if (twitchClientID == null || twitchClientSecret == null) return;
+
 module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   constructor(client) {
     super(client, {
@@ -28,17 +30,17 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       clientPermissions: ['MANAGE_MESSAGES', 'MENTION_EVERYONE'],
       examples: [
         '(Basic Setup)',
-        '```' +
+        '`' +
           `${prefix}twitch-announcer-settings streamer-name  text-channel-name` +
-          '```',
+          '`',
         '(Optional Timer)',
-        '```' + `${prefix}tasettings bacon-fixation general 3` + '```',
+        '`' + `${prefix}tasettings bacon-fixation general 3` + '`',
         `(Optional Message)`,
-        '```' +
+        '`' +
           `${prefix}tasettings bacon-fixation 2 "Check out my stream"` +
-          '```',
+          '`',
         '(Optional No Message)',
-        '```' + `${prefix}tasettings bacon-fixation 2 none` + '```'
+        '`' + `${prefix}tasettings bacon-fixation 2 none` + '`'
       ],
       description: 'Settings for the Twitch Announcer.',
       args: [
@@ -76,6 +78,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   }
 
   async run(message, { textRaw, streamChannel, timer, sayMsg }) {
+   //Tests if Bot has the ability to alter messages
     try {
       await message.delete();
     } catch {
@@ -84,11 +87,13 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       );
       return;
     }
-
+    
+    // Search by name
     let announcedChannel = message.guild.channels.cache.find(
-      cchannel => cchannel.name == streamChannel
+      channel => channel.name == streamChannel
     );
-
+    
+    // Search by id
     if (message.guild.channels.cache.get(streamChannel))
       announcedChannel = message.guild.channels.cache.get(streamChannel);
 
@@ -102,7 +107,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
     let access_token;
     try {
-      access_token = await TwitchStatusCommand.getToken(
+      access_token = await TwitchAPI.getToken(
         twitchClientID,
         twitchClientSecret,
         scope
@@ -113,7 +118,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     try {
-      var user = await TwitchStatusCommand.getUserInfo(
+      var user = await TwitchAPI.getUserInfo(
         access_token,
         twitchClientID,
         textFiltered
@@ -123,7 +128,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       return;
     }
 
-    //Saving to DB
+    //Saving to DB 1 Set
     var Twitch_DB = new db.table('Twitch_DB');
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
       botSay: sayMsg,
@@ -145,9 +150,9 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       .setURL('https://twitch.tv/' + user.data[0].display_name)
       .setTitle(`Your settings were saved!`)
       .setDescription(
-        'Remember to run ```' +
+        'Remember to run `' +
           `${prefix}twitch-announcer enable` +
-          '``` to start your timer.'
+          '` to start your timer.'
       )
       .setColor('#6441A4')
       .setThumbnail(user.data[0].profile_image_url)
@@ -171,6 +176,8 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         )
         .setTimestamp();
     }
+    
+    //Send Reponse
     message.say(embed);
   }
 };
