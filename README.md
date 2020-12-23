@@ -101,12 +101,14 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 - Guild
 
-| Command          | Description                                                                    | Usage                   |
-| ---------------- | ------------------------------------------------------------------------------ | ----------------------- |
-| !ban             | Bans a tagged member                                                           | !ban @johndoe           |
-| !kick            | Kicks a tagged member                                                          | !kick @johndoe          |
-| !prune           | Delete up to 99 recent messages                                                | !prune 50               |
-| !welcome-message | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable |
+| Command                    | Description                                                                    | Usage                                |
+| -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
+| !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
+| !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
+| !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
+| !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
+| !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
+| !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings bacon-fixation general 1 |
 
 ### Resources
 
@@ -120,11 +122,13 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
+[How to get Twitch API](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
-[Installing bot on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
 
 ### Contributing
 

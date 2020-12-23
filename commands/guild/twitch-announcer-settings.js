@@ -37,10 +37,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         '`' + `${prefix}tasettings bacon-fixation general 3` + '`',
         `(Optional Message)`,
         '`' +
-          `${prefix}tasettings bacon-fixation 2 "Check out my stream"` +
+          `${prefix}tasettings bacon-fixation general 2 "Check out my stream"` +
           '`',
         '(Optional No Message)',
-        '`' + `${prefix}tasettings bacon-fixation 2 none` + '`'
+        '`' + `${prefix}tasettings bacon-fixation <channel-name> 2 none` + '`'
       ],
       description: 'Settings for the Twitch Announcer.',
       args: [
@@ -78,7 +78,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   }
 
   async run(message, { textRaw, streamChannel, timer, sayMsg }) {
-   //Tests if Bot has the ability to alter messages
+    //Tests if Bot has the ability to alter messages
     try {
       await message.delete();
     } catch {
@@ -87,12 +87,12 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       );
       return;
     }
-    
+
     // Search by name
     let announcedChannel = message.guild.channels.cache.find(
       channel => channel.name == streamChannel
     );
-    
+
     // Search by id
     if (message.guild.channels.cache.get(streamChannel))
       announcedChannel = message.guild.channels.cache.get(streamChannel);
@@ -176,7 +176,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         )
         .setTimestamp();
     }
-    
+
     //Send Reponse
     message.say(embed);
   }
