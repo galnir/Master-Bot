@@ -122,7 +122,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
-[How to get Twitch API](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+[How to get Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
