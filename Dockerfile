@@ -11,4 +11,3 @@ curl -sL https://deb.nodesource.com/setup_14.x | bash -E && apt-get install -y n
 apt-get clean && \
 git clone https://github.com/galnir/Master-Bot.git ./Master-Bot
 WORKDIR "./Master-Bot"
-COPY ./config.json .
