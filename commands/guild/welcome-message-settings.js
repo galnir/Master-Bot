@@ -28,23 +28,27 @@ module.exports = class WecomeSettingsCommand extends Command {
           prompt: 'What would you like the title to say?',
           type: 'string',
           default: `default`,
-          validate: embedTitle => embedTitle.length > 0 && embedTitle != ' '
+          validate: function validateEmbedTitle(embedTitle) {
+            return embedTitle.length > 0 && embedTitle != ' ';
+          }
         },
         {
           key: 'topImageText',
           prompt: 'What would you like the top text of the image to say?',
           type: 'string',
           default: `default`,
-          validate: topImageText =>
-            topImageText.length > 0 && topImageText != ' '
+          validate: function validateTopImageText(topImageText) {
+            return topImageText.length > 0 && topImageText != ' ';
+          }
         },
         {
           key: 'bottomImageText',
           prompt: 'What would you like the lower text of the image to say?',
           type: 'string',
           default: `default`,
-          validate: bottomImageText =>
-            bottomImageText.length > 0 && bottomImageText != ' '
+          validate: function validatebottomImageText(bottomImageText) {
+            return bottomImageText.length > 0 && bottomImageText != ' ';
+          }
         },
         {
           key: 'wallpaperURL',
@@ -62,7 +66,7 @@ module.exports = class WecomeSettingsCommand extends Command {
               return true;
             }
           },
-          validate: function checkFile(file) {
+          validateFile: function checkFile(file) {
             if (file == 's') return true;
             else {
               var extension = file.substr(file.lastIndexOf('.') + 1);
