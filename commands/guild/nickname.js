@@ -15,7 +15,7 @@ module.exports = class NicknameCommand extends Command {
       guildOnly: true,
       args: [
         {
-          key: 'member',
+          key: 'memberName',
           prompt: 'Which member do you want to change the nickname of?',
           type: `member`,
           error: ':x: Member not found, please try again.'
@@ -29,19 +29,19 @@ module.exports = class NicknameCommand extends Command {
     });
   }
 
-  async run(message, { member, nickname }) {
+  async run(message, { memberName, nickname }) {
     var nickChanged = new MessageEmbed();
 
     if (nickname === 'remove') {
       try {
-        await member.setNickname('');
+        await memberName.setNickname('');
 
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Cleared!')
-          .addField('Member', `${member.id}`)
+          .addField('Member', `${memberName.id}`)
           .addField('Moderator', `${message.author}`)
-          .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+          .setThumbnail(memberName.user.displayAvatarURL({ dynamic: true }))
           .setFooter('Cleared', message.author.displayAvatarURL())
           .setTimestamp();
 
@@ -52,24 +52,24 @@ module.exports = class NicknameCommand extends Command {
           }
           */
 
-        return message.channel.send(nickChanged);
+        message.channel.send(nickChanged);
       } catch {
         message.reply(':x: Something went wrong removing nickname');
       }
     } else {
       try {
-        const oldName = member.displayName;
+        const oldName = memberName.displayName;
 
-        await member.setNickname(nickname);
+        await memberName.setNickname(nickname);
 
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Changed!')
-          .addField('Member', `${member.id}`)
+          .addField('Member', `${memberName.id}`)
           .addField('Old Name', `${oldName}`)
           .addField('New Name', `${nickname}`)
           .addField('Moderator', `${message.author}`)
-          .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+          .setThumbnail(memberName.user.displayAvatarURL({ dynamic: true }))
           .setFooter('Changed', message.author.displayAvatarURL())
           .setTimestamp();
 
@@ -80,7 +80,7 @@ module.exports = class NicknameCommand extends Command {
       }
       */
 
-        return message.channel.send(nickChanged);
+        message.channel.send(nickChanged);
       } catch {
         message.reply(':x: Something went wrong changing nickname');
       }
