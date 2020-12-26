@@ -7,7 +7,7 @@ module.exports = class RPSCommand extends Command {
       name: 'rps',
       aliases: ['rock-paper-scissors', 'rock'],
       group: 'other',
-      memberName: 'other',
+      memberName: 'rps',
       description: 'Rock paper scissors',
       args: [
         {
