@@ -7,22 +7,13 @@ module.exports = class ShowWelcomeCommand extends Command {
       memberName: 'show-welcome-message',
       group: 'guild',
       guildOnly: true,
-      description: 'Lets you see the Welcome Image with its current settings'
+      description: 'Lets you see the Welcome Image with its current settings',
+      aliases: ['show-welcome', 'showwelcome', 'welcome-me', 'welcomeme']
     });
   }
 
-  run() {
-    return;
-
-    /*
-    //place holder file
-    //The Following is inside index.js
+  run(message) {
     
-    client.on('message', message => {
-    if (message.content === `${prefix}join`) {
-      client.emit('guildMemberAdd', message.member);
-      }
-    });
-    */
+    this.client.emit('guildMemberAdd', message.member);
   }
 };
