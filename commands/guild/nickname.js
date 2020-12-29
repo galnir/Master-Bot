@@ -54,7 +54,7 @@ module.exports = class NicknameCommand extends Command {
 
         message.channel.send(nickChanged);
       } catch {
-        message.reply(':x: Something went wrong removing nickname');
+        return message.reply(':x: Something went wrong removing nickname');
       }
     } else {
       try {
@@ -82,7 +82,7 @@ module.exports = class NicknameCommand extends Command {
 
         message.channel.send(nickChanged);
       } catch {
-        message.reply(':x: Something went wrong changing nickname');
+        return message.reply(':x: Something went wrong changing nickname');
       }
     }
   }
