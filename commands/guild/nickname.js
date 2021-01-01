@@ -30,8 +30,6 @@ module.exports = class NicknameCommand extends Command {
   }
 
   async run(message, { memberName, nickname }) {
-    var nickChanged = new MessageEmbed();
-
     if (nickname === 'remove') {
       try {
         await memberName.setNickname('');
@@ -41,7 +39,8 @@ module.exports = class NicknameCommand extends Command {
         );
       }
       try {
-        nickChanged
+        const nickRemoved = new MessageEmbed();
+        nickRemoved
           .setColor('RANDOM')
           .setTitle('Nickname Cleared!')
           .addField('Member', `${memberName.user.username}`)
@@ -57,7 +56,7 @@ module.exports = class NicknameCommand extends Command {
           }
           */
 
-        return message.channel.send(nickChanged);
+        return message.channel.send(nickRemoved);
       } catch {
         return message.reply(':x: Something went wrong removing nickname');
       }
@@ -71,6 +70,7 @@ module.exports = class NicknameCommand extends Command {
         );
       }
       try {
+        const nickChanged = new MessageEmbed();
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Changed!')
