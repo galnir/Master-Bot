@@ -62,6 +62,7 @@ module.exports = class NicknameCommand extends Command {
         return message.reply(':x: Something went wrong removing nickname');
       }
     } else {
+      const oldName = memberName.displayName;
       try {
         await memberName.setNickname(nickname);
       } catch {
@@ -70,7 +71,6 @@ module.exports = class NicknameCommand extends Command {
         );
       }
       try {
-        const oldName = memberName.displayName;
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Changed!')
