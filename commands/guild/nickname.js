@@ -44,7 +44,7 @@ module.exports = class NicknameCommand extends Command {
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Cleared!')
-          .addField('Member', `${memberName.id}`)
+          .addField('Member', `${memberName.displayName}`)
           .addField('Moderator', `${message.author}`)
           .setThumbnail(memberName.user.displayAvatarURL({ dynamic: true }))
           .setFooter('Cleared', message.author.displayAvatarURL())
@@ -74,7 +74,7 @@ module.exports = class NicknameCommand extends Command {
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Changed!')
-          .addField('Member', `${memberName.id}`)
+          .addField('Member', `${memberName.displayName}`)
           .addField('Old Name', `${oldName}`)
           .addField('New Name', `${nickname}`)
           .addField('Moderator', `${message.author}`)
