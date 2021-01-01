@@ -37,7 +37,7 @@ module.exports = class NicknameCommand extends Command {
         await memberName.setNickname('');
       } catch {
         return message.reply(
-          `:x: Can't change nickname requested member has a higher role than you`
+          `:x: Can't change nickname, requested member has a higher role than you`
         );
       }
       try {
@@ -66,7 +66,7 @@ module.exports = class NicknameCommand extends Command {
         await memberName.setNickname(nickname);
       } catch {
         return message.reply(
-          `:x: Can't change nickname requested member has a higher role than you`
+          `:x: Can't change nickname, requested member has a higher role than you`
         );
       }
       try {
