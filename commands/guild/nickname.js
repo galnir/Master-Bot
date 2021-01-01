@@ -31,11 +31,16 @@ module.exports = class NicknameCommand extends Command {
 
   async run(message, { memberName, nickname }) {
     var nickChanged = new MessageEmbed();
-
+    console.log(memberName);
     if (nickname === 'remove') {
       try {
         await memberName.setNickname('');
-
+      } catch {
+        return message.reply(
+          `:x: Can't change nickname requested member has a higher role than you`
+        );
+      }
+      try {
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Cleared!')
@@ -58,10 +63,14 @@ module.exports = class NicknameCommand extends Command {
       }
     } else {
       try {
-        const oldName = memberName.displayName;
-
         await memberName.setNickname(nickname);
-
+      } catch {
+        return message.reply(
+          `:x: Can't change nickname requested member has a higher role than you`
+        );
+      }
+      try {
+        const oldName = memberName.displayName;
         nickChanged
           .setColor('RANDOM')
           .setTitle('Nickname Changed!')
