@@ -31,7 +31,7 @@ module.exports = class NicknameCommand extends Command {
 
   async run(message, { memberName, nickname }) {
     var nickChanged = new MessageEmbed();
-    console.log(memberName);
+
     if (nickname === 'remove') {
       try {
         await memberName.setNickname('');
