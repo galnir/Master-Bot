@@ -22,8 +22,7 @@ module.exports = class TvShowSearchCommand extends Command {
   }
   async run(message, { showQuery }) {
     const showResponse = await TvShowSearchCommand.getShowSearch(showQuery);
-    console.log(showResponse);
-
+    
     try {
       const embedArray = [];
       for (let i = 1; i <= showResponse.length; ++i) {
