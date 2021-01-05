@@ -14,6 +14,7 @@ Make a config.json file in the root directory of the project and add:
 ```
 {
   "prefix": "!",
+  "invite": "false",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
   "tenorAPI": "tenor-API-key",
