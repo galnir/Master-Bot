@@ -24,6 +24,7 @@ Make a config.json file in the root directory of the project and add:
   "geniusLyricsAPI": "genius-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret"
+  "invite": false
 }
 ```
 
@@ -105,6 +106,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command                    | Description                                                                    | Usage                                |
 | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
 | !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
+| !invite                    | Send you a link for invite                                                     | !invite                              |
 | !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
 | !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
@@ -138,7 +140,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
