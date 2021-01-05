@@ -89,6 +89,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !poll             | Creates a poll with up to 10 choices.                                                                                                                               | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
 | !vote             | Starts a yes/no/don't care vote.                                                                                                                                    | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                  |
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
+| !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
 
 - Gifs
 
@@ -137,7 +138,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
