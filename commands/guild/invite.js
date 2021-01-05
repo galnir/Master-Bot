@@ -2,9 +2,6 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const { invite } = require('../../config.json');
 
-// Only if invite is in config.json and set to true
-if (invite == (null || false)) return;
-
 module.exports = class InviteCommand extends Command {
   constructor(client) {
     super(client, {
@@ -16,6 +13,8 @@ module.exports = class InviteCommand extends Command {
   }
 
   async run(message) {
+    // Only if invite is in config.json and set to true
+    if (!invite) return;
     //provides the link with admin permissions
     const inviteURL = `https://discord.com/api/oauth2/authorize?client_id=${this.client.user.id}&permissions=8&scope=bot`;
 
