@@ -207,10 +207,12 @@ module.exports = class PlayCommand extends Command {
         .replace(/(>|<)/gi, '')
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
+      let failedToGetVideo = false;
       const video = await youtube.getVideoByID(id).catch(function() {
         message.say(':x: There was a problem getting the video you provided!');
-        return;
+        failedToGetVideo = true;
       });
+      if (failedToGetVideo) return;
       // // can be uncommented if you don't want the bot to play live streams
       // if (video.raw.snippet.liveBroadcastContent === 'live') {
       //   return message.say("I don't support live streams!");
