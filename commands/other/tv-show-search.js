@@ -22,7 +22,7 @@ module.exports = class TvShowSearchCommand extends Command {
   }
   async run(message, { showQuery }) {
     const showResponse = await TvShowSearchCommand.getShowSearch(showQuery);
-    
+
     try {
       const embedArray = [];
       for (let i = 1; i <= showResponse.length; ++i) {
@@ -53,7 +53,7 @@ module.exports = class TvShowSearchCommand extends Command {
 
         // Filter Language Row 2
         var showLanguage = showResponse[i - 1].show.language;
-        if (showLanguage === null) showLanguage = 'None Listed';
+        if (showLanguage === null) showLanguage = 'None listed';
 
         // Filter Genere Row 2
         var showGenre = showResponse[i - 1].show.genres;
