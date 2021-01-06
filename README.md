@@ -24,9 +24,12 @@ Make a config.json file in the root directory of the project and add:
   "geniusLyricsAPI": "genius-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret"
-  "invite": false
 }
 ```
+
+You can add `"invite": true` to the config.json to have the invite command.
+
+Remember to set your bot to Public Bot in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
 
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
@@ -106,7 +109,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command                    | Description                                                                    | Usage                                |
 | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
 | !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
-| !invite                    | Send you a link for invite                                                     | !invite                              |
+| !invite                    | Replies with a link to invite the bot.                                         | !invite                              |
 | !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
 | !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |

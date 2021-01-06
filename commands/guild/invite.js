@@ -8,7 +8,7 @@ module.exports = class InviteCommand extends Command {
       name: 'invite',
       group: 'guild',
       memberName: 'invite',
-      description: 'Send you a link for invite'
+      description: 'Replies with a link to invite the bot.'
     });
   }
 
