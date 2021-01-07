@@ -27,10 +27,6 @@ Make a config.json file in the root directory of the project and add:
 }
 ```
 
-You can add `"invite": true` to the config.json to have the invite command.
-
-Remember to set your bot to Public Bot in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
-
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
 Also, no matter what operating system you have, make sure [ffmpeg](https://www.ffmpeg.org/download.html) and [python 2.7](https://www.python.org/downloads/) are installed. **Discord.js now requires Node version greater than or equal to 12.0.0** .
