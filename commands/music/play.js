@@ -155,7 +155,10 @@ module.exports = class PlayCommand extends Command {
       */
 
       for (let i = 0; i < videosArr.length; i++) {
-        if (videosArr[i].raw.status.privacyStatus == 'private') {
+        if (
+          videosArr[i].raw.status.privacyStatus == 'private' ||
+          videosArr[i].raw.status.privacyStatus == 'privacyStatusUnspecified'
+        ) {
           continue;
         } else {
           try {
