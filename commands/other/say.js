@@ -26,7 +26,7 @@ module.exports = class SayCommand extends Command {
       .setDescription(text)
       .setTimestamp()
       .setFooter(
-        `${message.member.displayName}, Made me to say it!`,
+        `${message.member.displayName}, made me say it!`,
         message.author.displayAvatarURL()
       );
     return message.say(embed);
