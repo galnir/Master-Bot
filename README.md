@@ -90,6 +90,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !vote             | Starts a yes/no/don't care vote.                                                                                                                                    | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                  |
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
+| !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
 
 - Gifs
 

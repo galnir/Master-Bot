@@ -40,7 +40,7 @@ module.exports = class WecomeMessageCommand extends Command {
       choice.toLowerCase()
     );
 
-    if (choice == 'yes') {
+    if (choice.toLowerCase() == 'yes') {
     
       // Grab DB 1 get
       const DBInfo = db.get(
