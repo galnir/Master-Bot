@@ -89,6 +89,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !poll             | Creates a poll with up to 10 choices.                                                                                                                               | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
 | !vote             | Starts a yes/no/don't care vote.                                                                                                                                    | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                  |
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
+| !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
 
 - Gifs
 
