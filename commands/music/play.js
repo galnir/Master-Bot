@@ -44,13 +44,6 @@ module.exports = class PlayCommand extends Command {
       message.say(':x: Please try after the trivia has ended!');
       return;
     }
-    /*
-     [
-      { name: '1', urls: [ [Object], [Object] ] },
-      { name: '2', urls: [ [Object], [Object], [Object] ] },
-      { name: '3', urls: [ [Object], [Object] ] }
-     ]
-    */
 
     if (db.get(message.member.id) !== null) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
@@ -146,7 +139,7 @@ module.exports = class PlayCommand extends Command {
         return;
       });
 
-      // Uncommented if you want to shuffle the playlist
+      // Uncomment if you want the bot to automatically shuffle the playlist
 
       /*for (let i = videosArr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
