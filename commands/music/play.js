@@ -200,6 +200,7 @@ module.exports = class PlayCommand extends Command {
         // @TODO add the the position number of queue of the when a playlist is added
         return;
       }
+      return;
     }
 
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
