@@ -89,6 +89,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !poll             | Creates a poll with up to 10 choices.                                                                                                                               | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
 | !vote             | Starts a yes/no/don't care vote.                                                                                                                                    | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                  |
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
+| !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
+| !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
 
 - Gifs
 
@@ -101,12 +103,14 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 - Guild
 
-| Command          | Description                                                                    | Usage                   |
-| ---------------- | ------------------------------------------------------------------------------ | ----------------------- |
-| !ban             | Bans a tagged member                                                           | !ban @johndoe           |
-| !kick            | Kicks a tagged member                                                          | !kick @johndoe          |
-| !prune           | Delete up to 99 recent messages                                                | !prune 50               |
-| !welcome-message | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable |
+| Command                    | Description                                                                    | Usage                                |
+| -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
+| !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
+| !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
+| !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
+| !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
+| !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
+| !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings bacon-fixation general 1 |
 
 ### Resources
 
@@ -120,11 +124,13 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
+[How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
-[Installing bot on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
 
 ### Contributing
 
@@ -133,7 +139,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 

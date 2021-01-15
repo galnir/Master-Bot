@@ -44,13 +44,6 @@ module.exports = class PlayCommand extends Command {
       message.say(':x: Please try after the trivia has ended!');
       return;
     }
-    /*
-     [
-      { name: '1', urls: [ [Object], [Object] ] },
-      { name: '2', urls: [ [Object], [Object], [Object] ] },
-      { name: '3', urls: [ [Object], [Object] ] }
-     ]
-    */
 
     if (db.get(message.member.id) !== null) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
@@ -146,7 +139,7 @@ module.exports = class PlayCommand extends Command {
         return;
       });
 
-      // Uncommented if you want to shuffle the playlist
+      // Uncomment if you want the bot to automatically shuffle the playlist
 
       /*for (let i = videosArr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -155,7 +148,10 @@ module.exports = class PlayCommand extends Command {
       */
 
       for (let i = 0; i < videosArr.length; i++) {
-        if (videosArr[i].raw.status.privacyStatus == 'private') {
+        if (
+          videosArr[i].raw.status.privacyStatus == 'private' ||
+          videosArr[i].raw.status.privacyStatus == 'privacyStatusUnspecified'
+        ) {
           continue;
         } else {
           try {
@@ -200,15 +196,19 @@ module.exports = class PlayCommand extends Command {
     }
 
     // This if statement checks if the user entered a youtube url, it can be any kind of youtube url
-    if (query.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)) {
+    if (
+      query.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
+    ) {
       query = query
         .replace(/(>|<)/gi, '')
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
+      let failedToGetVideo = false;
       const video = await youtube.getVideoByID(id).catch(function() {
         message.say(':x: There was a problem getting the video you provided!');
-        return;
+        failedToGetVideo = true;
       });
+      if (failedToGetVideo) return;
       // // can be uncommented if you don't want the bot to play live streams
       // if (video.raw.snippet.liveBroadcastContent === 'live') {
       //   return message.say("I don't support live streams!");
