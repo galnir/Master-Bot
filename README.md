@@ -15,7 +15,6 @@ Make a config.json file in the root directory of the project and add:
 ```
 {
   "prefix": "!",
-  "invite": "false",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
   "youtubeAPI": "youtube-api-key"
@@ -25,6 +24,7 @@ Make a config.json file in the root directory of the project and add:
 - Full Command List
 ```
 {
+  "invite": "false",
   "prefix": "!",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
