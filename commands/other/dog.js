@@ -1,7 +1,9 @@
-  
 const fetch = require('node-fetch');
 const { tenorAPI } = require('../../config.json');
 const { Command } = require('discord.js-commando');
+
+// Skips loading if not found in config.json
+if (!tenorAPI) return;
 
 module.exports = class DogCommand extends Command {
   constructor(client) {

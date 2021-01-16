@@ -4,6 +4,9 @@ const { yandexAPI } = require('../../config.json');
 const ISO6391 = require('iso-639-1');
 const fetch = require('node-fetch');
 
+// Skips loading if not found in config.json
+if (!yandexAPI) return;
+
 module.exports = class TranslateCommand extends Command {
   constructor(client) {
     super(client, {

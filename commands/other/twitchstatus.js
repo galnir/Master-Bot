@@ -6,7 +6,7 @@ const Canvas = require('canvas');
 const probe = require('probe-image-size');
 
 // Skips loading if not found in config.json
-if (twitchClientID == null || twitchClientSecret == null) return;
+if (!twitchClientID || !twitchClientSecret) return;
 
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
@@ -32,12 +32,11 @@ module.exports = class TwitchStatusCommand extends Command {
   }
 
   async run(message, { textRaw }) {
-    
     // Twitch Section
     const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
     let access_token;
-    
+
     try {
       access_token = await TwitchAPI.getToken(
         twitchClientID,
@@ -61,7 +60,7 @@ module.exports = class TwitchStatusCommand extends Command {
     }
 
     const user_id = user.data[0].id;
-    
+
     try {
       var streamInfo = await TwitchAPI.getStream(
         access_token,
@@ -108,7 +107,7 @@ module.exports = class TwitchStatusCommand extends Command {
       message.say(offlineEmbed);
       return;
     }
-    
+
     // Box Art Recreation
     try {
       var gameInfo = await TwitchAPI.getGames(

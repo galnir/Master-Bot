@@ -11,7 +11,7 @@ const {
 } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (twitchClientID == null || twitchClientSecret == null) return;
+if (!twitchClientID || !twitchClientSecret) return;
 
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {

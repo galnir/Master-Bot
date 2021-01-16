@@ -11,16 +11,27 @@
 
 Make a config.json file in the root directory of the project and add:
 
+- Minimum
 ```
 {
   "prefix": "!",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
+  "youtubeAPI": "youtube-api-key"
+}
+```
+
+- Full Command List
+```
+{
+  "prefix": "!",
+  "discord_owner_id": "Your-Discord-ID",
+  "token": "Your-Bot-Token",
+  "youtubeAPI": "youtube-api-key",
+  "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "youtubeAPI": "youtube-api-key",
   "yandexAPI": "yandex-api-key",
-  "geniusLyricsAPI": "genius-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret"
 }
