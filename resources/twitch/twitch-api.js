@@ -2,13 +2,9 @@ const fetch = require('node-fetch');
 const { twitchClientID, twitchClientSecret } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (twitchClientID == null || twitchClientSecret == null)
-  return console.log(
-    'INFO: Twitch Features were removed from the list. \nMake sure you have "twitchClientID" and "twitchClientSecret" in your config.json to use Twitch Features '
-  );
+if (!twitchClientID || !twitchClientSecret) return;
 
 module.exports = class TwitchAPI {
-  
   //Access Token is valid for 24 Hours
   static getToken(twitchClientID, twitchClientSecret, scope) {
     return new Promise(async function fetchToken(resolve, reject) {

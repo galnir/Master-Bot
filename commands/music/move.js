@@ -8,6 +8,7 @@ module.exports = class MoveSongCommand extends Command {
       aliases: ['m', 'movesong'],
       description: 'Move song to a desired position in queue!',
       group: 'music',
+      guildOnly: true,
       throttling: {
         usages: 1,
         duration: 5
