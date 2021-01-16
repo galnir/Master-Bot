@@ -5,6 +5,9 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const { geniusLyricsAPI } = require('../../config.json');
 
+// Skips loading if not found in config.json
+if (!geniusLyricsAPI) return;
+
 module.exports = class LyricsCommand extends Command {
   constructor(client) {
     super(client, {

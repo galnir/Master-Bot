@@ -3,6 +3,9 @@ const fetch = require('node-fetch');
 const { newsAPI } = require('../../config.json');
 const { Command } = require('discord.js-commando');
 
+// Skips loading if not found in config.json
+if (!newsAPI) return;
+
 module.exports = class GlobalNewsCommand extends Command {
   constructor(client) {
     super(client, {
