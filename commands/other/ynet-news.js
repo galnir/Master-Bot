@@ -14,7 +14,7 @@ module.exports = class YnetNewsCommand extends Command {
       aliases: ['israel-news', 'ynet'],
       group: 'other',
       memberName: 'ynet-news',
-      description: 'Replies with the 5 latest israeli news headlines',
+      description: 'Replies with the 10 latest israeli news headlines',
       throttling: {
         usages: 2,
         duration: 10
