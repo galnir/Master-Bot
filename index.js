@@ -1,7 +1,7 @@
 const { CommandoClient } = require('discord.js-commando');
 const { Structures, MessageEmbed, MessageAttachment } = require('discord.js');
 const path = require('path');
-const { prefix, token, discord_owner_id } = require('./config.json');
+const { prefix, token, discord_owner_id, reportChannel } = require('./config.json');
 const db = require('quick.db');
 const Canvas = require('canvas');
 
@@ -239,6 +239,14 @@ client.on('guildMemberAdd', async member => {
       await channel.send(embed);
     }
   }
+});
+client.on('commandError', (command, err) => {
+  var commandErrorEmbed = new MesageEmbed()
+  .setColor('RANDOM')
+  .setTitle('Error')
+  .addField('Command that is being executed',command)
+  .addField('Error',err)
+  client.channels.cache.get(reportChannel).send(commandErrorEmbed);
 });
 
 client.login(token);
