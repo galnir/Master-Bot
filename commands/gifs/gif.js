@@ -22,7 +22,9 @@ module.exports = class GifCommand extends Command {
           key: 'text',
           prompt: ':thinking: What gif would you like to watch?',
           type: 'string',
-          validate: text => text.length < 50
+          validate: function validateText(text) {
+            return text.length < 50;
+          }
         }
       ]
     });
@@ -32,7 +34,7 @@ module.exports = class GifCommand extends Command {
     fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=${text}&limit=1`)
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
-      .catch(e => {
+      .catch(function onError() {
         message.say(':x: Failed to find a gif that matched your query!');
         // console.error(e);
         return;

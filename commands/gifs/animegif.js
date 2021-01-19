@@ -25,7 +25,7 @@ module.exports = class AnimegifCommand extends Command {
     fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=anime&limit=1`)
       .then(res => res.json())
       .then(json => message.say(json.results[0].url))
-      .catch(e => {
+      .catch(function onError() {
         message.say(':x: Failed to find a gif!');
         return;
       });
