@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class RedditCommand extends Command {
   constructor(client) {
@@ -76,39 +77,40 @@ module.exports = class RedditCommand extends Command {
         );
       }
     }
-    fetch(
+    const response = await fetch(
       `https://www.reddit.com/r/${subreddit}/${sort}/.json?limit=10&t=${
         timeFilter ? timeFilter : 'day'
       }`
-    )
-      .then(res => res.json())
-      .then(json => {
-        const dataArr = json.data.children;
-        for (let i = 0; i < dataArr.length; i++) {
-          // if (dataArr[i].data.over_18 === true) {
-          //   message.say(':no_entry: nsfw :no_entry:');
-          // } else {
-          message.say(embedPost(dataArr[i].data));
-          //}
-        }
-      })
-      .catch(err => {
-        message.say(':x: The subreddit you asked for was not found!');
-        return console.error(err);
-      });
-    // returns an embed that is ready to be sent
-    function embedPost(data) {
-      let color = '#FE9004';
-      if (data.title.length > 255) {
-        data.title = data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
-      }
-      if (data.over_18) color = '#cf000f';
-      return new MessageEmbed()
-        .setColor(color) // if post is nsfw, color is red
-        .setTitle(data.title)
-        .setURL(`https://www.reddit.com${data.permalink}`)
-        .setDescription(`Upvotes: ${data.score} :thumbsup: `)
-        .setAuthor(data.author);
+    );
+
+    const json = await response.json();
+    const dataArr = [];
+
+    for (let i = 1; i <= json.data.children.length; ++i) {
+      var color = '#FE9004';
+      var redditPost = json.data.children[i - 1];
+
+      if (redditPost.data.title.length > 255)
+        redditPost.data.title = redditPost.data.title.substring(0, 252) + '...'; // discord.js does not allow embed title lengths greater than 256
+
+      if (redditPost.data.over_18) color = '#cf000f';
+
+      dataArr.push(
+        new MessageEmbed()
+          .setColor(color) // if post is nsfw, color is red
+          .setTitle(redditPost.data.title)
+          .setURL(`https://www.reddit.com${redditPost.data.permalink}`)
+          .setDescription(`Upvotes: ${redditPost.data.score} :thumbsup: `)
+          .setAuthor(redditPost.data.author)
+      );
     }
+
+    const embed = new Pagination.Embeds()
+      .setArray(dataArr)
+      .setAuthorizedUsers([message.author.id])
+      .setChannel(message.channel)
+      .setPageIndicator(true);
+
+    embed.build();
   }
 };
