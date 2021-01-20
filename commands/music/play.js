@@ -337,7 +337,6 @@ module.exports = class PlayCommand extends Command {
                     setTimeout(() => {
                       message.guild.musicData.songDispatcher.end();
                     }, 100);
-                    message.say(`:grey_exclamation: Left the channel.`);
                     videoEmbed.setTimeout(0);
                   } else {
                     message.guild.musicData.queue.length = 0;
@@ -345,9 +344,9 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.loopSong = false;
                     message.guild.musicData.loopQueue = false;
                     message.guild.musicData.songDispatcher.end();
-                    message.say(`:grey_exclamation: Left the channel.`);
                     videoEmbed.setTimeout(100);
                   }
+                  message.say(`:grey_exclamation: Left the channel.`);
                 },
                 // Volume down
                 '🔉': (_, instance) => {
@@ -430,11 +429,11 @@ module.exports = class PlayCommand extends Command {
                 })
                 // Repeat Queue
                 .addFunctionEmoji('🔁', (_, instance) => {
-                  for (const embed of instance.array)
-                    embed.fields[0].name = ':repeat: Repeat Queue';
-                  if (message.guild.musicData.loopQueue)
+                  if (message.guild.musicData.loopQueue) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':repeat: Repeat Queue';
                     message.guild.musicData.loopQueue = false;
-                  else {
+                  } else {
                     for (const embed of instance.array)
                       embed.fields[0].name = ':notes: Now Playing';
                     message.guild.musicData.loopQueue = true;
@@ -445,11 +444,11 @@ module.exports = class PlayCommand extends Command {
               // Repeat current song
               '🔂',
               (_, instance) => {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':repeat_one: Repeat Song';
-                if (message.guild.musicData.loopSong)
+                if (message.guild.musicData.loopSong) {
+                  for (const embed of instance.array)
+                    embed.fields[0].name = ':repeat_one: Repeat Song';
                   message.guild.musicData.loopSong = false;
-                else {
+                } else {
                   for (const embed of instance.array)
                     embed.fields[0].name = ':notes: Now Playing';
                   message.guild.musicData.loopSong = true;
