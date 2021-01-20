@@ -424,6 +424,7 @@ module.exports = class PlayCommand extends Command {
                 )
                 // Next track
                 .addFunctionEmoji('⏭️', _ => {
+                  videoEmbed.setTimeout(100);
                   message.guild.musicData.loopSong = false;
                   message.guild.musicData.songDispatcher.end();
                 })
