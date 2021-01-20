@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const { youtubeAPI } = require('../../config.json');
 const youtube = new Youtube(youtubeAPI);
 const db = require('quick.db');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -281,20 +282,103 @@ module.exports = class PlayCommand extends Command {
                 db.get(`${message.guild.id}.serverSettings.volume`)
               );
 
-            const videoEmbed = new MessageEmbed()
-              .setThumbnail(queue[0].thumbnail)
-              .setColor('#ff0000')
-              .addField(':notes: Now Playing:', queue[0].title)
-              .addField(':stopwatch: Duration:', queue[0].duration)
-              .setURL(queue[0].url)
-              .setFooter(
-                `Requested by ${queue[0].memberDisplayName}!`,
-                queue[0].memberAvatar
-              );
+            var nowPlayingArr = [
+              new MessageEmbed()
+                .setThumbnail(queue[0].thumbnail)
+                .setColor('#ff0000')
+                .addField(
+                  ':notes: Now Playing',
+                  `[${queue[0].title}](${queue[0].url})`
+                )
+                .addField('Duration', ':stopwatch: ' + queue[0].duration, true)
+                .addField('Volume', dispatcher.volume * 100, true)
+                .setFooter(
+                  `Requested by ${queue[0].memberDisplayName}!`,
+                  queue[0].memberAvatar
+                )
+            ];
 
-            if (queue[1] && !message.guild.musicData.loopSong)
-              videoEmbed.addField(':track_next: Next Song:', queue[1].title);
-            message.say(videoEmbed);
+            const totalDurationObj = queue[0].rawDuration;
+            var totalDurationInMS = 0;
+            Object.keys(totalDurationObj).forEach(function(key) {
+              if (key == 'hours') {
+                totalDurationInMS =
+                  totalDurationInMS + totalDurationObj[key] * 3600000;
+              } else if (key == 'minutes') {
+                totalDurationInMS =
+                  totalDurationInMS + totalDurationObj[key] * 60000;
+              } else if (key == 'seconds') {
+                totalDurationInMS =
+                  totalDurationInMS + totalDurationObj[key] * 100;
+              }
+            });
+
+            var videoEmbed = new Pagination.Embeds()
+              .setArray(nowPlayingArr)
+              //.setAuthorizedUsers([message.author.id])
+              .setChannel(message.channel)
+              .setTimeout(
+                totalDurationInMS -
+                  message.guild.musicData.songDispatcher.streamTime
+              )
+              .setDeleteOnTimeout(true)
+              .setFunctionEmojis({
+                '🔉': (_, instance) => {
+                  for (const embed of instance.array) embed.fields[2].value--;
+
+                  message.guild.musicData.songDispatcher.setVolume(
+                    message.guild.musicData.songDispatcher.volume - 0.01
+                  );
+                },
+                '🔊': (_, instance) => {
+                  for (const embed of instance.array) embed.fields[2].value++;
+
+                  message.guild.musicData.songDispatcher.setVolume(
+                    message.guild.musicData.songDispatcher.volume + 0.01
+                  );
+                },
+                '🔂': _ => {
+                  if (message.guild.musicData.loopSong)
+                    message.guild.musicData.loopSong = false;
+                  else message.guild.musicData.loopSong = true;
+                },
+                '⏯️': _ => {
+                  if (!dispatcher.paused) {
+                    videoEmbed.setTimeout(600000);
+                    message.guild.musicData.songDispatcher.pause();
+                  } else {
+                    videoEmbed.setTimeout(
+                      totalDurationInMS -
+                        message.guild.musicData.songDispatcher.streamTime
+                    );
+                    message.guild.musicData.songDispatcher.resume();
+                  }
+                }
+              });
+
+            if (queue[1] && !message.guild.musicData.loopSong) {
+              videoEmbed
+                .addField(
+                  'Queue',
+                  [message.guild.musicData.queue.length - 1] + ' Song(s)',
+                  true
+                )
+                .addField(
+                  ':track_next: Next Song',
+                  `[${queue[1].title}](${queue[1].url})`
+                )
+                .addFunctionEmoji('⏭️', _ => {
+                  videoEmbed.setTimeout(50);
+                  message.guild.musicData.loopSong = false;
+                  if (dispatcher.paused)
+                    message.guild.musicData.songDispatcher.resume();
+                  setTimeout(() => {
+                    message.guild.musicData.songDispatcher.end();
+                  }, 100);
+                });
+            }
+            videoEmbed.build();
+
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
             return;
