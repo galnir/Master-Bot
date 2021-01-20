@@ -62,26 +62,6 @@ module.exports = class NowPlayingCommand extends Command {
       )
       .setDeleteOnTimeout(true)
       .setFunctionEmojis({
-        // Exit
-        '❌': _ => {
-          if (message.guild.musicData.songDispatcher.paused == true) {
-            message.guild.musicData.songDispatcher.resume();
-            message.guild.musicData.queue.length = 0;
-            message.guild.musicData.loopSong = false;
-            setTimeout(() => {
-              message.guild.musicData.songDispatcher.end();
-            }, 100);
-            videoEmbed.setTimeout(0);
-          } else {
-            message.guild.musicData.queue.length = 0;
-            message.guild.musicData.skipTimer = true;
-            message.guild.musicData.loopSong = false;
-            message.guild.musicData.loopQueue = false;
-            message.guild.musicData.songDispatcher.end();
-            videoEmbed.setTimeout(100);
-          }
-          message.say(`:grey_exclamation: Left the channel.`);
-        },
         // Volume down
         '🔉': (_, instance) => {
           if (message.guild.musicData.songDispatcher.volume > 0.01) {
@@ -116,25 +96,48 @@ module.exports = class NowPlayingCommand extends Command {
             );
           }
         },
+        // Stop
+        '⏹️': _ => {
+          if (message.guild.musicData.songDispatcher.paused == true) {
+            message.guild.musicData.songDispatcher.resume();
+            message.guild.musicData.queue.length = 0;
+            message.guild.musicData.loopSong = false;
+            setTimeout(() => {
+              message.guild.musicData.songDispatcher.end();
+            }, 100);
+            videoEmbed.setTimeout(0);
+          } else {
+            message.guild.musicData.queue.length = 0;
+            message.guild.musicData.skipTimer = true;
+            message.guild.musicData.loopSong = false;
+            message.guild.musicData.loopQueue = false;
+            message.guild.musicData.songDispatcher.end();
+            videoEmbed.setTimeout(100);
+          }
+          // message.say(`:grey_exclamation: Left the channel.`);
+        },
         // Play/Pause
         '⏯️': (_, instance) => {
+          var pauseTimer;
           if (message.guild.musicData.songDispatcher.paused == false) {
             for (const embed of instance.array)
               embed.title.name = `:pause_button: ${video.title}`;
             videoEmbed.setTimeout(600000);
             message.guild.musicData.songDispatcher.pause();
             // Leaves Channel if paused for 10 min
-            setTimeout(() => {
+            pauseTimer = setTimeout(() => {
               message.guild.musicData.songDispatcher.resume();
               message.guild.musicData.queue.length = 0;
               message.guild.musicData.loopSong = false;
               setTimeout(() => {
                 message.guild.musicData.songDispatcher.end();
               }, 100);
+              message.guild.me.voice.channel.leave();
               message.say(`:zzz: Left channel due to inactivity.`);
               videoEmbed.setTimeout(0);
             }, 600000);
           } else {
+            clearTimeout(pauseTimer);
             for (const embed of instance.array)
               embed.title.name = `:notes: ${title}`;
             videoEmbed.setTimeout(
@@ -178,21 +181,21 @@ module.exports = class NowPlayingCommand extends Command {
             message.guild.musicData.loopQueue = true;
           }
         });
-    }
-    videoEmbed.addFunctionEmoji(
-      // Repeat current song
-      '🔂',
-      _ => {
-        for (const embed of instance.array)
-          if (message.guild.musicData.loopSong) {
-            embed.title.name = `:notes: ${title}`;
-            message.guild.musicData.loopSong = false;
-          } else {
-            embed.title.name = `:repeat_one: ${video.title} **On Loop**`;
-            message.guild.musicData.loopSong = true;
-          }
-      }
-    );
+    } else
+      videoEmbed.addFunctionEmoji(
+        // Repeat
+        '🔂',
+        _ => {
+          for (const embed of instance.array)
+            if (message.guild.musicData.loopSong) {
+              embed.title.name = `:notes: ${title}`;
+              message.guild.musicData.loopSong = false;
+            } else {
+              embed.title.name = `:repeat_one: ${video.title} **On Loop**`;
+              message.guild.musicData.loopSong = true;
+            }
+        }
+      );
     videoEmbed.build();
     return;
   }
