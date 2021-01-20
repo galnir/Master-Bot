@@ -297,7 +297,7 @@ module.exports = class PlayCommand extends Command {
                   queue[0].memberAvatar
                 )
             ];
-            
+
             // Time conversion for the embed timeout(MS)
             const totalDurationObj = queue[0].rawDuration;
             var totalDurationInMS = 0;
@@ -361,12 +361,6 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.songDispatcher.volume + 0.01
                   );
                 },
-                // Repeat 1
-                '🔂': _ => {
-                  if (message.guild.musicData.loopSong)
-                    message.guild.musicData.loopSong = false;
-                  else message.guild.musicData.loopSong = true;
-                },
                 // Play/Pause
                 '⏯️': _ => {
                   if (!dispatcher.paused) {
@@ -393,7 +387,10 @@ module.exports = class PlayCommand extends Command {
                 }
               });
 
-            if (queue[1] && !message.guild.musicData.loopSong) {
+            if (
+              message.guild.musicData.queue.length > 1 &&
+              !message.guild.musicData.loopSong
+            ) {
               videoEmbed
                 .addField(
                   'Queue',
@@ -406,15 +403,25 @@ module.exports = class PlayCommand extends Command {
                 )
                 // Next track
                 .addFunctionEmoji('⏭️', _ => {
-                  videoEmbed.setTimeout(100);
                   message.guild.musicData.loopSong = false;
-                  if (dispatcher.paused)
-                    message.guild.musicData.songDispatcher.resume();
-                  setTimeout(() => {
-                    message.guild.musicData.songDispatcher.end();
-                  }, 100);
+                  message.guild.musicData.songDispatcher.end();
+                })
+                // Repeat Queue
+                .addFunctionEmoji('🔁', _ => {
+                  if (message.guild.musicData.loopQueue)
+                    message.guild.musicData.loopQueue = false;
+                  else message.guild.musicData.loopQueue = true;
                 });
             }
+            videoEmbed.addFunctionEmoji(
+              // Repeat current song
+              '🔂',
+              _ => {
+                if (message.guild.musicData.loopSong)
+                  message.guild.musicData.loopSong = false;
+                else message.guild.musicData.loopSong = true;
+              }
+            );
             videoEmbed.build();
 
             message.guild.musicData.nowPlaying = queue[0];
