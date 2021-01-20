@@ -303,7 +303,7 @@ module.exports = class PlayCommand extends Command {
             ];
 
             // Time conversion for the embed timeout(MS)
-            const totalDurationObj = queue[0].rawDuration;
+            var totalDurationObj = queue[0].rawDuration;
             var totalDurationInMS = 0;
             Object.keys(totalDurationObj).forEach(function(key) {
               if (key == 'hours') {
@@ -432,11 +432,11 @@ module.exports = class PlayCommand extends Command {
                 .addFunctionEmoji('🔁', (_, instance) => {
                   if (message.guild.musicData.loopQueue) {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':repeat: Repeat Queue';
+                      embed.fields[0].name = ':notes: Now Playing';
                     message.guild.musicData.loopQueue = false;
                   } else {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':notes: Now Playing';
+                      embed.fields[0].name = ':repeat: Repeat Queue';
                     message.guild.musicData.loopQueue = true;
                   }
                 });
@@ -447,11 +447,11 @@ module.exports = class PlayCommand extends Command {
                 (_, instance) => {
                   if (message.guild.musicData.loopSong) {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':repeat_one: Repeat Song';
+                      embed.fields[0].name = ':notes: Now Playing';
                     message.guild.musicData.loopSong = false;
                   } else {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':notes: Now Playing';
+                      embed.fields[0].name = ':repeat_one: Repeat Song';
                     message.guild.musicData.loopSong = true;
                   }
                 }
