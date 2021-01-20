@@ -64,6 +64,12 @@ module.exports = class NowPlayingCommand extends Command {
       .setFunctionEmojis({
         // Volume down
         '🔉': (_, instance) => {
+          videoEmbed
+            .setTimeout(
+              totalDurationInMS -
+                message.guild.musicData.songDispatcher.streamTime
+            )
+            .toFixed(0);
           if (message.guild.musicData.songDispatcher.volume > 0.01) {
             for (const embed of instance.array)
               embed.fields[0].value =
@@ -73,14 +79,20 @@ module.exports = class NowPlayingCommand extends Command {
                   100
                 ).toFixed(0) +
                 '%';
-
             message.guild.musicData.songDispatcher.setVolume(
               message.guild.musicData.songDispatcher.volume - 0.05
             );
           }
         },
+
         // Volume up
         '🔊': (_, instance) => {
+          videoEmbed
+            .setTimeout(
+              totalDurationInMS -
+                message.guild.musicData.songDispatcher.streamTime
+            )
+            .toFixed(0);
           if (message.guild.musicData.songDispatcher.volume < 2) {
             for (const embed of instance.array)
               embed.fields[0].value =
@@ -90,12 +102,12 @@ module.exports = class NowPlayingCommand extends Command {
                   100
                 ).toFixed(0) +
                 '%';
-
             message.guild.musicData.songDispatcher.setVolume(
               message.guild.musicData.songDispatcher.volume + 0.05
             );
           }
         },
+
         // Stop
         '⏹️': _ => {
           if (message.guild.musicData.songDispatcher.paused == true) {
@@ -116,6 +128,7 @@ module.exports = class NowPlayingCommand extends Command {
           }
           // message.say(`:grey_exclamation: Left the channel.`);
         },
+
         // Play/Pause
         '⏯️': (_, instance) => {
           var pauseTimer;
@@ -163,14 +176,22 @@ module.exports = class NowPlayingCommand extends Command {
           ':track_next: Next Song',
           `[${message.guild.musicData.queue[1].title}](${message.guild.musicData.queue[1].url})`
         )
+
         // Next track
         .addFunctionEmoji('⏭️', _ => {
           videoEmbed.setTimeout(100);
           message.guild.musicData.loopSong = false;
           message.guild.musicData.songDispatcher.end();
         })
+
         // Repeat Queue
         .addFunctionEmoji('🔁', _ => {
+          videoEmbed
+            .setTimeout(
+              totalDurationInMS -
+                message.guild.musicData.songDispatcher.streamTime
+            )
+            .toFixed(0);
           if (message.guild.musicData.loopQueue) {
             for (const embed of instance.array)
               embed.title.name = `:notes: ${title}`;
@@ -186,14 +207,21 @@ module.exports = class NowPlayingCommand extends Command {
         // Repeat
         '🔂',
         _ => {
-          for (const embed of instance.array)
-            if (message.guild.musicData.loopSong) {
+          videoEmbed
+            .setTimeout(
+              totalDurationInMS -
+                message.guild.musicData.songDispatcher.streamTime
+            )
+            .toFixed(0);
+          if (message.guild.musicData.loopSong) {
+            for (const embed of instance.array)
               embed.title.name = `:notes: ${title}`;
-              message.guild.musicData.loopSong = false;
-            } else {
+            message.guild.musicData.loopSong = false;
+          } else {
+            for (const embed of instance.array)
               embed.title.name = `:repeat_one: ${video.title} **On Loop**`;
-              message.guild.musicData.loopSong = true;
-            }
+            message.guild.musicData.loopSong = true;
+          }
         }
       );
     videoEmbed.build();

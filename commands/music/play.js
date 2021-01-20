@@ -327,13 +327,19 @@ module.exports = class PlayCommand extends Command {
               .setFunctionEmojis({
                 // Volume Down
                 '🔉': (_, instance) => {
+                  videoEmbed
+                    .setTimeout(
+                      totalDurationInMS -
+                        message.guild.musicData.songDispatcher.streamTime
+                    )
+                    .toFixed(0);
+
                   if (dispatcher.volume > 0.01) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
                         ((dispatcher.volume - 0.05) * 100).toFixed(0) +
                         '%';
-
                     message.guild.musicData.songDispatcher.setVolume(
                       message.guild.musicData.songDispatcher.volume - 0.05
                     );
@@ -341,13 +347,19 @@ module.exports = class PlayCommand extends Command {
                 },
                 // Volume Up
                 '🔊': (_, instance) => {
+                  videoEmbed
+                    .setTimeout(
+                      totalDurationInMS -
+                        message.guild.musicData.songDispatcher.streamTime
+                    )
+                    .toFixed(0);
+
                   if (dispatcher.volume < 2) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
                         ((dispatcher.volume + 0.05) * 100).toFixed(0) +
                         '%';
-
                     message.guild.musicData.songDispatcher.setVolume(
                       message.guild.musicData.songDispatcher.volume + 0.05
                     );
@@ -430,6 +442,12 @@ module.exports = class PlayCommand extends Command {
                 })
                 // Repeat Queue
                 .addFunctionEmoji('🔁', (_, instance) => {
+                  videoEmbed
+                    .setTimeout(
+                      totalDurationInMS -
+                        message.guild.musicData.songDispatcher.streamTime
+                    )
+                    .toFixed(0);
                   if (message.guild.musicData.loopQueue) {
                     for (const embed of instance.array)
                       embed.fields[0].name = ':notes: Now Playing';
@@ -445,6 +463,12 @@ module.exports = class PlayCommand extends Command {
                 // Repeat
                 '🔂',
                 (_, instance) => {
+                  videoEmbed
+                    .setTimeout(
+                      totalDurationInMS -
+                        message.guild.musicData.songDispatcher.streamTime
+                    )
+                    .toFixed(0);
                   if (message.guild.musicData.loopSong) {
                     for (const embed of instance.array)
                       embed.fields[0].name = ':notes: Now Playing';
