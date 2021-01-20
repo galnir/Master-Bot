@@ -297,7 +297,8 @@ module.exports = class PlayCommand extends Command {
                   queue[0].memberAvatar
                 )
             ];
-
+            
+            // Time conversion for the embed timeout(MS)
             const totalDurationObj = queue[0].rawDuration;
             var totalDurationInMS = 0;
             Object.keys(totalDurationObj).forEach(function(key) {
@@ -323,6 +324,7 @@ module.exports = class PlayCommand extends Command {
               )
               .setDeleteOnTimeout(true)
               .setFunctionEmojis({
+                // Exit
                 '❌': () => {
                   if (dispatcher.paused) {
                     message.guild.musicData.songDispatcher.resume();
@@ -343,6 +345,7 @@ module.exports = class PlayCommand extends Command {
                     videoEmbed.setTimeout(100);
                   }
                 },
+                // Volume down
                 '🔉': (_, instance) => {
                   for (const embed of instance.array) embed.fields[2].value--;
 
@@ -350,6 +353,7 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.songDispatcher.volume - 0.01
                   );
                 },
+                // Volume up
                 '🔊': (_, instance) => {
                   for (const embed of instance.array) embed.fields[2].value++;
 
@@ -357,15 +361,28 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.songDispatcher.volume + 0.01
                   );
                 },
+                // Repeat 1
                 '🔂': _ => {
                   if (message.guild.musicData.loopSong)
                     message.guild.musicData.loopSong = false;
                   else message.guild.musicData.loopSong = true;
                 },
+                // Play/Pause
                 '⏯️': _ => {
                   if (!dispatcher.paused) {
                     videoEmbed.setTimeout(600000);
                     message.guild.musicData.songDispatcher.pause();
+                    // Leaves the channel when left paused for 10min
+                    setTimeout(() => {
+                      message.guild.musicData.songDispatcher.resume();
+                      message.guild.musicData.queue.length = 0;
+                      message.guild.musicData.loopSong = false;
+                      setTimeout(() => {
+                        message.guild.musicData.songDispatcher.end();
+                      }, 100);
+                      message.say(`:zzz: Left channel due to inactivity.`);
+                      videoEmbed.setTimeout(0);
+                    }, 600000);
                   } else {
                     videoEmbed.setTimeout(
                       totalDurationInMS -
@@ -387,6 +404,7 @@ module.exports = class PlayCommand extends Command {
                   ':track_next: Next Song',
                   `[${queue[1].title}](${queue[1].url})`
                 )
+                // Next track
                 .addFunctionEmoji('⏭️', _ => {
                   videoEmbed.setTimeout(100);
                   message.guild.musicData.loopSong = false;
