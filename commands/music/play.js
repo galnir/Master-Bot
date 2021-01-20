@@ -322,15 +322,12 @@ module.exports = class PlayCommand extends Command {
               .setArray(nowPlayingArr)
               //.setAuthorizedUsers([message.author.id])
               .setChannel(message.channel)
-              .setTimeout(
-                totalDurationInMS -
-                  message.guild.musicData.songDispatcher.streamTime
-              )
+              .setTimeout(totalDurationInMS)
               .setDeleteOnTimeout(true)
               .setFunctionEmojis({
                 // Exit
                 '❌': () => {
-                  if (dispatcher.paused) {
+                  if (dispatcher.paused == true) {
                     message.guild.musicData.songDispatcher.resume();
                     message.guild.musicData.queue.length = 0;
                     message.guild.musicData.loopSong = false;
@@ -378,7 +375,7 @@ module.exports = class PlayCommand extends Command {
                 },
                 // Play/Pause
                 '⏯️': (_, instance) => {
-                  if (!dispatcher.paused) {
+                  if (dispatcher.paused == false) {
                     for (const embed of instance.array)
                       embed.fields[0].name = ':pause_button: Paused';
 
