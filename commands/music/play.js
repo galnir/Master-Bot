@@ -305,6 +305,7 @@ module.exports = class PlayCommand extends Command {
             var videoEmbed = new Pagination.Embeds()
               .setArray(nowPlayingArr)
               //.setAuthorizedUsers([message.author.id])
+              .setDisabledNavigationEmojis(['delete'])
               .setChannel(message.channel)
               .setFunctionEmojis({
                 // Volume Down
