@@ -53,6 +53,8 @@ module.exports = class NowPlayingCommand extends Command {
         )
     ];
 
+    var pauseTimer;
+
     var videoEmbed = new Pagination.Embeds()
       .setArray(nowPlayingArr)
       .setAuthorizedUsers([message.author.id])
@@ -116,30 +118,34 @@ module.exports = class NowPlayingCommand extends Command {
 
         // Play/Pause
         '⏯️': (_, instance) => {
-          var pauseTimer;
           if (message.guild.musicData.songDispatcher.paused == false) {
             for (const embed of instance.array)
               embed.title.name = `:pause_button: ${video.title}`;
             videoEmbed.setTimeout(600000);
             message.guild.musicData.songDispatcher.pause();
             // Leaves Channel if paused for 10 min
-            pauseTimer = setTimeout(() => {
-              message.guild.musicData.songDispatcher.resume();
-              message.guild.musicData.queue.length = 0;
-              message.guild.musicData.loopSong = false;
-              setTimeout(() => {
-                message.guild.musicData.songDispatcher.end();
-              }, 100);
-              message.guild.me.voice.channel.leave();
-              message.say(`:zzz: Left channel due to inactivity.`);
-              videoEmbed.setTimeout(0);
-            }, 600000);
+            function startPauseTimer() {
+              pauseTimer = setTimeout(() => {
+                message.guild.musicData.songDispatcher.resume();
+                message.guild.musicData.queue.length = 0;
+                message.guild.musicData.loopSong = false;
+                setTimeout(() => {
+                  message.guild.musicData.songDispatcher.end();
+                }, 100);
+                message.say(`:zzz: Left channel due to inactivity.`);
+                videoEmbed.setTimeout(0);
+              }, 600000);
+            }
+            startPauseTimer();
           } else {
-            clearTimeout(pauseTimer);
             for (const embed of instance.array)
               embed.title.name = `:notes: ${title}`;
             videoEmbed.setTimeout(30000);
             message.guild.musicData.songDispatcher.resume();
+            function stopPauseTimer() {
+              clearTimeout(pauseTimer);
+            }
+            stopPauseTimer();
           }
         }
       });

@@ -301,6 +301,7 @@ module.exports = class PlayCommand extends Command {
                   queue[0].memberAvatar
                 )
             ];
+            var pauseTimer;
 
             var videoEmbed = new Pagination.Embeds()
               .setArray(nowPlayingArr)
@@ -365,31 +366,35 @@ module.exports = class PlayCommand extends Command {
                 // Play/Pause
                 '⏯️': (_, instance) => {
                   // Leaves the channel when left paused for 10min
-                  var pauseTimer;
                   if (message.guild.musicData.songDispatcher.paused == false) {
                     message.guild.musicData.songDispatcher.pause();
+
                     for (const embed of instance.array)
                       embed.fields[0].name = ':pause_button: Paused';
                     // Leaves the channel when left paused for 10min
                     videoEmbed.setTimeout(600000);
-
-                    pauseTimer = setTimeout(() => {
-                      message.guild.musicData.songDispatcher.resume();
-                      message.guild.musicData.queue.length = 0;
-                      message.guild.musicData.loopSong = false;
-                      setTimeout(() => {
-                        message.guild.musicData.songDispatcher.end();
-                      }, 100);
-                      message.guild.me.voice.channel.leave();
-                      message.say(`:zzz: Left channel due to inactivity.`);
-                      videoEmbed.setTimeout(0);
-                    }, 600000);
+                    function startPauseTimer() {
+                      pauseTimer = setTimeout(() => {
+                        message.guild.musicData.songDispatcher.resume();
+                        message.guild.musicData.queue.length = 0;
+                        message.guild.musicData.loopSong = false;
+                        setTimeout(() => {
+                          message.guild.musicData.songDispatcher.end();
+                        }, 100);
+                        message.say(`:zzz: Left channel due to inactivity.`);
+                        videoEmbed.setTimeout(0);
+                      }, 600000);
+                    }
+                    startPauseTimer();
                   } else {
-                    clearTimeout(pauseTimer);
                     videoEmbed.setTimeout(30000);
                     for (const embed of instance.array)
                       embed.fields[0].name = ':notes: Now Playing';
                     message.guild.musicData.songDispatcher.resume();
+                    function stopPauseTimer() {
+                      clearTimeout(pauseTimer);
+                    }
+                    stopPauseTimer();
                   }
                 }
               });
