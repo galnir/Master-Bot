@@ -358,6 +358,8 @@ module.exports = class PlayCommand extends Command {
                 // Stop
                 '⏹️': () => {
                   if (message.guild.musicData.songDispatcher.paused == true) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':stop_button: Stopped';
                     message.guild.musicData.songDispatcher.resume();
                     message.guild.musicData.queue.length = 0;
                     message.guild.musicData.loopSong = false;
@@ -366,15 +368,14 @@ module.exports = class PlayCommand extends Command {
                     }, 100);
                     videoEmbed.setTimeout(0);
                   } else {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':stop_button: Stopped';
                     message.guild.musicData.queue.length = 0;
                     message.guild.musicData.skipTimer = true;
                     message.guild.musicData.loopSong = false;
                     message.guild.musicData.loopQueue = false;
                     message.guild.musicData.songDispatcher.end();
                     videoEmbed.setTimeout(100);
-                  }
-                  for (const embed of instance.array) {
-                    embed.fields[0].name = ':stop_button: Stopped';
                   }
                 },
                 // Play/Pause
