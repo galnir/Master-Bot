@@ -24,6 +24,7 @@ Make a config.json file in the root directory of the project and add:
 - Full Command List
 ```
 {
+  "invite": "false",
   "prefix": "!",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
@@ -36,6 +37,8 @@ Make a config.json file in the root directory of the project and add:
   "twitchClientSecret": "Your-Client-Secret"
 }
 ```
+
+Note: When setting `"invite": true` remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
 
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
@@ -117,6 +120,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command                    | Description                                                                    | Usage                                |
 | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
 | !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
+| !invite                    | Replies with a link to invite the bot.                                         | !invite                              |
 | !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
 | !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
@@ -150,7 +154,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
