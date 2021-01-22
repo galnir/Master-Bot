@@ -276,12 +276,12 @@ module.exports = class PlayCommand extends Command {
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
             // Volume Settings
-            var savedVolume = db.get(
-              `${message.guild.id}.serverSettings.volume`
-            );
-            if (!savedVolume)
+            if (!db.get(`${message.guild.id}.serverSettings.volume`))
               dispatcher.setVolume(message.guild.musicData.volume);
-            else dispatcher.setVolume(savedVolume);
+            else
+              dispatcher.setVolume(
+                db.get(`${message.guild.id}.serverSettings.volume`)
+              );
 
             var embedTitle = ':musical_note: Now Playing';
             if (message.guild.musicData.loopQueue)
@@ -309,17 +309,21 @@ module.exports = class PlayCommand extends Command {
 
             var videoEmbed = new Pagination.Embeds()
               .setArray(nowPlayingArr)
-              .setAuthorizedUsers([message.author.id])
+              //.setAuthorizedUsers([message.author.id])
               .setDisabledNavigationEmojis(['delete'])
               .setChannel(message.channel)
               .setFunctionEmojis({
                 // Volume Down
                 '🔉': (_, instance) => {
-                  if (dispatcher.volume > 0) {
+                  if (message.guild.musicData.songDispatcher.volume > 0) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
-                        ((dispatcher.volume - 0.01) * 100).toFixed(0) +
+                        (
+                          (message.guild.musicData.songDispatcher.volume -
+                            0.01) *
+                          100
+                        ).toFixed(0) +
                         '%';
                     message.guild.musicData.songDispatcher.setVolume(
                       message.guild.musicData.songDispatcher.volume - 0.01
@@ -332,7 +336,7 @@ module.exports = class PlayCommand extends Command {
                 },
                 // Volume Up
                 '🔊': (_, instance) => {
-                  if (dispatcher.volume < 2) {
+                  if (message.guild.musicData.songDispatcher.volume < 2) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
