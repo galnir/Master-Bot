@@ -275,21 +275,25 @@ module.exports = class PlayCommand extends Command {
           )
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
-            if (!db.get(`${message.guild.id}.serverSettings.volume`))
+            // Volume Settings
+            var savedVolume = db.get(
+              `${message.guild.id}.serverSettings.volume`
+            );
+            if (!savedVolume)
               dispatcher.setVolume(message.guild.musicData.volume);
-            else
-              dispatcher.setVolume(
-                db.get(`${message.guild.id}.serverSettings.volume`)
-              );
+            else dispatcher.setVolume(savedVolume);
+
+            var embedTitle = ':musical_note: Now Playing';
+            if (message.guild.musicData.loopQueue)
+              embedTitle = ':repeat: Repeat Queue';
+            if (message.guild.musicData.loopSong)
+              embedTitle = ':repeat_one: Repeat Song';
 
             var nowPlayingArr = [
               new MessageEmbed()
                 .setThumbnail(queue[0].thumbnail)
                 .setColor('#ff0000')
-                .addField(
-                  ':notes: Now Playing',
-                  `[${queue[0].title}](${queue[0].url})`
-                )
+                .addField(embedTitle, `[${queue[0].title}](${queue[0].url})`)
                 .addField('Duration', ':stopwatch: ' + queue[0].duration, true)
                 .addField(
                   'Volume',
@@ -305,30 +309,30 @@ module.exports = class PlayCommand extends Command {
 
             var videoEmbed = new Pagination.Embeds()
               .setArray(nowPlayingArr)
-              //.setAuthorizedUsers([message.author.id])
+              .setAuthorizedUsers([message.author.id])
               .setDisabledNavigationEmojis(['delete'])
               .setChannel(message.channel)
               .setFunctionEmojis({
                 // Volume Down
                 '🔉': (_, instance) => {
-                  if (message.guild.musicData.songDispatcher.volume > 0) {
+                  if (dispatcher.volume > 0) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
-                        (
-                          (message.guild.musicData.songDispatcher.volume -
-                            0.01) *
-                          100
-                        ).toFixed(0) +
+                        ((dispatcher.volume - 0.01) * 100).toFixed(0) +
                         '%';
                     message.guild.musicData.songDispatcher.setVolume(
                       message.guild.musicData.songDispatcher.volume - 0.01
+                    );
+                    db.set(
+                      `${message.member.guild.id}.serverSettings.volume`,
+                      message.guild.musicData.songDispatcher.volume.toFixed(2)
                     );
                   }
                 },
                 // Volume Up
                 '🔊': (_, instance) => {
-                  if (message.guild.musicData.songDispatcher.volume < 2) {
+                  if (dispatcher.volume < 2) {
                     for (const embed of instance.array)
                       embed.fields[2].value =
                         ':loud_sound: ' +
@@ -340,6 +344,10 @@ module.exports = class PlayCommand extends Command {
                         '%';
                     message.guild.musicData.songDispatcher.setVolume(
                       message.guild.musicData.songDispatcher.volume + 0.01
+                    );
+                    db.set(
+                      `${message.member.guild.id}.serverSettings.volume`,
+                      message.guild.musicData.songDispatcher.volume.toFixed(2)
                     );
                   }
                 },
@@ -361,14 +369,15 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.songDispatcher.end();
                     videoEmbed.setTimeout(100);
                   }
-                  // message.say(`:grey_exclamation: Left the channel.`);
+                  for (const embed of instance.array) {
+                    embed.fields[0].name = ':stop_button: Stopped';
+                  }
                 },
                 // Play/Pause
                 '⏯️': (_, instance) => {
                   // Leaves the channel when left paused for 10min
                   if (message.guild.musicData.songDispatcher.paused == false) {
                     message.guild.musicData.songDispatcher.pause();
-
                     for (const embed of instance.array)
                       embed.fields[0].name = ':pause_button: Paused';
                     // Leaves the channel when left paused for 10min
@@ -389,7 +398,7 @@ module.exports = class PlayCommand extends Command {
                   } else {
                     videoEmbed.setTimeout(30000);
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':notes: Now Playing';
+                      embed.fields[0].name = ':musical_note: Now Playing';
                     message.guild.musicData.songDispatcher.resume();
                     function stopPauseTimer() {
                       clearTimeout(pauseTimer);
@@ -406,7 +415,9 @@ module.exports = class PlayCommand extends Command {
               videoEmbed
                 .addField(
                   'Queue',
-                  [message.guild.musicData.queue.length - 1] + ' Song(s)',
+                  ':notes: ' +
+                    [message.guild.musicData.queue.length - 1] +
+                    ' Song(s)',
                   true
                 )
                 .addField(
@@ -423,7 +434,7 @@ module.exports = class PlayCommand extends Command {
                 .addFunctionEmoji('🔁', (_, instance) => {
                   if (message.guild.musicData.loopQueue) {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':notes: Now Playing';
+                      embed.fields[0].name = ':musical_note: Now Playing';
                     message.guild.musicData.loopQueue = false;
                   } else {
                     for (const embed of instance.array)
@@ -438,7 +449,7 @@ module.exports = class PlayCommand extends Command {
                 (_, instance) => {
                   if (message.guild.musicData.loopSong) {
                     for (const embed of instance.array)
-                      embed.fields[0].name = ':notes: Now Playing';
+                      embed.fields[0].name = ':musical_note: Now Playing';
                     message.guild.musicData.loopSong = false;
                   } else {
                     for (const embed of instance.array)

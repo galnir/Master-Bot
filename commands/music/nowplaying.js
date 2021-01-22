@@ -1,6 +1,7 @@
 const { MessageEmbed } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const Pagination = require('discord-paginationembed');
+const db = require('quick.db');
 
 module.exports = class NowPlayingCommand extends Command {
   constructor(client) {
@@ -33,15 +34,18 @@ module.exports = class NowPlayingCommand extends Command {
       description = NowPlayingCommand.playbackBar(message, video);
     }
 
-    const title = message.guild.musicData.loopSong
-      ? `:repeat: ${video.title} **On Loop**`
-      : video.title;
+    var embedTitle = `:musical_note: ${video.title}`;
+
+    if (message.guild.musicData.loopQueue == true)
+      embedTitle = `:repeat: ${video.title} **Queue On Loop**`;
+    if (message.guild.musicData.loopSong == true)
+      embedTitle = `:repeat_one: ${video.title} **On Loop**'`;
 
     var nowPlayingArr = [
       new MessageEmbed()
         .setThumbnail(video.thumbnail)
         .setColor('#e9f931')
-        .setTitle(`:notes: ${title}`)
+        .setTitle(embedTitle)
         .setURL(video.url)
         .setDescription(description)
         .addField(
@@ -75,6 +79,10 @@ module.exports = class NowPlayingCommand extends Command {
             message.guild.musicData.songDispatcher.setVolume(
               message.guild.musicData.songDispatcher.volume - 0.01
             );
+            db.set(
+              `${message.member.guild.id}.serverSettings.volume`,
+              message.guild.musicData.songDispatcher.volume.toFixed(2)
+            );
           }
         },
 
@@ -91,6 +99,10 @@ module.exports = class NowPlayingCommand extends Command {
                 '%';
             message.guild.musicData.songDispatcher.setVolume(
               message.guild.musicData.songDispatcher.volume + 0.01
+            );
+            db.set(
+              `${message.member.guild.id}.serverSettings.volume`,
+              message.guild.musicData.songDispatcher.volume.toFixed(2)
             );
           }
         },
@@ -113,14 +125,13 @@ module.exports = class NowPlayingCommand extends Command {
             message.guild.musicData.songDispatcher.end();
             videoEmbed.setTimeout(100);
           }
-          // message.say(`:grey_exclamation: Left the channel.`);
         },
 
         // Play/Pause
         '⏯️': (_, instance) => {
           if (message.guild.musicData.songDispatcher.paused == false) {
             for (const embed of instance.array)
-              embed.title.name = `:pause_button: ${video.title}`;
+              embed.title = `:pause_button: ${video.title}`;
             videoEmbed.setTimeout(600000);
             message.guild.musicData.songDispatcher.pause();
             // Leaves Channel if paused for 10 min
@@ -139,7 +150,7 @@ module.exports = class NowPlayingCommand extends Command {
             startPauseTimer();
           } else {
             for (const embed of instance.array)
-              embed.title.name = `:notes: ${title}`;
+              embed.title = `:musical_note: ${video.title}`;
             videoEmbed.setTimeout(30000);
             message.guild.musicData.songDispatcher.resume();
             function stopPauseTimer() {
@@ -157,7 +168,7 @@ module.exports = class NowPlayingCommand extends Command {
       videoEmbed
         .addField(
           'Queue',
-          [message.guild.musicData.queue.length - 1] + ' Song(s)',
+          ':notes: '[message.guild.musicData.queue.length - 1] + ' Song(s)',
           true
         )
         .addField(
@@ -173,14 +184,14 @@ module.exports = class NowPlayingCommand extends Command {
         })
 
         // Repeat Queue
-        .addFunctionEmoji('🔁', _ => {
+        .addFunctionEmoji('🔁', (_, instance) => {
           if (message.guild.musicData.loopQueue) {
             for (const embed of instance.array)
-              embed.title.name = `:notes: ${title}`;
+              embed.title = `:musical_note: ${video.title}`;
             message.guild.musicData.loopQueue = false;
           } else {
             for (const embed of instance.array)
-              embed.title.name = `:repeat: ${video.title} **On Loop**`;
+              embed.title = `:repeat: ${video.title} **On Loop**`;
             message.guild.musicData.loopQueue = true;
           }
         });
@@ -188,14 +199,14 @@ module.exports = class NowPlayingCommand extends Command {
       videoEmbed.addFunctionEmoji(
         // Repeat
         '🔂',
-        _ => {
+        (_, instance) => {
           if (message.guild.musicData.loopSong) {
             for (const embed of instance.array)
-              embed.title.name = `:notes: ${title}`;
+              embed.title = `:musical_note:  ${video.title}`;
             message.guild.musicData.loopSong = false;
           } else {
             for (const embed of instance.array)
-              embed.title.name = `:repeat_one: ${video.title} **On Loop**`;
+              embed.title = `:repeat_one: ${video.title} **On Loop**`;
             message.guild.musicData.loopSong = true;
           }
         }
