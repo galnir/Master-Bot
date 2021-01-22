@@ -61,7 +61,7 @@ module.exports = class NowPlayingCommand extends Command {
 
     var videoEmbed = new Pagination.Embeds()
       .setArray(nowPlayingArr)
-      .setAuthorizedUsers([message.author.id])
+      //.setAuthorizedUsers([message.author.id])
       .setChannel(message.channel)
       .setDisabledNavigationEmojis(['delete'])
       .setFunctionEmojis({
