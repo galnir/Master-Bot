@@ -356,10 +356,11 @@ module.exports = class PlayCommand extends Command {
                   }
                 },
                 // Stop
-                '⏹️': () => {
+                '⏹️': (_, instance) => {
+                  for (const embed of instance.array)
+                    embed.fields[0].name = ':stop_button: Stopped';
+
                   if (message.guild.musicData.songDispatcher.paused == true) {
-                    for (const embed of instance.array)
-                      embed.fields[0].name = ':stop_button: Stopped';
                     message.guild.musicData.songDispatcher.resume();
                     message.guild.musicData.queue.length = 0;
                     message.guild.musicData.loopSong = false;
@@ -368,8 +369,6 @@ module.exports = class PlayCommand extends Command {
                     }, 100);
                     videoEmbed.setTimeout(0);
                   } else {
-                    for (const embed of instance.array)
-                      embed.fields[0].name = ':stop_button: Stopped';
                     message.guild.musicData.queue.length = 0;
                     message.guild.musicData.skipTimer = true;
                     message.guild.musicData.loopSong = false;
@@ -380,7 +379,6 @@ module.exports = class PlayCommand extends Command {
                 },
                 // Play/Pause
                 '⏯️': (_, instance) => {
-                  // Leaves the channel when left paused for 10min
                   if (message.guild.musicData.songDispatcher.paused == false) {
                     message.guild.musicData.songDispatcher.pause();
                     for (const embed of instance.array)
