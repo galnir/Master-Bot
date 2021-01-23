@@ -285,7 +285,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                 );
               }
               embed.setArray(embedArry2);
-              if (number - 1 > 0)
+              if (number > 0)
                 embed.addField(
                   `Category ${number + 1} of ${category.length}`,
                   '🔼' +
