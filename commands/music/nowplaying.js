@@ -176,7 +176,7 @@ module.exports = class NowPlayingCommand extends Command {
       videoEmbed
         .addField(
           'Queue',
-          ':notes: ' + message.guild.musicData.queue.length - 1 + ' Song(s)',
+          ':notes: ' + [message.guild.musicData.queue.length - 1] + ' Song(s)',
           true
         )
         .addField(
