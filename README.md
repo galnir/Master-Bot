@@ -2,49 +2,11 @@
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
+[![image](https://img.shields.io/badge/python-%3E%3D2.7-blue)](https://www.python.org/)
 
-### Installing the dependencies
-
-`npm i`
-
-### Setup
-
-Make a config.json file in the root directory of the project and add:
-
-- Minimum
-```
-{
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
-  "token": "Your-Bot-Token",
-  "youtubeAPI": "youtube-api-key"
-}
-```
-
-- Full Command List
-```
-{
-  "invite": "false",
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
-  "token": "Your-Bot-Token",
-  "youtubeAPI": "youtube-api-key",
-  "geniusLyricsAPI": "genius-api-key",
-  "tenorAPI": "tenor-API-key",
-  "newsAPI": "news-api-key",
-  "yandexAPI": "yandex-api-key",
-  "twitchClientID": "Your-Client-ID",
-  "twitchClientSecret": "Your-Client-Secret"
-}
-```
-
-Note: When setting `"invite": true` remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
-
-I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
-
-Also, no matter what operating system you have, make sure [python 2.7](https://www.python.org/downloads/) is installed. **Discord.js now requires Node version greater than or equal to 12.0.0** .
-
-If you are not cloning this repo, make sure your dependencies versions are the same as this repo's.
+### Getting Started
+* [Creating configuration file](https://github.com/galnir/Master-Bot/wiki/Creating-configuration-file)
+* Creating bot on [Linux](https://github.com/galnir/Master-Bot/wiki/Creating-bot-on-Linux) or [Windows](https://github.com/galnir/Master-Bot/wiki/Creating-bot-on-Windows) or [RaspberryPi](https://github.com/galnir/Master-Bot/wiki/Creating-bot-on-Raspberry-Pi)
 
 ### Commands
 
@@ -127,25 +89,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
 | !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings bacon-fixation general 1 |
 
-### Resources
-
-[Get a Tenor API key here](https://tenor.com/developer/keyregistration)
-
-[Get a NewsAPI API key here](https://newsapi.org/)
-
-[How to get a Youtube API key](https://developers.google.com/youtube/v3/getting-started)
-
-[Get a Yandex API key here](https://translate.yandex.com/developers/keys)
-
-[Get a Genius API key here](https://genius.com/api-clients/new)
-
-[How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
-
-[Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
-
-[Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
-
-[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
 
 ### Contributing
 
