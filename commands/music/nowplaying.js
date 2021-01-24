@@ -206,7 +206,7 @@ module.exports = class NowPlayingCommand extends Command {
         )
         .addField(
           ':track_next: Next Song',
-          `[${message.guild.musicData.queue[1].title}](${message.guild.musicData.queue[1].url})`
+          `[${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
         )
 
         // Next track
