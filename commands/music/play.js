@@ -1219,7 +1219,7 @@ module.exports = class PlayCommand extends Command {
 
   static constructSongObj(video, voiceChannel, user) {
     let duration = this.formatDuration(video.duration);
-    if (duration == '00:00') duration = ':red_circle: Live Stream';
+    if (duration == '00:00') duration = 'Live Stream';
     return {
       url: `https://www.youtube.com/watch?v=${video.raw.id}`,
       title: video.title,
