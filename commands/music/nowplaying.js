@@ -43,7 +43,7 @@ module.exports = class NowPlayingCommand extends Command {
     if (message.guild.musicData.songDispatcher.paused == true)
       embedTitle = `:pause_button: ${video.title}`;
 
-    var nowPlayingArr = [
+    const nowPlayingArr = [
       new MessageEmbed()
         .setThumbnail(video.thumbnail)
         .setColor('#e9f931')
@@ -59,9 +59,13 @@ module.exports = class NowPlayingCommand extends Command {
         )
     ];
 
+    const channelInfo = message.member.voice.channel.members;
+    const rawMembers = Object.fromEntries(channelInfo);
+    const memberArray = [Object.keys(rawMembers)];
+
     var videoEmbed = new Pagination.Embeds()
       .setArray(nowPlayingArr)
-      .setAuthorizedUsers([message.author.id])
+      .setAuthorizedUsers(memberArray[0])
       .setChannel(message.channel)
       .setDisabledNavigationEmojis(['delete'])
       .setFunctionEmojis({

@@ -229,9 +229,14 @@ module.exports = class PlayCommand extends Command {
               message.guild.musicData.nowPlaying.memberAvatar
             )
         ];
-        var videoEmbed = new Pagination.Embeds()
+
+        const channelInfo = message.member.voice.channel.members;
+        const rawMembers = Object.fromEntries(channelInfo);
+        const memberArray = [Object.keys(rawMembers)];
+
+        const videoEmbed = new Pagination.Embeds()
           .setArray(PlayListEmbed)
-          .setAuthorizedUsers([message.author.id])
+          .setAuthorizedUsers(memberArray[0])
           .setDisabledNavigationEmojis(['delete'])
           .setChannel(message.channel)
           // Reaction Controls
@@ -316,7 +321,6 @@ module.exports = class PlayCommand extends Command {
             // Play/Pause
             '⏯️': (_, instance) => {
               try {
-                // Leaves the channel when left paused for 10min
                 if (message.guild.musicData.songDispatcher.paused == false) {
                   message.guild.musicData.songDispatcher.pause();
                   for (const embed of instance.array)
@@ -344,8 +348,7 @@ module.exports = class PlayCommand extends Command {
               setTimeout(() => {
                 message.guild.musicData.songDispatcher.end();
               }, 100);
-
-              videoEmbed.setTimeout(1);
+              videoEmbed.setTimeout(0);
             } catch (error) {
               message.say(':x: Something went wrong');
               console.log(error);
@@ -458,9 +461,14 @@ module.exports = class PlayCommand extends Command {
               message.guild.musicData.nowPlaying.memberAvatar
             )
         ];
-        var videoEmbed = new Pagination.Embeds()
+
+        const channelInfo = message.member.voice.channel.members;
+        const rawMembers = Object.fromEntries(channelInfo);
+        const memberArray = [Object.keys(rawMembers)];
+
+        const videoEmbed = new Pagination.Embeds()
           .setArray(addedEmbed)
-          .setAuthorizedUsers([message.author.id])
+          .setAuthorizedUsers(memberArray[0])
           .setDisabledNavigationEmojis(['delete'])
           .setChannel(message.channel)
           // Reaction Controls
@@ -545,7 +553,6 @@ module.exports = class PlayCommand extends Command {
             // Play/Pause
             '⏯️': (_, instance) => {
               try {
-                // Leaves the channel when left paused for 10min
                 if (message.guild.musicData.songDispatcher.paused == false) {
                   message.guild.musicData.songDispatcher.pause();
                   for (const embed of instance.array)
@@ -573,8 +580,7 @@ module.exports = class PlayCommand extends Command {
               setTimeout(() => {
                 message.guild.musicData.songDispatcher.end();
               }, 100);
-
-              videoEmbed.setTimeout(1);
+              videoEmbed.setTimeout(0);
             } catch (error) {
               message.say(':x: Something went wrong');
               console.log(error);
@@ -643,7 +649,7 @@ module.exports = class PlayCommand extends Command {
             if (message.guild.musicData.loopSong)
               embedTitle = ':repeat_one: Repeat Song';
 
-            var nowPlayingArr = [
+            const nowPlayingArr = [
               new MessageEmbed()
                 .setThumbnail(queue[0].thumbnail)
                 .setColor('#ff0000')
@@ -659,9 +665,14 @@ module.exports = class PlayCommand extends Command {
                   queue[0].memberAvatar
                 )
             ];
-            var videoEmbed = new Pagination.Embeds()
+
+            const channelInfo = message.member.voice.channel.members;
+            const rawMembers = Object.fromEntries(channelInfo);
+            const memberArray = [Object.keys(rawMembers)];
+
+            const videoEmbed = new Pagination.Embeds()
               .setArray(nowPlayingArr)
-              .setAuthorizedUsers([message.author.id])
+              .setAuthorizedUsers(memberArray[0])
               .setDisabledNavigationEmojis(['delete'])
               .setChannel(message.channel)
               // Reaction Controls
@@ -736,7 +747,6 @@ module.exports = class PlayCommand extends Command {
                 // Play/Pause
                 '⏯️': (_, instance) => {
                   try {
-                    // Leaves the channel when left paused for 10min
                     if (
                       message.guild.musicData.songDispatcher.paused == false
                     ) {
@@ -782,8 +792,7 @@ module.exports = class PlayCommand extends Command {
                     setTimeout(() => {
                       message.guild.musicData.songDispatcher.end();
                     }, 100);
-
-                    videoEmbed.setTimeout(1);
+                    videoEmbed.setTimeout(0);
                   } catch (error) {
                     message.say(':x: Something went wrong');
                     console.log(error);
@@ -1046,9 +1055,14 @@ module.exports = class PlayCommand extends Command {
                     message.guild.musicData.nowPlaying.memberAvatar
                   )
               ];
-              var videoEmbed = new Pagination.Embeds()
+
+              const channelInfo = message.member.voice.channel.members;
+              const rawMembers = Object.fromEntries(channelInfo);
+              const memberArray = [Object.keys(rawMembers)];
+
+              const videoEmbed = new Pagination.Embeds()
                 .setArray(addedEmbed)
-                .setAuthorizedUsers([message.author.id])
+                .setAuthorizedUsers(memberArray[0])
                 .setDisabledNavigationEmojis(['delete'])
                 .setChannel(message.channel)
                 // Reaction Controls
@@ -1137,7 +1151,6 @@ module.exports = class PlayCommand extends Command {
                   // Play/Pause
                   '⏯️': (_, instance) => {
                     try {
-                      // Leaves the channel when left paused for 10min
                       if (
                         message.guild.musicData.songDispatcher.paused == false
                       ) {
@@ -1167,8 +1180,7 @@ module.exports = class PlayCommand extends Command {
                     setTimeout(() => {
                       message.guild.musicData.songDispatcher.end();
                     }, 100);
-
-                    videoEmbed.setTimeout(1);
+                    videoEmbed.setTimeout(0);
                   } catch (error) {
                     message.say(':x: Something went wrong');
                     console.log(error);
