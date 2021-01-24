@@ -40,6 +40,8 @@ module.exports = class NowPlayingCommand extends Command {
       embedTitle = `:repeat: ${video.title} **Queue On Loop**`;
     if (message.guild.musicData.loopSong == true)
       embedTitle = `:repeat_one: ${video.title} **On Loop**'`;
+    if (message.guild.musicData.songDispatcher.paused == true)
+      embedTitle = `:pause_button: ${video.title}`;
 
     var nowPlayingArr = [
       new MessageEmbed()
@@ -57,8 +59,6 @@ module.exports = class NowPlayingCommand extends Command {
         )
     ];
 
-    var pauseTimer;
-
     var videoEmbed = new Pagination.Embeds()
       .setArray(nowPlayingArr)
       .setAuthorizedUsers([message.author.id])
@@ -68,6 +68,12 @@ module.exports = class NowPlayingCommand extends Command {
         // Volume down
         '🔉': (_, instance) => {
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.songDispatcher.volume > 0) {
               for (const embed of instance.array)
                 embed.fields[0].value =
@@ -94,6 +100,12 @@ module.exports = class NowPlayingCommand extends Command {
         // Volume up
         '🔊': (_, instance) => {
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.songDispatcher.volume < 2) {
               for (const embed of instance.array)
                 embed.fields[0].value =
@@ -119,10 +131,16 @@ module.exports = class NowPlayingCommand extends Command {
 
         // Stop
         '⏹️': (_, instance) => {
-          for (const embed of instance.array)
-            embed.title = `:stop_button: ${video.title}`;
-
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
+            for (const embed of instance.array)
+              embed.title = `:stop_button: ${video.title}`;
+
             if (message.guild.musicData.songDispatcher.paused == true) {
               message.guild.musicData.songDispatcher.resume();
               message.guild.musicData.queue.length = 0;
@@ -148,19 +166,22 @@ module.exports = class NowPlayingCommand extends Command {
         // Play/Pause
         '⏯️': (_, instance) => {
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.songDispatcher.paused == false) {
               for (const embed of instance.array)
                 embed.title = `:pause_button: ${video.title}`;
               videoEmbed.setTimeout(600000);
               message.guild.musicData.songDispatcher.pause();
-              // Leaves Channel if paused for 10 min
-              startPauseTimer();
             } else {
               for (const embed of instance.array)
                 embed.title = `:musical_note: ${video.title}`;
               videoEmbed.setTimeout(30000);
               message.guild.musicData.songDispatcher.resume();
-              stopPauseTimer();
             }
           } catch (error) {
             message.say(':x: Something went wrong');
@@ -176,7 +197,7 @@ module.exports = class NowPlayingCommand extends Command {
       videoEmbed
         .addField(
           'Queue',
-          ':notes: ' + [message.guild.musicData.queue.length - 1] + ' Song(s)',
+          ':notes: ' + message.guild.musicData.queue.length + ' Song(s)',
           true
         )
         .addField(
@@ -185,18 +206,25 @@ module.exports = class NowPlayingCommand extends Command {
         )
 
         // Next track
-        .addFunctionEmoji('⏭️', _ => {
+        .addFunctionEmoji('⏭️', (_, instance) => {
           try {
+            for (const embed of instance.array)
+              embed.title = `:next_track: Skipped ${video.title}`;
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.songDispatcher.paused == true)
               message.guild.musicData.songDispatcher.resume();
-            stopPauseTimer();
-            videoEmbed.setTimeout(100);
             message.guild.musicData.loopSong = false;
             setTimeout(() => {
               message.guild.musicData.songDispatcher.end();
             }, 100);
+            videoEmbed.setTimeout(0);
           } catch (error) {
-            message.say(':x: Something went wrong' + error);
+            message.say(':x: Something went wrong');
             console.log(error);
           }
         })
@@ -204,6 +232,12 @@ module.exports = class NowPlayingCommand extends Command {
         // Repeat Queue
         .addFunctionEmoji('🔁', (_, instance) => {
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.loopQueue) {
               for (const embed of instance.array)
                 embed.title = `:musical_note: ${video.title}`;
@@ -214,7 +248,7 @@ module.exports = class NowPlayingCommand extends Command {
               message.guild.musicData.loopQueue = true;
             }
           } catch (error) {
-            message.say(':x: Something went wrong' + error);
+            message.say(':x: Something went wrong');
             console.log(error);
           }
         });
@@ -224,6 +258,12 @@ module.exports = class NowPlayingCommand extends Command {
         '🔂',
         (_, instance) => {
           try {
+            if (video.duration == 'Live Stream') {
+              description = ':red_circle: Live Stream';
+            } else {
+              description = NowPlayingCommand.playbackBar(message, video);
+            }
+            videoEmbed.setDescription(description);
             if (message.guild.musicData.loopSong) {
               for (const embed of instance.array)
                 embed.title = `:musical_note:  ${video.title}`;
@@ -234,29 +274,13 @@ module.exports = class NowPlayingCommand extends Command {
               message.guild.musicData.loopSong = true;
             }
           } catch (error) {
-            message.say(':x: Something went wrong' + error);
+            message.say(':x: Something went wrong');
             console.log(error);
           }
         }
       );
     videoEmbed.build();
     return;
-
-    function stopPauseTimer() {
-      clearTimeout(pauseTimer);
-    }
-    function startPauseTimer() {
-      pauseTimer = setTimeout(() => {
-        message.guild.musicData.songDispatcher.resume();
-        message.guild.musicData.queue.length = 0;
-        message.guild.musicData.loopSong = false;
-        setTimeout(() => {
-          message.guild.musicData.songDispatcher.end();
-        }, 100);
-        message.say(`:zzz: Left channel due to inactivity.`);
-        videoEmbed.setTimeout(0);
-      }, 600000);
-    }
   }
 
   static playbackBar(message, video) {
