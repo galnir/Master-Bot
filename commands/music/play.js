@@ -147,7 +147,7 @@ module.exports = class PlayCommand extends Command {
         [videosArr[i], videosArr[j]] = [videosArr[j], videosArr[i]];
       }
       */
-
+      const queueCount = message.guild.musicData.queue.length;
       for (let i = 0; i < videosArr.length; i++) {
         if (
           videosArr[i].raw.status.privacyStatus == 'private' ||
@@ -183,6 +183,9 @@ module.exports = class PlayCommand extends Command {
       } else if (message.guild.musicData.isPlaying == true) {
         // @TODO add the the position number of queue of the when a playlist is added
 
+        const playlistCount = Math.abs(
+          queueCount - message.guild.musicData.queue.length
+        );
         // Playlist Message
         var embedTitle = ':musical_note: Now Playing';
         if (message.guild.musicData.loopQueue)
@@ -220,10 +223,14 @@ module.exports = class PlayCommand extends Command {
               true
             )
             .addField(
-              ':track_next: Next Song',
-              `[${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
+              'Next Song',
+              `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
             )
-            .addField('Playlist added', `[${playlist.title}](${playlist.url})`)
+            .addField(
+              'Added Playlist',
+              `[${playlist.title}](${playlist.url})
+              Adds ${playlistCount} songs to the queue!`
+            )
             .setFooter(
               `Requested by ${message.guild.musicData.nowPlaying.memberDisplayName}!`,
               message.guild.musicData.nowPlaying.memberAvatar
@@ -452,8 +459,8 @@ module.exports = class PlayCommand extends Command {
               true
             )
             .addField(
-              ':track_next: Next Song',
-              `[${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
+              'Next Song',
+              `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
             )
             .addField('Added to Queue', `[${video.title}](${video.url})`)
             .setFooter(
@@ -778,8 +785,8 @@ module.exports = class PlayCommand extends Command {
                   true
                 )
                 .addField(
-                  ':track_next: Next Song',
-                  `[${queue[1].title}](${queue[1].url})`
+                  'Next Song',
+                  `:track_next: [${queue[1].title}](${queue[1].url})`
                 )
                 // Next track
                 .addFunctionEmoji('⏭️', (_, instance) => {
@@ -1046,8 +1053,8 @@ module.exports = class PlayCommand extends Command {
                     true
                   )
                   .addField(
-                    ':track_next: Next Song',
-                    `[${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
+                    'Next Song',
+                    `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
                   )
                   .addField('Added to Queue', `[${video.title}](${video.url})`)
                   .setFooter(
