@@ -195,7 +195,7 @@ module.exports = class PlayCommand extends Command {
         if (message.guild.musicData.songDispatcher.paused == true)
           embedTitle = ':pause_button: Paused';
 
-        const PlayListEmbed = [
+        const playListEmbedArr = [
           new MessageEmbed()
             .setThumbnail(message.guild.musicData.nowPlaying.thumbnail)
             .setColor('#ff0000')
@@ -242,7 +242,7 @@ module.exports = class PlayCommand extends Command {
         const memberArray = [Object.keys(rawMembers)];
 
         const videoEmbed = new Pagination.Embeds()
-          .setArray(PlayListEmbed)
+          .setArray(playListEmbedArr)
           .setAuthorizedUsers(memberArray[0])
           .setDisabledNavigationEmojis(['delete'])
           .setChannel(message.channel)
@@ -250,133 +250,67 @@ module.exports = class PlayCommand extends Command {
           .setFunctionEmojis({
             // Volume Down
             '🔉': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.volume > 0) {
-                  for (const embed of instance.array)
-                    embed.fields[2].value =
-                      ':loud_sound: ' +
-                      (
-                        (message.guild.musicData.songDispatcher.volume - 0.01) *
-                        100
-                      ).toFixed(0) +
-                      '%';
-                  message.guild.musicData.songDispatcher.setVolume(
-                    message.guild.musicData.songDispatcher.volume - 0.01
-                  );
-                  db.set(
-                    `${message.member.guild.id}.serverSettings.volume`,
-                    message.guild.musicData.songDispatcher.volume
-                  );
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.volume > 0) {
+                for (const embed of instance.array)
+                  embed.fields[2].value =
+                    ':loud_sound: ' +
+                    (
+                      (message.guild.musicData.songDispatcher.volume - 0.01) *
+                      100
+                    ).toFixed(0) +
+                    '%';
+                return PlayCommand.volumeDown(message);
               }
             },
             // Volume Up
             '🔊': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.volume < 2) {
-                  for (const embed of instance.array)
-                    embed.fields[2].value =
-                      ':loud_sound: ' +
-                      (
-                        (message.guild.musicData.songDispatcher.volume + 0.01) *
-                        100
-                      ).toFixed(0) +
-                      '%';
-                  message.guild.musicData.songDispatcher.setVolume(
-                    message.guild.musicData.songDispatcher.volume + 0.01
-                  );
-                  db.set(
-                    `${message.member.guild.id}.serverSettings.volume`,
-                    message.guild.musicData.songDispatcher.volume
-                  );
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.volume < 2) {
+                for (const embed of instance.array)
+                  embed.fields[2].value =
+                    ':loud_sound: ' +
+                    (
+                      (message.guild.musicData.songDispatcher.volume + 0.01) *
+                      100
+                    ).toFixed(0) +
+                    '%';
+                return PlayCommand.volumeUp(message);
               }
             },
             // Stop
             '⏹️': (_, instance) => {
-              try {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':stop_button: Stopped';
-
-                if (message.guild.musicData.songDispatcher.paused == true) {
-                  message.guild.musicData.songDispatcher.resume();
-                  message.guild.musicData.queue.length = 0;
-                  message.guild.musicData.loopSong = false;
-                  setTimeout(() => {
-                    message.guild.musicData.songDispatcher.end();
-                  }, 100);
-                  videoEmbed.setTimeout(0);
-                } else {
-                  message.guild.musicData.queue.length = 0;
-                  message.guild.musicData.skipTimer = true;
-                  message.guild.musicData.loopSong = false;
-                  message.guild.musicData.loopQueue = false;
-                  message.guild.musicData.songDispatcher.end();
-                  videoEmbed.setTimeout(100);
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
-              }
+              for (const embed of instance.array)
+                embed.fields[0].name = ':stop_button: Stopped';
+              return PlayCommand.stopTheMusic(message);
             },
             // Play/Pause
             '⏯️': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.paused == false) {
-                  message.guild.musicData.songDispatcher.pause();
-                  for (const embed of instance.array)
-                    embed.fields[0].name = ':pause_button: Paused';
-                } else {
-                  for (const embed of instance.array)
-                    embed.fields[0].name = ':musical_note: Now Playing';
-                  message.guild.musicData.songDispatcher.resume();
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.paused == false) {
+                for (const embed of instance.array)
+                  embed.fields[0].name = ':pause_button: Paused';
+              } else {
+                for (const embed of instance.array)
+                  embed.fields[0].name = ':musical_note: Now Playing';
               }
+              return PlayCommand.playPause(message);
             }
           });
         // Next track
         videoEmbed
           .addFunctionEmoji('⏭️', (_, instance) => {
-            try {
-              for (const embed of instance.array)
-                embed.fields[0].name = ':next_track: Skipped';
-              if (message.guild.musicData.songDispatcher.paused == true)
-                message.guild.musicData.songDispatcher.resume();
-              message.guild.musicData.loopSong = false;
-              setTimeout(() => {
-                message.guild.musicData.songDispatcher.end();
-              }, 100);
-              videoEmbed.setTimeout(0);
-            } catch (error) {
-              message.say(':x: Something went wrong');
-              console.log(error);
-            }
+            for (const embed of instance.array)
+              embed.fields[0].name = ':next_track: Skipped';
+            return PlayCommand.nextTrack(message);
           })
           // Repeat Queue
           .addFunctionEmoji('🔁', (_, instance) => {
-            try {
-              if (message.guild.musicData.loopQueue) {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':musical_note: Now Playing';
-                message.guild.musicData.loopQueue = false;
-              } else {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':repeat: Repeat Queue';
-                message.guild.musicData.loopQueue = true;
-              }
-            } catch (error) {
-              message.say(':x: Something went wrong');
-              console.log(error);
+            if (message.guild.musicData.loopQueue) {
+              for (const embed of instance.array)
+                embed.fields[0].name = ':musical_note: Now Playing';
+            } else {
+              for (const embed of instance.array)
+                embed.fields[0].name = ':repeat: Repeat Queue';
             }
+            return PlayCommand.repeatQueue(message);
           });
 
         videoEmbed.build();
@@ -482,133 +416,67 @@ module.exports = class PlayCommand extends Command {
           .setFunctionEmojis({
             // Volume Down
             '🔉': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.volume > 0) {
-                  for (const embed of instance.array)
-                    embed.fields[2].value =
-                      ':loud_sound: ' +
-                      (
-                        (message.guild.musicData.songDispatcher.volume - 0.01) *
-                        100
-                      ).toFixed(0) +
-                      '%';
-                  message.guild.musicData.songDispatcher.setVolume(
-                    message.guild.musicData.songDispatcher.volume - 0.01
-                  );
-                  db.set(
-                    `${message.member.guild.id}.serverSettings.volume`,
-                    message.guild.musicData.songDispatcher.volume
-                  );
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.volume > 0) {
+                for (const embed of instance.array)
+                  embed.fields[2].value =
+                    ':loud_sound: ' +
+                    (
+                      (message.guild.musicData.songDispatcher.volume - 0.01) *
+                      100
+                    ).toFixed(0) +
+                    '%';
               }
+              return PlayCommand.volumeDown(message);
             },
             // Volume Up
             '🔊': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.volume < 2) {
-                  for (const embed of instance.array)
-                    embed.fields[2].value =
-                      ':loud_sound: ' +
-                      (
-                        (message.guild.musicData.songDispatcher.volume + 0.01) *
-                        100
-                      ).toFixed(0) +
-                      '%';
-                  message.guild.musicData.songDispatcher.setVolume(
-                    message.guild.musicData.songDispatcher.volume + 0.01
-                  );
-                  db.set(
-                    `${message.member.guild.id}.serverSettings.volume`,
-                    message.guild.musicData.songDispatcher.volume
-                  );
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.volume < 2) {
+                for (const embed of instance.array)
+                  embed.fields[2].value =
+                    ':loud_sound: ' +
+                    (
+                      (message.guild.musicData.songDispatcher.volume + 0.01) *
+                      100
+                    ).toFixed(0) +
+                    '%';
               }
+              return PlayCommand.volumeUp(message);
             },
             // Stop
             '⏹️': (_, instance) => {
-              try {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':stop_button: Stopped';
-
-                if (message.guild.musicData.songDispatcher.paused == true) {
-                  message.guild.musicData.songDispatcher.resume();
-                  message.guild.musicData.queue.length = 0;
-                  message.guild.musicData.loopSong = false;
-                  setTimeout(() => {
-                    message.guild.musicData.songDispatcher.end();
-                  }, 100);
-                  videoEmbed.setTimeout(0);
-                } else {
-                  message.guild.musicData.queue.length = 0;
-                  message.guild.musicData.skipTimer = true;
-                  message.guild.musicData.loopSong = false;
-                  message.guild.musicData.loopQueue = false;
-                  message.guild.musicData.songDispatcher.end();
-                  videoEmbed.setTimeout(100);
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
-              }
+              for (const embed of instance.array)
+                embed.fields[0].name = ':stop_button: Stopped';
+              return PlayCommand.stopTheMusic(message);
             },
             // Play/Pause
             '⏯️': (_, instance) => {
-              try {
-                if (message.guild.musicData.songDispatcher.paused == false) {
-                  message.guild.musicData.songDispatcher.pause();
-                  for (const embed of instance.array)
-                    embed.fields[0].name = ':pause_button: Paused';
-                } else {
-                  for (const embed of instance.array)
-                    embed.fields[0].name = ':musical_note: Now Playing';
-                  message.guild.musicData.songDispatcher.resume();
-                }
-              } catch (error) {
-                message.say(':x: Something went wrong');
-                console.log(error);
+              if (message.guild.musicData.songDispatcher.paused == false) {
+                for (const embed of instance.array)
+                  embed.fields[0].name = ':pause_button: Paused';
+              } else {
+                for (const embed of instance.array)
+                  embed.fields[0].name = ':musical_note: Now Playing';
               }
+              return PlayCommand.playPause(message);
             }
           });
         // Next track
         videoEmbed
           .addFunctionEmoji('⏭️', (_, instance) => {
-            try {
-              for (const embed of instance.array)
-                embed.fields[0].name = ':next_track: Skipped';
-              if (message.guild.musicData.songDispatcher.paused == true)
-                message.guild.musicData.songDispatcher.resume();
-              message.guild.musicData.loopSong = false;
-              setTimeout(() => {
-                message.guild.musicData.songDispatcher.end();
-              }, 100);
-              videoEmbed.setTimeout(0);
-            } catch (error) {
-              message.say(':x: Something went wrong');
-              console.log(error);
-            }
+            for (const embed of instance.array)
+              embed.fields[0].name = ':next_track: Skipped';
+            return PlayCommand.nextTrack(message);
           })
           // Repeat Queue
           .addFunctionEmoji('🔁', (_, instance) => {
-            try {
-              if (message.guild.musicData.loopQueue) {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':musical_note: Now Playing';
-                message.guild.musicData.loopQueue = false;
-              } else {
-                for (const embed of instance.array)
-                  embed.fields[0].name = ':repeat: Repeat Queue';
-                message.guild.musicData.loopQueue = true;
-              }
-            } catch (error) {
-              message.say(':x: Something went wrong');
-              console.log(error);
+            if (message.guild.musicData.loopQueue) {
+              for (const embed of instance.array)
+                embed.fields[0].name = ':musical_note: Now Playing';
+            } else {
+              for (const embed of instance.array)
+                embed.fields[0].name = ':repeat: Repeat Queue';
             }
+            return PlayCommand.repeatQueue(message);
           });
 
         videoEmbed.build();
@@ -686,89 +554,42 @@ module.exports = class PlayCommand extends Command {
               .setFunctionEmojis({
                 // Volume Down
                 '🔉': (_, instance) => {
-                  try {
-                    if (dispatcher.volume > 0) {
-                      for (const embed of instance.array)
-                        embed.fields[2].value =
-                          ':loud_sound: ' +
-                          ((dispatcher.volume - 0.01) * 100).toFixed(0) +
-                          '%';
-                      dispatcher.setVolume(dispatcher.volume - 0.01);
-                      db.set(
-                        `${message.member.guild.id}.serverSettings.volume`,
-                        dispatcher.volume
-                      );
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (dispatcher.volume > 0) {
+                    for (const embed of instance.array)
+                      embed.fields[2].value =
+                        ':loud_sound: ' +
+                        ((dispatcher.volume - 0.01) * 100).toFixed(0) +
+                        '%';
                   }
+                  return PlayCommand.volumeDown(message);
                 },
                 // Volume Up
                 '🔊': (_, instance) => {
-                  try {
-                    if (dispatcher.volume < 2) {
-                      for (const embed of instance.array)
-                        embed.fields[2].value =
-                          ':loud_sound: ' +
-                          ((dispatcher.volume + 0.01) * 100).toFixed(0) +
-                          '%';
-                      dispatcher.setVolume(dispatcher.volume + 0.01);
-                      db.set(
-                        `${message.member.guild.id}.serverSettings.volume`,
-                        dispatcher.volume
-                      );
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (dispatcher.volume < 2) {
+                    for (const embed of instance.array)
+                      embed.fields[2].value =
+                        ':loud_sound: ' +
+                        ((dispatcher.volume + 0.01) * 100).toFixed(0) +
+                        '%';
                   }
+                  return PlayCommand.volumeUp(message);
                 },
                 // Stop
                 '⏹️': (_, instance) => {
-                  try {
-                    for (const embed of instance.array)
-                      embed.fields[0].name = ':stop_button: Stopped';
-
-                    if (message.guild.musicData.songDispatcher.paused == true) {
-                      message.guild.musicData.songDispatcher.resume();
-                      message.guild.musicData.queue.length = 0;
-                      message.guild.musicData.loopSong = false;
-                      setTimeout(() => {
-                        message.guild.musicData.songDispatcher.end();
-                      }, 100);
-                      videoEmbed.setTimeout(0);
-                    } else {
-                      message.guild.musicData.queue.length = 0;
-                      message.guild.musicData.skipTimer = true;
-                      message.guild.musicData.loopSong = false;
-                      message.guild.musicData.loopQueue = false;
-                      message.guild.musicData.songDispatcher.end();
-                      videoEmbed.setTimeout(100);
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
-                  }
+                  for (const embed of instance.array)
+                    embed.fields[0].name = ':stop_button: Stopped';
+                  return PlayCommand.stopTheMusic(message);
                 },
                 // Play/Pause
                 '⏯️': (_, instance) => {
-                  try {
-                    if (
-                      message.guild.musicData.songDispatcher.paused == false
-                    ) {
-                      message.guild.musicData.songDispatcher.pause();
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':pause_button: Paused';
-                    } else {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':musical_note: Now Playing';
-                      message.guild.musicData.songDispatcher.resume();
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (message.guild.musicData.songDispatcher.paused == false) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':pause_button: Paused';
+                  } else {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':musical_note: Now Playing';
                   }
+                  return PlayCommand.playPause(message);
                 }
               });
 
@@ -790,57 +611,34 @@ module.exports = class PlayCommand extends Command {
                 )
                 // Next track
                 .addFunctionEmoji('⏭️', (_, instance) => {
-                  try {
-                    for (const embed of instance.array)
-                      embed.fields[0].name = ':next_track: Skipped';
-                    if (message.guild.musicData.songDispatcher.paused == true)
-                      message.guild.musicData.songDispatcher.resume();
-                    message.guild.musicData.loopSong = false;
-                    setTimeout(() => {
-                      message.guild.musicData.songDispatcher.end();
-                    }, 100);
-                    videoEmbed.setTimeout(0);
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
-                  }
+                  for (const embed of instance.array)
+                    embed.fields[0].name = ':next_track: Skipped';
+                  return PlayCommand.nextTrack(message);
                 })
                 // Repeat Queue
                 .addFunctionEmoji('🔁', (_, instance) => {
-                  try {
-                    if (message.guild.musicData.loopQueue) {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':musical_note: Now Playing';
-                      message.guild.musicData.loopQueue = false;
-                    } else {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':repeat: Repeat Queue';
-                      message.guild.musicData.loopQueue = true;
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (message.guild.musicData.loopQueue) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':musical_note: Now Playing';
+                  } else {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':repeat: Repeat Queue';
                   }
+                  return PlayCommand.repeatQueue(message);
                 });
             } else
               videoEmbed.addFunctionEmoji(
                 // Repeat
                 '🔂',
                 (_, instance) => {
-                  try {
-                    if (message.guild.musicData.loopSong) {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':musical_note: Now Playing';
-                      message.guild.musicData.loopSong = false;
-                    } else {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':repeat_one: Repeat Song';
-                      message.guild.musicData.loopSong = true;
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (message.guild.musicData.loopSong) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':musical_note: Now Playing';
+                  } else {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':repeat_one: Repeat Song';
                   }
+                  return PlayCommand.repeatSong(message);
                 }
               );
             videoEmbed.build();
@@ -1076,139 +874,73 @@ module.exports = class PlayCommand extends Command {
                 .setFunctionEmojis({
                   // Volume Down
                   '🔉': (_, instance) => {
-                    try {
-                      if (message.guild.musicData.songDispatcher.volume > 0) {
-                        for (const embed of instance.array)
-                          embed.fields[2].value =
-                            ':loud_sound: ' +
-                            (
-                              (message.guild.musicData.songDispatcher.volume -
-                                0.01) *
-                              100
-                            ).toFixed(0) +
-                            '%';
-                        message.guild.musicData.songDispatcher.setVolume(
-                          message.guild.musicData.songDispatcher.volume - 0.01
-                        );
-                        db.set(
-                          `${message.member.guild.id}.serverSettings.volume`,
-                          message.guild.musicData.songDispatcher.volume
-                        );
-                      }
-                    } catch (error) {
-                      message.say(':x: Something went wrong');
-                      console.log(error);
+                    if (message.guild.musicData.songDispatcher.volume > 0) {
+                      for (const embed of instance.array)
+                        embed.fields[2].value =
+                          ':loud_sound: ' +
+                          (
+                            (message.guild.musicData.songDispatcher.volume -
+                              0.01) *
+                            100
+                          ).toFixed(0) +
+                          '%';
                     }
+                    return PlayCommand.volumeDown(message);
                   },
                   // Volume Up
                   '🔊': (_, instance) => {
-                    try {
-                      if (message.guild.musicData.songDispatcher.volume < 2) {
-                        for (const embed of instance.array)
-                          embed.fields[2].value =
-                            ':loud_sound: ' +
-                            (
-                              (message.guild.musicData.songDispatcher.volume +
-                                0.01) *
-                              100
-                            ).toFixed(0) +
-                            '%';
-                        message.guild.musicData.songDispatcher.setVolume(
-                          message.guild.musicData.songDispatcher.volume + 0.01
-                        );
-                        db.set(
-                          `${message.member.guild.id}.serverSettings.volume`,
-                          message.guild.musicData.songDispatcher.volume
-                        );
-                      }
-                    } catch (error) {
-                      message.say(':x: Something went wrong');
-                      console.log(error);
+                    if (message.guild.musicData.songDispatcher.volume < 2) {
+                      for (const embed of instance.array)
+                        embed.fields[2].value =
+                          ':loud_sound: ' +
+                          (
+                            (message.guild.musicData.songDispatcher.volume +
+                              0.01) *
+                            100
+                          ).toFixed(0) +
+                          '%';
                     }
+                    return PlayCommand.volumeUp(message);
                   },
                   // Stop
                   '⏹️': (_, instance) => {
-                    try {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':stop_button: Stopped';
-
-                      if (
-                        message.guild.musicData.songDispatcher.paused == true
-                      ) {
-                        message.guild.musicData.songDispatcher.resume();
-                        message.guild.musicData.queue.length = 0;
-                        message.guild.musicData.loopSong = false;
-                        setTimeout(() => {
-                          message.guild.musicData.songDispatcher.end();
-                        }, 100);
-                        videoEmbed.setTimeout(0);
-                      } else {
-                        message.guild.musicData.queue.length = 0;
-                        message.guild.musicData.skipTimer = true;
-                        message.guild.musicData.loopSong = false;
-                        message.guild.musicData.loopQueue = false;
-                        message.guild.musicData.songDispatcher.end();
-                        videoEmbed.setTimeout(100);
-                      }
-                    } catch (error) {
-                      message.say(':x: Something went wrong');
-                      console.log(error);
-                    }
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':stop_button: Stopped';
+                    return PlayCommand.stopTheMusic(message);
                   },
                   // Play/Pause
                   '⏯️': (_, instance) => {
-                    try {
-                      if (
-                        message.guild.musicData.songDispatcher.paused == false
-                      ) {
-                        message.guild.musicData.songDispatcher.pause();
-                        for (const embed of instance.array)
-                          embed.fields[0].name = ':pause_button: Paused';
-                      } else {
-                        for (const embed of instance.array)
-                          embed.fields[0].name = ':musical_note: Now Playing';
-                        message.guild.musicData.songDispatcher.resume();
-                      }
-                    } catch (error) {
-                      message.say(':x: Something went wrong');
-                      console.log(error);
+                    if (
+                      message.guild.musicData.songDispatcher.paused == false
+                    ) {
+                      for (const embed of instance.array)
+                        embed.fields[0].name = ':pause_button: Paused';
+                    } else {
+                      for (const embed of instance.array)
+                        embed.fields[0].name = ':musical_note: Now Playing';
                     }
+                    return PlayCommand.playPause(message);
                   }
                 });
               // Next track
               videoEmbed
                 .addFunctionEmoji('⏭️', (_, instance) => {
-                  try {
-                    for (const embed of instance.array)
-                      embed.fields[0].name = ':next_track: Skipped';
-                    if (message.guild.musicData.songDispatcher.paused == true)
-                      message.guild.musicData.songDispatcher.resume();
-                    message.guild.musicData.loopSong = false;
-                    setTimeout(() => {
-                      message.guild.musicData.songDispatcher.end();
-                    }, 100);
-                    videoEmbed.setTimeout(0);
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
-                  }
+                  for (const embed of instance.array)
+                    embed.fields[0].name = ':next_track: Skipped';
+                  return PlayCommand.nextTrack(message);
                 })
                 // Repeat Queue
                 .addFunctionEmoji('🔁', (_, instance) => {
-                  try {
-                    if (message.guild.musicData.loopQueue) {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':musical_note: Now Playing';
-                      message.guild.musicData.loopQueue = false;
-                    } else {
-                      for (const embed of instance.array)
-                        embed.fields[0].name = ':repeat: Repeat Queue';
-                      message.guild.musicData.loopQueue = true;
-                    }
-                  } catch (error) {
-                    message.say(':x: Something went wrong');
-                    console.log(error);
+                  if (message.guild.musicData.loopQueue) {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':musical_note: Now Playing';
+                    message.guild.musicData.loopQueue = false;
+                  } else {
+                    for (const embed of instance.array)
+                      embed.fields[0].name = ':repeat: Repeat Queue';
+                    message.guild.musicData.loopQueue = true;
                   }
+                  return PlayCommand.repeatQueue(message);
                 });
 
               videoEmbed.build();
@@ -1262,5 +994,116 @@ module.exports = class PlayCommand extends Command {
         : '00')
     }`;
     return duration;
+  }
+
+  // Reaction Button Functions
+  static volumeDown(message) {
+    try {
+      if (message.guild.musicData.songDispatcher.volume > 0) {
+        message.guild.musicData.songDispatcher.setVolume(
+          message.guild.musicData.songDispatcher.volume - 0.01
+        );
+        db.set(
+          `${message.member.guild.id}.serverSettings.volume`,
+          message.guild.musicData.songDispatcher.volume
+        );
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
+  }
+
+  static volumeUp(message) {
+    try {
+      if (message.guild.musicData.songDispatcher.volume < 2) {
+        message.guild.musicData.songDispatcher.setVolume(
+          message.guild.musicData.songDispatcher.volume + 0.01
+        );
+        db.set(
+          `${message.member.guild.id}.serverSettings.volume`,
+          message.guild.musicData.songDispatcher.volume
+        );
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
+  }
+
+  static stopTheMusic(message) {
+    try {
+      if (message.guild.musicData.songDispatcher.paused == true) {
+        message.guild.musicData.songDispatcher.resume();
+        message.guild.musicData.queue.length = 0;
+        message.guild.musicData.loopSong = false;
+        setTimeout(() => {
+          message.guild.musicData.songDispatcher.end();
+        }, 100);
+        return;
+      } else {
+        message.guild.musicData.queue.length = 0;
+        message.guild.musicData.skipTimer = true;
+        message.guild.musicData.loopSong = false;
+        message.guild.musicData.loopQueue = false;
+        message.guild.musicData.songDispatcher.end();
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      return console.log(error);
+    }
+  }
+
+  static nextTrack(message) {
+    try {
+      if (message.guild.musicData.songDispatcher.paused == true)
+        message.guild.musicData.songDispatcher.resume();
+      message.guild.musicData.loopSong = false;
+      setTimeout(() => {
+        message.guild.musicData.songDispatcher.end();
+      }, 100);
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
+  }
+
+  static playPause(message) {
+    try {
+      if (message.guild.musicData.songDispatcher.paused == false) {
+        message.guild.musicData.songDispatcher.pause();
+      } else {
+        message.guild.musicData.songDispatcher.resume();
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
+  }
+
+  static repeatSong(message) {
+    try {
+      if (message.guild.musicData.loopSong) {
+        message.guild.musicData.loopSong = false;
+      } else {
+        message.guild.musicData.loopSong = true;
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
+  }
+
+  static repeatQueue(message) {
+    try {
+      if (message.guild.musicData.loopQueue) {
+        return (message.guild.musicData.loopQueue = false);
+      } else {
+        return (message.guild.musicData.loopQueue = true);
+      }
+    } catch (error) {
+      message.say(':x: Something went wrong');
+      console.log(error);
+    }
   }
 };
