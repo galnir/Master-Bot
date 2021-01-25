@@ -78,13 +78,13 @@ module.exports = class NowPlayingCommand extends Command {
           }
           videoEmbed.setDescription(description);
           if (message.guild.musicData.songDispatcher.volume > 0) {
-            for (const embed of instance.array)
-              embed.fields[0].value =
-                ':loud_sound: ' +
-                (
-                  [message.guild.musicData.songDispatcher.volume - 0.01] * 100
-                ).toFixed(0) +
-                '%';
+            const embed = instance.array[0];
+            embed.fields[0].value =
+              ':loud_sound: ' +
+              (
+                [message.guild.musicData.songDispatcher.volume - 0.01] * 100
+              ).toFixed(0) +
+              '%';
             return PlayCommand.volumeDown(message);
           }
         },
@@ -98,33 +98,36 @@ module.exports = class NowPlayingCommand extends Command {
           }
           videoEmbed.setDescription(description);
           if (message.guild.musicData.songDispatcher.volume < 2) {
-            for (const embed of instance.array)
-              embed.fields[0].value =
-                ':loud_sound: ' +
-                (
-                  (message.guild.musicData.songDispatcher.volume + 0.01) *
-                  100
-                ).toFixed(0) +
-                '%';
+            const embed = instance.array[0];
+            embed.fields[0].value =
+              ':loud_sound: ' +
+              (
+                (message.guild.musicData.songDispatcher.volume + 0.01) *
+                100
+              ).toFixed(0) +
+              '%';
           }
           return PlayCommand.volumeUp(message);
         },
 
         // Stop
         '⏹️': (_, instance) => {
+          const embed = instance.array[0];
+
           if (video.duration == 'Live Stream') {
             description = ':red_circle: Live Stream';
           } else {
             description = NowPlayingCommand.playbackBar(message, video);
           }
           videoEmbed.setDescription(description).setTimeout(100);
-          for (const embed of instance.array)
-            embed.title = `:stop_button: ${video.title}`;
+          embed.title = `:stop_button: ${video.title}`;
           return PlayCommand.stopTheMusic(message);
         },
 
         // Play/Pause
         '⏯️': (_, instance) => {
+          const embed = instance.array[0];
+
           if (video.duration == 'Live Stream') {
             description = ':red_circle: Live Stream';
           } else {
@@ -132,18 +135,16 @@ module.exports = class NowPlayingCommand extends Command {
           }
           videoEmbed.setDescription(description);
           if (message.guild.musicData.songDispatcher.paused == false) {
-            for (const embed of instance.array)
-              embed.title = `:pause_button: ${video.title}`;
+            embed.title = `:pause_button: ${video.title}`;
           } else {
-            for (const embed of instance.array)
-              embed.title = `:musical_note: ${video.title}`;
+            embed.title = `:musical_note: ${video.title}`;
           }
           return PlayCommand.playPause(message);
         }
       });
 
     if (
-      message.guild.musicData.queue.length > 1 &&
+      message.guild.musicData.queue.length > 0 &&
       !message.guild.musicData.loopSong
     ) {
       videoEmbed
@@ -159,8 +160,8 @@ module.exports = class NowPlayingCommand extends Command {
 
         // Next track
         .addFunctionEmoji('⏭️', (_, instance) => {
-          for (const embed of instance.array)
-            embed.title = `:next_track: Skipped ${video.title}`;
+          const embed = instance.array[0];
+          embed.title = `:next_track: Skipped ${video.title}`;
           if (video.duration == 'Live Stream') {
             description = ':red_circle: Live Stream';
           } else {
@@ -172,6 +173,8 @@ module.exports = class NowPlayingCommand extends Command {
 
         // Repeat Queue
         .addFunctionEmoji('🔁', (_, instance) => {
+          const embed = instance.array[0];
+
           if (video.duration == 'Live Stream') {
             description = ':red_circle: Live Stream';
           } else {
@@ -179,11 +182,9 @@ module.exports = class NowPlayingCommand extends Command {
           }
           videoEmbed.setDescription(description);
           if (message.guild.musicData.loopQueue) {
-            for (const embed of instance.array)
-              embed.title = `:musical_note: ${video.title}`;
+            embed.title = `:musical_note: ${video.title}`;
           } else {
-            for (const embed of instance.array)
-              embed.title = `:repeat: ${video.title} **On Loop**`;
+            embed.title = `:repeat: ${video.title} **On Loop**`;
           }
           return PlayCommand.repeatQueue(message);
         });
@@ -192,6 +193,8 @@ module.exports = class NowPlayingCommand extends Command {
         // Repeat
         '🔂',
         (_, instance) => {
+          const embed = instance.array[0];
+
           if (video.duration == 'Live Stream') {
             description = ':red_circle: Live Stream';
           } else {
@@ -199,11 +202,9 @@ module.exports = class NowPlayingCommand extends Command {
           }
           videoEmbed.setDescription(description);
           if (message.guild.musicData.loopSong) {
-            for (const embed of instance.array)
-              embed.title = `:musical_note:  ${video.title}`;
+            embed.title = `:musical_note:  ${video.title}`;
           } else {
-            for (const embed of instance.array)
-              embed.title = `:repeat_one: ${video.title} **On Loop**`;
+            embed.title = `:repeat_one: ${video.title} **On Loop**`;
           }
           return PlayCommand.repeatSong(message);
         }
