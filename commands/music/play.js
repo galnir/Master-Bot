@@ -238,7 +238,6 @@ module.exports = class PlayCommand extends Command {
         PlayCommand.createResponse(message)
           .addField('Added to Queue', `[${video.title}](${video.url})`)
           .build();
-
         return;
       }
     }
@@ -682,9 +681,10 @@ module.exports = class PlayCommand extends Command {
           message.guild.musicData.songDispatcher.volume
         );
       }
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 
@@ -700,9 +700,10 @@ module.exports = class PlayCommand extends Command {
           message.guild.musicData.songDispatcher.volume
         );
       }
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 
@@ -716,7 +717,6 @@ module.exports = class PlayCommand extends Command {
         setTimeout(() => {
           message.guild.musicData.songDispatcher.end();
         }, 100);
-        return;
       } else {
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.skipTimer = true;
@@ -724,6 +724,7 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.loopQueue = false;
         message.guild.musicData.songDispatcher.end();
       }
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
       return console.log(error);
@@ -739,23 +740,23 @@ module.exports = class PlayCommand extends Command {
       setTimeout(() => {
         message.guild.musicData.songDispatcher.end();
       }, 100);
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 
   static playPause(message) {
     if (!message.guild.musicData.songDispatcher) return;
     try {
-      if (message.guild.musicData.songDispatcher.paused == false) {
+      if (message.guild.musicData.songDispatcher.paused == false)
         message.guild.musicData.songDispatcher.pause();
-      } else {
-        message.guild.musicData.songDispatcher.resume();
-      }
+      else message.guild.musicData.songDispatcher.resume();
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 
@@ -767,23 +768,23 @@ module.exports = class PlayCommand extends Command {
       } else {
         message.guild.musicData.loopSong = true;
       }
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 
   static repeatQueue(message) {
     if (!message.guild.musicData.songDispatcher) return;
     try {
-      if (message.guild.musicData.loopQueue) {
-        return (message.guild.musicData.loopQueue = false);
-      } else {
-        return (message.guild.musicData.loopQueue = true);
-      }
+      if (message.guild.musicData.loopQueue)
+        message.guild.musicData.loopQueue = false;
+      else message.guild.musicData.loopQueue = true;
+      return;
     } catch (error) {
       message.say(':x: Something went wrong');
-      console.log(error);
+      return console.log(error);
     }
   }
 };
