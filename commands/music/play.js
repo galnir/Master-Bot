@@ -543,9 +543,9 @@ module.exports = class PlayCommand extends Command {
     const videoEmbed = new Pagination.Embeds()
       .setArray([embed])
       .setAuthorizedUsers(memberArray[0])
-      .setDisabledNavigationEmojis(['delete'])
+      //.setDisabledNavigationEmojis(['delete'])
       .setChannel(message.channel)
-      //.setTimeout(PlayCommand.buttonTimer(message))
+      .setTimeout(PlayCommand.buttonTimer(message))
       .setFunctionEmojis({
         // Volume Down
         '🔉': (_, instance) => {
@@ -574,7 +574,7 @@ module.exports = class PlayCommand extends Command {
               ).toFixed(0) +
               '%';
           }
-          // videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
+          videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
           return PlayCommand.volumeUp(message);
         },
         // Stop
@@ -589,10 +589,10 @@ module.exports = class PlayCommand extends Command {
           const embed = instance.array[0];
           if (message.guild.musicData.songDispatcher.paused == false) {
             embed.title = ':pause_button: Paused';
-            // videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
+            videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
           } else {
             embed.title = embedTitle;
-            // videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
+            videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
           }
           return PlayCommand.playPause(message);
         }
@@ -617,7 +617,7 @@ module.exports = class PlayCommand extends Command {
         })
         // Repeat Queue
         .addFunctionEmoji('🔁', (_, instance) => {
-          // videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
+          videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
           const embed = instance.array[0];
           if (message.guild.musicData.loopQueue) {
             embed.title = ':musical_note: Now Playing';
@@ -631,7 +631,7 @@ module.exports = class PlayCommand extends Command {
         // Repeat
         '🔂',
         (_, instance) => {
-          //videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
+          videoEmbed.setTimeout(PlayCommand.buttonTimer(message));
           const embed = instance.array[0];
 
           if (message.guild.musicData.loopSong) {
@@ -664,8 +664,9 @@ module.exports = class PlayCommand extends Command {
       totalDurationInMS -
       message.guild.musicData.songDispatcher.streamTime +
       500;
+    if (timer > 300000) timer = 300000; // 5min timer limit
 
-    if (totalDurationInMS == 0) timer = 300000; // 5min control timer for Live Streams
+    if (totalDurationInMS == 0) timer = 300000; // 5min timer for Live Streams
     return timer;
   }
 
