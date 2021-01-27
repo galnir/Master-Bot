@@ -49,7 +49,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
         initial.data.slice(0, 6).forEach(id => {
           gameNameArr.push(id.names.international);
         });
-        var gameName = new MessageEmbed()
+        let gameName = new MessageEmbed()
           .setColor('#3E8657')
           .setTitle(':mag: Search Results')
           .setThumbnail(initial.data[0].assets['cover-medium'].uri)
@@ -64,11 +64,11 @@ module.exports = class SpeedrunBasicCommand extends Command {
         }
         message.say(gameName);
       } else {
-        const embedArry = [];
+        const embedArray = [];
 
-        var number = 0;
+        let number = 0;
 
-        var category = body.data;
+        let category = body.data;
 
         for (let i = 1; i <= category[0].players.data.length; ++i) {
           let platform =
@@ -85,13 +85,13 @@ module.exports = class SpeedrunBasicCommand extends Command {
               ? category[0].players.data[i - 1].names.international
               : category[0].players.data[i - 1].name;
 
-          var trophyIcon;
+          let trophyIcon;
           if (i == 1) trophyIcon = '🏆 WR: ';
           if (i == 2) trophyIcon = '🥈 2nd: ';
           if (i == 3) trophyIcon = '🥉 3rd: ';
           if (i >= 4) trophyIcon = `${i}th: `;
 
-          embedArry.push(
+          embedArray.push(
             new MessageEmbed()
               .setColor('#3E8657')
               .setTitle(
@@ -124,7 +124,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
         }
 
         var embed = new Pagination.Embeds()
-          .setArray(embedArry)
+          .setArray(embedArray)
           .setAuthorizedUsers([message.author.id])
           .setChannel(message.channel);
 
@@ -136,10 +136,10 @@ module.exports = class SpeedrunBasicCommand extends Command {
           );
         // Next Category
         embed
-          .addFunctionEmoji('🔼', _ => {
+          .addFunctionEmoji('🔼', () => {
             if (number + 1 < body.data.length) number = number + 1;
             try {
-              const embedArry2 = [];
+              const embedArray2 = [];
               for (let i = 1; i <= category[number].players.data.length; ++i) {
                 let platform =
                   category[number].platforms.data.length > 0
@@ -163,7 +163,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                 if (i == 3) trophyIcon = '🥉 3rd: ';
                 if (i >= 4) trophyIcon = `${i}th: `;
 
-                embedArry2.push(
+                embedArray2.push(
                   new MessageEmbed()
                     .setColor('#3E8657')
                     .setTitle(
@@ -200,7 +200,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                 );
               }
 
-              embed.setArray(embedArry2);
+              embed.setArray(embedArray2);
               if (number + 1 < category.length)
                 embed.addField(
                   `Category ${number + 1} of ${category.length}`,
@@ -220,7 +220,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
             }
           })
           // Prev Category
-          .addFunctionEmoji('🔽', _ => {
+          .addFunctionEmoji('🔽', () => {
             if (number > 0) number = number - 1;
 
             try {
