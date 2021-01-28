@@ -668,6 +668,7 @@ module.exports = class PlayCommand extends Command {
 
           videoEmbed
             .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTitle(embedTitle(message))
             .setTimeout(buttonTimer(message));
         });
     } else
