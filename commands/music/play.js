@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const { youtubeAPI } = require('../../config.json');
 const youtube = new Youtube(youtubeAPI);
 const db = require('quick.db');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -96,9 +97,13 @@ module.exports = class PlayCommand extends Command {
                 message.guild.musicData.queue.push(urlsArray[i]);
               }
               if (message.guild.musicData.isPlaying == true) {
-                message.channel.send(
-                  `Playlist **${query} has been added to queue**`
-                );
+                // Saved Playlist Added to Queue Message
+                PlayCommand.createResponse(message)
+                  .addField(
+                    'Added Playlist',
+                    `:new: **${query}** added ${urlsArray.length} songs to the queue!`
+                  )
+                  .build();
               } else if (message.guild.musicData.isPlaying == false) {
                 message.guild.musicData.isPlaying = true;
                 PlayCommand.playSong(message.guild.musicData.queue, message);
@@ -146,7 +151,7 @@ module.exports = class PlayCommand extends Command {
         [videosArr[i], videosArr[j]] = [videosArr[j], videosArr[i]];
       }
       */
-
+      const queueCount = message.guild.musicData.queue.length;
       for (let i = 0; i < videosArr.length; i++) {
         if (
           videosArr[i].raw.status.privacyStatus == 'private' ||
@@ -180,17 +185,17 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        const PlayListEmbed = new MessageEmbed()
-          .setColor('#ff0000')
-          .setTitle(`:musical_note: ${playlist.title}`)
-          .addField(
-            `Playlist has added ${message.guild.musicData.queue.length} songs to queue!`,
-            playlist.url
-          )
-          .setThumbnail(playlist.thumbnails.high.url)
-          .setURL(playlist.url);
-        message.say(PlayListEmbed);
         // @TODO add the the position number of queue of the when a playlist is added
+
+        const playlistCount = message.guild.musicData.queue.length - queueCount;
+        // Added playlist to queue message
+        PlayCommand.createResponse(message)
+          .addField(
+            'Added Playlist',
+            `[${playlist.title}](${playlist.url})
+              Adds ${playlistCount} songs to the queue!`
+          )
+          .build();
         return;
       }
     }
@@ -233,16 +238,11 @@ module.exports = class PlayCommand extends Command {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
       } else if (message.guild.musicData.isPlaying == true) {
-        const addedEmbed = new MessageEmbed()
-          .setColor('#ff0000')
-          .setTitle(`:musical_note: ${video.title}`)
-          .addField(
-            `Has been added to queue. `,
-            `This song is #${message.guild.musicData.queue.length} in queue`
-          )
-          .setThumbnail(video.thumbnails.high.url)
-          .setURL(video.url);
-        message.say(addedEmbed);
+        // Added song to queue message (link/url)
+
+        PlayCommand.createResponse(message)
+          .addField('Added to Queue', `:new: [${video.title}](${video.url})`)
+          .build();
         return;
       }
     }
@@ -250,6 +250,7 @@ module.exports = class PlayCommand extends Command {
     // if user provided a song/video name
     await PlayCommand.searchYoutube(query, message, voiceChannel);
   }
+
   static playSong(queue, message) {
     const classThis = this; // use classThis instead of 'this' because of lexical scope below
     if (queue[0].voiceChannel == undefined) {
@@ -274,6 +275,7 @@ module.exports = class PlayCommand extends Command {
           )
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
+            // Volume Settings
             if (!db.get(`${message.guild.id}.serverSettings.volume`))
               dispatcher.setVolume(message.guild.musicData.volume);
             else
@@ -281,25 +283,18 @@ module.exports = class PlayCommand extends Command {
                 db.get(`${message.guild.id}.serverSettings.volume`)
               );
 
-            const videoEmbed = new MessageEmbed()
-              .setThumbnail(queue[0].thumbnail)
-              .setColor('#ff0000')
-              .addField(':notes: Now Playing:', queue[0].title)
-              .addField(':stopwatch: Duration:', queue[0].duration)
-              .setURL(queue[0].url)
-              .setFooter(
-                `Requested by ${queue[0].memberDisplayName}!`,
-                queue[0].memberAvatar
-              );
-
-            if (queue[1] && !message.guild.musicData.loopSong)
-              videoEmbed.addField(':track_next: Next Song:', queue[1].title);
-            message.say(videoEmbed);
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
-            return;
+            // Main Message
+            PlayCommand.createResponse(message).build();
           })
           .on('finish', function() {
+            // Save the volume when the song ends
+            db.set(
+              `${message.member.guild.id}.serverSettings.volume`,
+              message.guild.musicData.songDispatcher.volume
+            );
+
             queue = message.guild.musicData.queue;
             if (message.guild.musicData.loopSong) {
               queue.unshift(message.guild.musicData.nowPlaying);
@@ -464,16 +459,13 @@ module.exports = class PlayCommand extends Command {
               if (songEmbed) {
                 songEmbed.delete();
               }
-              const addedEmbed = new MessageEmbed()
-                .setColor('#ff0000')
-                .setTitle(`:musical_note: ${video.title}`)
+              // Added song to queue message (search)
+              PlayCommand.createResponse(message)
                 .addField(
-                  `Has been added to queue. `,
-                  `This song is #${message.guild.musicData.queue.length} in queue`
+                  'Added to Queue',
+                  `:new: [${video.title}](${video.url})`
                 )
-                .setThumbnail(video.thumbnails.high.url)
-                .setURL(video.url);
-              message.say(addedEmbed);
+                .build();
               return;
             }
           })
@@ -500,7 +492,7 @@ module.exports = class PlayCommand extends Command {
 
   static constructSongObj(video, voiceChannel, user) {
     let duration = this.formatDuration(video.duration);
-    if (duration == '00:00') duration = ':red_circle: Live Stream';
+    if (duration == '00:00') duration = 'Live Stream';
     return {
       url: `https://www.youtube.com/watch?v=${video.raw.id}`,
       title: video.title,
@@ -514,15 +506,298 @@ module.exports = class PlayCommand extends Command {
   }
   // prettier-ignore
   static formatDuration(durationObj) {
-    const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${
-      durationObj.minutes ? durationObj.minutes : '00'
-    }:${
-      (durationObj.seconds < 10)
+    const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${durationObj.minutes ? durationObj.minutes : '00'
+      }:${(durationObj.seconds < 10)
         ? ('0' + durationObj.seconds)
         : (durationObj.seconds
-        ? durationObj.seconds
-        : '00')
-    }`;
+          ? durationObj.seconds
+          : '00')
+      }`;
     return duration;
+  }
+
+  // Create Embed Messages
+  static createResponse(message) {
+    // Builds Member ID Array for buttons
+    const channelInfo = message.member.voice.channel.members;
+    const rawMembers = Object.fromEntries(channelInfo);
+    const memberArray = [Object.keys(rawMembers)];
+
+    const songTitle = `[${message.guild.musicData.nowPlaying.title}](${message.guild.musicData.nowPlaying.url})\n`;
+
+    const embed = new MessageEmbed()
+      .setThumbnail(message.guild.musicData.nowPlaying.thumbnail)
+      .setColor('#ff0000')
+      .addField(
+        'Duration',
+        ':stopwatch: ' + message.guild.musicData.nowPlaying.duration,
+        true
+      )
+      .addField(
+        'Volume',
+        ':loud_sound: ' +
+          (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
+          '%',
+        true
+      )
+      .setFooter(
+        `Requested by ${message.guild.musicData.nowPlaying.memberDisplayName}!`,
+        message.guild.musicData.nowPlaying.memberAvatar
+      );
+
+    const videoEmbed = new Pagination.Embeds()
+      .setArray([embed])
+      .setAuthorizedUsers(memberArray[0])
+      .setDisabledNavigationEmojis(['all'])
+      .setChannel(message.channel)
+      //.setDeleteOnTimeout(true)
+      .setTimeout(buttonTimer(message))
+      .setTitle(embedTitle(message))
+      .setDescription(songTitle + PlayCommand.playbackBar(message))
+      // Reaction Controls
+      .setFunctionEmojis({
+        // Volume Down Button
+        '🔉': function(_, instance) {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTimeout(buttonTimer(message));
+
+          if (message.guild.musicData.songDispatcher.volume > 0) {
+            message.guild.musicData.songDispatcher.setVolume(
+              message.guild.musicData.songDispatcher.volume - 0.01
+            );
+            const embed = instance.array[0];
+            embed.fields[1].value =
+              ':loud_sound: ' +
+              (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
+              '%';
+          }
+        },
+        // Volume Up Button
+        '🔊': function(_, instance) {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTimeout(buttonTimer(message));
+
+          if (message.guild.musicData.songDispatcher.volume < 2) {
+            message.guild.musicData.songDispatcher.setVolume(
+              message.guild.musicData.songDispatcher.volume + 0.01
+            );
+            const embed = instance.array[0];
+            embed.fields[1].value =
+              ':loud_sound: ' +
+              (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
+              '%';
+          }
+        },
+        // Stop Button
+        '⏹️': function() {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTitle(':stop_button: Stopped')
+            .setTimeout(100);
+
+          if (message.guild.musicData.songDispatcher.paused == true) {
+            message.guild.musicData.songDispatcher.resume();
+            message.guild.musicData.queue.length = 0;
+            message.guild.musicData.loopSong = false;
+            message.guild.musicData.loopQueue = false;
+            setTimeout(() => {
+              message.guild.musicData.songDispatcher.end();
+            }, 100);
+          } else {
+            message.guild.musicData.queue.length = 0;
+            message.guild.musicData.skipTimer = true;
+            message.guild.musicData.loopSong = false;
+            message.guild.musicData.loopQueue = false;
+            message.guild.musicData.songDispatcher.end();
+          }
+        },
+        // Play/Pause Button
+        '⏯️': function() {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          if (message.guild.musicData.songDispatcher.paused == false) {
+            message.guild.musicData.songDispatcher.pause();
+            videoEmbed
+              .setDescription(songTitle + PlayCommand.playbackBar(message))
+              .setTitle(embedTitle(message))
+              .setTimeout(600000);
+          } else {
+            message.guild.musicData.songDispatcher.resume();
+
+            videoEmbed
+              .setDescription(songTitle + PlayCommand.playbackBar(message))
+              .setTitle(embedTitle(message))
+              .setTimeout(buttonTimer(message));
+          }
+        }
+      });
+
+    if (message.guild.musicData.queue.length > 0) {
+      videoEmbed
+        .addField(
+          'Queue',
+          ':notes: ' + message.guild.musicData.queue.length + ' Song(s)',
+          true
+        )
+        .addField(
+          'Next Song',
+          `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
+        )
+        // Next track Button
+        .addFunctionEmoji('⏭️', function() {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTitle(':next_track: Skipped')
+            .setTimeout(100);
+          if (message.guild.musicData.songDispatcher.paused == true)
+            message.guild.musicData.songDispatcher.resume();
+          message.guild.musicData.loopSong = false;
+          setTimeout(() => {
+            message.guild.musicData.songDispatcher.end();
+          }, 100);
+        })
+        // Repeat One Song Button
+        .addFunctionEmoji('🔂', function() {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          if (message.guild.musicData.loopSong) {
+            message.guild.musicData.loopSong = false;
+          } else {
+            message.guild.musicData.loopQueue = false;
+            message.guild.musicData.loopSong = true;
+          }
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTitle(embedTitle(message))
+            .setTimeout(buttonTimer(message));
+        })
+        // Repeat Queue Button
+        .addFunctionEmoji('🔁', function() {
+          if (!message.guild.musicData.songDispatcher) return;
+
+          if (message.guild.musicData.loopQueue)
+            message.guild.musicData.loopQueue = false;
+          else {
+            message.guild.musicData.loopSong = false;
+            message.guild.musicData.loopQueue = true;
+          }
+          videoEmbed
+            .setDescription(songTitle + PlayCommand.playbackBar(message))
+            .setTitle(embedTitle(message))
+            .setTimeout(buttonTimer(message));
+        });
+    } else {
+      // Repeat One Song Button (when queue is 0)
+      videoEmbed.addFunctionEmoji('🔂', function() {
+        if (!message.guild.musicData.songDispatcher) return;
+
+        if (message.guild.musicData.loopSong) {
+          message.guild.musicData.loopSong = false;
+        } else {
+          message.guild.musicData.loopQueue = false;
+          message.guild.musicData.loopSong = true;
+        }
+        videoEmbed
+          .setDescription(songTitle + PlayCommand.playbackBar(message))
+          .setTitle(embedTitle(message))
+          .setTimeout(buttonTimer(message));
+      });
+    }
+    return videoEmbed;
+
+    function buttonTimer(message) {
+      let timer;
+      const totalDurationObj = message.guild.musicData.nowPlaying.rawDuration;
+      let totalDurationInMS = 0;
+      Object.keys(totalDurationObj).forEach(function(key) {
+        if (key == 'hours') {
+          totalDurationInMS =
+            totalDurationInMS + totalDurationObj[key] * 3600000;
+        } else if (key == 'minutes') {
+          totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000;
+        } else if (key == 'seconds') {
+          totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100;
+        }
+      });
+
+      timer =
+        totalDurationInMS -
+        message.guild.musicData.songDispatcher.streamTime +
+        500;
+      //if (timer > 300000) timer = 300000; // 5min timer limit
+
+      if (totalDurationInMS == 0) timer = 300000; // 5min timer for Live Streams
+      return timer;
+    }
+
+    function embedTitle(message) {
+      let embedTitle = ':musical_note: Now Playing';
+      if (message.guild.musicData.loopQueue)
+        embedTitle = embedTitle + ' :repeat: Queue';
+      if (message.guild.musicData.loopSong)
+        embedTitle = embedTitle + ' :repeat_one: Song';
+      if (message.guild.musicData.songDispatcher.paused)
+        embedTitle = ':pause_button: Paused';
+
+      return embedTitle;
+    }
+  }
+
+  static playbackBar(message) {
+    if (message.guild.musicData.nowPlaying.duration == 'Live Stream') {
+      const noPlayBackBar = '';
+      return noPlayBackBar;
+    }
+
+    const passedTimeInMS = message.guild.musicData.songDispatcher.streamTime;
+    const passedTimeInMSObj = {
+      seconds: Math.floor((passedTimeInMS / 1000) % 60),
+      minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),
+      hours: Math.floor((passedTimeInMS / (1000 * 60 * 60)) % 24)
+    };
+    const passedTimeFormatted = PlayCommand.formatDuration(passedTimeInMSObj);
+
+    const totalDurationObj = message.guild.musicData.nowPlaying.rawDuration;
+    const totalDurationFormatted = PlayCommand.formatDuration(totalDurationObj);
+
+    let totalDurationInMS = 0;
+    Object.keys(totalDurationObj).forEach(function(key) {
+      if (key == 'hours') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 3600000;
+      } else if (key == 'minutes') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000;
+      } else if (key == 'seconds') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100;
+      }
+    });
+    const playBackBarLocation = Math.round(
+      (passedTimeInMS / totalDurationInMS) * 10
+    );
+    let playBack = '';
+    for (let i = 1; i < 21; i++) {
+      if (playBackBarLocation == 0) {
+        playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
+        break;
+      } else if (playBackBarLocation == 10) {
+        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:';
+        break;
+      } else if (i == playBackBarLocation * 2) {
+        playBack = playBack + ':musical_note:';
+      } else {
+        playBack = playBack + '▬';
+      }
+    }
+    playBack = `${passedTimeFormatted}  ${playBack}  ${totalDurationFormatted}`;
+    return playBack;
   }
 };

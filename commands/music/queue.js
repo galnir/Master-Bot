@@ -23,9 +23,9 @@ module.exports = class QueueCommand extends Command {
       .setArray(queueClone)
       .setAuthorizedUsers([message.author.id])
       .setChannel(message.channel)
-      .setElementsPerPage(10)
+      .setElementsPerPage(8)
       .formatField('# - Song', function(e) {
-        return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
+        return `**${queueClone.indexOf(e) + 1}**: [${e.title}](${e.url})`;
       });
 
     queueEmbed.embed.setColor('#ff7373').setTitle('Music Queue');
