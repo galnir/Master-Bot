@@ -324,6 +324,7 @@ module.exports = class MusicTriviaCommand extends Command {
 
   static getLeaderBoard(arr) {
     if (!arr) return;
+    if (!arr[0]) return; // issue #422
     let leaderBoard = '';
 
     leaderBoard = `👑   **${arr[0][0]}:** ${arr[0][1]}  points`;
