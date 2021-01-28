@@ -726,14 +726,14 @@ module.exports = class PlayCommand extends Command {
         } else if (key == 'minutes') {
           totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000;
         } else if (key == 'seconds') {
-          totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100;
+          totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 1000;
         }
       });
 
       timer =
         totalDurationInMS -
         message.guild.musicData.songDispatcher.streamTime +
-        500;
+        30000; // allows for controls near the end of the song
       //if (timer > 300000) timer = 300000; // 5min timer limit
 
       if (totalDurationInMS == 0) timer = 300000; // 5min timer for Live Streams
@@ -777,7 +777,7 @@ module.exports = class PlayCommand extends Command {
       } else if (key == 'minutes') {
         totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000;
       } else if (key == 'seconds') {
-        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100;
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 1000;
       }
     });
     const playBackBarLocation = Math.round(
