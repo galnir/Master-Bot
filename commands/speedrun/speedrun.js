@@ -3,6 +3,7 @@
 const fetch = require('node-fetch');
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const Pagination = require('discord-paginationembed');
 
 module.exports = class SpeedrunBasicCommand extends Command {
   constructor(client) {
@@ -11,7 +12,8 @@ module.exports = class SpeedrunBasicCommand extends Command {
       group: 'speedrun',
       aliases: ['sr', 'wr', 'src'],
       memberName: 'speedrun',
-      description: 'Replies with speedrun info of the main category.',
+      description:
+        'Replies with the Top 10 speedrun results in every category.',
       throttling: {
         usages: 1,
         duration: 6
@@ -38,7 +40,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
       let gameID = initial.data[0].id;
 
       const response = await fetch(
-        `https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=1&embed=game,category,players,platforms,regions`
+        `https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=10&embed=game,category,players,platforms,regions`
       );
       const body = await response.json();
 
@@ -47,55 +49,262 @@ module.exports = class SpeedrunBasicCommand extends Command {
         initial.data.slice(0, 6).forEach(id => {
           gameNameArr.push(id.names.international);
         });
-        var gameName = new MessageEmbed()
+        let gameName = new MessageEmbed()
           .setColor('#3E8657')
           .setTitle(':mag: Search Results')
           .setThumbnail(initial.data[0].assets['cover-medium'].uri)
-          .addField(':x: Try searching again with the following suggestions.', initial.data[0].names.international + ` doesn't have any runs.`)
+          .addField(
+            ':x: Try searching again with the following suggestions.',
+            initial.data[0].names.international + ` doesn't have any runs.`
+          )
           .setTimestamp()
           .setFooter('Powered by www.speedrun.com', '');
         for (let i = 1; i < gameNameArr.length; i++) {
-          gameName.addField(`:video_game: Result ${i}`,gameNameArr[i],)
+          gameName.addField(`:video_game: Result ${i}`, gameNameArr[i]);
         }
-        message.say(gameName)
-      
+        message.say(gameName);
       } else {
-        let platform =
-          body.data[0].platforms.data.length > 0
-            ? body.data[0].platforms.data[0].name
-            : '';
-        let region =
-          body.data[0].regions.data.length > 0
-            ? ' - ' + body.data[0].regions.data[0].name
-            : '';
-        let emu = body.data[0].runs[0].run.system.emulated ? ' [EMU]' : '';
-        let runnerName =
-          body.data[0].players.data[0].rel === 'user'
-            ? body.data[0].players.data[0].names.international
-            : body.data[0].players.data[0].name;
+        const embedArray = [];
 
-        const embed = new MessageEmbed()
-          .setColor('#3E8657')
-          .setTitle(
-            SpeedrunBasicCommand.convertTime(
-              body.data[0].runs[0].run.times.primary_t
-            ) +
-              ' by ' +
-              runnerName
-          )
-          .setThumbnail(body.data[0].game.data.assets['cover-medium'].uri)
-          .setURL(body.data[0].runs[0].run.weblink)
-          .setAuthor(
-            body.data[0].game.data.names.international +
-              ' - ' +
-              body.data[0].category.data.name, 'https://i.imgur.com/PpxR9E1.png', 'http://speedrun.com/'
-          )
-          .addField(':calendar_spiral: Date Played:', body.data[0].runs[0].run.date)
-          .addField(':video_game: Played On:', platform + region + emu)
-          .setTimestamp()
-          .setFooter('Powered by www.speedrun.com', '');
+        let number = 0;
 
-        message.channel.send(embed);
+        let category = body.data;
+
+        for (let i = 1; i <= category[0].players.data.length; ++i) {
+          let platform =
+            category[0].platforms.data.length > 0
+              ? category[0].platforms.data[0].name
+              : '';
+          let region =
+            category[0].regions.data.length > 0
+              ? ' - ' + category[0].regions.data[0].name
+              : '';
+          let emu = category[0].runs[i - 1].run.system.emulated ? ' [EMU]' : '';
+          let runnerName =
+            category[0].players.data[i - 1].rel === 'user'
+              ? category[0].players.data[i - 1].names.international
+              : category[0].players.data[i - 1].name;
+
+          let trophyIcon;
+          if (i == 1) trophyIcon = '🏆 WR: ';
+          if (i == 2) trophyIcon = '🥈 2nd: ';
+          if (i == 3) trophyIcon = '🥉 3rd: ';
+          if (i >= 4) trophyIcon = `${i}th: `;
+
+          embedArray.push(
+            new MessageEmbed()
+              .setColor('#3E8657')
+              .setTitle(
+                trophyIcon +
+                  SpeedrunBasicCommand.convertTime(
+                    category[0].runs[i - 1].run.times.primary_t
+                  ) +
+                  ' by ' +
+                  runnerName
+              )
+              .setThumbnail(category[0].game.data.assets['cover-medium'].uri)
+              .setURL(category[0].runs[i - 1].run.weblink)
+              .setAuthor(
+                category[0].game.data.names.international +
+                  ' - ' +
+                  category[0].category.data.name,
+                '',
+                'http://speedrun.com/'
+              )
+              .addField(
+                ':calendar_spiral: Date Played:',
+                category[0].runs[i - 1].run.date
+              )
+              .addField(':video_game: Played On:', platform + region + emu)
+              .setFooter(
+                'Powered by www.speedrun.com',
+                'https://i.imgur.com/PpxR9E1.png'
+              )
+          );
+        }
+
+        var embed = new Pagination.Embeds()
+          .setArray(embedArray)
+          .setAuthorizedUsers([message.author.id])
+          .setChannel(message.channel);
+
+        // More Info
+        if (category.length > 1)
+          embed.addField(
+            `Category ${number + 1} of ${category.length}`,
+            '🔼' + category[number + 1].category.data.name
+          );
+        // Next Category
+        embed
+          .addFunctionEmoji('🔼', () => {
+            if (number + 1 < body.data.length) number = number + 1;
+            try {
+              const embedArray2 = [];
+              for (let i = 1; i <= category[number].players.data.length; ++i) {
+                let platform =
+                  category[number].platforms.data.length > 0
+                    ? category[number].platforms.data[0].name
+                    : '';
+                let region =
+                  category[number].regions.data.length > 0
+                    ? ' - ' + category[number].regions.data[0].name
+                    : '';
+                let emu = category[number].runs[i - 1].run.system.emulated
+                  ? ' [EMU]'
+                  : '';
+                let runnerName =
+                  category[number].players.data[i - 1].rel === 'user'
+                    ? category[number].players.data[i - 1].names.international
+                    : category[number].players.data[i - 1].name;
+
+                var trophyIcon;
+                if (i == 1) trophyIcon = '🏆 WR: ';
+                if (i == 2) trophyIcon = '🥈 2nd: ';
+                if (i == 3) trophyIcon = '🥉 3rd: ';
+                if (i >= 4) trophyIcon = `${i}th: `;
+
+                embedArray2.push(
+                  new MessageEmbed()
+                    .setColor('#3E8657')
+                    .setTitle(
+                      trophyIcon +
+                        SpeedrunBasicCommand.convertTime(
+                          category[number].runs[i - 1].run.times.primary_t
+                        ) +
+                        ' by ' +
+                        runnerName
+                    )
+                    .setThumbnail(
+                      category[number].game.data.assets['cover-medium'].uri
+                    )
+                    .setURL(category[number].runs[i - 1].run.weblink)
+                    .setAuthor(
+                      category[number].game.data.names.international +
+                        ' - ' +
+                        category[number].category.data.name,
+                      '',
+                      'http://speedrun.com/'
+                    )
+                    .addField(
+                      ':calendar_spiral: Date Played:',
+                      category[number].runs[i - 1].run.date
+                    )
+                    .addField(
+                      ':video_game: Played On:',
+                      platform + region + emu
+                    )
+                    .setFooter(
+                      'Powered by www.speedrun.com',
+                      'https://i.imgur.com/PpxR9E1.png'
+                    )
+                );
+              }
+
+              embed.setArray(embedArray2);
+              if (number + 1 < category.length)
+                embed.addField(
+                  `Category ${number + 1} of ${category.length}`,
+                  '🔼' +
+                    category[number + 1].category.data.name +
+                    '\n🔽' +
+                    category[number - 1].category.data.name
+                );
+              else
+                embed.addField(
+                  `Category ${number + 1} of ${category.length}`,
+                  '🔽' + category[number - 1].category.data.name
+                );
+            } catch (error) {
+              message.say(':x: Something went wrong');
+              console.log(error);
+            }
+          })
+          // Prev Category
+          .addFunctionEmoji('🔽', () => {
+            if (number > 0) number = number - 1;
+
+            try {
+              const embedArry2 = [];
+              for (let i = 1; i <= category[number].players.data.length; ++i) {
+                let platform =
+                  category[number].platforms.data.length > 0
+                    ? category[number].platforms.data[0].name
+                    : '';
+                let region =
+                  category[number].regions.data.length > 0
+                    ? ' - ' + category[number].regions.data[0].name
+                    : '';
+                let emu = category[number].runs[i - 1].run.system.emulated
+                  ? ' [EMU]'
+                  : '';
+                let runnerName =
+                  category[number].players.data[i - 1].rel === 'user'
+                    ? category[number].players.data[i - 1].names.international
+                    : category[number].players.data[i - 1].name;
+
+                var trophyIcon;
+                if (i == 1) trophyIcon = '🏆 WR: ';
+                if (i == 2) trophyIcon = '🥈 2nd: ';
+                if (i == 3) trophyIcon = '🥉 3rd: ';
+                if (i >= 4) trophyIcon = `${i}th: `;
+
+                embedArry2.push(
+                  new MessageEmbed()
+                    .setColor('#3E8657')
+                    .setTitle(
+                      trophyIcon +
+                        SpeedrunBasicCommand.convertTime(
+                          category[number].runs[i - 1].run.times.primary_t
+                        ) +
+                        ' by ' +
+                        runnerName
+                    )
+                    .setThumbnail(
+                      category[number].game.data.assets['cover-medium'].uri
+                    )
+                    .setURL(category[number].runs[i - 1].run.weblink)
+                    .setAuthor(
+                      category[number].game.data.names.international +
+                        ' - ' +
+                        category[number].category.data.name,
+                      '',
+                      'http://speedrun.com/'
+                    )
+                    .addField(
+                      ':calendar_spiral: Date Played:',
+                      category[number].runs[i - 1].run.date
+                    )
+                    .addField(
+                      ':video_game: Played On:',
+                      platform + region + emu
+                    )
+                    .setFooter(
+                      'Powered by www.speedrun.com',
+                      'https://i.imgur.com/PpxR9E1.png'
+                    )
+                );
+              }
+              embed.setArray(embedArry2);
+              if (number > 0)
+                embed.addField(
+                  `Category ${number + 1} of ${category.length}`,
+                  '🔼' +
+                    category[number + 1].category.data.name +
+                    '\n🔽' +
+                    category[number - 1].category.data.name
+                );
+              else
+                embed.addField(
+                  `Category ${number + 1} of ${category.length}`,
+                  '🔼' + category[number + 1].category.data.name
+                );
+            } catch (error) {
+              message.say(':x: Something went wrong');
+              console.log(error);
+            }
+          });
+
+        embed.build();
       }
     }
   }
