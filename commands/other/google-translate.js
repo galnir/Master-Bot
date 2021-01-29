@@ -8,6 +8,7 @@ module.exports = class GoogleTranslateCommand extends Command {
     super(client, {
       name: 'google-translate',
       memberName: 'google-translate',
+      aliases: ['gt', 'g-translate', 'gtranslate'],
       group: 'other',
       description: 'Translate to any language using Google translate.',
       throttling: {
