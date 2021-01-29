@@ -105,6 +105,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
 | !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
+| !google-translate | Translate to any language using Google translate.                                                                                                                   | !google-translate dutch "How are you today" |
 
 - Gifs
 
