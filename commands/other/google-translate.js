@@ -36,7 +36,7 @@ module.exports = class GoogleTranslateCommand extends Command {
     });
   }
 
-  async run(message, { queryText, targetLang }) {
+  run(message, { queryText, targetLang }) {
     const langCode = ISO6391.getCode(targetLang);
     if (langCode === '')
       return message.channel.send(':x: Please provide a valid language!');
