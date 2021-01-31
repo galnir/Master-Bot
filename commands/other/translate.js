@@ -7,12 +7,13 @@ const translate = require('@vitalets/google-translate-api');
 
 // loads google-translate if yandexAPI is not found in config.json
 if (!yandexAPI) {
-  module.exports = class GoogleTranslateCommand extends Command {
+  module.exports = class TranslateCommand extends Command {
     constructor(client) {
       super(client, {
-        name: 'google-translate',
-        memberName: 'google-translate',
-        aliases: ['gt', 'g-translate', 'gtranslate', 'translate'],
+        name: 'translate',
+        memberName: 'translate',
+        group: 'other',
+        aliases: ['gt', 'g-translate', 'gtranslate', 'google-translate'],
         group: 'other',
         description: 'Translate to any language using Google translate.',
         throttling: {
