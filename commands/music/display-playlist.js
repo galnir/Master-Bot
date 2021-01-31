@@ -47,6 +47,7 @@ module.exports = class CreatePlaylistCommand extends Command {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
         message.reply(`**${playlistName}** is empty!`);
+        return;
       }
       const savedSongsEmbed = new Pagination.FieldsEmbed()
         .setArray(urlsArrayClone)
