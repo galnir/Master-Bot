@@ -90,9 +90,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
   }
 
   static async processURL(url, message) {
-    if (
-      url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
-    ) {
+    if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url).catch(function() {
         message.say(':x: Playlist is either private or it does not exist!');
         return;
