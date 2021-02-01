@@ -32,7 +32,6 @@ Make a config.json file in the root directory of the project and add:
   "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "yandexAPI": "yandex-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret"
 }
@@ -91,7 +90,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !reddit           | Replies with 5 top non nsfw subreddit posts                                                                                                                         | !reddit askreddit                                                             |
 | !say              | Make the bot say anything                                                                                                                                           | !say Lorem Ipsum                                                              |
 | !sr               | Replies with the Top 10 speedrun results in every category.                                                                                                         | !sr super metroid                                                             |
-| !translate        | Translate to any language using yandex translation service(only supported lanugages)                                                                                | !translate ありがとう                                                         |
+| !translate        | Translate to any language using Google translate.(only supported lanugages)                                                                                | !translate english ありがとう                                                         |
 | !about            | Info about me and the repo                                                                                                                                          | !about                                                                        |
 | !uptime           | Replies with the bot's total uptime                                                                                                                                 | !uptime                                                                       |
 | !8ball            | Get the answer to anything!                                                                                                                                         | !8ball Is this bot awesome?                                                   |
@@ -105,7 +104,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
 | !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
-| !google-translate | Translate to any language using Google translate.                                                                                                                   | !google-translate dutch "How are you today" |
 
 - Gifs
 
@@ -135,8 +133,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 [Get a NewsAPI API key here](https://newsapi.org/)
 
 [How to get a Youtube API key](https://developers.google.com/youtube/v3/getting-started)
-
-[Get a Yandex API key here](https://translate.yandex.com/developers/keys)
 
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
