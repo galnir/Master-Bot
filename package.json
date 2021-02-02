@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.3.3",
+    "@vitalets/google-translate-api": "^5.0.0",
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.5",
     "discord-paginationembed": "^2.1.0",
