@@ -26,7 +26,7 @@ module.exports = class TranslateCommand extends Command {
         },
         {
           key: 'queryText',
-          prompt: 'What do you want to translate',
+          prompt: 'What text do you want to translate?',
           type: 'string',
           validate: function (queryText) {
             return queryText.length < 3000;
