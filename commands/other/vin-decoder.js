@@ -73,7 +73,7 @@ module.exports = class VinDecoderCommand extends Command {
     if (embedArray.length == 0) {
       return message.say(':x: Error no data after filtering');
     }
-    let recallURL;
+    let recallURL = '';
     if (vinQuery.length == 17)
       recallURL = `[Check For Recalls](https://www.nhtsa.gov/recalls?vin=${vinQuery}#vin)`;
 
