@@ -347,15 +347,22 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Offline Edit
-          await announcedChannel.messages
-            .fetch({
-              around: embedID,
-              limit: 1
-            })
-            .then(msg => {
-              const fetchedMsg = msg.first();
-              fetchedMsg.edit(offlineEmbed);
-            });
+          try {
+            await announcedChannel.messages
+              .fetch({
+                around: embedID,
+                limit: 1
+              })
+              .then(msg => {
+                const fetchedMsg = msg.first();
+                fetchedMsg.edit(offlineEmbed);
+              });
+          } catch (error) {
+            message.say(':x: Could not edit message');
+            console.say(error);
+            clearInterval(Ticker);
+            return;
+          }
         }
       }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
     }
