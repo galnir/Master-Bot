@@ -305,7 +305,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             }
           } catch (error) {
             message.say(':x: Could not send message to channel');
-            console.say(error);
+            console.log(error);
             clearInterval(Ticker);
             return;
           }
@@ -359,7 +359,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               });
           } catch (error) {
             message.say(':x: Could not edit message');
-            console.say(error);
+            console.log(error);
             clearInterval(Ticker);
             return;
           }
