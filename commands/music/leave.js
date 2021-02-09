@@ -35,6 +35,10 @@ module.exports = class LeaveCommand extends Command {
         `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
+    } else if (message.guild.triviaData.isTriviaRunning) {
+      message.reply(
+        `Use stop-trivia command in order to stop the music trivia!`
+      );
     } else if (!message.guild.musicData.queue) {
       message.reply(':x: There are no songs in queue');
       return;
