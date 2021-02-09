@@ -43,11 +43,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
   }
 
   async run(message, { textRaw }) {
-    
     // Grab DataBase 1 get
     var Twitch_DB = new db.table('Twitch_DB');
     const DBInfo = Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`);
-    
+
     var textFiltered = textRaw.toLowerCase();
     var currentMsgStatus;
     var currentGame;
@@ -145,8 +144,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         .setFooter(DBInfo.savedName, DBInfo.savedAvatar)
         .setTimestamp(DBInfo.date);
     }
-    
-    //Check embed trigger 
+
+    //Check embed trigger
     if (textFiltered == 'check') {
       if (currentMsgStatus == 'disable') message.say(disabledEmbed);
       else {
@@ -295,13 +294,20 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Online Send
-          if (DBInfo.botSay.toLowerCase() != 'none') {
-            await announcedChannel.message.say(DBInfo.botSay),
+          try {
+            if (DBInfo.botSay.toLowerCase() != 'none') {
+              await announcedChannel.send(DBInfo.botSay),
+                await announcedChannel.send(onlineEmbed);
+              embedID = announcedChannel.lastMessage.id;
+            } else {
               await announcedChannel.send(onlineEmbed);
-            embedID = announcedChannel.lastMessage.id;
-          } else {
-            await announcedChannel.send(onlineEmbed);
-            embedID = announcedChannel.lastMessage.id;
+              embedID = announcedChannel.lastMessage.id;
+            }
+          } catch (error) {
+            message.say(':x: Could not send message to channel');
+            console.log(error);
+            clearInterval(Ticker);
+            return;
           }
           currentMsgStatus = 'sent';
         }
@@ -341,15 +347,22 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
 
           //Offline Edit
-          await announcedChannel.messages
-            .fetch({
-              around: embedID,
-              limit: 1
-            })
-            .then(msg => {
-              const fetchedMsg = msg.first();
-              fetchedMsg.edit(offlineEmbed);
-            });
+          try {
+            await announcedChannel.messages
+              .fetch({
+                around: embedID,
+                limit: 1
+              })
+              .then(msg => {
+                const fetchedMsg = msg.first();
+                fetchedMsg.edit(offlineEmbed);
+              });
+          } catch (error) {
+            message.say(':x: Could not edit message');
+            console.log(error);
+            clearInterval(Ticker);
+            return;
+          }
         }
       }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
     }

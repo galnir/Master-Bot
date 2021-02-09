@@ -4,7 +4,7 @@ module.exports = class LeaveCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'leave',
-      aliases: ['end'],
+      aliases: ['end', 'stop'],
       group: 'music',
       memberName: 'leave',
       guildOnly: true,
@@ -35,6 +35,10 @@ module.exports = class LeaveCommand extends Command {
         `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
       );
       return;
+    } else if (message.guild.triviaData.isTriviaRunning) {
+      message.reply(
+        `Use stop-trivia command in order to stop the music trivia!`
+      );
     } else if (!message.guild.musicData.queue) {
       message.reply(':x: There are no songs in queue');
       return;
@@ -42,6 +46,7 @@ module.exports = class LeaveCommand extends Command {
       message.guild.musicData.songDispatcher.resume();
       message.guild.musicData.queue.length = 0;
       message.guild.musicData.loopSong = false;
+      message.guild.musicData.skipTimer = true;
       setTimeout(() => {
         message.guild.musicData.songDispatcher.end();
       }, 100);

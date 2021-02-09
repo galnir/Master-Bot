@@ -367,7 +367,13 @@ module.exports = class PlayCommand extends Command {
       );
       return;
     });
-    if (videos.length < 5 || !videos) {
+    if (!videos) {
+      message.say(
+        `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
+      );
+      return;
+    }
+    if (videos.length < 5) {
       message.say(
         `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
       );

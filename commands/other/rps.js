@@ -13,7 +13,7 @@ module.exports = class RPSCommand extends Command {
         {
           key: 'text',
           prompt:
-            'You ready for a game of Rock, Paper, Sissors? \n What is your move?',
+            'You ready for a game of Rock, Paper, Scissors? \n What is your move?',
           type: 'string'
         }
       ]
