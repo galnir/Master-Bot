@@ -274,12 +274,13 @@ module.exports = class PlayCommand extends Command {
           .on('start', function() {
             message.guild.musicData.songDispatcher = dispatcher;
             // Volume Settings
-            if (!db.get(`${message.guild.id}.serverSettings.volume`))
+            if (!db.get(`${message.guild.id}.serverSettings.volume`)) {
               dispatcher.setVolume(message.guild.musicData.volume);
-            else
+            } else {
               dispatcher.setVolume(
                 db.get(`${message.guild.id}.serverSettings.volume`)
               );
+            }
 
             message.guild.musicData.nowPlaying = queue[0];
             queue.shift();
@@ -554,7 +555,7 @@ module.exports = class PlayCommand extends Command {
       .setAuthorizedUsers(memberArray[0])
       .setDisabledNavigationEmojis(['all'])
       .setChannel(message.channel)
-      .setDeleteOnTimeout(false) // change to true to Delete the messages at the end of the song
+      .setDeleteOnTimeout(false) // change to true to delete the messages at the end of the song
       .setTimeout(buttonTimer(message))
       .setTitle(embedTitle(message))
       .setDescription(songTitle + PlayCommand.playbackBar(message))
@@ -746,6 +747,7 @@ module.exports = class PlayCommand extends Command {
       // if (timer > 300000) timer = 300000;
 
       // Live Stream timer
+
       if (totalDurationInMS == 0) timer = 300000;
       return timer;
     }
@@ -765,8 +767,7 @@ module.exports = class PlayCommand extends Command {
 
   static playbackBar(message) {
     if (message.guild.musicData.nowPlaying.duration == 'Live Stream') {
-      const noPlayBackBar = '';
-      return noPlayBackBar;
+      return '';
     }
 
     const passedTimeInMS = message.guild.musicData.songDispatcher.streamTime;
@@ -794,12 +795,12 @@ module.exports = class PlayCommand extends Command {
       (passedTimeInMS / totalDurationInMS) * 10
     );
     let playBack = '';
-    for (let i = 1; i < 21; i++) {
+    for (let i = 1; i < 12; i++) {
       if (playBackBarLocation == 0) {
-        playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬';
+        playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬';
         break;
       } else if (playBackBarLocation == 10) {
-        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:';
+        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:';
         break;
       } else if (i == playBackBarLocation * 2) {
         playBack = playBack + ':musical_note:';
