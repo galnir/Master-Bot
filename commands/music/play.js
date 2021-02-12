@@ -478,7 +478,7 @@ module.exports = class PlayCommand extends Command {
               songEmbed.delete();
             }
             message.say(
-              ':x: An error has occured when trying to get the video ID from youtube.'
+              ':x: An error has occurred when trying to get the video ID from youtube.'
             );
             return;
           });
@@ -554,7 +554,7 @@ module.exports = class PlayCommand extends Command {
       .setAuthorizedUsers(memberArray[0])
       .setDisabledNavigationEmojis(['all'])
       .setChannel(message.channel)
-      //.setDeleteOnTimeout(true)
+      .setDeleteOnTimeout(false) // change to true to Delete the messages at the end of the song
       .setTimeout(buttonTimer(message))
       .setTitle(embedTitle(message))
       .setDescription(songTitle + PlayCommand.playbackBar(message))
@@ -570,7 +570,7 @@ module.exports = class PlayCommand extends Command {
 
           if (message.guild.musicData.songDispatcher.volume > 0) {
             message.guild.musicData.songDispatcher.setVolume(
-              message.guild.musicData.songDispatcher.volume - 0.01
+              message.guild.musicData.songDispatcher.volume - 0.1
             );
             const embed = instance.array[0];
             embed.fields[1].value =
@@ -589,7 +589,7 @@ module.exports = class PlayCommand extends Command {
 
           if (message.guild.musicData.songDispatcher.volume < 2) {
             message.guild.musicData.songDispatcher.setVolume(
-              message.guild.musicData.songDispatcher.volume + 0.01
+              message.guild.musicData.songDispatcher.volume + 0.1
             );
             const embed = instance.array[0];
             embed.fields[1].value =
@@ -612,6 +612,7 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.queue.length = 0;
             message.guild.musicData.loopSong = false;
             message.guild.musicData.loopQueue = false;
+            message.guild.musicData.skipTimer = true;
             setTimeout(() => {
               message.guild.musicData.songDispatcher.end();
             }, 100);
@@ -622,6 +623,7 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.loopQueue = false;
             message.guild.musicData.songDispatcher.end();
           }
+          message.say(`:grey_exclamation: Leaving the channel.`);
         },
         // Play/Pause Button
         '⏯️': function() {
@@ -735,12 +737,16 @@ module.exports = class PlayCommand extends Command {
       });
 
       timer =
-        totalDurationInMS -
-        message.guild.musicData.songDispatcher.streamTime +
-        30000; // allows for controls near the end of the song
-      //if (timer > 300000) timer = 300000; // 5min timer limit
+        totalDurationInMS - message.guild.musicData.songDispatcher.streamTime;
 
-      if (totalDurationInMS == 0) timer = 300000; // 5min timer for Live Streams
+      // Allow controls to stay for at least 30 seconds
+      if (timer < 30000) timer = 30000;
+
+      // Uncomment below for 5 min maximum timer limit
+      // if (timer > 300000) timer = 300000;
+
+      // Live Stream timer
+      if (totalDurationInMS == 0) timer = 300000;
       return timer;
     }
 
