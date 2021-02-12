@@ -648,10 +648,12 @@ module.exports = class PlayCommand extends Command {
       });
 
     if (message.guild.musicData.queue.length > 0) {
+      const songOrSongs =
+        message.guild.musicData.queue.length > 1 ? 'Songs' : 'Song'; // eslint-disable-line
       videoEmbed
         .addField(
           'Queue',
-          ':notes: ' + message.guild.musicData.queue.length + ' Song(s)',
+          ':notes: ' + message.guild.musicData.queue.length + songOrSongs,
           true
         )
         .addField(
