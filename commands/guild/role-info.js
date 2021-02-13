@@ -35,7 +35,7 @@ module.exports = class RoleInfoCommand extends Command {
         .addField('Role', `<@&${role.id}>`)
         .addField('Role ID', role.id)
         .addField('Color', role.hexColor.toUpperCase())
-        .addField('Creation Date', new Date(role.createdAt).toDateString())
+        .addField('Creation Date', new Date(role.createdAt).toLocaleString())
         .addField('Mentionable', role.mentionable ? 'Yes' : 'No')
         .setFooter('▶️ Permissions')
     ];
