@@ -88,6 +88,7 @@ module.exports = class MusicTriviaCommand extends Command {
   }
 
   static async playQuizSong(queue, message) {
+    const randomStartTime = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
     var classThis = this;
     queue[0].voiceChannel.join().then(function(connection) {
       const dispatcher = connection
@@ -96,7 +97,10 @@ module.exports = class MusicTriviaCommand extends Command {
             // filter: 'audio',
             quality: 'highestaudio',
             highWaterMark: 1024 * 1024 * 1024
-          })
+          }),
+          {
+            seek: randomStartTime
+          }
         )
         .on('error', async function(e) {
           message.say(':x: Could not play that song!');
