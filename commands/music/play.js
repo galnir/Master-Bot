@@ -37,12 +37,12 @@ module.exports = class PlayCommand extends Command {
   async run(message, { query }) {
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
-      message.say(':no_entry: Please join a voice channel and try again!');
+      message.reply(':no_entry: Please join a voice channel and try again!');
       return;
     }
 
     if (message.guild.triviaData.isTriviaRunning == true) {
-      message.say(':x: Please try after the trivia has ended!');
+      message.reply(':x: Please try after the trivia has ended!');
       return;
     }
 
@@ -82,6 +82,7 @@ module.exports = class PlayCommand extends Command {
           )
           .then(async function onClarifyResponse(response) {
             const msgContent = response.first().content;
+            // Play a saved playlist
             if (msgContent == 1) {
               if (clarifyEmbed) {
                 clarifyEmbed.delete();
@@ -108,6 +109,7 @@ module.exports = class PlayCommand extends Command {
                 message.guild.musicData.isPlaying = true;
                 PlayCommand.playSong(message.guild.musicData.queue, message);
               }
+              // Search for the query on YouTube
             } else if (msgContent == 2) {
               await PlayCommand.searchYoutube(query, message, voiceChannel);
               return;
@@ -127,7 +129,7 @@ module.exports = class PlayCommand extends Command {
     }
 
     if (
-      // Handles PlayList Links
+      // Handles playlist Links
       query.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
