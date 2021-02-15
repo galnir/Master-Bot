@@ -34,7 +34,7 @@ module.exports = class AdviceCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say('Failed to deliver advice :sob:');
+        message.reply('Failed to deliver advice :sob:');
         return console.error(err);
       });
   }

@@ -31,7 +31,7 @@ module.exports = class SkipAllCommand extends Command {
       return;
     }
     if (!message.guild.musicData.queue)
-      return message.say(':x: There are no songs in queue!');
+      return message.reply(':x: There are no songs in queue!');
     message.guild.musicData.queue.length = 0; // clear queue
     message.guild.musicData.loopSong = false;
     message.guild.musicData.loopQueue = false;

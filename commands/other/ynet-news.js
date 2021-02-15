@@ -53,7 +53,7 @@ module.exports = class YnetNewsCommand extends Command {
 
       embed.build();
     } catch (err) {
-      message.say(':x: Something failed along the way');
+      message.reply(':x: Something failed along the way');
       return console.error(err);
     }
   }

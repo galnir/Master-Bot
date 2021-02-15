@@ -119,7 +119,6 @@ module.exports = class WecomeSettingsCommand extends Command {
     }
   ) {
     let destinationChannel;
-    
 
     //Grab DB 1 Get
     const DBInfo = db.get(
@@ -163,10 +162,10 @@ module.exports = class WecomeSettingsCommand extends Command {
 
     //Swap if in the incorrect order
     if (imageHeight > imageWidth) {
-        imageWidth = imageHeight;
-        imageHeight = imageWidth;
-     }
-    
+      imageWidth = imageHeight;
+      imageHeight = imageWidth;
+    }
+
     //Save to DB 1 set
     db.set(`${message.member.guild.id}.serverSettings.welcomeMsg`, {
       destination: destination,
@@ -204,8 +203,8 @@ module.exports = class WecomeSettingsCommand extends Command {
         message.member.user.displayAvatarURL()
       )
       .setTimestamp();
-    
-    //Shows Local wallpaper when in Default 
+
+    //Shows Local wallpaper when in Default
     if (wallpaperURL == './resources/welcome/wallpaper.jpg') {
       const attachment = new MessageAttachment(
         '././resources/welcome/wallpaper.jpg'
@@ -214,6 +213,6 @@ module.exports = class WecomeSettingsCommand extends Command {
     }
     //Show URL Image
     else embed.setImage(wallpaperURL);
-    return message.say(embed);
+    return message.reply(embed);
   }
 };

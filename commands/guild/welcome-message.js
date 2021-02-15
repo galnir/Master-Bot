@@ -28,12 +28,11 @@ module.exports = class WecomeMessageCommand extends Command {
 
   //DB Tally (2 enable new db) || (2 enable has DB) || (1 disable)
   run(message, { choice }) {
-    
     // Converting choices
     if (choice.toLowerCase() == 'enable') choice = 'yes';
 
     if (choice.toLowerCase() == 'disable') choice = 'no';
-   
+
     // Save to DB 1 set
     db.set(
       `${message.member.guild.id}.serverSettings.welcomeMsg.status`,
@@ -41,15 +40,13 @@ module.exports = class WecomeMessageCommand extends Command {
     );
 
     if (choice.toLowerCase() == 'yes') {
-    
       // Grab DB 1 get
       const DBInfo = db.get(
         `${message.member.guild.id}.serverSettings.welcomeMsg`
       );
-     
+
       // DB check
       if (DBInfo.cmdUsed == null) {
-        
         // Saving Defaults if none are present
         db.set(`${message.member.guild.id}.serverSettings.welcomeMsg`, {
           destination: 'direct message',
@@ -64,11 +61,11 @@ module.exports = class WecomeMessageCommand extends Command {
           timeStamp: message.createdAt,
           cmdUsed: message.content
         });
-        
+
         const attachment = new MessageAttachment(
           '././resources/welcome/wallpaper.jpg'
         );
-        
+
         // Embed for New DB situation
         const embed = new MessageEmbed()
           .setTitle(
@@ -94,10 +91,8 @@ module.exports = class WecomeMessageCommand extends Command {
             message.member.user.displayAvatarURL()
           );
 
-        return message.say(embed);
-      
+        return message.reply(embed);
       } else {
-        
         // Report Back settings from DB
         const embed = new MessageEmbed()
           .setTitle(
@@ -128,13 +123,13 @@ module.exports = class WecomeMessageCommand extends Command {
           embed.attachFiles(attachment);
           embed.setImage('attachment://wallpaper.jpg');
         } else embed.setImage(DBInfo.wallpaperURL);
-        return message.say(embed);
+        return message.reply(embed);
       }
     }
-    
+
     // Report Settings are Disabled
     if (choice.toLowerCase() == 'no')
-      message.say(
+      message.reply(
         `Welcome Message ***Disabled*** on ${message.member.guild.name}`
       );
   }

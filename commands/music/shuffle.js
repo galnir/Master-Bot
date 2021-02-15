@@ -35,7 +35,7 @@ module.exports = class ShuffleQueueCommand extends Command {
       return;
     }
     if (message.guild.musicData.queue.length < 1)
-      return message.say(':x: There are no songs in queue!');
+      return message.reply(':x: There are no songs in queue!');
 
     shuffleQueue(message.guild.musicData.queue);
 

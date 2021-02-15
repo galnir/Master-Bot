@@ -8,16 +8,14 @@ module.exports = class UnmuteCommand extends Command {
       aliases: ['unmute-user'],
       memberName: 'unmute',
       group: 'guild',
-      description:
-        'Unmutes a tagged user',
+      description: 'Unmutes a tagged user',
       guildOnly: true,
       userPermissions: ['MANAGE_ROLES'],
       clientPermissions: ['MANAGE_ROLES'],
       args: [
         {
           key: 'userToUnmute',
-          prompt:
-            'Please mention the member that you want to unmute them.',
+          prompt: 'Please mention the member that you want to unmute them.',
           type: 'member'
         }
       ]
@@ -25,7 +23,9 @@ module.exports = class UnmuteCommand extends Command {
   }
 
   async run(message, { userToUnmute }) {
-    const mutedRole = message.guild.roles.cache.find(role => role.name === 'Muted');
+    const mutedRole = message.guild.roles.cache.find(
+      role => role.name === 'Muted'
+    );
     if (!mutedRole)
       return message.channel.send(
         ':x: No "Muted" role was found, create one and try again.'
@@ -42,7 +42,7 @@ module.exports = class UnmuteCommand extends Command {
         message.channel.send(unmuteEmbed);
       })
       .catch(err => {
-        message.say(
+        message.reply(
           ':x: Something went wrong when trying to unmute this user.'
         );
         return console.error(err);

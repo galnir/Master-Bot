@@ -14,12 +14,12 @@ module.exports = class LoopCommand extends Command {
 
   run(message) {
     if (!message.guild.musicData.isPlaying) {
-      return message.say(':x: There is no song playing right now!');
+      return message.reply(':x: There is no song playing right now!');
     } else if (
       message.guild.musicData.isPlaying &&
       message.guild.triviaData.isTriviaRunning
     ) {
-      return message.say(':x: You cannot loop over a trivia!');
+      return message.reply(':x: You cannot loop over a trivia!');
     } else if (
       message.member.voice.channel.id !== message.guild.me.voice.channel.id
     ) {

@@ -15,9 +15,9 @@ module.exports = class QueueCommand extends Command {
 
   run(message) {
     if (message.guild.triviaData.isTriviaRunning)
-      return message.say(':x: Try again after the trivia has ended!');
+      return message.reply(':x: Try again after the trivia has ended!');
     if (message.guild.musicData.queue.length == 0)
-      return message.say(':x: There are no songs in queue!');
+      return message.reply(':x: There are no songs in queue!');
     const queueClone = message.guild.musicData.queue;
     const queueEmbed = new Pagination.FieldsEmbed()
       .setArray(queueClone)

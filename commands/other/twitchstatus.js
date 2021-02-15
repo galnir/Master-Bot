@@ -44,7 +44,7 @@ module.exports = class TwitchStatusCommand extends Command {
         scope
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -55,7 +55,7 @@ module.exports = class TwitchStatusCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -68,7 +68,7 @@ module.exports = class TwitchStatusCommand extends Command {
         user_id
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -104,7 +104,7 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       }
-      message.say(offlineEmbed);
+      message.reply(offlineEmbed);
       return;
     }
 
@@ -129,7 +129,7 @@ module.exports = class TwitchStatusCommand extends Command {
       // Use helpful Attachment class structure to process the file for you
       var attachment = new MessageAttachment(canvas.toBuffer(), 'box_art.png');
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -167,7 +167,7 @@ module.exports = class TwitchStatusCommand extends Command {
         true
       );
     }
-    message.say(onlineEmbed);
+    message.reply(onlineEmbed);
     return;
   }
 };

@@ -31,7 +31,7 @@ module.exports = class WeatherCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.length === 0) {
-      message.say(':x: No location data was found.');
+      message.reply(':x: No location data was found.');
     } else {
       const locationID = initial[0].woeid;
 

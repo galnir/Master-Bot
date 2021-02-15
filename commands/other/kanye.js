@@ -30,7 +30,7 @@ module.exports = class KanyeCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say('Failed to deliver quote :sob:');
+        message.reply('Failed to deliver quote :sob:');
         return console.error(err);
       });
   }

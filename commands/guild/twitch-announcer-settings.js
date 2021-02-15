@@ -113,7 +113,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         scope
       );
     } catch (e) {
-      message.say(':x: ' + e);
+      message.reply(':x: ' + e);
       return;
     }
 
@@ -124,7 +124,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.say(':x: ' + e);
+      message.reply(':x: ' + e);
       return;
     }
 
@@ -178,6 +178,6 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     //Send Reponse
-    message.say(embed);
+    message.reply(embed);
   }
 };

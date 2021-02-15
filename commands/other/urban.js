@@ -49,7 +49,7 @@ module.exports = class UrbanCommand extends Command {
         return;
       })
       .catch(() => {
-        message.say('Failed to deliver definition :sob:');
+        message.reply('Failed to deliver definition :sob:');
         // console.error(err); // no need to spam console for each time it doesn't find a query
         return;
       });

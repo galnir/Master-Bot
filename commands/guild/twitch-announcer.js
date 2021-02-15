@@ -73,7 +73,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
     } catch (e) {
       clearInterval(Ticker);
-      message.say(':x: Twitch Announcer has stopped!\n' + e);
+      message.reply(':x: Twitch Announcer has stopped!\n' + e);
       return;
     }
 
@@ -85,7 +85,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
     } catch (e) {
       clearInterval(Ticker);
-      message.say(':x: Twitch Announcer has stopped!\n' + e);
+      message.reply(':x: Twitch Announcer has stopped!\n' + e);
       return;
     }
 
@@ -147,22 +147,22 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     //Check embed trigger
     if (textFiltered == 'check') {
-      if (currentMsgStatus == 'disable') message.say(disabledEmbed);
+      if (currentMsgStatus == 'disable') message.reply(disabledEmbed);
       else {
-        return message.say(enabledEmbed);
+        return message.reply(enabledEmbed);
       }
       return;
     }
     //Disable Set
     if (textFiltered == 'disable') {
       currentMsgStatus = 'disable';
-      message.say(disabledEmbed);
+      message.reply(disabledEmbed);
     }
 
     //Enable Set
     if (textFiltered == 'enable') {
       currentMsgStatus = 'enable';
-      message.say(enabledEmbed);
+      message.reply(enabledEmbed);
 
       //Ticker Section (Loop)
       var Ticker = setInterval(async function() {
@@ -182,7 +182,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: Twitch Announcer has stopped!\n' + e);
+          message.reply(':x: Twitch Announcer has stopped!\n' + e);
           return;
         }
 
@@ -194,7 +194,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: Twitch Announcer has stopped!\n' + e);
+          message.reply(':x: Twitch Announcer has stopped!\n' + e);
           return;
         }
 
@@ -207,7 +207,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         } catch (e) {
           clearInterval(Ticker);
-          message.say(':x: Twitch Announcer has stopped!\n' + e);
+          message.reply(':x: Twitch Announcer has stopped!\n' + e);
           return;
         }
 
@@ -253,7 +253,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             );
           } catch (e) {
             clearInterval(Ticker);
-            message.say(':x: Twitch Announcer has stopped!\n' + e);
+            message.reply(':x: Twitch Announcer has stopped!\n' + e);
             return;
           }
 
@@ -304,7 +304,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               embedID = announcedChannel.lastMessage.id;
             }
           } catch (error) {
-            message.say(':x: Could not send message to channel');
+            message.reply(':x: Could not send message to channel');
             console.log(error);
             clearInterval(Ticker);
             return;
@@ -358,7 +358,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
                 fetchedMsg.edit(offlineEmbed);
               });
           } catch (error) {
-            message.say(':x: Could not edit message');
+            message.reply(':x: Could not edit message');
             console.log(error);
             clearInterval(Ticker);
             return;

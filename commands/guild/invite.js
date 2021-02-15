@@ -44,6 +44,6 @@ module.exports = class InviteCommand extends Command {
       )
       .setTimestamp(this.client.user.createdAt);
 
-    message.say(embed);
+    message.reply(embed);
   }
 };

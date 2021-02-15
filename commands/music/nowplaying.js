@@ -19,7 +19,7 @@ module.exports = class NowPlayingCommand extends Command {
         !message.guild.musicData.nowPlaying) ||
       message.guild.triviaData.isTriviaRunning
     ) {
-      return message.say(
+      return message.reply(
         ':no_entry: Please join a voice channel and try again!'
       );
     }

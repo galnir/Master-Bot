@@ -55,7 +55,7 @@ module.exports = class BanCommand extends Command {
         message.channel.send(banEmbed);
       })
       .catch(err => {
-        message.say(
+        message.reply(
           ':x: Something went wrong when trying to ban this user, I probably do not have the permission to ban him!'
         );
         return console.error(err);

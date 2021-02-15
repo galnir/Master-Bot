@@ -34,7 +34,7 @@ module.exports = class BoredCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say('Failed to deliver activity :sob:');
+        message.reply('Failed to deliver activity :sob:');
         return console.error(err);
       });
   }

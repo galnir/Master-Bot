@@ -23,13 +23,17 @@ module.exports = class FortuneCommand extends Command {
       const json = await res.json();
       const embed = new MessageEmbed()
         .setColor('#F4D190')
-        .setAuthor('Fortune Cookie', 'https://i.imgur.com/58wIjK0.png', 'https://yerkee.com')
+        .setAuthor(
+          'Fortune Cookie',
+          'https://i.imgur.com/58wIjK0.png',
+          'https://yerkee.com'
+        )
         .setDescription(json.fortune)
         .setTimestamp()
         .setFooter('Powered by yerkee.com', '');
-      return message.say(embed);
+      return message.reply(embed);
     } catch (e) {
-      message.say(':x: Could not obtain a fortune cookie!');
+      message.reply(':x: Could not obtain a fortune cookie!');
       return console.error(e);
     }
   }

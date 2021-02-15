@@ -16,15 +16,15 @@ module.exports = class MuteCommand extends Command {
       args: [
         {
           key: 'userToMute',
-          prompt:
-            'Please mention the member that you want to mute them.',
+          prompt: 'Please mention the member that you want to mute them.',
           type: 'member'
         },
         {
           key: 'reason',
           prompt: 'Why do you want to mute this user?',
           type: 'string',
-          default: message => `${message.author.tag} Requested, no reason was given`
+          default: message =>
+            `${message.author.tag} Requested, no reason was given`
         }
       ]
     });
@@ -51,7 +51,7 @@ module.exports = class MuteCommand extends Command {
         message.channel.send(muteEmbed);
       })
       .catch(err => {
-        message.say(
+        message.reply(
           ':x: Something went wrong when trying to mute this user.'
         );
         return console.error(err);

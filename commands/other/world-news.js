@@ -53,7 +53,7 @@ module.exports = class GlobalNewsCommand extends Command {
 
       embed.build();
     } catch (e) {
-      message.say(':x: Something failed along the way!');
+      message.reply(':x: Something failed along the way!');
       return console.error(e);
     }
   }

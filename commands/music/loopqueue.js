@@ -22,13 +22,13 @@ module.exports = class LoopQueueCommand extends Command {
 
   run(message) {
     if (!message.guild.musicData.isPlaying) {
-      message.say(':x: There is no song playing right now!');
+      message.reply(':x: There is no song playing right now!');
       return;
     } else if (
       message.guild.musicData.isPlaying &&
       message.guild.triviaData.isTriviaRunning
     ) {
-      message.say(':x: You cannot loop over a trivia!');
+      message.reply(':x: You cannot loop over a trivia!');
       return;
     } else if (
       message.member.voice.channel.id !== message.guild.me.voice.channel.id
@@ -38,7 +38,7 @@ module.exports = class LoopQueueCommand extends Command {
       );
       return;
     } else if (message.guild.musicData.queue.length == 0) {
-      message.say(`:x: I can't loop over an empty queue!`);
+      message.reply(`:x: I can't loop over an empty queue!`);
       return;
     } else if (message.guild.musicData.loopSong) {
       message.reply(

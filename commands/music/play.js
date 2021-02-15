@@ -150,12 +150,12 @@ module.exports = class PlayCommand extends Command {
       query.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
-        message.say(':x: Playlist is either private or it does not exist!');
+        message.reply(':x: Playlist is either private or it does not exist!');
         return;
       });
       // add 10 as an argument in getVideos() if you choose to limit the queue
       const videosArr = await playlist.getVideos().catch(function() {
-        message.say(
+        message.reply(
           ':x: There was a problem getting one of the videos in the playlist!'
         );
         return;
@@ -226,7 +226,9 @@ module.exports = class PlayCommand extends Command {
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
       let failedToGetVideo = false;
       const video = await youtube.getVideoByID(id).catch(function() {
-        message.say(':x: There was a problem getting the video you provided!');
+        message.reply(
+          ':x: There was a problem getting the video you provided!'
+        );
         failedToGetVideo = true;
       });
       if (failedToGetVideo) return;
@@ -358,7 +360,7 @@ module.exports = class PlayCommand extends Command {
             }
           })
           .on('error', function(e) {
-            message.say(':x: Cannot play song!');
+            message.reply(':x: Cannot play song!');
             console.error(e);
             if (queue.length > 1) {
               queue.shift();
@@ -375,7 +377,7 @@ module.exports = class PlayCommand extends Command {
           });
       })
       .catch(function() {
-        message.say(':no_entry: I have no permission to join your channel!');
+        message.reply(':no_entry: I have no permission to join your channel!');
         message.guild.musicData.queue.length = 0;
         message.guild.musicData.isPlaying = false;
         message.guild.musicData.nowPlaying = null;
@@ -390,19 +392,19 @@ module.exports = class PlayCommand extends Command {
 
   static async searchYoutube(query, message, voiceChannel) {
     const videos = await youtube.searchVideos(query, 5).catch(async function() {
-      await message.say(
+      await message.reply(
         ':x: There was a problem searching the video you requested!'
       );
       return;
     });
     if (!videos) {
-      message.say(
+      message.reply(
         `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
       );
       return;
     }
     if (videos.length < 5) {
-      message.say(
+      message.reply(
         `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
       );
       return;
@@ -512,7 +514,7 @@ module.exports = class PlayCommand extends Command {
             if (songEmbed) {
               songEmbed.delete();
             }
-            message.say(
+            message.reply(
               ':x: An error has occurred when trying to get the video ID from youtube.'
             );
             return;
@@ -522,7 +524,7 @@ module.exports = class PlayCommand extends Command {
         if (songEmbed) {
           songEmbed.delete();
         }
-        message.say(
+        message.reply(
           ':x: Please try again and enter a number between 1 and 5 or cancel.'
         );
         return;
@@ -658,7 +660,7 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.loopQueue = false;
             message.guild.musicData.songDispatcher.end();
           }
-          message.say(`:grey_exclamation: Leaving the channel.`);
+          message.reply(`:grey_exclamation: Leaving the channel.`);
         },
         // Play/Pause Button
         '⏯️': function() {

@@ -43,7 +43,7 @@ module.exports = class SkipToCommand extends Command {
     }
 
     if (message.guild.musicData.queue < 1) {
-      message.say(':x: There are no songs in queue!');
+      message.reply(':x: There are no songs in queue!');
       return;
     }
 

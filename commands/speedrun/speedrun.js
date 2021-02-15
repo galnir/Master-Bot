@@ -35,7 +35,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
 
     const initial = await respInitial.json();
     if (initial.data.length === 0) {
-      message.say(':x: No game was found.');
+      message.reply(':x: No game was found.');
     } else {
       let gameID = initial.data[0].id;
 
@@ -62,7 +62,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
         for (let i = 1; i < gameNameArr.length; i++) {
           gameName.addField(`:video_game: Result ${i}`, gameNameArr[i]);
         }
-        message.say(gameName);
+        message.reply(gameName);
       } else {
         const embedArray = [];
 
@@ -215,7 +215,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                   '🔽' + category[number - 1].category.data.name
                 );
             } catch (error) {
-              message.say(':x: Something went wrong');
+              message.reply(':x: Something went wrong');
               console.log(error);
             }
           })
@@ -299,7 +299,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                   '🔼' + category[number + 1].category.data.name
                 );
             } catch (error) {
-              message.say(':x: Something went wrong');
+              message.reply(':x: Something went wrong');
               console.log(error);
             }
           });

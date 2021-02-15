@@ -42,6 +42,8 @@ module.exports = class RemoveSongCommand extends Command {
     }
 
     message.guild.musicData.queue.splice(songNumber - 1, 1);
-    message.say(`:wastebasket: Removed song number ${songNumber} from queue!`);
+    message.reply(
+      `:wastebasket: Removed song number ${songNumber} from queue!`
+    );
   }
 };
