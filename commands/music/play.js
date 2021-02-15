@@ -3,9 +3,26 @@ const { MessageEmbed } = require('discord.js');
 const Youtube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
 const { youtubeAPI } = require('../../config.json');
+let {
+  playLiveStreams,
+  playVideosLongerThan1Hour,
+  maxQueueLength,
+  AutomaticallyShuffleYouTubePlaylists
+} = require('../../options.json');
 const youtube = new Youtube(youtubeAPI);
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
+
+if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
+if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
+  maxQueueLength = 1000;
+}
+if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
+  AutomaticallyShuffleYouTubePlaylists = false;
+}
+if (typeof playVideosLongerThan1Hour !== 'boolean') {
+  playVideosLongerThan1Hour = true;
+}
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -144,13 +161,13 @@ module.exports = class PlayCommand extends Command {
         return;
       });
 
-      // Uncomment if you want the bot to automatically shuffle the playlist
-
-      /*for (let i = videosArr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [videosArr[i], videosArr[j]] = [videosArr[j], videosArr[i]];
+      if (AutomaticallyShuffleYouTubePlaylists) {
+        for (let i = videosArr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [videosArr[i], videosArr[j]] = [videosArr[j], videosArr[i]];
+        }
       }
-      */
+
       const queueCount = message.guild.musicData.queue.length;
       for (let i = 0; i < videosArr.length; i++) {
         if (
@@ -161,21 +178,20 @@ module.exports = class PlayCommand extends Command {
         } else {
           try {
             const video = await videosArr[i].fetch();
-            // this can be uncommented if you choose to limit the queue
-            // if (message.guild.musicData.queue.length < 10) {
-            //
-            message.guild.musicData.queue.push(
-              PlayCommand.constructSongObj(
-                video,
-                voiceChannel,
-                message.member.user
-              )
-            );
-            // } else {
-            //   return message.say(
-            //     `I can't play the full playlist because there will be more than 10 songs in queue`
-            //   );
-            // }
+            if (message.guild.musicData.queue.length < maxQueueLength) {
+              message.guild.musicData.queue.push(
+                PlayCommand.constructSongObj(
+                  video,
+                  voiceChannel,
+                  message.member.user
+                )
+              );
+            } else {
+              message.reply(
+                `I stopped adding songs since the queue size hit its limit of ${maxQueueLength}`
+              );
+              break;
+            }
           } catch (err) {
             return console.error(err);
           }
@@ -214,20 +230,29 @@ module.exports = class PlayCommand extends Command {
         failedToGetVideo = true;
       });
       if (failedToGetVideo) return;
-      // // can be uncommented if you don't want the bot to play live streams
-      // if (video.raw.snippet.liveBroadcastContent === 'live') {
-      //   return message.say("I don't support live streams!");
-      // }
-      // // can be uncommented if you don't want the bot to play videos longer than 1 hour
-      // if (video.duration.hours !== 0) {
-      //   return message.say('I cannot play videos longer than 1 hour');
-      // }
-      // // can be uncommented if you want to limit the queue
-      // if (message.guild.musicData.queue.length > 10) {
-      //   return message.say(
-      //     'There are too many songs in the queue already, skip or wait a bit'
-      //   );
-      // }
+      if (
+        video.raw.snippet.liveBroadcastContent === 'live' &&
+        !playLiveStreams
+      ) {
+        message.reply(
+          'Live streams are disabled in this server! Contact the owner'
+        );
+        return;
+      }
+
+      if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
+        message.reply(
+          'Videos longer than 1 hour are disabled in this server! Contact the owner'
+        );
+        return;
+      }
+
+      if (message.guild.musicData.queue.length > maxQueueLength) {
+        message.reply(
+          `The queue hit its limit of ${maxQueueLength}, please wait a bit`
+        );
+        return;
+      }
       message.guild.musicData.queue.push(
         PlayCommand.constructSongObj(video, voiceChannel, message.member.user)
       );
@@ -430,25 +455,32 @@ module.exports = class PlayCommand extends Command {
         youtube
           .getVideoByID(videos[videoIndex - 1].id)
           .then(function(video) {
-            // // can be uncommented if you don't want the bot to play live streams
-            // if (video.raw.snippet.liveBroadcastContent === 'live') {
-            //   songEmbed.delete();
-            //   return message.say("I don't support live streams!");
-            // }
+            if (
+              video.raw.snippet.liveBroadcastContent === 'live' &&
+              !playLiveStreams
+            ) {
+              songEmbed.delete();
+              message.reply(
+                'Live streams are disabled in this server! Contact the owner'
+              );
+              return;
+            }
 
-            // // can be uncommented if you don't want the bot to play videos longer than 1 hour
-            // if (video.duration.hours !== 0) {
-            //   songEmbed.delete();
-            //   return message.say('I cannot play videos longer than 1 hour');
-            // }
+            if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
+              songEmbed.delete();
+              message.reply(
+                'Videos longer than 1 hour are disabled in this server! Contact the owner'
+              );
+              return;
+            }
 
-            // // can be uncommented if you don't want to limit the queue
-            // if (message.guild.musicData.queue.length > 10) {
-            //   songEmbed.delete();
-            //   return message.say(
-            //     'There are too many songs in the queue already, skip or wait a bit'
-            //   );
-            // }
+            if (message.guild.musicData.queue.length > maxQueueLength) {
+              songEmbed.delete();
+              message.reply(
+                `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`
+              );
+              return;
+            }
             message.guild.musicData.queue.push(
               PlayCommand.constructSongObj(
                 video,
