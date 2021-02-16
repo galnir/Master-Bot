@@ -48,7 +48,7 @@ module.exports = class TranslateCommand extends Command {
           .setURL('https://translate.google.com/')
           .setDescription(response.text)
           .setFooter('Powered by Google Translate!');
-        message.reply(embed);
+        message.channel.send(embed);
       })
       .catch(error => {
         message.reply(

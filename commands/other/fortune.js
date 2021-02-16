@@ -31,7 +31,7 @@ module.exports = class FortuneCommand extends Command {
         .setDescription(json.fortune)
         .setTimestamp()
         .setFooter('Powered by yerkee.com', '');
-      message.reply(embed);
+      message.channel.send(embed);
       return;
     } catch (e) {
       message.reply(':x: Could not obtain a fortune cookie!');

@@ -48,7 +48,7 @@ module.exports = class MySplitsIOCommand extends Command {
     ).then(pbsRes => pbsRes.json());
 
     if (pbsRes.length == 0) {
-      message.reply(
+      message.channel.send(
         ':x: The Runner ' +
           userRes.runners[0].name +
           `s hasn't submitted any speedruns to Splits.io\n

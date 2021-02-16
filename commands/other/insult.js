@@ -31,7 +31,7 @@ module.exports = class InsultCommand extends Command {
           .setDescription(json.insult)
           .setTimestamp()
           .setFooter('Powered by evilinsult.com', '');
-        message.reply(embed);
+        message.channel.send(embed);
         return;
       })
       .catch(err => {

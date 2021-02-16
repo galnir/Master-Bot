@@ -61,7 +61,7 @@ module.exports = class MusicTriviaCommand extends Command {
         `:notes: Get ready! There are ${numberOfSongs} songs, you have 30 seconds to guess either the singer/band or the name of the song. Good luck!
         You can end the trivia at any point by using the ${prefix}end-trivia command!`
       );
-    message.reply(infoEmbed);
+    message.channel.send(infoEmbed);
     // init quiz queue
     // turn each vid to song object
 

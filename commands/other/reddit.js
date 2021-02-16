@@ -51,7 +51,7 @@ module.exports = class RedditCommand extends Command {
 
   async run(message, { subreddit, sort }) {
     if (sort === 'top' || sort === 'controversial') {
-      await message.reply(
+      await message.channel.send(
         `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`
       );
       try {

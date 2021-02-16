@@ -104,7 +104,7 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       }
-      message.reply(offlineEmbed);
+      message.channel.send(offlineEmbed);
       return;
     }
 
@@ -167,7 +167,7 @@ module.exports = class TwitchStatusCommand extends Command {
         true
       );
     }
-    message.reply(onlineEmbed);
+    message.channel.send(onlineEmbed);
     return;
   }
 };

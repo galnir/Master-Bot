@@ -213,7 +213,7 @@ module.exports = class WecomeSettingsCommand extends Command {
     }
     //Show URL Image
     else embed.setImage(wallpaperURL);
-    message.reply(embed);
+    message.channel.send(embed);
     return;
   }
 };

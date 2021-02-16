@@ -62,7 +62,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
         for (let i = 1; i < gameNameArr.length; i++) {
           gameName.addField(`:video_game: Result ${i}`, gameNameArr[i]);
         }
-        message.reply(gameName);
+        message.channel.send(gameName);
       } else {
         const embedArray = [];
 

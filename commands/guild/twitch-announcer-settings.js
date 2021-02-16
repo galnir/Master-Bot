@@ -178,6 +178,6 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     //Send Reponse
-    message.reply(embed);
+    message.channel.send(embed);
   }
 };

@@ -149,9 +149,9 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     //Check embed trigger
     if (textFiltered == 'check') {
-      if (currentMsgStatus == 'disable') message.reply(disabledEmbed);
+      if (currentMsgStatus == 'disable') message.channel.send(disabledEmbed);
       else {
-        message.reply(enabledEmbed);
+        message.channel.send(enabledEmbed);
         return;
       }
       return;
@@ -159,13 +159,13 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     //Disable Set
     if (textFiltered == 'disable') {
       currentMsgStatus = 'disable';
-      message.reply(disabledEmbed);
+      message.channel.send(disabledEmbed);
     }
 
     //Enable Set
     if (textFiltered == 'enable') {
       currentMsgStatus = 'enable';
-      message.reply(enabledEmbed);
+      message.channel.send(enabledEmbed);
 
       //Ticker Section (Loop)
       var Ticker = setInterval(async function() {
