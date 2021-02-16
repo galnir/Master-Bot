@@ -31,7 +31,8 @@ module.exports = class InsultCommand extends Command {
           .setDescription(json.insult)
           .setTimestamp()
           .setFooter('Powered by evilinsult.com', '');
-        return message.reply(embed);
+        message.reply(embed);
+        return;
       })
       .catch(err => {
         message.reply(':x: Failed to deliver insult!');

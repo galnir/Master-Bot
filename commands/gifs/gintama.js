@@ -23,7 +23,8 @@ module.exports = class GintamaCommand extends Command {
         .readFileSync('././resources/gifs/gintamalinks.txt', 'utf8')
         .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
-      return message.reply(link);
+      message.reply(link);
+      return;
 
       /*
       I changed the command from calling the tenor api each time someone

@@ -34,10 +34,10 @@ module.exports = class MusicTriviaCommand extends Command {
   async run(message, { numberOfSongs }) {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel)
-      return message.reply(
-        ':no_entry: Please join a voice channel and try again!'
-      );
+    if (!voiceChannel) {
+      message.reply(':no_entry: Please join a voice channel and try again!');
+      return;
+    }
     if (message.guild.musicData.isPlaying === true)
       return message.channel.send(':x: A quiz or a song is already running!');
     message.guild.musicData.isPlaying = true;

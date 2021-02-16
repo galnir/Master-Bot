@@ -33,7 +33,7 @@ module.exports = class GifCommand extends Command {
   run(message, { text }) {
     fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=${text}&limit=1`)
       .then(res => res.json())
-      .then(json => message.reply(json.results[0].url))
+      .then(json => message.channel.send(json.results[0].url))
       .catch(function onError() {
         message.reply(':x: Failed to find a gif that matched your query!');
         // console.error(e);

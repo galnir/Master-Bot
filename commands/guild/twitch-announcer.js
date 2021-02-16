@@ -53,12 +53,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     var embedID;
 
     //Error Missing DB
-    if (DBInfo == undefined)
-      return message.reply(
+    if (DBInfo == undefined) {
+      message.reply(
         ':no_entry: No settings were found, please run `' +
           `${prefix}twitch-announcer-settings` +
           '` first'
       );
+      return;
+    }
 
     //Get Twitch Ready for Response Embeds
     const scope = 'user:read:email';
@@ -149,7 +151,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     if (textFiltered == 'check') {
       if (currentMsgStatus == 'disable') message.reply(disabledEmbed);
       else {
-        return message.reply(enabledEmbed);
+        message.reply(enabledEmbed);
+        return;
       }
       return;
     }

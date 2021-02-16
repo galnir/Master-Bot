@@ -91,7 +91,8 @@ module.exports = class WecomeMessageCommand extends Command {
             message.member.user.displayAvatarURL()
           );
 
-        return message.reply(embed);
+        message.reply(embed);
+        return;
       } else {
         // Report Back settings from DB
         const embed = new MessageEmbed()
@@ -123,7 +124,8 @@ module.exports = class WecomeMessageCommand extends Command {
           embed.attachFiles(attachment);
           embed.setImage('attachment://wallpaper.jpg');
         } else embed.setImage(DBInfo.wallpaperURL);
-        return message.reply(embed);
+        message.reply(embed);
+        return;
       }
     }
 

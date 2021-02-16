@@ -20,7 +20,8 @@ module.exports = class RemoveSongCommand extends Command {
   }
   run(message, { songNumber }) {
     if (songNumber < 1 || songNumber >= message.guild.musicData.queue.length) {
-      return message.reply(':x: Please enter a valid song number!');
+      message.reply(':x: Please enter a valid song number!');
+      return;
     }
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {

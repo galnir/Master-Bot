@@ -47,7 +47,8 @@ module.exports = class MoveSongCommand extends Command {
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply(':x: There is no song playing right now!');
+      message.reply(':x: There is nothing playing right now!');
+      return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
         `:no_entry: You must be in the same voice channel as the bot's in order to use that!`

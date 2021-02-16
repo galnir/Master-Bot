@@ -32,7 +32,9 @@ module.exports = class JoinCommand extends Command {
       await voiceChannel.join();
       return;
     } catch {
-      message.reply(':x Something went wrong when moving channels');
+      message.reply(
+        ':x Something went wrong while attempting to move channels'
+      );
       return;
     }
   }

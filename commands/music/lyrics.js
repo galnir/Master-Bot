@@ -39,11 +39,13 @@ module.exports = class LyricsCommand extends Command {
     ) {
       songName = message.guild.musicData.nowPlaying.title;
     } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
-      return message.reply(':x: Please try again after the trivia has ended');
+      message.reply(':x: Please try again after the trivia has ended');
+      return;
     } else if (songName == '' && !message.guild.musicData.isPlaying) {
-      return message.reply(
+      message.reply(
         ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
       );
+      return;
     }
 
     const sentMessage = await message.channel.send(
