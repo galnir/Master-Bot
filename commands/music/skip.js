@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const { prefix } = require('../../config.json');
 
 module.exports = class SkipCommand extends Command {
   constructor(client) {
