@@ -107,7 +107,7 @@ client.on('guildMemberAdd', async member => {
 
       return ctx.font;
     };
-    
+
     // Customizable Welcome Image Options
     var canvas = await Canvas.createCanvas(
       welcomeMsgSettings.imageWidth,
@@ -139,7 +139,6 @@ client.on('guildMemberAdd', async member => {
         canvas.height / 3.5
       );
     } else {
-      
       // Upper Text Options DB
       ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 65
       ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
@@ -155,7 +154,7 @@ client.on('guildMemberAdd', async member => {
         canvas.height / 3.5
       );
     }
-   
+
     // Lower Text Options Defaults
     if (welcomeMsgSettings.bottomImageText == 'default') {
       ctx.font = applyText(canvas, `${member.displayName}!`);
@@ -187,7 +186,7 @@ client.on('guildMemberAdd', async member => {
         canvas.height / 1.8
       );
     }
-    
+
     // Avatar Shape Options
     ctx.beginPath();
     ctx.arc(125, 125, 100, 0, Math.PI * 2, true); // Shape option (circle)
@@ -205,7 +204,7 @@ client.on('guildMemberAdd', async member => {
       canvas.toBuffer(),
       'welcome-image.png'
     );
-    
+
     // Welcome Embed Report
     var embed = new MessageEmbed()
       .setColor(`RANDOM`)
@@ -218,8 +217,8 @@ client.on('guildMemberAdd', async member => {
         `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB -Default
       );
     } else embed.setTitle(welcomeMsgSettings.embedTitle);
-    
-    // Sends a DM if set to or if destenation is not present in DB(pre channel option users)
+
+    // Sends a DM if set to or if destination is not present in DB(pre channel option users)
     if (
       welcomeMsgSettings.destination == 'direct message' ||
       !welcomeMsgSettings.destination
@@ -229,7 +228,7 @@ client.on('guildMemberAdd', async member => {
       } catch {
         console.log(`${member.user.username}'s dms are private`);
       }
-    
+
     // Sends to assigned Channel from DB
     if (welcomeMsgSettings.destination != 'direct message') {
       const channel = member.guild.channels.cache.find(
