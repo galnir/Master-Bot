@@ -36,7 +36,7 @@ module.exports = class ChuckNorrisCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say(':x: An error occured, Chuck is investigating this!');
+        message.reply(':x: An error occured, Chuck is investigating this!');
         return console.error(err);
       });
   }

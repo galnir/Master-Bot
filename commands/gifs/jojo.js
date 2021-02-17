@@ -24,7 +24,8 @@ module.exports = class JojoCommand extends Command {
         .readFileSync('././resources/gifs/jojolinks.txt', 'utf8')
         .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
-      return message.say(link);
+      message.channel.send(link);
+      return;
 
       /*
       I changed the command from calling the tenor api each time someone
@@ -43,14 +44,14 @@ module.exports = class JojoCommand extends Command {
         `https://api.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`
       )
         .then(res => res.json())
-        .then(json => message.say(json.results[0].url))
+        .then(json => message.channel.send(json.results[0].url))
         .catch(e => {
-          message.say('Failed to fetch a gif :slight_frown:');
+          message.reply('Failed to fetch a gif :slight_frown:');
           return console.error(e);
         })
       */
     } catch (e) {
-      message.say(':x: Failed to fetch a gif!');
+      message.reply(':x: Failed to fetch a gif!');
       return console.error(e);
     }
   }

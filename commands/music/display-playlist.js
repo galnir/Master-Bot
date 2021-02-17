@@ -47,14 +47,15 @@ module.exports = class CreatePlaylistCommand extends Command {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
         message.reply(`**${playlistName}** is empty!`);
+        return;
       }
       const savedSongsEmbed = new Pagination.FieldsEmbed()
         .setArray(urlsArrayClone)
         .setAuthorizedUsers([message.member.id])
         .setChannel(message.channel)
-        .setElementsPerPage(10)
+        .setElementsPerPage(8)
         .formatField('# - Title', function(e) {
-          return `**${urlsArrayClone.indexOf(e) + 1}**: ${e.title}`;
+          return `**${urlsArrayClone.indexOf(e) + 1}**: [${e.title}](${e.url})`;
         });
       savedSongsEmbed.embed.setColor('#ff7373').setTitle('Saved Songs');
       savedSongsEmbed.build();

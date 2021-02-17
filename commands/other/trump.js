@@ -24,7 +24,7 @@ module.exports = class TrumpCommand extends Command {
           .setColor('#BB7D61')
           .setAuthor(
             'Donald Trump',
-            'https://www.whitehouse.gov/wp-content/uploads/2017/11/President-Trump-Official-Portrait-200x200.jpg'
+            'https://www.whitehouse.gov/wp-content/uploads/2021/01/45_donald_trump.jpg'
           )
           .setDescription(json.value)
           .setTimestamp(json.appeared_at)
@@ -33,7 +33,7 @@ module.exports = class TrumpCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say('Failed to deliver quote :sob:');
+        message.reply('Failed to deliver quote :sob:');
         return console.error(err);
       });
   }

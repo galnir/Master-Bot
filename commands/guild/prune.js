@@ -24,10 +24,10 @@ module.exports = class PruneCommand extends Command {
   run(message, { deleteCount }) {
     message.channel
       .bulkDelete(deleteCount)
-      .then(messages => message.say(`Deleted ${messages.size} messages`))
+      .then(messages => message.reply(`Deleted ${messages.size} messages`))
       .catch(e => {
         console.error(e);
-        return message.say(
+        return message.reply(
           ':x: Something went wrong when trying to delete messages!'
         );
       });

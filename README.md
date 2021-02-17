@@ -11,24 +11,37 @@
 
 Make a config.json file in the root directory of the project and add:
 
+- Minimum
 ```
 {
   "prefix": "!",
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
+  "youtubeAPI": "youtube-api-key"
+}
+```
+
+- Full Command List
+```
+{
+  "invite": "false",
+  "prefix": "!",
+  "discord_owner_id": "Your-Discord-ID",
+  "token": "Your-Bot-Token",
+  "youtubeAPI": "youtube-api-key",
+  "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "youtubeAPI": "youtube-api-key",
-  "yandexAPI": "yandex-api-key",
-  "geniusLyricsAPI": "genius-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret"
 }
 ```
 
+Note: When setting `"invite": true` remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
+
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
-Also, no matter what operating system you have, make sure [ffmpeg](https://www.ffmpeg.org/download.html) and [python 2.7](https://www.python.org/downloads/) are installed. **Discord.js now requires Node version greater than or equal to 12.0.0** .
+Also, no matter what operating system you have, make sure [python 2.7](https://www.python.org/downloads/) is installed. **Discord.js now requires Node version greater than or equal to 12.0.0** .
 
 If you are not cloning this repo, make sure your dependencies versions are the same as this repo's.
 
@@ -72,12 +85,12 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !insult           | Generate an evil insult                                                                                                                                             | !insult                                                                       |
 | !chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                             | !chucknorris                                                                  |
 | !motivation       | Get a random motivational quote                                                                                                                                     | !motivation                                                                   |
-| !global-news      | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in global-news.js or ynet-news.js | !global-news                                                                  |
+| !world-news      | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | !world-news                                                                  |
 | !random           | Generate a random number between two provided numbers                                                                                                               | !random 0 100                                                                 |
 | !reddit           | Replies with 5 top non nsfw subreddit posts                                                                                                                         | !reddit askreddit                                                             |
 | !say              | Make the bot say anything                                                                                                                                           | !say Lorem Ipsum                                                              |
-| !sr               | Replies with speedrun info of the main category.                                                                                                                    | !sr super metroid                                                             |
-| !translate        | Translate to any language using yandex translation service(only supported lanugages)                                                                                | !translate ありがとう                                                         |
+| !sr               | Replies with the Top 10 speedrun results in every category.                                                                                                         | !sr super metroid                                                             |
+| !translate        | Translate to any language using Google translate.(only supported lanugages)                                                                                | !translate english ありがとう                                                         |
 | !about            | Info about me and the repo                                                                                                                                          | !about                                                                        |
 | !uptime           | Replies with the bot's total uptime                                                                                                                                 | !uptime                                                                       |
 | !8ball            | Get the answer to anything!                                                                                                                                         | !8ball Is this bot awesome?                                                   |
@@ -106,6 +119,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | Command                    | Description                                                                    | Usage                                |
 | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
 | !ban                       | Bans a tagged member                                                           | !ban @johndoe                        |
+| !invite                    | Replies with a link to invite the bot.                                         | !invite                              |
 | !kick                      | Kicks a tagged member                                                          | !kick @johndoe                       |
 | !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
@@ -120,8 +134,6 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [How to get a Youtube API key](https://developers.google.com/youtube/v3/getting-started)
 
-[Get a Yandex API key here](https://translate.yandex.com/developers/keys)
-
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
 [How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
@@ -130,7 +142,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 [Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
-[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/blob/master/Pi_Instructions.md)
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
 
 ### Contributing
 
@@ -139,7 +151,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 

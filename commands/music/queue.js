@@ -14,18 +14,22 @@ module.exports = class QueueCommand extends Command {
   }
 
   run(message) {
-    if (message.guild.triviaData.isTriviaRunning)
-      return message.say(':x: Try again after the trivia has ended!');
-    if (message.guild.musicData.queue.length == 0)
-      return message.say(':x: There are no songs in queue!');
+    if (message.guild.triviaData.isTriviaRunning) {
+      message.reply(':x: Try again after the trivia has ended!');
+      return;
+    }
+    if (message.guild.musicData.queue.length == 0) {
+      message.reply(':x: There are no songs in queue!');
+      return;
+    }
     const queueClone = message.guild.musicData.queue;
     const queueEmbed = new Pagination.FieldsEmbed()
       .setArray(queueClone)
       .setAuthorizedUsers([message.author.id])
       .setChannel(message.channel)
-      .setElementsPerPage(10)
+      .setElementsPerPage(8)
       .formatField('# - Song', function(e) {
-        return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
+        return `**${queueClone.indexOf(e) + 1}**: [${e.title}](${e.url})`;
       });
 
     queueEmbed.embed.setColor('#ff7373').setTitle('Music Queue');

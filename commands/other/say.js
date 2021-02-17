@@ -29,6 +29,7 @@ module.exports = class SayCommand extends Command {
         `${message.member.displayName}, made me say it!`,
         message.author.displayAvatarURL()
       );
-    return message.say(embed);
+    message.channel.send(embed);
+    return;
   }
 };

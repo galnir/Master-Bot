@@ -90,15 +90,13 @@ module.exports = class SaveToPlaylistCommand extends Command {
   }
 
   static async processURL(url, message) {
-    if (
-      url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
-    ) {
+    if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
       const playlist = await youtube.getPlaylist(url).catch(function() {
-        message.say(':x: Playlist is either private or it does not exist!');
+        message.reply(':x: Playlist is either private or it does not exist!');
         return;
       });
       const videosArr = await playlist.getVideos().catch(function() {
-        message.say(
+        message.reply(
           ':x: There was a problem getting one of the videos in the playlist!'
         );
         return;
@@ -125,7 +123,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
       .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
     const id = url[2].split(/[^0-9a-z_\-]/i)[0];
     const video = await youtube.getVideoByID(id).catch(function() {
-      message.say(':x: There was a problem getting the video you provided!');
+      message.reply(':x: There was a problem getting the video you provided!');
       return;
     });
     if (video.raw.snippet.liveBroadcastContent === 'live') {

@@ -12,7 +12,7 @@ module.exports = class WhoMadeMeCommand extends Command {
   }
 
   run(message) {
-    message.say(
+    message.channel.send(
       'Made by @hyperzone#1185 with :heart: full code is available on GitHub https://github.com/galnir/Master-Bot'
     );
   }

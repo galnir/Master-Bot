@@ -30,6 +30,7 @@ module.exports = class RandomNumberCommand extends Command {
     var rngEmbed = new MessageEmbed().setTitle(
       Math.floor(Math.random() * (max - min + 1)) + min
     );
-    return message.say(rngEmbed);
+    message.channel.send(rngEmbed);
+    return;
   }
 };

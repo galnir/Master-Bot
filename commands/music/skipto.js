@@ -22,19 +22,21 @@ module.exports = class SkipToCommand extends Command {
 
   run(message, { songNumber }) {
     if (songNumber < 1 && songNumber >= message.guild.musicData.queue.length) {
-      return message.reply(':x: Please enter a valid song number!');
+      message.reply(':x: Please enter a valid song number!');
+      return;
     }
     var voiceChannel = message.member.voice.channel;
-    if (!voiceChannel)
-      return message.reply(
-        ':no_entry: Please join a voice channel and try again!'
-      );
+    if (!voiceChannel) {
+      message.reply(':no_entry: Please join a voice channel and try again!');
+      return;
+    }
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply(':x: There is no song playing right now!');
+      message.reply(':x: There is no song playing right now!');
+      return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
         `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
@@ -43,7 +45,7 @@ module.exports = class SkipToCommand extends Command {
     }
 
     if (message.guild.musicData.queue < 1) {
-      message.say(':x: There are no songs in queue!');
+      message.reply(':x: There are no songs in queue!');
       return;
     }
 

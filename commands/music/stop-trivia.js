@@ -18,19 +18,21 @@ module.exports = class StopMusicTriviaCommand extends Command {
     });
   }
   run(message) {
-    if (!message.guild.triviaData.isTriviaRunning)
-      return message.say(':x: No trivia is currently running!');
+    if (!message.guild.triviaData.isTriviaRunning) {
+      message.reply(':x: No trivia is currently running!');
+      return;
+    }
 
     if (message.guild.me.voice.channel !== message.member.voice.channel) {
-      return message.say(
-        ':no_entry: Please join a voice channel and try again!'
-      );
+      message.reply(':no_entry: Please join a voice channel and try again!');
+      return;
     }
 
     if (!message.guild.triviaData.triviaScore.has(message.author.username)) {
-      return message.say(
+      message.reply(
         ':stop_sign: You need to participate in the trivia in order to end it'
       );
+      return;
     }
 
     message.guild.triviaData.triviaQueue.length = 0;

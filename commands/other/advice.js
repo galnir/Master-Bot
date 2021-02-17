@@ -22,7 +22,11 @@ module.exports = class AdviceCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#403B3A')
-          .setAuthor('Advice Slip', 'https://i.imgur.com/8pIvnmD.png', 'adviceslip.com')
+          .setAuthor(
+            'Advice Slip',
+            'https://i.imgur.com/8pIvnmD.png',
+            'https://adviceslip.com/'
+          )
           .setDescription(json.slip.advice)
           .setTimestamp()
           .setFooter('Powered by adviceslip.com', '');
@@ -30,7 +34,7 @@ module.exports = class AdviceCommand extends Command {
         return;
       })
       .catch(err => {
-        message.say('Failed to deliver advice :sob:');
+        message.reply('Failed to deliver advice :sob:');
         return console.error(err);
       });
   }

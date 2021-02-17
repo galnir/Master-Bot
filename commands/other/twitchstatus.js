@@ -6,7 +6,7 @@ const Canvas = require('canvas');
 const probe = require('probe-image-size');
 
 // Skips loading if not found in config.json
-if (twitchClientID == null || twitchClientSecret == null) return;
+if (!twitchClientID || !twitchClientSecret) return;
 
 module.exports = class TwitchStatusCommand extends Command {
   constructor(client) {
@@ -32,12 +32,11 @@ module.exports = class TwitchStatusCommand extends Command {
   }
 
   async run(message, { textRaw }) {
-    
     // Twitch Section
     const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
     let access_token;
-    
+
     try {
       access_token = await TwitchAPI.getToken(
         twitchClientID,
@@ -45,7 +44,7 @@ module.exports = class TwitchStatusCommand extends Command {
         scope
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -56,12 +55,12 @@ module.exports = class TwitchStatusCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
     const user_id = user.data[0].id;
-    
+
     try {
       var streamInfo = await TwitchAPI.getStream(
         access_token,
@@ -69,7 +68,7 @@ module.exports = class TwitchStatusCommand extends Command {
         user_id
       );
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -105,10 +104,10 @@ module.exports = class TwitchStatusCommand extends Command {
           true
         );
       }
-      message.say(offlineEmbed);
+      message.channel.send(offlineEmbed);
       return;
     }
-    
+
     // Box Art Recreation
     try {
       var gameInfo = await TwitchAPI.getGames(
@@ -130,7 +129,7 @@ module.exports = class TwitchStatusCommand extends Command {
       // Use helpful Attachment class structure to process the file for you
       var attachment = new MessageAttachment(canvas.toBuffer(), 'box_art.png');
     } catch (e) {
-      message.say(e);
+      message.reply(e);
       return;
     }
 
@@ -168,7 +167,7 @@ module.exports = class TwitchStatusCommand extends Command {
         true
       );
     }
-    message.say(onlineEmbed);
+    message.channel.send(onlineEmbed);
     return;
   }
 };

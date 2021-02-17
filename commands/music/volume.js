@@ -31,16 +31,17 @@ module.exports = class VolumeCommand extends Command {
 
   run(message, { wantedVolume }) {
     const voiceChannel = message.member.voice.channel;
-    if (!voiceChannel)
-      return message.reply(
-        ':no_entry: Please join a voice channel and try again!'
-      );
+    if (!voiceChannel) {
+      message.reply(':no_entry: Please join a voice channel and try again!');
+      return;
+    }
 
     if (
       typeof message.guild.musicData.songDispatcher == 'undefined' ||
       message.guild.musicData.songDispatcher == null
     ) {
-      return message.reply(':x: There is no song playing right now!');
+      message.reply(':x: There is no song playing right now!');
+      return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
         `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
@@ -49,8 +50,8 @@ module.exports = class VolumeCommand extends Command {
     }
     const volume = wantedVolume / 100;
     message.guild.musicData.volume = volume;
-    db.set(`${message.member.guild.id}.serverSettings.volume`, volume );
+    db.set(`${message.member.guild.id}.serverSettings.volume`, volume);
     message.guild.musicData.songDispatcher.setVolume(volume);
-    message.say(`:loud_sound: Setting the volume to: ${wantedVolume}%!`);
+    message.reply(`:loud_sound: Setting the volume to: ${wantedVolume}%!`);
   }
 };

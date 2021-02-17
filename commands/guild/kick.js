@@ -46,7 +46,7 @@ module.exports = class KickCommand extends Command {
         message.channel.send(kickEmbed);
       })
       .catch(err => {
-        message.say(
+        message.reply(
           ':x: Something went wrong when trying to kick this user, I probably do not have the permission to kick him!'
         );
         return console.error(err);

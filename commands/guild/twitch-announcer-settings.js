@@ -9,7 +9,7 @@ const {
 } = require('../../config.json');
 
 // Skips loading if not found in config.json
-if (twitchClientID == null || twitchClientSecret == null) return;
+if (!twitchClientID || !twitchClientSecret) return;
 
 module.exports = class TwitchAnnouncerSettingsCommand extends Command {
   constructor(client) {
@@ -113,7 +113,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         scope
       );
     } catch (e) {
-      message.say(':x: ' + e);
+      message.reply(':x: ' + e);
       return;
     }
 
@@ -124,7 +124,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         textFiltered
       );
     } catch (e) {
-      message.say(':x: ' + e);
+      message.reply(':x: ' + e);
       return;
     }
 
@@ -178,6 +178,6 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     //Send Reponse
-    message.say(embed);
+    message.channel.send(embed);
   }
 };

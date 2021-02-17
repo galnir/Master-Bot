@@ -5,6 +5,9 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const { geniusLyricsAPI } = require('../../config.json');
 
+// Skips loading if not found in config.json
+if (!geniusLyricsAPI) return;
+
 module.exports = class LyricsCommand extends Command {
   constructor(client) {
     super(client, {
@@ -36,11 +39,13 @@ module.exports = class LyricsCommand extends Command {
     ) {
       songName = message.guild.musicData.nowPlaying.title;
     } else if (songName == '' && message.guild.triviaData.isTriviaRunning) {
-      return message.say(':x: Please try again after the trivia has ended');
+      message.reply(':x: Please try again after the trivia has ended');
+      return;
     } else if (songName == '' && !message.guild.musicData.isPlaying) {
-      return message.say(
+      message.reply(
         ':no_entry: There is no song playing right now, please try again with a song name or play a song first!'
       );
+      return;
     }
 
     const sentMessage = await message.channel.send(
@@ -89,17 +94,17 @@ module.exports = class LyricsCommand extends Command {
                   });
               })
               .catch(function(err) {
-                message.say(err);
+                message.reply(err);
                 return;
               });
           })
           .catch(function(err) {
-            message.say(err);
+            message.reply(err);
             return;
           });
       })
       .catch(function(err) {
-        message.say(err);
+        message.reply(err);
         return;
       });
   }

@@ -23,14 +23,19 @@ module.exports = class InsultCommand extends Command {
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#E41032')
-          .setAuthor('Evil Insult', 'https://i.imgur.com/bOVpNAX.png', 'https://evilinsult.com')
+          .setAuthor(
+            'Evil Insult',
+            'https://i.imgur.com/bOVpNAX.png',
+            'https://evilinsult.com'
+          )
           .setDescription(json.insult)
           .setTimestamp()
           .setFooter('Powered by evilinsult.com', '');
-        return message.say(embed);
+        message.channel.send(embed);
+        return;
       })
       .catch(err => {
-        message.say(':x: Failed to deliver insult!');
+        message.reply(':x: Failed to deliver insult!');
         return console.error(err);
       });
   }
