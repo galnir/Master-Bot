@@ -3,7 +3,7 @@ const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
-module.exports = class WecomeMessageCommand extends Command {
+module.exports = class WelcomeMessageCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'welcome-message',
@@ -79,7 +79,7 @@ module.exports = class WecomeMessageCommand extends Command {
           .addField('Message Destination', 'direct message')
           .addField(`Title`, 'default')
           .addField(`Upper Text`, 'default')
-          .addField(`Lower Text`, 'defualt')
+          .addField(`Lower Text`, 'default')
           .addField(`Image Size`, 700 + ` X ` + 250)
           .addField(`Image Path`, './resources/welcome/wallpaper.jpg')
           .setColor('#420626')
