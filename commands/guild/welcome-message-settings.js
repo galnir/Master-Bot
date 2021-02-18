@@ -3,7 +3,7 @@ const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 const { prefix } = require('../../config.json');
 
-module.exports = class WecomeSettingsCommand extends Command {
+module.exports = class WelcomeSettingsCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'welcome-message-settings',
