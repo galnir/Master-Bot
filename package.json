@@ -27,8 +27,6 @@
     "ytdl-core": "^4.4.5"
   },
   "devDependencies": {
-    "@getify/eslint-plugin-proper-arrows": "^8.0.1",
-    "@getify/eslint-plugin-proper-ternary": "^3.0.1",
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
     "nodemon": "^1.19.4",
