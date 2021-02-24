@@ -58,22 +58,15 @@ module.exports = class PlayCommand extends Command {
       return;
     }
 
-    if (message.guild.triviaData.isTriviaRunning == true) {
+    if (message.guild.triviaData.isTriviaRunning) {
       message.reply(':x: Please try after the trivia has ended!');
       return;
     }
 
-    if (db.get(message.member.id) !== null) {
+    if (!this.isNull(db.get(message.member.id))) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
-      let found = false;
-      let location;
-      for (let i = 0; i < userPlaylists.length; i++) {
-        if (userPlaylists[i].name == query) {
-          found = true;
-          location = i;
-          break;
-        }
-      }
+      const found = userPlaylists.find(element => element.name == query);
+      const index = userPlaylists.indexOf(found);
       if (found) {
         const embed = new MessageEmbed()
           .setColor('#ff0000')
@@ -87,16 +80,11 @@ module.exports = class PlayCommand extends Command {
           .setFooter('Choose by commenting a number between 1 and 3.');
         const clarifyEmbed = await message.channel.send({ embed });
         message.channel
-          .awaitMessages(
-            function onMessage(msg) {
-              return msg.content > 0 && msg.content < 4;
-            },
-            {
-              max: 1,
-              time: 30000,
-              errors: ['time']
-            }
-          )
+          .awaitMessages(msg => msg.content > 0 && msg.content < 4, {
+            max: 1,
+            time: 30000,
+            errors: ['time']
+          })
           .then(async function onClarifyResponse(response) {
             const msgContent = response.first().content;
             // Play a saved playlist
@@ -104,17 +92,17 @@ module.exports = class PlayCommand extends Command {
               if (clarifyEmbed) {
                 clarifyEmbed.delete();
               }
-              const urlsArray = userPlaylists[location].urls;
-              if (urlsArray.length == 0) {
+              const urlsArray = userPlaylists[index].urls;
+              if (!urlsArray.length) {
                 message.reply(
-                  `${query} is empty, add songs to it before attempting to play it`
+                  `'${query}' playlist is empty, add songs to it before attempting to play it`
                 );
                 return;
               }
-              for (let i = 0; i < urlsArray.length; i++) {
-                message.guild.musicData.queue.push(urlsArray[i]);
-              }
-              if (message.guild.musicData.isPlaying == true) {
+              urlsArray.map(element =>
+                message.guild.musicData.queue.push(element)
+              );
+              if (message.guild.musicData.isPlaying) {
                 // Saved Playlist Added to Queue Message
                 PlayCommand.createResponse(message)
                   .addField(
@@ -122,7 +110,7 @@ module.exports = class PlayCommand extends Command {
                     `:new: **${query}** added ${urlsArray.length} songs to the queue!`
                   )
                   .build();
-              } else if (message.guild.musicData.isPlaying == false) {
+              } else if (!message.guild.musicData.isPlaying) {
                 message.guild.musicData.isPlaying = true;
                 PlayCommand.playSong(message.guild.musicData.queue, message);
               }
@@ -153,7 +141,6 @@ module.exports = class PlayCommand extends Command {
         message.reply(':x: Playlist is either private or it does not exist!');
         return;
       });
-      // add 10 as an argument in getVideos() if you choose to limit the queue
       const videosArr = await playlist.getVideos().catch(function() {
         message.reply(
           ':x: There was a problem getting one of the videos in the playlist!'
@@ -168,7 +155,6 @@ module.exports = class PlayCommand extends Command {
         }
       }
 
-      const queueCount = message.guild.musicData.queue.length;
       for (let i = 0; i < videosArr.length; i++) {
         if (
           videosArr[i].raw.status.privacyStatus == 'private' ||
@@ -197,13 +183,13 @@ module.exports = class PlayCommand extends Command {
           }
         }
       }
-      if (message.guild.musicData.isPlaying == false) {
+      if (!message.guild.musicData.isPlaying) {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
-      } else if (message.guild.musicData.isPlaying == true) {
-        // @TODO add the the position number of queue of the when a playlist is added
-
-        const playlistCount = message.guild.musicData.queue.length - queueCount;
+      } else if (message.guild.musicData.isPlaying) {
+        const playlistCount =
+          message.guild.musicData.queue.length -
+          message.guild.musicData.queue.length;
         // Added playlist to queue message
         PlayCommand.createResponse(message)
           .addField(
@@ -224,14 +210,14 @@ module.exports = class PlayCommand extends Command {
         .replace(/(>|<)/gi, '')
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
       const id = query[2].split(/[^0-9a-z_\-]/i)[0];
-      let failedToGetVideo = false;
+      let failedToFetchVideo = false;
       const video = await youtube.getVideoByID(id).catch(function() {
         message.reply(
           ':x: There was a problem getting the video you provided!'
         );
-        failedToGetVideo = true;
+        failedToFetchVideo = true;
       });
-      if (failedToGetVideo) return;
+      if (failedToFetchVideo) return;
       if (
         video.raw.snippet.liveBroadcastContent === 'live' &&
         !playLiveStreams
@@ -259,12 +245,12 @@ module.exports = class PlayCommand extends Command {
         PlayCommand.constructSongObj(video, voiceChannel, message.member.user)
       );
       if (
-        message.guild.musicData.isPlaying == false ||
+        !message.guild.musicData.isPlaying ||
         typeof message.guild.musicData.isPlaying == 'undefined'
       ) {
         message.guild.musicData.isPlaying = true;
         return PlayCommand.playSong(message.guild.musicData.queue, message);
-      } else if (message.guild.musicData.isPlaying == true) {
+      } else if (message.guild.musicData.isPlaying) {
         // Added song to queue message (link/url)
 
         PlayCommand.createResponse(message)
@@ -277,6 +263,7 @@ module.exports = class PlayCommand extends Command {
     // if user provided a song/video name
     await PlayCommand.searchYoutube(query, message, voiceChannel);
   }
+  isNull = x => (x === null ? true : false);
 
   static playSong(queue, message) {
     const classThis = this; // use classThis instead of 'this' because of lexical scope below
@@ -670,14 +657,14 @@ module.exports = class PlayCommand extends Command {
             message.guild.musicData.songDispatcher.pause();
             videoEmbed
               .setDescription(songTitle + PlayCommand.playbackBar(message))
-              .setTitle(embedTitle(message))
+              .setTitle(embedTitle())
               .setTimeout(600000);
           } else {
             message.guild.musicData.songDispatcher.resume();
 
             videoEmbed
               .setDescription(songTitle + PlayCommand.playbackBar(message))
-              .setTitle(embedTitle(message))
+              .setTitle(embedTitle())
               .setTimeout(buttonTimer(message));
           }
         }
@@ -738,7 +725,7 @@ module.exports = class PlayCommand extends Command {
           }
           videoEmbed
             .setDescription(songTitle + PlayCommand.playbackBar(message))
-            .setTitle(embedTitle(message))
+            .setTitle(embedTitle())
             .setTimeout(buttonTimer(message));
         });
     } else {
@@ -754,7 +741,7 @@ module.exports = class PlayCommand extends Command {
         }
         videoEmbed
           .setDescription(songTitle + PlayCommand.playbackBar(message))
-          .setTitle(embedTitle(message))
+          .setTitle(embedTitle())
           .setTimeout(buttonTimer(message));
       });
     }
@@ -790,7 +777,7 @@ module.exports = class PlayCommand extends Command {
       return timer;
     }
 
-    function embedTitle(message) {
+    function embedTitle() {
       let embedTitle = ':musical_note: Now Playing';
       if (message.guild.musicData.loopQueue)
         embedTitle = embedTitle + ' :repeat: Queue';
