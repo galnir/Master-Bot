@@ -66,7 +66,6 @@ module.exports = class PlayCommand extends Command {
     if (!this.isNull(db.get(message.member.id))) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
       const found = userPlaylists.find(element => element.name == query);
-      const index = userPlaylists.indexOf(found);
       if (found) {
         const embed = new MessageEmbed()
           .setColor('#ff0000')
@@ -92,7 +91,8 @@ module.exports = class PlayCommand extends Command {
               if (clarifyEmbed) {
                 clarifyEmbed.delete();
               }
-              const urlsArray = userPlaylists[index].urls;
+              const urlsArray =
+                userPlaylists[userPlaylists.indexOf(found)].urls;
               if (!urlsArray.length) {
                 message.reply(
                   `'${query}' playlist is empty, add songs to it before attempting to play it`
@@ -133,8 +133,8 @@ module.exports = class PlayCommand extends Command {
       }
     }
 
+    // Handles playlist Links (if a user entered a YouTube playlist link)
     if (
-      // Handles playlist Links
       query.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
     ) {
       const playlist = await youtube.getPlaylist(query).catch(function() {
@@ -156,6 +156,7 @@ module.exports = class PlayCommand extends Command {
       }
 
       for (let i = 0; i < videosArr.length; i++) {
+        // prevent processing of private videos
         if (
           videosArr[i].raw.status.privacyStatus == 'private' ||
           videosArr[i].raw.status.privacyStatus == 'privacyStatusUnspecified'
@@ -354,27 +355,36 @@ module.exports = class PlayCommand extends Command {
               classThis.playSong(queue, message);
               return;
             }
-            message.guild.musicData.queue.length = 0;
-            message.guild.musicData.isPlaying = false;
-            message.guild.musicData.nowPlaying = null;
-            message.guild.musicData.loopSong = false;
-            message.guild.musicData.songDispatcher = null;
-            message.guild.me.voice.channel.leave();
+            message.guild.resetMusicDataOnError();
+            if (message.guild.me.voice.channel) {
+              message.guild.me.voice.channel.leave();
+            }
             return;
           });
       })
       .catch(function() {
         message.reply(':no_entry: I have no permission to join your channel!');
-        message.guild.musicData.queue.length = 0;
-        message.guild.musicData.isPlaying = false;
-        message.guild.musicData.nowPlaying = null;
-        message.guild.musicData.loopSong = false;
-        message.guild.musicData.songDispatcher = null;
+        message.guild.resetMusicDataOnError();
         if (message.guild.me.voice.channel) {
           message.guild.me.voice.channel.leave();
         }
         return;
       });
+  }
+
+  static createVideosResultsEmbed(namesArray, firstVideo) {
+    return new MessageEmbed()
+      .setColor('#ff0000')
+      .setTitle(`:mag: Search Results!`)
+      .addField(':notes: Result 1', namesArray[0])
+      .setURL(firstVideo.url)
+      .addField(':notes: Result 2', namesArray[1])
+      .addField(':notes: Result 3', namesArray[2])
+      .addField(':notes: Result 4', namesArray[3])
+      .addField(':notes: Result 5', namesArray[4])
+      .setThumbnail(firstVideo.thumbnails.high.url)
+      .setFooter('Choose a song by commenting a number between 1 and 5')
+      .addField(':x: Cancel', 'to cancel ');
   }
 
   static async searchYoutube(query, message, voiceChannel) {
@@ -409,18 +419,7 @@ module.exports = class PlayCommand extends Command {
       );
     }
     vidNameArr.push('cancel');
-    const embed = new MessageEmbed()
-      .setColor('#ff0000')
-      .setTitle(`:mag: Search Results!`)
-      .addField(':notes: Result 1', vidNameArr[0])
-      .setURL(videos[0].url)
-      .addField(':notes: Result 2', vidNameArr[1])
-      .addField(':notes: Result 3', vidNameArr[2])
-      .addField(':notes: Result 4', vidNameArr[3])
-      .addField(':notes: Result 5', vidNameArr[4])
-      .setThumbnail(videos[0].thumbnails.high.url)
-      .setFooter('Choose a song by commenting a number between 1 and 5')
-      .addField(':x: Cancel', 'to cancel ');
+    const embed = PlayCommand.createVideosResultsEmbed(vidNameArr, videos[0]);
     var songEmbed = await message.channel.send({ embed });
     message.channel
       .awaitMessages(
@@ -534,14 +533,13 @@ module.exports = class PlayCommand extends Command {
   }
   // prettier-ignore
   static formatDuration(durationObj) {
-    const duration = `${durationObj.hours ? (durationObj.hours + ':') : ''}${durationObj.minutes ? durationObj.minutes : '00'
+    return `${durationObj.hours ? (durationObj.hours + ':') : ''}${durationObj.minutes ? durationObj.minutes : '00'
       }:${(durationObj.seconds < 10)
         ? ('0' + durationObj.seconds)
         : (durationObj.seconds
           ? durationObj.seconds
           : '00')
       }`;
-    return duration;
   }
 
   // Create Embed Messages
@@ -670,7 +668,7 @@ module.exports = class PlayCommand extends Command {
         }
       });
 
-    if (message.guild.musicData.queue.length > 0) {
+    if (message.guild.musicData.queue.length) {
       const songOrSongs =
         message.guild.musicData.queue.length > 1 ? 'Songs' : 'Song'; // eslint-disable-line
       videoEmbed
@@ -691,7 +689,7 @@ module.exports = class PlayCommand extends Command {
             .setDescription(songTitle + PlayCommand.playbackBar(message))
             .setTitle(':next_track: Skipped')
             .setTimeout(100);
-          if (message.guild.musicData.songDispatcher.paused == true)
+          if (message.guild.musicData.songDispatcher.paused)
             message.guild.musicData.songDispatcher.resume();
           message.guild.musicData.loopSong = false;
           setTimeout(() => {
@@ -748,7 +746,6 @@ module.exports = class PlayCommand extends Command {
     return videoEmbed;
 
     function buttonTimer(message) {
-      let timer;
       const totalDurationObj = message.guild.musicData.nowPlaying.rawDuration;
       let totalDurationInMS = 0;
       Object.keys(totalDurationObj).forEach(function(key) {
@@ -762,7 +759,7 @@ module.exports = class PlayCommand extends Command {
         }
       });
 
-      timer =
+      let timer =
         totalDurationInMS - message.guild.musicData.songDispatcher.streamTime;
 
       // Allow controls to stay for at least 30 seconds

@@ -26,6 +26,14 @@ Structures.extend('Guild', function(Guild) {
         triviaScore: new Map()
       };
     }
+    resetMusicDataOnError() {
+      this.musicData.queue.length = 0;
+      this.musicData.isPlaying = false;
+      this.musicData.nowPlaying = null;
+      this.musicData.loopSong = false;
+      this.musicData.loopQueue = false;
+      this.musicData.songDispatcher = null;
+    }
   }
   return MusicGuild;
 });
