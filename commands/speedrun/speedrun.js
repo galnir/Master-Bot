@@ -224,7 +224,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
             if (number > 0) number = number - 1;
 
             try {
-              const embedArry2 = [];
+              const embedArray2 = [];
               for (let i = 1; i <= category[number].players.data.length; ++i) {
                 let platform =
                   category[number].platforms.data.length > 0
@@ -248,7 +248,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                 if (i == 3) trophyIcon = '🥉 3rd: ';
                 if (i >= 4) trophyIcon = `${i}th: `;
 
-                embedArry2.push(
+                embedArray2.push(
                   new MessageEmbed()
                     .setColor('#3E8657')
                     .setTitle(
@@ -284,7 +284,7 @@ module.exports = class SpeedrunBasicCommand extends Command {
                     )
                 );
               }
-              embed.setArray(embedArry2);
+              embed.setArray(embedArray2);
               if (number > 0)
                 embed.addField(
                   `Category ${number + 1} of ${category.length}`,

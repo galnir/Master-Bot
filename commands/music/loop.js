@@ -26,7 +26,7 @@ module.exports = class LoopCommand extends Command {
       message.member.voice.channel.id !== message.guild.me.voice.channel.id
     ) {
       message.reply(
-        `You must be in the same voice channel as the bot's in order to use that!`
+        `You must be in the same voice channel as the bot in order to use that!`
       );
       return;
     }

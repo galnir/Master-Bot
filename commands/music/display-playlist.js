@@ -2,7 +2,7 @@ const { Command } = require('discord.js-commando');
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
 
-module.exports = class CreatePlaylistCommand extends Command {
+module.exports = class DisplayPlaylistCommand extends Command {
   constructor(client) {
     super(client, {
       name: 'display-playlist',
