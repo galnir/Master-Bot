@@ -52,61 +52,50 @@ module.exports = class LyricsCommand extends Command {
       ':mag: :notes: Searching for lyrics!'
     );
 
-    // remove stuff like (Official Video)
-    songName = songName.replace(/ *\([^)]*\) */g, '');
+    try {
+      const url = await LyricsCommand.searchSong(
+        LyricsCommand.cleanSongName(songName)
+      );
+      const songPageURL = await LyricsCommand.getSongPageURL(url);
+      const lyrics = await LyricsCommand.getLyrics(songPageURL);
 
-    // remove emojis
-    songName = songName.replace(
-      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-      ''
-    );
+      const lyricsIndex = Math.round(lyrics.length / 2048) + 1;
+      const lyricsArray = [];
 
-    LyricsCommand.searchSong(songName)
-      .then(function(url) {
-        LyricsCommand.getSongPageURL(url)
-          .then(function(url) {
-            LyricsCommand.getLyrics(url)
-              .then(function(lyrics) {
-                const lyricsIndex = Math.round(lyrics.length / 2048) + 1;
-                const lyricsArray = [];
+      for (let i = 1; i <= lyricsIndex; ++i) {
+        let b = i - 1;
+        lyricsArray.push(
+          new MessageEmbed()
+            .setTitle(`Lyrics Page #` + i)
+            .setDescription(lyrics.slice(b * 2048, i * 2048))
+            .setFooter('Provided by genius.com')
+        );
+      }
 
-                for (let i = 1; i <= lyricsIndex; ++i) {
-                  let b = i - 1;
-                  lyricsArray.push(
-                    new MessageEmbed()
-                      .setTitle(`Lyrics Page #` + i)
-                      .setDescription(lyrics.slice(b * 2048, i * 2048))
-                      .setFooter('Provided by genius.com')
-                  );
-                }
+      const lyricsEmbed = new Pagination.Embeds()
+        .setArray(lyricsArray)
+        .setAuthorizedUsers([message.author.id])
+        .setChannel(message.channel)
+        .setURL(songPageURL)
+        .setColor('#00724E');
 
-                const lyricsEmbed = new Pagination.Embeds()
-                  .setArray(lyricsArray)
-                  .setAuthorizedUsers([message.author.id])
-                  .setChannel(message.channel)
-                  .setURL(url)
-                  .setColor('#00724E');
+      return sentMessage
+        .edit(':white_check_mark: Lyrics Found!', lyricsEmbed.build())
+        .then(msg => {
+          msg.delete({ timeout: 2000 });
+        });
+    } catch (err) {
+      message.reply(err);
+    }
+  }
 
-                return sentMessage
-                  .edit(':white_check_mark: Lyrics Found!', lyricsEmbed.build())
-                  .then(msg => {
-                    msg.delete({ timeout: 2000 });
-                  });
-              })
-              .catch(function(err) {
-                message.reply(err);
-                return;
-              });
-          })
-          .catch(function(err) {
-            message.reply(err);
-            return;
-          });
-      })
-      .catch(function(err) {
-        message.reply(err);
-        return;
-      });
+  static cleanSongName(songName) {
+    return songName
+      .replace(/ *\([^)]*\) */g, '')
+      .replace(
+        /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+        ''
+      );
   }
 
   static searchSong(query) {
