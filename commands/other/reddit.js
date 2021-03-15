@@ -57,11 +57,11 @@ module.exports = class RedditCommand extends Command {
       try {
         var t = await message.channel.awaitMessages(
           msg =>
-            msg.content === 'hour' ||
-            msg.content === 'week' ||
-            msg.content === 'month' ||
-            msg.content === 'year' ||
-            msg.content === 'all',
+            msg.content.toLowerCase() === 'hour' ||
+            msg.content.toLowerCase() === 'week' ||
+            msg.content.toLowerCase() === 'month' ||
+            msg.content.toLowerCase() === 'year' ||
+            msg.content.toLowerCase() === 'all',
           {
             max: 1,
             maxProcessed: 1,
