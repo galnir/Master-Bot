@@ -207,10 +207,10 @@ module.exports = class PlayCommand extends Command {
     if (
       query.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)
     ) {
-      query = query
+      const id = query
         .replace(/(>|<)/gi, '')
-        .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-      const id = query[2].split(/[^0-9a-z_\-]/i)[0];
+        .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)[2]
+        .split(/[^0-9a-z_\-]/i)[0];
       let failedToFetchVideo = false;
       const video = await youtube.getVideoByID(id).catch(function() {
         message.reply(
