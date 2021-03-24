@@ -19,6 +19,8 @@ Make a config.json file in the root directory of the project and add:
   "discord_owner_id": "Your-Discord-ID",
   "token": "Your-Bot-Token",
   "youtubeAPI": "youtube-api-key"
+  "spotify_secret": "spotify-secret",
+  "spotify_clientid": "spotify-client-id"
 }
 ```
 
