@@ -1,19 +1,14 @@
 const Discord = require("discord.js");
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
-const ytdl = require('ytdl-core');
 const fs = require('fs');
 const db = require('quick.db');
 const { prefix, spotify_secret, spotify_clientid } = require('../../config.json');
 const Spotify = require("spotify-api.js")
 const Auth = new Spotify.Auth();
+const MAX_DISTANCE = 3;
 
-/*
-load all tracks form all playlists in musictrivia.json
-get random x songs from all tracks
-play trivia
 
-*/
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
     super(client, {
@@ -64,25 +59,13 @@ module.exports = class MusicTriviaCommand extends Command {
       clientSecret: spotify_secret,
     });
     const sp_client = new Spotify.Client(token);
-
+    const regexp = /\/playlist\/(.+)\?/;
+    playlist = playlist.match(regexp)[1];
+    if (!playlist) {
+      message.reply('Invalid playlist!');
+      return;
+    }
     const sp_playlist = await sp_client.playlists.get(playlist);
-
-    // fetch link array from txt file
-
-
-    // const jsonSongs = fs.readFileSync(
-    //   '././resources/music/musictrivia.json',
-    //   'utf8'
-    // );
-
-
-    // var videoDataArray = JSON.parse(jsonSongs).songs;
-    // // get random numberOfSongs videos from array
-    // const randomXVideoLinks = MusicTriviaCommand.getRandom(
-    //   videoDataArray,
-    //   numberOfSongs
-    // ); // get x random urls
-    // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
       .setTitle(':notes: Starting Music Quiz!')
@@ -91,13 +74,16 @@ module.exports = class MusicTriviaCommand extends Command {
         You can end the trivia at any point by using the ${prefix}end-trivia command!`
       );
     message.channel.send(infoEmbed);
-    // init quiz queue
-    // turn each vid to song object
-
+    var songMap = new Map();
     for (let i = 0; i < numberOfSongs; i++) {
       var track = sp_playlist.tracks[Math.floor(Math.random() * sp_playlist.tracks.length)].track;
+      if (songMap.has(track.id)) {
+        i--;
+        continue;
+      }
       if (!track.previewUrl || !track.artists[0].name || !track.name) {
         i--;
+        //console.log("Not adding: " + track.name);
         continue;
       }
       const song = {
@@ -106,9 +92,12 @@ module.exports = class MusicTriviaCommand extends Command {
         title: track.name.split('feat.')[0],
         voiceChannel
       };
-      console.log(song.singer + ": " + song.title)
-      message.guild.triviaData.triviaQueue.push(song);
+
+      console.log(song.singer + ": " + song.title);
+      songMap.set(track.id, song);
+
     }
+    message.guild.triviaData.triviaQueue = Array.from(songMap.values());
     const channelInfo = Array.from(
       message.member.voice.channel.members.entries()
     );
@@ -123,16 +112,13 @@ module.exports = class MusicTriviaCommand extends Command {
   }
   static async playQuizSong(queue, message) {
     var classThis = this;
-    queue[0].voiceChannel.join().then(function (connection) {
-      console.log("Trying to play: " + queue[0].singer + ": " + queue[0].title + " " + queue[0].url);
+    message.member.voice.channel.join().then(function (connection) {
+      //console.log("playQuizSongStart:\n\n");
+      queue.forEach(element => console.log(element.singer + ":" + element.title + ":" + element.url));
       const dispatcher = connection
         .play(queue[0].url)
-        // .play(ytdl(queue[0].url, {
-        //   // filter: 'audio',
-        //   quality: 'highestaudio',
-        //   highWaterMark: 1024 * 1024 * 1024
-        // }))
         .on('start', function () {
+          console.log("Playing: " + queue[0].singer + ": " + queue[0].title + " " + queue[0].url);
           message.guild.musicData.songDispatcher = dispatcher;
           if (!db.get(`${message.guild.id}.serverSettings.volume`))
             dispatcher.setVolume(message.guild.musicData.volume);
@@ -147,7 +133,7 @@ module.exports = class MusicTriviaCommand extends Command {
           const filter = msg =>
             message.guild.triviaData.triviaScore.has(msg.author.username);
           const collector = message.channel.createMessageCollector(filter, {
-            time: 30000
+            time: 28000
           });
 
           collector.on('collect', msg => {
@@ -155,7 +141,7 @@ module.exports = class MusicTriviaCommand extends Command {
               return;
             if (msg.content.startsWith(prefix)) return;
             // if user guessed song name
-            if (msg.content.toLowerCase() === queue[0].title.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].title.toLowerCase()) < 2) {
+            if (msg.content.toLowerCase() === queue[0].title.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].title.toLowerCase()) <= MAX_DISTANCE) {
               if (songNameFound) return; // if song name already found
               songNameFound = true;
 
@@ -178,7 +164,7 @@ module.exports = class MusicTriviaCommand extends Command {
             }
             // if user guessed singer
             else if (
-              msg.content.toLowerCase() === queue[0].singer.toLowerCase()
+              msg.content.toLowerCase() === queue[0].singer.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].singer.toLowerCase()) <= MAX_DISTANCE
             ) {
               if (songSingerFound) return;
               songSingerFound = true;
@@ -266,6 +252,7 @@ module.exports = class MusicTriviaCommand extends Command {
 
             message.channel.send(embed);
             queue.shift();
+            console.log("Shift in Collector:End");
             dispatcher.end();
             return;
           });
@@ -275,6 +262,7 @@ module.exports = class MusicTriviaCommand extends Command {
           console.log(e);
           if (queue.length > 1) {
             queue.shift();
+            console.log("Shift in Error");
             classThis.playQuizSong(queue, message);
             return;
           }
@@ -302,6 +290,8 @@ module.exports = class MusicTriviaCommand extends Command {
         })
         .on('finish', function () {
           if (queue.length >= 1) {
+            //console.log("playQuizSongFinish:\n\n");
+            //queue.forEach(element => console.log(element.singer + ":" + element.title + ":" + element.url));
             return classThis.playQuizSong(queue, message);
           } else {
             if (message.guild.triviaData.wasTriviaEndCalled) {
