@@ -1,10 +1,19 @@
+const Discord = require("discord.js");
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const ytdl = require('ytdl-core');
 const fs = require('fs');
 const db = require('quick.db');
-const { prefix } = require('../../config.json');
+const { prefix, spotify_secret, spotify_clientid } = require('../../config.json');
+const Spotify = require("spotify-api.js")
+const Auth = new Spotify.Auth();
 
+/*
+load all tracks form all playlists in musictrivia.json
+get random x songs from all tracks
+play trivia
+
+*/
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
     super(client, {
@@ -27,11 +36,16 @@ module.exports = class MusicTriviaCommand extends Command {
           min: 1,
           //default: 5,
           max: 15
+        },
+        {
+          key: 'playlist',
+          prompt: 'Which playlist to choose from',
+          type: 'string'
         }
       ]
     });
   }
-  async run(message, { numberOfSongs }) {
+  async run(message, { numberOfSongs, playlist }) {
     // check if user is in a voice channel
     var voiceChannel = message.member.voice.channel;
     if (!voiceChannel) {
@@ -42,17 +56,32 @@ module.exports = class MusicTriviaCommand extends Command {
       return message.channel.send(':x: A quiz or a song is already running!');
     message.guild.musicData.isPlaying = true;
     message.guild.triviaData.isTriviaRunning = true;
+    message.guild.triviaData.triviaQueue = [];
+
+
+    const token = await Auth.get({
+      clientId: spotify_clientid,
+      clientSecret: spotify_secret,
+    });
+    const sp_client = new Spotify.Client(token);
+
+    const sp_playlist = await sp_client.playlists.get(playlist);
+
     // fetch link array from txt file
-    const jsonSongs = fs.readFileSync(
-      '././resources/music/musictrivia.json',
-      'utf8'
-    );
-    var videoDataArray = JSON.parse(jsonSongs).songs;
-    // get random numberOfSongs videos from array
-    const randomXVideoLinks = MusicTriviaCommand.getRandom(
-      videoDataArray,
-      numberOfSongs
-    ); // get x random urls
+
+
+    // const jsonSongs = fs.readFileSync(
+    //   '././resources/music/musictrivia.json',
+    //   'utf8'
+    // );
+
+
+    // var videoDataArray = JSON.parse(jsonSongs).songs;
+    // // get random numberOfSongs videos from array
+    // const randomXVideoLinks = MusicTriviaCommand.getRandom(
+    //   videoDataArray,
+    //   numberOfSongs
+    // ); // get x random urls
     // create and send info embed
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
@@ -65,13 +94,19 @@ module.exports = class MusicTriviaCommand extends Command {
     // init quiz queue
     // turn each vid to song object
 
-    for (let i = 0; i < randomXVideoLinks.length; i++) {
+    for (let i = 0; i < numberOfSongs; i++) {
+      var track = sp_playlist.tracks[Math.floor(Math.random() * sp_playlist.tracks.length)].track;
+      if (!track.previewUrl || !track.artists[0].name || !track.name) {
+        i--;
+        continue;
+      }
       const song = {
-        url: randomXVideoLinks[i].url,
-        singer: randomXVideoLinks[i].singer,
-        title: randomXVideoLinks[i].title,
+        url: track.previewUrl,
+        singer: track.artists[0].name,
+        title: track.name.split('feat.')[0],
         voiceChannel
       };
+      console.log(song.singer + ": " + song.title)
       message.guild.triviaData.triviaQueue.push(song);
     }
     const channelInfo = Array.from(
@@ -86,55 +121,19 @@ module.exports = class MusicTriviaCommand extends Command {
       message
     );
   }
-
   static async playQuizSong(queue, message) {
-    const randomStartTime = Math.floor(Math.random() * (80 - 30 + 1)) + 30;
     var classThis = this;
-    queue[0].voiceChannel.join().then(function(connection) {
+    queue[0].voiceChannel.join().then(function (connection) {
+      console.log("Trying to play: " + queue[0].singer + ": " + queue[0].title + " " + queue[0].url);
       const dispatcher = connection
-        .play(
-          ytdl(queue[0].url, {
-            // filter: 'audio',
-            quality: 'highestaudio',
-            highWaterMark: 1024 * 1024 * 1024
-          }),
-          {
-            seek: randomStartTime
-          }
-        )
-        .on('error', async function(e) {
-          message.reply(':x: Could not play that song!');
-          console.log(e);
-          if (queue.length > 1) {
-            queue.shift();
-            classThis.playQuizSong(queue, message);
-            return;
-          }
-          const sortedScoreMap = new Map(
-            [...message.guild.triviaData.triviaScore.entries()].sort(function(
-              a,
-              b
-            ) {
-              return b[1] - a[1];
-            })
-          );
-          const embed = new MessageEmbed()
-            .setColor('#ff7373')
-            .setTitle(`Music Quiz Results:`)
-            .setDescription(
-              classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
-            );
-          message.channel.send(embed);
-          message.guild.musicData.isPlaying = false;
-          message.guild.triviaData.isTriviaRunning = false;
-          message.guild.triviaData.triviaScore.clear();
-          message.guild.musicData.songDispatcher = null;
-          message.guild.me.voice.channel.leave();
-          return;
-        })
-        .on('start', function() {
+        .play(queue[0].url)
+        // .play(ytdl(queue[0].url, {
+        //   // filter: 'audio',
+        //   quality: 'highestaudio',
+        //   highWaterMark: 1024 * 1024 * 1024
+        // }))
+        .on('start', function () {
           message.guild.musicData.songDispatcher = dispatcher;
-
           if (!db.get(`${message.guild.id}.serverSettings.volume`))
             dispatcher.setVolume(message.guild.musicData.volume);
           else
@@ -156,7 +155,7 @@ module.exports = class MusicTriviaCommand extends Command {
               return;
             if (msg.content.startsWith(prefix)) return;
             // if user guessed song name
-            if (msg.content.toLowerCase() === queue[0].title.toLowerCase()) {
+            if (msg.content.toLowerCase() === queue[0].title.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].title.toLowerCase()) < 2) {
               if (songNameFound) return; // if song name already found
               songNameFound = true;
 
@@ -173,7 +172,7 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.triviaScore.set(
                 msg.author.username,
                 message.guild.triviaData.triviaScore.get(msg.author.username) +
-                  1
+                1
               );
               msg.react('☑');
             }
@@ -197,18 +196,18 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.triviaScore.set(
                 msg.author.username,
                 message.guild.triviaData.triviaScore.get(msg.author.username) +
-                  1
+                1
               );
               msg.react('☑');
             } else if (
               msg.content.toLowerCase() ===
-                queue[0].singer.toLowerCase() +
-                  ' ' +
-                  queue[0].title.toLowerCase() ||
+              queue[0].singer.toLowerCase() +
+              ' ' +
+              queue[0].title.toLowerCase() ||
               msg.content.toLowerCase() ===
-                queue[0].title.toLowerCase() +
-                  ' ' +
-                  queue[0].singer.toLowerCase()
+              queue[0].title.toLowerCase() +
+              ' ' +
+              queue[0].singer.toLowerCase()
             ) {
               if (
                 (songSingerFound && !songNameFound) ||
@@ -226,7 +225,7 @@ module.exports = class MusicTriviaCommand extends Command {
               message.guild.triviaData.triviaScore.set(
                 msg.author.username,
                 message.guild.triviaData.triviaScore.get(msg.author.username) +
-                  2
+                2
               );
               msg.react('☑');
               return collector.stop();
@@ -235,8 +234,7 @@ module.exports = class MusicTriviaCommand extends Command {
               return msg.react('❌');
             }
           });
-
-          collector.on('end', function() {
+          collector.on('end', function () {
             /*
             The reason for this if statement is that we don't want to get an
             empty embed returned via chat by the bot if end-trivia command was called
@@ -247,7 +245,7 @@ module.exports = class MusicTriviaCommand extends Command {
             }
 
             const sortedScoreMap = new Map(
-              [...message.guild.triviaData.triviaScore.entries()].sort(function(
+              [...message.guild.triviaData.triviaScore.entries()].sort(function (
                 a,
                 b
               ) {
@@ -272,7 +270,37 @@ module.exports = class MusicTriviaCommand extends Command {
             return;
           });
         })
-        .on('finish', function() {
+        .on('error', async function (e) {
+          message.reply(':x: Could not play that song!');
+          console.log(e);
+          if (queue.length > 1) {
+            queue.shift();
+            classThis.playQuizSong(queue, message);
+            return;
+          }
+          const sortedScoreMap = new Map(
+            [...message.guild.triviaData.triviaScore.entries()].sort(function (
+              a,
+              b
+            ) {
+              return b[1] - a[1];
+            })
+          );
+          const embed = new MessageEmbed()
+            .setColor('#ff7373')
+            .setTitle(`Music Quiz Results:`)
+            .setDescription(
+              classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
+            );
+          message.channel.send(embed);
+          message.guild.musicData.isPlaying = false;
+          message.guild.triviaData.isTriviaRunning = false;
+          message.guild.triviaData.triviaScore.clear();
+          message.guild.musicData.songDispatcher = null;
+          message.guild.me.voice.channel.leave();
+          return;
+        })
+        .on('finish', function () {
           if (queue.length >= 1) {
             return classThis.playQuizSong(queue, message);
           } else {
@@ -284,7 +312,7 @@ module.exports = class MusicTriviaCommand extends Command {
               return;
             }
             const sortedScoreMap = new Map(
-              [...message.guild.triviaData.triviaScore.entries()].sort(function(
+              [...message.guild.triviaData.triviaScore.entries()].sort(function (
                 a,
                 b
               ) {
@@ -343,8 +371,30 @@ module.exports = class MusicTriviaCommand extends Command {
   }
   // https://www.w3resource.com/javascript-exercises/javascript-string-exercise-9.php
   static capitalize_Words(str) {
-    return str.replace(/\w\S*/g, function(txt) {
+    return str.replace(/\w\S*/g, function (txt) {
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
+  }
+
+  static levenshtein(str1, str2) {
+    const track = Array(str2.length + 1).fill(null).map(() =>
+      Array(str1.length + 1).fill(null));
+    for (let i = 0; i <= str1.length; i += 1) {
+      track[0][i] = i;
+    }
+    for (let j = 0; j <= str2.length; j += 1) {
+      track[j][0] = j;
+    }
+    for (let j = 1; j <= str2.length; j += 1) {
+      for (let i = 1; i <= str1.length; i += 1) {
+        const indicator = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        track[j][i] = Math.min(
+          track[j][i - 1] + 1, // deletion
+          track[j - 1][i] + 1, // insertion
+          track[j - 1][i - 1] + indicator, // substitution
+        );
+      }
+    }
+    return track[str2.length][str1.length];
   }
 };
