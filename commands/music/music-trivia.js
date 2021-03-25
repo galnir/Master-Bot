@@ -5,7 +5,7 @@ const fs = require('fs');
 const db = require('quick.db');
 const { prefix, spotify_secret, spotify_clientid } = require('../../config.json');
 const Spotify = require("spotify-api.js")
-const Auth = new Spotify.Auth();
+const sp_client = new Spotify.Client();
 const MAX_DISTANCE = 3;
 
 
@@ -54,11 +54,11 @@ module.exports = class MusicTriviaCommand extends Command {
     message.guild.triviaData.triviaQueue = [];
 
 
-    const token = await Auth.get({
-      clientId: spotify_clientid,
-      clientSecret: spotify_secret,
-    });
-    const sp_client = new Spotify.Client(token);
+    // const token = await Auth.get({
+    //   clientId: spotify_clientid,
+    //   clientSecret: spotify_secret,
+    // });
+    await sp_client.login(spotify_clientid, spotify_secret);
     const regexp = /\/playlist\/(.+)\?/;
     playlist = playlist.match(regexp)[1];
     if (!playlist) {
@@ -66,6 +66,7 @@ module.exports = class MusicTriviaCommand extends Command {
       return;
     }
     const sp_playlist = await sp_client.playlists.get(playlist);
+    const tracks = await (await sp_playlist.getTracks()).items;
     const infoEmbed = new MessageEmbed()
       .setColor('#ff7373')
       .setTitle(':notes: Starting Music Quiz!')
@@ -76,7 +77,7 @@ module.exports = class MusicTriviaCommand extends Command {
     message.channel.send(infoEmbed);
     var songMap = new Map();
     for (let i = 0; i < numberOfSongs; i++) {
-      var track = sp_playlist.tracks[Math.floor(Math.random() * sp_playlist.tracks.length)].track;
+      var track = tracks[Math.floor(Math.random() * tracks.length)].track;
       if (songMap.has(track.id)) {
         i--;
         continue;
@@ -114,7 +115,7 @@ module.exports = class MusicTriviaCommand extends Command {
     var classThis = this;
     message.member.voice.channel.join().then(function (connection) {
       //console.log("playQuizSongStart:\n\n");
-      queue.forEach(element => console.log(element.singer + ":" + element.title + ":" + element.url));
+      //queue.forEach(element => console.log(element.singer + ":" + element.title + ":" + element.url));
       const dispatcher = connection
         .play(queue[0].url)
         .on('start', function () {
