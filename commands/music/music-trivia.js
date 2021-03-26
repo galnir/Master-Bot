@@ -182,10 +182,8 @@ module.exports = class MusicTriviaCommand extends Command {
 
             const embed = new MessageEmbed()
               .setColor('#ff7373')
-              .setTitle(`:musical_note: The song was:  ${song}`)
-              .setDescription(
-                classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
-              );
+              .setTitle(`:musical_note: The song was: ${song}`)
+            classThis.setLeaderBoardOnMessage(embed, Array.from(sortedScoreMap.entries()))
 
             message.channel.send(embed);
             queue.shift();
@@ -214,9 +212,7 @@ module.exports = class MusicTriviaCommand extends Command {
           const embed = new MessageEmbed()
             .setColor('#ff7373')
             .setTitle(`Music Quiz Results:`)
-            .setDescription(
-              classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
-            );
+          classThis.setLeaderBoardOnMessage(embed, Array.from(sortedScoreMap.entries()))
           message.channel.send(embed);
           message.guild.musicData.isPlaying = false;
           message.guild.triviaData.isTriviaRunning = false;
@@ -248,10 +244,8 @@ module.exports = class MusicTriviaCommand extends Command {
             );
             const embed = new MessageEmbed()
               .setColor('#ff7373')
-              .setTitle(`Music Quiz Results:`)
-              .setDescription(
-                classThis.getLeaderBoard(Array.from(sortedScoreMap.entries()))
-              );
+              .setTitle(`Music Quiz Results`);
+            classThis.setLeaderBoardOnMessage(embed, Array.from(sortedScoreMap.entries()))
             message.channel.send(embed);
             message.guild.musicData.isPlaying = false;
             message.guild.triviaData.isTriviaRunning = false;
@@ -295,6 +289,34 @@ module.exports = class MusicTriviaCommand extends Command {
       }
     }
     return leaderBoard;
+  }
+
+  static setLeaderBoardOnMessage(message, arr) {
+    if (!message) return;
+    if (!arr) return;
+    if (!arr[0]) return; // issue #422
+
+    let placements = '';
+    let names = '';
+    let points = '';
+
+    for (let i = 0; i < arr.length; i++) {
+      if (i === 0) {
+        placements = '#' + (i + 1)
+        names = arr[i][0]
+        points = arr[i][1]
+      } else {
+        placements += '\n#' + (i + 1)
+        names += '\n' + arr[i][0]
+        points += '\n' + arr[i][1]
+      }
+    }
+
+    message.addFields(
+      { name: "Placement", value: placements, inline: true},
+      { name: "User", value: names, inline: true},
+      { name: "Points", value: points, inline: true}
+    );
   }
 
   // https://www.w3resource.com/javascript-exercises/javascript-string-exercise-9.php
