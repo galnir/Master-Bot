@@ -143,7 +143,7 @@ module.exports = class MusicTriviaCommand extends Command {
             .toLowerCase()
             .replace(RELPACE_REGEX, "");
 
-          var trackArtist = queue[0].toLowerCase().replace().replace(RELPACE_REGEX, "");
+          var trackArtist = queue[0].singer.toLowerCase().replace().replace(RELPACE_REGEX, "");
 
 
           collector.on('collect', msg => {
