@@ -7,7 +7,7 @@ const { prefix, spotify_secret, spotify_clientid } = require('../../config.json'
 const Spotify = require("spotify-api.js")
 const sp_client = new Spotify.Client();
 const MAX_DISTANCE = 3;
-
+const RELPACE_REGEX = /[^0-9a-zA-Z\s]+/
 
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
@@ -137,12 +137,23 @@ module.exports = class MusicTriviaCommand extends Command {
             time: 28000
           });
 
+          var trackTitle = queue[0].title
+            .split('feat.')[0]
+            .split('ft.')[0]
+            .toLowerCase()
+            .replace(RELPACE_REGEX, "");
+
+          var trackArtist = queue[0].toLowerCase().replace().replace(RELPACE_REGEX, "");
+
+
           collector.on('collect', msg => {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
               return;
             if (msg.content.startsWith(prefix)) return;
+            var userInput = msg.content.toLowerCase().replace(RELPACE_REGEX, "");
+
             // if user guessed song name
-            if (msg.content.toLowerCase() === queue[0].title.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].title.toLowerCase()) <= MAX_DISTANCE) {
+            if (userInput === trackTitle || MusicTriviaCommand.levenshtein(userInput, trackTitle) <= MAX_DISTANCE) {
               if (songNameFound) return; // if song name already found
               songNameFound = true;
 
@@ -165,7 +176,7 @@ module.exports = class MusicTriviaCommand extends Command {
             }
             // if user guessed singer
             else if (
-              msg.content.toLowerCase() === queue[0].singer.toLowerCase() || MusicTriviaCommand.levenshtein(msg.content.toLowerCase(), queue[0].singer.toLowerCase()) <= MAX_DISTANCE
+              userInput === trackTitle || MusicTriviaCommand.levenshtein(userInput, trackTitle) <= MAX_DISTANCE
             ) {
               if (songSingerFound) return;
               songSingerFound = true;
@@ -186,15 +197,9 @@ module.exports = class MusicTriviaCommand extends Command {
                 1
               );
               msg.react('☑');
-            } else if (
-              msg.content.toLowerCase() ===
-              queue[0].singer.toLowerCase() +
-              ' ' +
-              queue[0].title.toLowerCase() ||
-              msg.content.toLowerCase() ===
-              queue[0].title.toLowerCase() +
-              ' ' +
-              queue[0].singer.toLowerCase()
+            } else if (MusicTriviaCommand.levenshtein(userInput, trackArtist + ' ' + trackTitle) <= MAX_DISTANCE
+              ||
+              MusicTriviaCommand.levenshtein(userInput, trackTitle + ' ' + trackArtist) <= MAX_DISTANCE
             ) {
               if (
                 (songSingerFound && !songNameFound) ||
