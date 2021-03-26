@@ -15,10 +15,11 @@ libgif-dev \
 librsvg2-dev && \
 curl -sL https://deb.nodesource.com/setup_14.x | bash -E && apt-get install -y nodejs && \
 apt-get clean && \
-npm install -g pm2 && \
-git clone https://github.com/qdlmcfresh/Master-Bot.git ./Master-Bot
+npm install -g pm2
+RUN git clone https://github.com/qdlmcfresh/Master-Bot.git ./Master-Bot
 WORKDIR "/Master-Bot"
 COPY ./config.json* .
 COPY ./json.sqlite* .
 RUN npm install
+ENTRYPOINT ["git" ,"pull"]
 CMD ["pm2-runtime", "index.js"]
