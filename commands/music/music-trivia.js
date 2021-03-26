@@ -7,7 +7,9 @@ const { prefix, spotify_secret, spotify_clientid } = require('../../config.json'
 const Spotify = require("spotify-api.js")
 const sp_client = new Spotify.Client();
 const MAX_DISTANCE = 3;
-const RELPACE_REGEX = /[^0-9a-zA-Z\s]+/
+const REGEX_PARENTHESES = /\(.*\)/;
+const REGEX_DASH = /-.*/;
+const REGEX_SPECIAL_CHARACTERS = /[^0-9a-zA-Z\s]+/;
 
 module.exports = class MusicTriviaCommand extends Command {
   constructor(client) {
@@ -141,16 +143,22 @@ module.exports = class MusicTriviaCommand extends Command {
             .split('feat.')[0]
             .split('ft.')[0]
             .toLowerCase()
-            .replace(RELPACE_REGEX, "");
+            .replace(REGEX_DASH)
+            .replace(REGEX_PARENTHESES)
+            .replace(REGEX_SPECIAL_CHARACTERS, "")
+            .strip();
 
-          var trackArtist = queue[0].singer.toLowerCase().replace().replace(RELPACE_REGEX, "");
+          var trackArtist = queue[0].singer.toLowerCase().replace().replace(REGEX_SPECIAL_CHARACTERS, "");
 
 
           collector.on('collect', msg => {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
               return;
             if (msg.content.startsWith(prefix)) return;
-            var userInput = msg.content.toLowerCase().replace(RELPACE_REGEX, "");
+            var userInput = msg.content.toLowerCase()
+              .replace(REGEX_DASH)
+              .replace(REGEX_PARENTHESES)
+              .replace(REGEX_SPECIAL_CHARACTERS, "");
 
             // if user guessed song name
             if (userInput === trackTitle || MusicTriviaCommand.levenshtein(userInput, trackTitle) <= MAX_DISTANCE) {

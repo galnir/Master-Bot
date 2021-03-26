@@ -5,7 +5,7 @@ const { prefix, token, discord_owner_id } = require('./config.json');
 const db = require('quick.db');
 const Canvas = require('canvas');
 
-Structures.extend('Guild', function(Guild) {
+Structures.extend('Guild', function (Guild) {
   class MusicGuild extends Guild {
     constructor(client, data) {
       super(client, data);
@@ -37,6 +37,7 @@ Structures.extend('Guild', function(Guild) {
   }
   return MusicGuild;
 });
+console.log("Docker test");
 
 const client = new CommandoClient({
   commandPrefix: prefix,
