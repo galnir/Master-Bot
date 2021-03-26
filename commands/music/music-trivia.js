@@ -146,7 +146,7 @@ module.exports = class MusicTriviaCommand extends Command {
             .replace(REGEX_DASH)
             .replace(REGEX_PARENTHESES)
             .replace(REGEX_SPECIAL_CHARACTERS, "")
-            .strip();
+            .trim();
 
           var trackArtist = queue[0].singer.toLowerCase().replace().replace(REGEX_SPECIAL_CHARACTERS, "");
 
@@ -158,7 +158,8 @@ module.exports = class MusicTriviaCommand extends Command {
             var userInput = msg.content.toLowerCase()
               .replace(REGEX_DASH)
               .replace(REGEX_PARENTHESES)
-              .replace(REGEX_SPECIAL_CHARACTERS, "");
+              .replace(REGEX_SPECIAL_CHARACTERS, "")
+	      .trim();
 
             // if user guessed song name
             if (userInput === trackTitle || MusicTriviaCommand.levenshtein(userInput, trackTitle) <= MAX_DISTANCE) {
