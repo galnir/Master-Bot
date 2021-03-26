@@ -19,7 +19,5 @@ npm install -g pm2
 RUN git clone https://github.com/qdlmcfresh/Master-Bot.git ./Master-Bot
 WORKDIR "/Master-Bot"
 COPY ./config.json* .
-COPY ./json.sqlite* .
 RUN npm install
-ENTRYPOINT ["git" ,"pull"]
-CMD ["pm2-runtime", "index.js"]
+CMD ["entrypoint.sh"]
