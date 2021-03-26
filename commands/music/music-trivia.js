@@ -90,7 +90,7 @@ module.exports = class MusicTriviaCommand extends Command {
       const song = {
         url: track.previewUrl,
         singer: track.artists[0].name,
-        title: track.name.split('feat.')[0],
+        title: track.name,
         voiceChannel
       };
 
