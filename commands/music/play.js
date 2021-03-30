@@ -65,7 +65,10 @@ module.exports = class PlayCommand extends Command {
 
     if (!this.isNull(db.get(message.member.id))) {
       const userPlaylists = db.get(message.member.id).savedPlaylists;
-      const found = userPlaylists.find(element => element.name == query);
+      let found;
+      if (userPlaylists) {
+        found = userPlaylists.find(element => element.name == query);
+      }
       if (found) {
         const embed = new MessageEmbed()
           .setColor('#ff0000')
