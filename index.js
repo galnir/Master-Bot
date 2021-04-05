@@ -10,7 +10,7 @@ Structures.extend('Guild', function(Guild) {
     constructor(client, data) {
       super(client, data);
       this.musicData = {
-        queue: [],
+        queue: [], 
         isPlaying: false,
         nowPlaying: null,
         songDispatcher: null,
