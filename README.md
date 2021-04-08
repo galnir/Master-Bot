@@ -12,6 +12,7 @@
 Make a config.json file in the root directory of the project and add:
 
 - Minimum
+
 ```
 {
   "prefix": "!",
@@ -22,6 +23,7 @@ Make a config.json file in the root directory of the project and add:
 ```
 
 - Full Command List
+
 ```
 {
   "invite": "false",
@@ -77,33 +79,32 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 
 - Other
 
-| Command           | Description                                                                                                                                                         | Usage                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| !cat              | Get a cute cat picture                                                                                                                                              | !cat                                                                          |
-| !dog              | Get a cute dog picture                                                                                                                                              | !dog                                                                          |
-| !fortune          | Get a fortune cookie tip                                                                                                                                            | !fortune                                                                      |
-| !insult           | Generate an evil insult                                                                                                                                             | !insult                                                                       |
-| !chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                             | !chucknorris                                                                  |
-| !motivation       | Get a random motivational quote                                                                                                                                     | !motivation                                                                   |
-| !world-news      | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | !world-news                                                                  |
-| !random           | Generate a random number between two provided numbers                                                                                                               | !random 0 100                                                                 |
-| !reddit           | Replies with 5 top non nsfw subreddit posts                                                                                                                         | !reddit askreddit                                                             |
-| !say              | Make the bot say anything                                                                                                                                           | !say Lorem Ipsum                                                              |
-| !sr               | Replies with the Top 10 speedrun results in every category.                                                                                                         | !sr super metroid                                                             |
-| !translate        | Translate to any language using Google translate.(only supported lanugages)                                                                                | !translate english ありがとう                                                         |
-| !about            | Info about me and the repo                                                                                                                                          | !about                                                                        |
-| !uptime           | Replies with the bot's total uptime                                                                                                                                 | !uptime                                                                       |
-| !8ball            | Get the answer to anything!                                                                                                                                         | !8ball Is this bot awesome?                                                   |
-| !rps              | Rock Paper Scissors                                                                                                                                                 | !rps                                                                          |
-| !bored            | Generate a random activity!                                                                                                                                         | !bored                                                                        |
-| !advice           | Get some advice!                                                                                                                                                    | !advice                                                                       |
-| !kanye            | Get a random Kanye quote                                                                                                                                            | !kanye                                                                        |
-| !urban dictionary | Get definitions from urban dictonary                                                                                                                                | !urban javascript                                                             |
-| !poll             | Creates a poll with up to 10 choices.                                                                                                                               | !poll "What's your favourite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
-| !vote             | Starts a yes/no/don't care vote.                                                                                                                                    | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                  |
-| !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                    | !twitchstatus MasterBot or !tso MasterBot                                     |
-| !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                  | !tv-show-search Duck                                                          |
-| !nickname | Sets the selected member's nickname with the provided nickname | !nickname @Master-Bot Master |
+| Command           | Description                                                                                                                                                        | Usage                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| !cat              | Get a cute cat picture                                                                                                                                             | !cat                                                                         |
+| !dog              | Get a cute dog picture                                                                                                                                             | !dog                                                                         |
+| !fortune          | Get a fortune cookie tip                                                                                                                                           | !fortune                                                                     |
+| !insult           | Generate an evil insult                                                                                                                                            | !insult                                                                      |
+| !chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | !chucknorris                                                                 |
+| !motivation       | Get a random motivational quote                                                                                                                                    | !motivation                                                                  |
+| !world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | !world-news                                                                  |
+| !random           | Generate a random number between two provided numbers                                                                                                              | !random 0 100                                                                |
+| !reddit           | Replies with 5 top non nsfw subreddit posts                                                                                                                        | !reddit askreddit                                                            |
+| !say              | Make the bot say anything                                                                                                                                          | !say Lorem Ipsum                                                             |
+| !sr               | Replies with the Top 10 speedrun results in every category.                                                                                                        | !sr super metroid                                                            |
+| !translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | !translate english ありがとう                                                |
+| !about            | Info about me and the repo                                                                                                                                         | !about                                                                       |
+| !8ball            | Get the answer to anything!                                                                                                                                        | !8ball Is this bot awesome?                                                  |
+| !rps              | Rock Paper Scissors                                                                                                                                                | !rps                                                                         |
+| !bored            | Generate a random activity!                                                                                                                                        | !bored                                                                       |
+| !advice           | Get some advice!                                                                                                                                                   | !advice                                                                      |
+| !kanye            | Get a random Kanye quote                                                                                                                                           | !kanye                                                                       |
+| !urban dictionary | Get definitions from urban dictionary                                                                                                                              | !urban javascript                                                            |
+| !poll             | Creates a poll with up to 10 choices.                                                                                                                              | !poll "What's your favorite food?" "Hot Dogs,Pizza,Burgers,Fruits,Veggie" 10 |
+| !vote             | Starts a yes/no/don't care vote.                                                                                                                                   | !vote "Do you like to vote?." "I mean who doesn't right?!" 5                 |
+| !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                   | !twitchstatus MasterBot or !tso MasterBot                                    |
+| !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                 | !tv-show-search Duck                                                         |
+| !nickname         | Sets the selected member's nickname with the provided nickname                                                                                                     | !nickname @Master-Bot Master                                                 |
 
 - Gifs
 
@@ -124,7 +125,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !prune                     | Delete up to 99 recent messages                                                | !prune 50                            |
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
 | !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
-| !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings bacon-fixation general 1 |
+| !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings Bacon_Fixation general 1 |
 
 ### Resources
 

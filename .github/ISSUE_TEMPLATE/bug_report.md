@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Desktop (please complete the following information):**
  - OS: [e.g. Windows, Ubuntu...]
  - Node Version(Should be v12 atleast): 
- - Are python 2.7 and Ffmpeg installed?:
+ - Is python 2.7 installed?:
  - How are you hosting the bot(Locally, on a vps, heroku, glitch...):
 
 **Additional context**

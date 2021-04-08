@@ -28,7 +28,7 @@ module.exports = class SkipCommand extends Command {
       return;
     } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
       message.reply(
-        `:no_entry: You must be in the same voice channel as the bot's in order to use that!`
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
       );
       return;
     } else if (message.guild.triviaData.isTriviaRunning) {

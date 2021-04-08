@@ -102,7 +102,7 @@ module.exports = class MySplitsIOCommand extends Command {
             .addField('Attempts', pbArray[i - 1].attempts, true)
             .addField('Timer Used', pbArray[i - 1].program)
             .setFooter(
-              'Powered by Splits.io! Run was submited',
+              'Powered by Splits.io! Run was submitted',
               'https://splits.io//assets/favicon/favicon-32x32-84a395f64a39ce95d7c51fecffdaa578e2277e340d47a50fdac7feb00bf3fd68.png'
             )
             .setTimestamp(pbArray[i - 1].parsed_at)
@@ -120,7 +120,7 @@ module.exports = class MySplitsIOCommand extends Command {
     }
   }
   // prettier-ignore
-  // Differant than Src Command time convertion includes ms
+  // Different than Src Command time conversion includes ms
   static convertTime(time) {
     let str, hr, min, sec, ms;
     let parts = time.toString().split('.');
