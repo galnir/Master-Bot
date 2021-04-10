@@ -16,7 +16,7 @@
     "canvas": "^2.6.1",
     "cheerio": "^1.0.0-rc.5",
     "discord-paginationembed": "^2.1.0",
-    "discord.js": "github:discordjs/discord.js#stable",
+    "discord.js": "^12.5.3",
     "discord.js-commando": "github:discordjs/Commando",
     "emoji-regex": "^9.2.1",
     "ffmpeg-static": "^4.2.7",
