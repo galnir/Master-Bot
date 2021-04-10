@@ -15,11 +15,9 @@ module.exports = class AnimegifCommand extends Command {
                 'anime-gifs',
             ],
             memberName: 'animegif',
-            description: 'Provide a name of an anime show or character and I will return a gif!',
+            description: 'Return a random anime gif!',
             examples: [
-                '`' + config.prefix + 'animegif`',
-                '`' + config.prefix + 'animegif Bleach`',
-                '`' + config.prefix + 'animegif Yoruichi`'
+                '`' + config.prefix + 'animegif`'
                       ],
             throttling: {
                 usages: 1,
