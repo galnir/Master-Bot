@@ -3,6 +3,7 @@
 const fs = require('fs');
 const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
+const config = require(../../config.json');
 
 module.exports = class JojoCommand extends Command {
   constructor(client) {
