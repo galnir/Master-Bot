@@ -2,6 +2,7 @@
 // const { tenorAPI } = require("../config.json");
 const fs = require('fs');
 const { Command } = require('discord.js-commando');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = class JojoCommand extends Command {
   constructor(client) {
@@ -11,6 +12,9 @@ module.exports = class JojoCommand extends Command {
       group: 'gifs',
       memberName: 'jojo',
       description: 'Replies with a random jojo gif!',
+      examples: [
+        '`' + config.json + 'jojo',
+      ],
       throttling: {
         usages: 2,
         duration: 8
@@ -19,12 +23,17 @@ module.exports = class JojoCommand extends Command {
   }
 
   run(message) {
+    const embed = new MessageEmbed();
     try {
       const linkArray = fs
         .readFileSync('././resources/gifs/jojolinks.txt', 'utf8')
         .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
-      message.channel.send(link);
+                var embed = new MessageEmbed()
+                .setDescription('Click this link if the image doesn\'t load: [Link](' + link + ')')
+                .setColor('RANDOM')
+                .setImage(link);
+      message.channel.send(embed);
       return;
 
       /*
