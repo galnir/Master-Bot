@@ -12,15 +12,15 @@ module.exports = class SayCommand extends Command {
       description: 'Make the bot say anything!',
       args: [
         {
-          key: 'text',
-          prompt: ':microphone2: What do you want the bot to say?',
-          type: 'string'
-        },
-        {
           key: 'announcementChannel',
           prompt: 'In which channel do you want the announcement to be sent?',
           type: 'string',
           default: message => message.channel.id
+        },
+        {
+          key: 'text',
+          prompt: ':microphone2: What do you want the bot to say?',
+          type: 'string'
         }
       ]
     });
