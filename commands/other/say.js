@@ -15,6 +15,12 @@ module.exports = class SayCommand extends Command {
           key: 'text',
           prompt: ':microphone2: What do you want the bot to say?',
           type: 'string'
+        },
+        {
+          key: 'announcementChannel',
+          prompt: 'In which channel do you want the announcement to be sent?',
+          type: 'string',
+          default: message => message.channel.id
         }
       ]
     });
@@ -30,12 +36,33 @@ module.exports = class SayCommand extends Command {
         `${message.member.displayName}, made me say it!`,
         message.author.displayAvatarURL()
       );
-    message.channel
-      .send(embed)
-      .then(
+    
+    if (announcementChannel != undefined) {
+      let announcedChannel = message.guild.channels.cache.find(
+        channel => channel.name == announcementChannel
+      );
+
+      if (message.guild.channels.cache.get(announcementChannel)) {
+        announcedChannel = message.guild.channels.cache.get(announcementChannel);
+      }
+
+      if (!announcedChannel) {
+        message.reply(':x: ' + announcementChannel + ' could not be found.');
+        return;
+      }
+      
+      announcedChannel
+        .send(embed)
+        .catch(e => console.log(e));
+      return;
+    } else if (announcementChannel) {
+      message.channel
+        .send(embed)
+        .then(
         () => message.delete().catch(e => console.error(e)) // nested promise
       )
-      .catch(e => console.error(e));
-    return;
+        .catch(e => console.error(e));
+      return;
+    }
   }
 };
