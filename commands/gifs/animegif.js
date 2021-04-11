@@ -15,21 +15,31 @@ module.exports = class AnimegifCommand extends Command {
                 'anime-gifs',
             ],
             memberName: 'animegif',
-            description: 'Return a random anime gif!',
+            description: 'Get any anime gif via query.',
             examples: [
-                '`' + config.prefix + 'animegif`'
+                '`' + config.prefix + 'animegif one punch man`'
                       ],
             throttling: {
                 usages: 1,
-                duration: 4
+                duration: 4,
+      args: [
+        {
+          key: 'text',
+          prompt: ':thinking: What gif would you like to watch?',
+          type: 'string',
+          validate: function validateText(text) {
+            return text.length < 50;
+          }
+        }
+      ]
             }
         });
     }
 
-    run(message) {
+    run(message, {text}) {
         const embed = new MessageEmbed();    
         fetch(
-            'https://api.tenor.com/v1/random?key=' + config.tenorAPI + '&q=anime&limit=1'
+            'https://api.tenor.com/v1/random?key=' + config.tenorAPI + '&q=anime-' + text + '&limit=1'
         )
         .then(res => res.json())
         .then(json => {
