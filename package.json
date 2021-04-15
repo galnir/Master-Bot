@@ -17,7 +17,7 @@
     "cheerio": "^1.0.0-rc.5",
     "discord-paginationembed": "^2.1.0",
     "discord.js": "^12.5.3",
-    "discord.js-commando": "github:discordjs/Commando",
+    "discord.js-commando": "^0.12.3",
     "emoji-regex": "^9.2.1",
     "ffmpeg-static": "^4.2.7",
     "iso-639-1": "^2.1.8",
