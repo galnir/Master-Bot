@@ -519,7 +519,12 @@ var searchYoutube = async (query, message, voiceChannel) => {
 
 var interactiveEmbed = message => {
   // Builds Member ID array for buttons
-  const rawMembers = Object.fromEntries(message.member.voice.channel.members);
+  //const rawMembers = Object.fromEntries(message.member.voice.channel.members);
+  const rawMembers = Object.fromEntries(
+    message.member.voice.channel
+      ? message.member.voice.channel.members
+      : message.guild.musicData.nowPlaying.voiceChannel.members
+  );
   const memberArray = [Object.keys(rawMembers)];
 
   const songTitle = `[${message.guild.musicData.nowPlaying.title}](${message.guild.musicData.nowPlaying.url})\n`;
