@@ -14,7 +14,7 @@ module.exports = class SayCommand extends Command {
         {
           key: 'announcementChannel',
           prompt: 'In which channel do you want the announcement to be sent?',
-          type: 'string',
+          type: 'channel',
           default: message => message.channel.id
         },
         {
@@ -26,7 +26,7 @@ module.exports = class SayCommand extends Command {
     });
   }
 
-  run(message, { text }) {
+  run(message, { text, announcementChannel }) {
     const embed = new MessageEmbed()
       .setTitle(`Just wanted to say...`)
       .setColor('#888888')
