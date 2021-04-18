@@ -167,10 +167,9 @@ module.exports = class PlayCommand extends Command {
         return message.reply(
           'The queue is full, please try adding more songs later'
         );
-
       videosArr
         .splice(0, maxQueueLength - message.guild.musicData.queue.length)
-        .forEach(async video => {
+        .forEach(async (video, key, arr) => {
           // don't process private videos
           if (
             video.raw.status.privacyStatus == 'private' ||
@@ -187,21 +186,26 @@ module.exports = class PlayCommand extends Command {
                 message.member.user
               )
             );
+            if (Object.is(arr.length - 1, key)) {
+              if (!message.guild.musicData.isPlaying) {
+                message.guild.musicData.isPlaying = true;
+                playSong(message.guild.musicData.queue, message);
+                return;
+              } else {
+                interactiveEmbed(message)
+                  .addField(
+                    'Added Playlist',
+                    `[${playlist.title}](${playlist.url})`
+                  )
+                  .build();
+                return;
+              }
+            }
           } catch (err) {
             return console.error(err);
           }
         });
-
-      if (!message.guild.musicData.isPlaying) {
-        message.guild.musicData.isPlaying = true;
-        playSong(message.guild.musicData.queue, message);
-        return;
-      } else {
-        interactiveEmbed(message)
-          .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
-          .build();
-        return;
-      }
+      return;
     }
 
     if (isYouTubeVideoURL(query)) {
@@ -515,7 +519,12 @@ var searchYoutube = async (query, message, voiceChannel) => {
 
 var interactiveEmbed = message => {
   // Builds Member ID array for buttons
-  const rawMembers = Object.fromEntries(message.member.voice.channel.members);
+  //const rawMembers = Object.fromEntries(message.member.voice.channel.members);
+  const rawMembers = Object.fromEntries(
+    message.member.voice.channel
+      ? message.member.voice.channel.members
+      : message.guild.musicData.nowPlaying.voiceChannel.members
+  );
   const memberArray = [Object.keys(rawMembers)];
 
   const songTitle = `[${message.guild.musicData.nowPlaying.title}](${message.guild.musicData.nowPlaying.url})\n`;

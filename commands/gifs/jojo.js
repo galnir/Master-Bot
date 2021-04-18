@@ -41,7 +41,7 @@ module.exports = class JojoCommand extends Command {
 
       /*
       fetch(
-        `https://api.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`
+        `https://g.tenor.com/v1/random?key=${tenorAPI}&q=jojos-bizarre-adventure&limit=1`
       )
         .then(res => res.json())
         .then(json => message.channel.send(json.results[0].url))
