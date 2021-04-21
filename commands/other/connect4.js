@@ -41,34 +41,32 @@ module.exports = class Connect4Command extends Command {
       return message.channel.send("Sorry can't play against a bot user");
     }
 
-    const gameState = new Object({
-      player1Avatar: player1.displayAvatarURL({
-        format: 'jpg'
-      }),
-      player2Avatar: player2.avatarURL({
-        format: 'jpg'
-      }),
-      column: [
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0]
-      ],
-      row: {
-        0: [],
-        1: [],
-        2: [],
-        3: [],
-        4: [],
-        5: [],
-        6: []
-      },
-      currentPlayer: player1.id,
-      boardImageURL: null
+    const player1Avatar = player1.displayAvatarURL({
+      format: 'jpg'
     });
+    const player2Avatar = player2.avatarURL({
+      format: 'jpg'
+    });
+    let column = [
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0]
+    ];
+    let row = {
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: []
+    };
+    let currentPlayer = player1.id;
+    let boardImageURL = null;
 
     let currentTurn = 0;
     await createBoard(message);
@@ -77,7 +75,7 @@ module.exports = class Connect4Command extends Command {
     new Pagination.Embeds()
       .setArray([new MessageEmbed()])
       .setAuthorizedUsers([player1.id, player2.id])
-      .setThumbnail(gameState.player1Avatar)
+      .setThumbnail(player1Avatar)
       .setChannel(message.channel)
       .setColor('#3E8657')
       .setTitle(`Connect 4 - Player 1's Turn`)
@@ -87,7 +85,7 @@ module.exports = class Connect4Command extends Command {
          Thumbnail and Title indicate current players turn.
          You have 1 minute per turn or it's an automatic forfeit.`
       )
-      .setImage(gameState.boardImageURL)
+      .setImage(boardImageURL)
       .setFooter('Incase of invisible board click 🔄')
       .setTimestamp()
       .setTimeout(60000)
@@ -96,224 +94,224 @@ module.exports = class Connect4Command extends Command {
       .setFunctionEmojis({
         // Column 1
         '1️⃣': async function(user, instance) {
-          if (gameState.row[0].length === 6) {
+          if (row[0].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[0][gameState.row[0].length] = 1;
-                gameState.row[0].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[0][row[0].length] = 1;
+                row[0].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[0][gameState.row[0].length] = 2;
-                gameState.row[0].push(2);
-                gameState.currentPlayer = player1.id;
+                column[0][row[0].length] = 2;
+                row[0].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 2
         '2️⃣': async function(user, instance) {
-          if (gameState.row[1].length === 6) {
+          if (row[1].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[1][gameState.row[1].length] = 1;
-                gameState.row[1].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[1][row[1].length] = 1;
+                row[1].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[1][gameState.row[1].length] = 2;
-                gameState.row[1].push(2);
-                gameState.currentPlayer = player1.id;
+                column[1][row[1].length] = 2;
+                row[1].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 3
         '3️⃣': async function(user, instance) {
-          if (gameState.row[2].length === 6) {
+          if (row[2].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[2][gameState.row[2].length] = 1;
-                gameState.row[2].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[2][row[2].length] = 1;
+                row[2].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[2][gameState.row[2].length] = 2;
-                gameState.row[2].push(2);
-                gameState.currentPlayer = player1.id;
+                column[2][row[2].length] = 2;
+                row[2].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 4
         '4️⃣': async function(user, instance) {
-          if (gameState.row[3].length === 6) {
+          if (row[3].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[3][gameState.row[3].length] = 1;
-                gameState.row[3].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[3][row[3].length] = 1;
+                row[3].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[3][gameState.row[3].length] = 2;
-                gameState.row[3].push(2);
-                gameState.currentPlayer = player1.id;
+                column[3][row[3].length] = 2;
+                row[3].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 5
         '5️⃣': async function(user, instance) {
-          if (gameState.row[4].length === 6) {
+          if (row[4].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[4][gameState.row[4].length] = 1;
-                gameState.row[4].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[4][row[4].length] = 1;
+                row[4].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[4][gameState.row[4].length] = 2;
-                gameState.row[4].push(2);
-                gameState.currentPlayer = player1.id;
+                column[4][row[4].length] = 2;
+                row[4].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 6
         '6️⃣': async function(user, instance) {
-          if (gameState.row[5].length === 6) {
+          if (row[5].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[5][gameState.row[5].length] = 1;
-                gameState.row[5].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[5][row[5].length] = 1;
+                row[5].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[5][gameState.row[5].length] = 2;
-                gameState.row[5].push(2);
-                gameState.currentPlayer = player1.id;
+                column[5][row[5].length] = 2;
+                row[5].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Column 7
         '7️⃣': async function(user, instance) {
-          if (gameState.row[6].length === 6) {
+          if (row[6].length === 6) {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(gameState.column) === 0) {
-            if (gameState.currentPlayer === user.id) {
-              if (gameState.currentPlayer === player1.id) {
-                gameState.column[6][gameState.row[6].length] = 1;
-                gameState.row[6].push(1);
-                gameState.currentPlayer = player2.id;
+          if (chkWinner(column) === 0) {
+            if (currentPlayer === user.id) {
+              if (currentPlayer === player1.id) {
+                column[6][row[6].length] = 1;
+                row[6].push(1);
+                currentPlayer = player2.id;
                 instance
-                  .setThumbnail(gameState.player2Avatar)
+                  .setThumbnail(player2Avatar)
                   .setTitle(`Connect 4 - Player 2's Turn`);
               } else {
-                gameState.column[6][gameState.row[6].length] = 2;
-                gameState.row[6].push(2);
-                gameState.currentPlayer = player1.id;
+                column[6][row[6].length] = 2;
+                row[6].push(2);
+                currentPlayer = player1.id;
                 instance
-                  .setThumbnail(gameState.player1Avatar)
+                  .setThumbnail(player1Avatar)
                   .setTitle(`Connect 4 - Player 1's Turn`);
               }
               await createBoard(message);
               ++currentTurn;
             }
-            return instance.setImage(gameState.boardImageURL).setTimestamp();
+            return instance.setImage(boardImageURL).setTimestamp();
           } else {
             return;
           }
         },
         // Refresh Image
         '🔄': function(_, instance) {
-          instance.setImage(gameState.boardImageURL);
+          instance.setImage(boardImageURL);
         }
       })
       .build();
@@ -350,17 +348,17 @@ module.exports = class Connect4Command extends Command {
             true
           );
           // Empty Spaces
-          if (gameState.column[rowIndex][columnIndex] === 0) {
+          if (column[rowIndex][columnIndex] === 0) {
             ctx.fillStyle = 'grey';
             ctx.fill();
           }
           // Player 1 Pieces
-          if (gameState.column[rowIndex][columnIndex] === 1) {
+          if (column[rowIndex][columnIndex] === 1) {
             ctx.fillStyle = 'red';
             ctx.fill();
           }
           // Player 2 Pieces
-          if (gameState.column[rowIndex][columnIndex] === 2) {
+          if (column[rowIndex][columnIndex] === 2) {
             ctx.fillStyle = 'blue';
             ctx.fill();
           }
@@ -381,16 +379,11 @@ module.exports = class Connect4Command extends Command {
         `connect4Game${player1.id}-${player2.id}${currentTurn}.png` // to prevent cross-talk when multiple games are running at the same time in the same channel
       );
 
-      if (
-        chkWinner(gameState.column) === 1 ||
-        chkWinner(gameState.column) === 2
-      ) {
+      if (chkWinner(column) === 1 || chkWinner(column) === 2) {
         message.channel
           .send(attachment)
           .then(result => {
-            gameState.boardImageURL = result.attachments
-              .entries()
-              .next().value[1].url;
+            boardImageURL = result.attachments.entries().next().value[1].url;
             result.delete();
           })
           .catch(err => {
@@ -399,15 +392,13 @@ module.exports = class Connect4Command extends Command {
             }
           });
         return message.channel.send(
-          `Player ${chkWinner(gameState.column)} is the winner!!!!!`
+          `Player ${chkWinner(column)} is the winner!!!!!`
         );
       }
       return message.channel
         .send(attachment)
         .then(result => {
-          gameState.boardImageURL = result.attachments
-            .entries()
-            .next().value[1].url;
+          boardImageURL = result.attachments.entries().next().value[1].url;
           result.delete();
         })
         .catch(err => {
