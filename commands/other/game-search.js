@@ -13,7 +13,7 @@ module.exports = class GameSearchCommand extends Command {
       aliases: ['gs'],
       memberName: 'game-search',
       group: 'other',
-      description: 'Display game information ',
+      description: 'Search for game information.',
       args: [
         {
           key: 'gameQuery',
