@@ -77,7 +77,7 @@ module.exports = class Connect4Command extends Command {
       .setAuthorizedUsers([player1.id, player2.id])
       .setThumbnail(player1Avatar)
       .setChannel(message.channel)
-      .setColor('#3E8657')
+      .setColor('RED')
       .setTitle(`Connect 4 - Player 1's Turn`)
       .setDescription(
         `Incase of invisible board click 🔄.
@@ -98,28 +98,38 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[0][row[0].length] = 1;
-                row[0].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[0][row[0].length] = 2;
-                row[0].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[0][row[0].length] = 1;
+              row[0].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[0][row[0].length] = 2;
+              row[0].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`);
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -129,28 +139,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[1][row[1].length] = 1;
-                row[1].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[1][row[1].length] = 2;
-                row[1].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[1][row[1].length] = 1;
+              row[1].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[1][row[1].length] = 2;
+              row[1].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -160,28 +181,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[2][row[2].length] = 1;
-                row[2].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[2][row[2].length] = 2;
-                row[2].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[2][row[2].length] = 1;
+              row[2].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[2][row[2].length] = 2;
+              row[2].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -191,28 +223,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[3][row[3].length] = 1;
-                row[3].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[3][row[3].length] = 2;
-                row[3].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[3][row[3].length] = 1;
+              row[3].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[3][row[3].length] = 2;
+              row[3].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -222,28 +265,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[4][row[4].length] = 1;
-                row[4].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[4][row[4].length] = 2;
-                row[4].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[4][row[4].length] = 1;
+              row[4].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[4][row[4].length] = 2;
+              row[4].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -253,28 +307,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[5][row[5].length] = 1;
-                row[5].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[5][row[5].length] = 2;
-                row[5].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[5][row[5].length] = 1;
+              row[5].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[5][row[5].length] = 2;
+              row[5].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -284,28 +349,39 @@ module.exports = class Connect4Command extends Command {
             return; // Ignore Columns that are full
           }
 
-          if (chkWinner(column) === 0) {
-            if (currentPlayer === user.id) {
-              if (currentPlayer === player1.id) {
-                column[6][row[6].length] = 1;
-                row[6].push(1);
-                currentPlayer = player2.id;
-                instance
-                  .setThumbnail(player2Avatar)
-                  .setTitle(`Connect 4 - Player 2's Turn`);
-              } else {
-                column[6][row[6].length] = 2;
-                row[6].push(2);
-                currentPlayer = player1.id;
-                instance
-                  .setThumbnail(player1Avatar)
-                  .setTitle(`Connect 4 - Player 1's Turn`);
-              }
-              await createBoard(message);
-              ++currentTurn;
+          if (currentPlayer === user.id) {
+            if (currentPlayer === player1.id) {
+              column[6][row[6].length] = 1;
+              row[6].push(1);
+              currentPlayer = player2.id;
+              instance
+                .setThumbnail(player2Avatar)
+                .setTitle(`Connect 4 - Player 2's Turn`)
+                .setColor('BLUE');
+            } else {
+              column[6][row[6].length] = 2;
+              row[6].push(2);
+              currentPlayer = player1.id;
+              instance
+                .setThumbnail(player1Avatar)
+                .setTitle(`Connect 4 - Player 1's Turn`)
+                .setColor('RED');
             }
+            await createBoard(message);
+            ++currentTurn;
+          }
+          if (chkWinner(column) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
+            instance
+              .setImage(boardImageURL)
+              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTimestamp();
+            if (currentPlayer === player1.id) {
+              instance.setThumbnail(player2Avatar).setColor('BLUE');
+            } else {
+              instance.setThumbnail(player1Avatar).setColor('RED');
+            }
             return;
           }
         },
@@ -379,22 +455,6 @@ module.exports = class Connect4Command extends Command {
         `connect4Game${player1.id}-${player2.id}${currentTurn}.png` // to prevent cross-talk when multiple games are running at the same time in the same channel
       );
 
-      if (chkWinner(column) === 1 || chkWinner(column) === 2) {
-        message.channel
-          .send(attachment)
-          .then(result => {
-            boardImageURL = result.attachments.entries().next().value[1].url;
-            result.delete();
-          })
-          .catch(err => {
-            if (err) {
-              console.log(err);
-            }
-          });
-        return message.channel.send(
-          `Player ${chkWinner(column)} is the winner!!!!!`
-        );
-      }
       return message.channel
         .send(attachment)
         .then(result => {
