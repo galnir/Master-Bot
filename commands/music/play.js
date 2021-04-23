@@ -7,7 +7,8 @@ let {
   playLiveStreams,
   playVideosLongerThan1Hour,
   maxQueueLength,
-  AutomaticallyShuffleYouTubePlaylists
+  AutomaticallyShuffleYouTubePlaylists,
+  deleteOldPlayMessage
 } = require('../../options.json');
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
@@ -22,6 +23,10 @@ if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
 }
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
+}
+
+if (typeof deleteOldPlayMessage !== 'boolean') {
+  deleteOldPlayMessage = false;
 }
 
 module.exports = class PlayCommand extends Command {
@@ -554,7 +559,7 @@ var interactiveEmbed = message => {
     .setAuthorizedUsers(memberArray[0])
     .setDisabledNavigationEmojis(['all'])
     .setChannel(message.channel)
-    .setDeleteOnTimeout(false) // change to true to delete the messages at the end of the song
+    .setDeleteOnTimeout(deleteOldPlayMessage)
     .setTimeout(buttonTimer(message))
     .setTitle(embedTitle(message))
     .setDescription(songTitle + playbackBar(message.guild.musicData))

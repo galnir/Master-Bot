@@ -2,5 +2,6 @@
   "playLiveStreams": true,
   "playVideosLongerThan1Hour": true,
   "maxQueueLength": 1000,
-  "AutomaticallyShuffleYouTubePlaylists": false
+  "AutomaticallyShuffleYouTubePlaylists": false,
+  "deleteOldPlayMessage": false
 }
