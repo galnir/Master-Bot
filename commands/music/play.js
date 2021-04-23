@@ -90,7 +90,7 @@ module.exports = class PlayCommand extends Command {
           .addField(':arrow_forward: Playlist', '1. Play saved playlist')
           .addField(
             ':twisted_rightwards_arrows: Shuffle Playlist',
-            '2.Shuffle & Play saved playlist'
+            '2. Shuffle & Play saved playlist'
           )
           .addField(':mag: YouTube', '3. Search on YouTube')
           .addField(':x: Cancel', '4. Cancel')
