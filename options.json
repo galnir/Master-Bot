@@ -3,5 +3,6 @@
   "playVideosLongerThan1Hour": true,
   "maxQueueLength": 1000,
   "AutomaticallyShuffleYouTubePlaylists": false,
+  "AutomaticallyShuffleSavedPlaylists": false,
   "deleteOldPlayMessage": false
 }

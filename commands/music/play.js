@@ -8,6 +8,7 @@ let {
   playVideosLongerThan1Hour,
   maxQueueLength,
   AutomaticallyShuffleYouTubePlaylists,
+  AutomaticallyShuffleSavedPlaylists,
   deleteOldPlayMessage
 } = require('../../options.json');
 const db = require('quick.db');
@@ -20,6 +21,9 @@ if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
 }
 if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
   AutomaticallyShuffleYouTubePlaylists = false;
+}
+if (typeof AutomaticallyShuffleSavedPlaylists !== 'boolean') {
+  AutomaticallyShuffleSavedPlaylists = false;
 }
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
@@ -110,9 +114,18 @@ module.exports = class PlayCommand extends Command {
             switch (response) {
               // 1: Play the saved playlist
               case '1':
-                playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
-                  message.guild.musicData.queue.push(song)
-                );
+                if (AutomaticallyShuffleSavedPlaylists) {
+                  let clonedSavedPlaylist = shuffleArray(
+                    playlistsArray[playlistsArray.indexOf(found)].urls
+                  );
+                  clonedSavedPlaylist.map(song =>
+                    message.guild.musicData.queue.push(song)
+                  );
+                } else {
+                  playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
+                    message.guild.musicData.queue.push(song)
+                  );
+                }
                 if (message.guild.musicData.isPlaying) {
                   // Send a message indicating that the playlist was added to the queue
                   interactiveEmbed(message)
