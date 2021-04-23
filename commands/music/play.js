@@ -8,7 +8,6 @@ let {
   playVideosLongerThan1Hour,
   maxQueueLength,
   AutomaticallyShuffleYouTubePlaylists,
-  AutomaticallyShuffleSavedPlaylists,
   deleteOldPlayMessage
 } = require('../../options.json');
 const db = require('quick.db');
@@ -21,9 +20,6 @@ if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
 }
 if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
   AutomaticallyShuffleYouTubePlaylists = false;
-}
-if (typeof AutomaticallyShuffleSavedPlaylists !== 'boolean') {
-  AutomaticallyShuffleSavedPlaylists = false;
 }
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
@@ -92,9 +88,13 @@ module.exports = class PlayCommand extends Command {
             `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
           )
           .addField(':arrow_forward: Playlist', '1. Play saved playlist')
-          .addField(':mag: YouTube', '2. Search on YouTube')
-          .addField(':x: Cancel', '3. Cancel')
-          .setFooter('Choose by commenting a number between 1 and 3.');
+          .addField(
+            ':twisted_rightwards_arrows: Playlist',
+            '2.Shuffle & Play saved playlist'
+          )
+          .addField(':mag: YouTube', '3. Search on YouTube')
+          .addField(':x: Cancel', '4. Cancel')
+          .setFooter('Choose by commenting a number between 1 and 4.');
         const ClarificationEmbedMessage = await message.channel.send(
           clarificationEmbed
         );
@@ -114,18 +114,10 @@ module.exports = class PlayCommand extends Command {
             switch (response) {
               // 1: Play the saved playlist
               case '1':
-                if (AutomaticallyShuffleSavedPlaylists) {
-                  let clonedSavedPlaylist = shuffleArray(
-                    playlistsArray[playlistsArray.indexOf(found)].urls
-                  );
-                  clonedSavedPlaylist.map(song =>
-                    message.guild.musicData.queue.push(song)
-                  );
-                } else {
-                  playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
-                    message.guild.musicData.queue.push(song)
-                  );
-                }
+                playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
+                  message.guild.musicData.queue.push(song)
+                );
+
                 if (message.guild.musicData.isPlaying) {
                   // Send a message indicating that the playlist was added to the queue
                   interactiveEmbed(message)
@@ -142,16 +134,38 @@ module.exports = class PlayCommand extends Command {
                   playSong(message.guild.musicData.queue, message);
                 }
                 break;
-              // 2: Search for the query on YouTube
+              // 2: Play the shuffled saved playlist
               case '2':
+                shuffleArray(
+                  playlistsArray[playlistsArray.indexOf(found)].urls
+                ).map(song => message.guild.musicData.queue.push(song));
+
+                if (message.guild.musicData.isPlaying) {
+                  // Send a message indicating that the playlist was added to the queue
+                  interactiveEmbed(message)
+                    .addField(
+                      'Added Playlist',
+                      `:new: **${query}** added ${
+                        playlistsArray[playlistsArray.indexOf(found)].urls
+                          .length
+                      } songs to the queue!`
+                    )
+                    .build();
+                } else {
+                  message.guild.musicData.isPlaying = true;
+                  playSong(message.guild.musicData.queue, message);
+                }
+                break;
+              // 3: Search for the query on YouTube
+              case '3':
                 await searchYoutube(
                   query,
                   message,
                   message.member.voice.channel
                 );
                 break;
-              // 3: Cancel
-              case '3':
+              // 4: Cancel
+              case '4':
                 break;
             }
           })
