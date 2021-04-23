@@ -89,7 +89,7 @@ module.exports = class PlayCommand extends Command {
           )
           .addField(':arrow_forward: Playlist', '1. Play saved playlist')
           .addField(
-            ':twisted_rightwards_arrows: Playlist',
+            ':twisted_rightwards_arrows: Shuffle Playlist',
             '2.Shuffle & Play saved playlist'
           )
           .addField(':mag: YouTube', '3. Search on YouTube')
@@ -101,7 +101,7 @@ module.exports = class PlayCommand extends Command {
 
         // Wait for a proper response on the clarification embed
         message.channel
-          .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
+          .awaitMessages(msg => ['1', '2', '3', '4'].includes(msg.content), {
             max: 1,
             time: 30000, // 30 seconds
             errors: ['time']
