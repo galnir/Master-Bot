@@ -16,41 +16,27 @@ module.exports = class ARCommand extends Command {
         {
           key: 'userToAssignRole',
           prompt: 'To whom do you want to add role?',
-          type: 'string'
+          type: 'member',
+          error: ':x: Please try again with a valid user.'
         },
         {
           key: 'roleToAssign',
           prompt: 'Which role do you want to assign?',
-          type: 'string'
+          type: 'role',
+          error: ':x: Please try again with a valid role.'
         }
       ]
     });
   }
 
   async run(message, { userToAssignRole, roleToAssign }) {
-    const getuserid = userToAssignRole.match(/\d+/g)[0];
-    const user =
-      message.mentions.members.first() ||
-      (await message.guild.members.fetch(getuserid));
-    const role =
-      message.mentions.roles.first() ||
-      (await message.guild.roles.fetch(roleToAssign));
-    if (user == undefined) {
-      message.channel.send(':x: Please try again with a valid user.');
-      return;
-    }
-    if (role == undefined) {
-      message.channel.send(':x: Please try again with a valid role.');
-      return;
-    }
-
-    user.roles
-      .add(role)
+    userToAssignRole.roles
+      .add(roleToAssign)
       .then(() => {
         const roleEmbed = new MessageEmbed()
           .addField('Assigned Role', roleToAssign)
           .addField('To', userToAssignRole)
-          .setColor(role.hexColor);
+          .setColor(roleToAssign.hexColor);
         message.channel.send(roleEmbed);
       })
       .then(() => message.delete().catch(e => console.error(e))) // nested promise
