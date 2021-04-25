@@ -29,7 +29,13 @@ module.exports = class RRCommand extends Command {
     });
   }
 
-  async run(message, { userToRemoveRole, roleToRemove }) {
+  run(message, { userToRemoveRole, roleToRemove }) {
+    if (!userToRemoveRole._roles.includes(roleToRemove.id)) {
+      return message.channel.send(
+        `:x: "**${userToRemoveRole.displayName}**" does ***not*** have the "**${roleToRemove.name}**" role.`
+      );
+    }
+
     userToRemoveRole.roles
       .remove(roleToRemove)
       .then(() => {

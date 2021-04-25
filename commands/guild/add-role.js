@@ -29,7 +29,13 @@ module.exports = class ARCommand extends Command {
     });
   }
 
-  async run(message, { userToAssignRole, roleToAssign }) {
+  run(message, { userToAssignRole, roleToAssign }) {
+    if (userToAssignRole._roles.includes(roleToAssign.id)) {
+      return message.channel.send(
+        `:x: "**${userToAssignRole.displayName}**" already has the "**${roleToAssign.name}**" role.`
+      );
+    }
+
     userToAssignRole.roles
       .add(roleToAssign)
       .then(() => {
