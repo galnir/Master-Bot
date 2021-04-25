@@ -1,6 +1,6 @@
 FROM node:alpine3.12
 
-RUN apk update && apk add --no-cache \
+RUN apk add --no-cache \
 python3 \
 make \
 g++ \
