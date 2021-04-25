@@ -6,8 +6,6 @@ curl \
 python2 \
 build-essential \
 libkrb5-dev \
-vim \
-nano \
 libcairo2-dev \ 
 libpango1.0-dev \ 
 libjpeg-dev \ 
@@ -16,8 +14,8 @@ librsvg2-dev && \
 curl -sL https://deb.nodesource.com/setup_14.x | bash -E && apt-get install -y nodejs && \
 apt-get clean && \
 npm install -g pm2 && \
-git clone https://github.com/galnir/Master-Bot.git ./Master-Bot
-WORKDIR "/Master-Bot"
-COPY ./config.json* .
-COPY ./json.sqlite* .
+mkdir Master-Bot
+WORKDIR /Master-Bot
+COPY . .
+RUN npm clean-install
 CMD ["pm2-runtime", "index.js"]
