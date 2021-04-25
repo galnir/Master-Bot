@@ -8,6 +8,7 @@ module.exports = class SayCommand extends Command {
       aliases: ['make-me-say', 'print'],
       memberName: 'say',
       group: 'other',
+      guildOnly: true,
       clientPermissions: ['SEND_MESSAGES', 'MANAGE_MESSAGES'],
       description: 'Make the bot say anything!',
       args: [
