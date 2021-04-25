@@ -820,3 +820,5 @@ var createResultsEmbed = (namesArray, firstVideo) =>
     .setThumbnail(firstVideo.thumbnails.high.url)
     .setFooter('Choose a song by commenting a number between 1 and 5')
     .addField(':x: Cancel', 'to cancel ');
+
+module.exports.createResponse = interactiveEmbed;
