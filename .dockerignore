@@ -1,0 +1,11 @@
+Dockerfile
+.dockerignore
+
+.git
+.github
+.gitignore
+LICENSE
+README.md
+
+.eslintrc.json
+.prettierrc
