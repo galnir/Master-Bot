@@ -12,7 +12,7 @@ librsvg-dev
 
 WORKDIR "/Master-Bot"
 COPY package.json package-lock.json ./
-RUN npm i
+RUN npm i --production
 
 COPY ./ ./
 CMD ["npm", "start"]
