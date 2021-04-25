@@ -1,5 +1,4 @@
-FROM node:alpine3.12
-
+FROM node:lts-alpine
 RUN apk add --no-cache \
 python3 \
 make \
