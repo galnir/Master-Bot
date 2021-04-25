@@ -7,7 +7,9 @@ let {
   playLiveStreams,
   playVideosLongerThan1Hour,
   maxQueueLength,
-  AutomaticallyShuffleYouTubePlaylists
+  AutomaticallyShuffleYouTubePlaylists,
+  LeaveTimeOut,
+  MaxResponseTime
 } = require('../../options.json');
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
@@ -94,7 +96,7 @@ module.exports = class PlayCommand extends Command {
         message.channel
           .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
             max: 1,
-            time: 30000, // 30 seconds
+            time: MaxResponseTime*1000, // 30 seconds
             errors: ['time']
           })
           .then(async function onProperResponse(response) {
@@ -339,15 +341,18 @@ var playSong = (queue, message) => {
               return;
             }
             if (message.guild.me.voice.channel) {
-              setTimeout(function onTimeOut() {
-                if (
-                  message.guild.musicData.isPlaying == false &&
-                  message.guild.me.voice.channel
-                ) {
-                  message.guild.me.voice.channel.leave();
-                  message.channel.send(':zzz: Left channel due to inactivity.');
-                }
-              }, 90000);
+              if (LeaveTimeOut > 0) {
+                setTimeout(function onTimeOut() {
+                  if (
+                    message.guild.musicData.isPlaying == false &&
+                    message.guild.me.voice.channel
+                  ) {
+                    message.guild.me.voice.channel.leave();
+                    message.channel.send(':zzz: Left channel due to inactivity.');
+                  }
+                }, LeaveTimeOut*1000);
+              }
+              
             }
           }
         })
@@ -434,7 +439,7 @@ var searchYoutube = async (query, message, voiceChannel) => {
       },
       {
         max: 1,
-        time: 60000,
+        time: MaxResponseTime*1000,
         errors: ['time']
       }
     )
