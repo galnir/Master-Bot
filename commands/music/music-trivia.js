@@ -350,8 +350,9 @@ module.exports = class MusicTriviaCommand extends Command {
 };
 
 var normalizeValue = value => 
-  value.toLowerCase()
+  value
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove diacritics
   .replace(/[^0-9a-zA-Z\s]/g, '') // remove non-alphanumeric characters
   .trim()
-  .replace(/\s+/g,' '); // remove duplicate spaces
+  .replace(/\s+/g,' ')
+  .toLowerCase(); // remove duplicate spaces
