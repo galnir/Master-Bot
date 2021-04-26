@@ -4,5 +4,6 @@
   "maxQueueLength": 1000,
   "AutomaticallyShuffleYouTubePlaylists": false,
   "LeaveTimeOut" : 90,
-  "MaxResponseTime" :30
+  "MaxResponseTime" :30,
+  "deleteOldPlayMessage": false
 }
