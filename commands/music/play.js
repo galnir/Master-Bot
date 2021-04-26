@@ -15,9 +15,20 @@ const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
 
 const youtube = new Youtube(youtubeAPI);
+// Check If Options are Valid
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
 if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
   maxQueueLength = 1000;
+}
+if (typeof LeaveTimeOut !== 'number') {
+  LeaveTimeOut = 90;
+}
+if (
+  typeof MaxResponseTime !== 'number' ||
+  MaxResponseTime < 1 ||
+  MaxResponseTime > 150
+) {
+  MaxResponseTime = 30;
 }
 if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
   AutomaticallyShuffleYouTubePlaylists = false;
@@ -96,7 +107,7 @@ module.exports = class PlayCommand extends Command {
         message.channel
           .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
             max: 1,
-            time: MaxResponseTime*1000, // 30 seconds
+            time: MaxResponseTime * 1000, // 30 seconds
             errors: ['time']
           })
           .then(async function onProperResponse(response) {
@@ -348,11 +359,12 @@ var playSong = (queue, message) => {
                     message.guild.me.voice.channel
                   ) {
                     message.guild.me.voice.channel.leave();
-                    message.channel.send(':zzz: Left channel due to inactivity.');
+                    message.channel.send(
+                      ':zzz: Left channel due to inactivity.'
+                    );
                   }
-                }, LeaveTimeOut*1000);
+                }, LeaveTimeOut * 1000);
               }
-              
             }
           }
         })
@@ -439,7 +451,7 @@ var searchYoutube = async (query, message, voiceChannel) => {
       },
       {
         max: 1,
-        time: MaxResponseTime*1000,
+        time: MaxResponseTime * 1000,
         errors: ['time']
       }
     )
