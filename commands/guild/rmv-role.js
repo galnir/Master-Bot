@@ -16,41 +16,33 @@ module.exports = class RRCommand extends Command {
         {
           key: 'userToRemoveRole',
           prompt: 'To whom do you want to remove role from?',
-          type: 'string'
+          type: 'member',
+          error: ':x: Please try again with a valid user.'
         },
         {
           key: 'roleToRemove',
           prompt: 'Which role do you want to remove?',
-          type: 'string'
+          type: 'role',
+          error: ':x: Please try again with a valid role.'
         }
       ]
     });
   }
 
-  async run(message, { userToRemoveRole, roleToRemove }) {
-    const getuserid = userToRemoveRole.match(/\d+/g)[0];
-    const user =
-      message.mentions.members.first() ||
-      (await message.guild.members.fetch(getuserid));
-    const role =
-      message.mentions.roles.first() ||
-      (await message.guild.roles.fetch(roleToRemove));
-    if (user == undefined) {
-      message.channel.send(':x: Please try again with a valid user.');
-      return;
-    }
-    if (role == undefined) {
-      message.channel.send(':x: Please try again with a valid role.');
-      return;
+  run(message, { userToRemoveRole, roleToRemove }) {
+    if (!userToRemoveRole._roles.includes(roleToRemove.id)) {
+      return message.channel.send(
+        `:x: "**${userToRemoveRole.displayName}**" does ***not*** have the "**${roleToRemove.name}**" role.`
+      );
     }
 
-    user.roles
-      .remove(role)
+    userToRemoveRole.roles
+      .remove(roleToRemove)
       .then(() => {
         const rroleEmbed = new MessageEmbed()
           .addField('Removed Role', roleToRemove)
           .addField('From', userToRemoveRole)
-          .setColor(role.hexColor);
+          .setColor(roleToRemove.hexColor);
         message.channel.send(rroleEmbed);
       })
       .then(() => message.delete().catch(e => console.error(e))) // nested promise
