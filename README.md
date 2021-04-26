@@ -58,8 +58,9 @@ Default Template for options.json
   "maxQueueLength": 1000,
   "AutomaticallyShuffleYouTubePlaylists": false,
   "LeaveTimeOut" : 90,
-  "MaxResponseTime" :30
-}
+  "MaxResponseTime" :30,
+  "deleteOldPlayMessage": false
+  }
 ```
 * playLiveStreams : Allow to play Live Streams (`true`,`false`)
 * playVideosLongerThan1Hour : Allow to play videos longer than 1 hour (`true`,`false`)
@@ -67,7 +68,7 @@ Default Template for options.json
 * AutomaticallyShuffleYouTubePlaylists : Automatic shuffle YouTube playlists : (`true`,`false`)
 *  LeaveTimeOut : Timeout in seconds before bot leaves channel due to inactivity. 0 means unlimited (`int > 1` or `0` for unlimited)
 * MaxResponseTime : Maximum time in seconds allowed for user to response back to bot before cancelling command (example: using !play) : (minimum `2` , maximum `149` , `int`)
-
+* deleteOldPlayMessage : Remove play message after playing or no : (`true`,`false`)
 
 ### Commands
 
