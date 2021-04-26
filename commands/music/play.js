@@ -7,7 +7,8 @@ let {
   playLiveStreams,
   playVideosLongerThan1Hour,
   maxQueueLength,
-  AutomaticallyShuffleYouTubePlaylists
+  AutomaticallyShuffleYouTubePlaylists,
+  deleteOldPlayMessage
 } = require('../../options.json');
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
@@ -22,6 +23,10 @@ if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
 }
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
+}
+
+if (typeof deleteOldPlayMessage !== 'boolean') {
+  deleteOldPlayMessage = false;
 }
 
 module.exports = class PlayCommand extends Command {
@@ -83,16 +88,20 @@ module.exports = class PlayCommand extends Command {
             `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
           )
           .addField(':arrow_forward: Playlist', '1. Play saved playlist')
-          .addField(':mag: YouTube', '2. Search on YouTube')
-          .addField(':x: Cancel', '3. Cancel')
-          .setFooter('Choose by commenting a number between 1 and 3.');
+          .addField(
+            ':twisted_rightwards_arrows: Shuffle Playlist',
+            '2. Shuffle & Play saved playlist'
+          )
+          .addField(':mag: YouTube', '3. Search on YouTube')
+          .addField(':x: Cancel', '4. Cancel')
+          .setFooter('Choose by commenting a number between 1 and 4.');
         const ClarificationEmbedMessage = await message.channel.send(
           clarificationEmbed
         );
 
         // Wait for a proper response on the clarification embed
         message.channel
-          .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
+          .awaitMessages(msg => ['1', '2', '3', '4'].includes(msg.content), {
             max: 1,
             time: 30000, // 30 seconds
             errors: ['time']
@@ -108,6 +117,7 @@ module.exports = class PlayCommand extends Command {
                 playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
                   message.guild.musicData.queue.push(song)
                 );
+
                 if (message.guild.musicData.isPlaying) {
                   // Send a message indicating that the playlist was added to the queue
                   interactiveEmbed(message)
@@ -124,16 +134,38 @@ module.exports = class PlayCommand extends Command {
                   playSong(message.guild.musicData.queue, message);
                 }
                 break;
-              // 2: Search for the query on YouTube
+              // 2: Play the shuffled saved playlist
               case '2':
+                shuffleArray(
+                  playlistsArray[playlistsArray.indexOf(found)].urls
+                ).map(song => message.guild.musicData.queue.push(song));
+
+                if (message.guild.musicData.isPlaying) {
+                  // Send a message indicating that the playlist was added to the queue
+                  interactiveEmbed(message)
+                    .addField(
+                      'Added Playlist',
+                      `:new: **${query}** added ${
+                        playlistsArray[playlistsArray.indexOf(found)].urls
+                          .length
+                      } songs to the queue!`
+                    )
+                    .build();
+                } else {
+                  message.guild.musicData.isPlaying = true;
+                  playSong(message.guild.musicData.queue, message);
+                }
+                break;
+              // 3: Search for the query on YouTube
+              case '3':
                 await searchYoutube(
                   query,
                   message,
                   message.member.voice.channel
                 );
                 break;
-              // 3: Cancel
-              case '3':
+              // 4: Cancel
+              case '4':
                 break;
             }
           })
@@ -554,7 +586,7 @@ var interactiveEmbed = message => {
     .setAuthorizedUsers(memberArray[0])
     .setDisabledNavigationEmojis(['all'])
     .setChannel(message.channel)
-    .setDeleteOnTimeout(false) // change to true to delete the messages at the end of the song
+    .setDeleteOnTimeout(deleteOldPlayMessage)
     .setTimeout(buttonTimer(message))
     .setTitle(embedTitle(message))
     .setDescription(songTitle + playbackBar(message.guild.musicData))
