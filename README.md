@@ -1,7 +1,7 @@
 # A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
-[![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
+[![image](https://img.shields.io/badge/node-%3E%3D%2014.0.0-blue)](https://nodejs.org/)
 
 ### Installing the dependencies
 
@@ -126,6 +126,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
 | !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
 | !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings Bacon_Fixation general 1 |
+| !add-role                  | Adds a specific role to a specified user.                                      | !add-role @johndoe admin             |
+| !remove-role               | Removes a specific role from a specified user.                                 | !remove-role @johndoe admin          |
 
 ### Resources
 
