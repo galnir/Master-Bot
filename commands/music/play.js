@@ -24,11 +24,7 @@ if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
 if (typeof LeaveTimeOut !== 'number') {
   LeaveTimeOut = 90;
 }
-if (
-  typeof MaxResponseTime !== 'number' ||
-  MaxResponseTime < 1 ||
-  MaxResponseTime > 150
-) {
+if (typeof MaxResponseTime !== 'number') {
   MaxResponseTime = 30;
 }
 if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
@@ -37,10 +33,16 @@ if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
 }
-
 if (typeof deleteOldPlayMessage !== 'boolean') {
   deleteOldPlayMessage = false;
 }
+
+// If the Options are outside of min or max then use the closest number
+LeaveTimeOut = LeaveTimeOut > 600 ? 600 : LeaveTimeOut &&
+  LeaveTimeOut < 2 ? 1 : LeaveTimeOut; // prettier-ignore
+
+MaxResponseTime = MaxResponseTime > 150 ? 150 : MaxResponseTime &&
+  MaxResponseTime < 5 ? 5 : MaxResponseTime; // prettier-ignore
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -116,7 +118,7 @@ module.exports = class PlayCommand extends Command {
         message.channel
           .awaitMessages(msg => ['1', '2', '3', '4'].includes(msg.content), {
             max: 1,
-            time: MaxResponseTime * 1000, // 30 seconds
+            time: MaxResponseTime * 1000,
             errors: ['time']
           })
           .then(async function onProperResponse(response) {
