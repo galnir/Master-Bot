@@ -8,15 +8,24 @@ let {
   playVideosLongerThan1Hour,
   maxQueueLength,
   AutomaticallyShuffleYouTubePlaylists,
+  LeaveTimeOut,
+  MaxResponseTime,
   deleteOldPlayMessage
 } = require('../../options.json');
 const db = require('quick.db');
 const Pagination = require('discord-paginationembed');
 
 const youtube = new Youtube(youtubeAPI);
+// Check If Options are Valid
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
 if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
   maxQueueLength = 1000;
+}
+if (typeof LeaveTimeOut !== 'number') {
+  LeaveTimeOut = 90;
+}
+if (typeof MaxResponseTime !== 'number') {
+  MaxResponseTime = 30;
 }
 if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
   AutomaticallyShuffleYouTubePlaylists = false;
@@ -24,10 +33,16 @@ if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
 if (typeof playVideosLongerThan1Hour !== 'boolean') {
   playVideosLongerThan1Hour = true;
 }
-
 if (typeof deleteOldPlayMessage !== 'boolean') {
   deleteOldPlayMessage = false;
 }
+
+// If the Options are outside of min or max then use the closest number
+LeaveTimeOut = LeaveTimeOut > 600 ? 600 : LeaveTimeOut &&
+  LeaveTimeOut < 2 ? 1 : LeaveTimeOut; // prettier-ignore
+
+MaxResponseTime = MaxResponseTime > 150 ? 150 : MaxResponseTime &&
+  MaxResponseTime < 5 ? 5 : MaxResponseTime; // prettier-ignore
 
 module.exports = class PlayCommand extends Command {
   constructor(client) {
@@ -103,7 +118,7 @@ module.exports = class PlayCommand extends Command {
         message.channel
           .awaitMessages(msg => ['1', '2', '3', '4'].includes(msg.content), {
             max: 1,
-            time: 30000, // 30 seconds
+            time: MaxResponseTime * 1000,
             errors: ['time']
           })
           .then(async function onProperResponse(response) {
@@ -371,15 +386,19 @@ var playSong = (queue, message) => {
               return;
             }
             if (message.guild.me.voice.channel) {
-              setTimeout(function onTimeOut() {
-                if (
-                  message.guild.musicData.isPlaying == false &&
-                  message.guild.me.voice.channel
-                ) {
-                  message.guild.me.voice.channel.leave();
-                  message.channel.send(':zzz: Left channel due to inactivity.');
-                }
-              }, 90000);
+              if (LeaveTimeOut > 0) {
+                setTimeout(function onTimeOut() {
+                  if (
+                    message.guild.musicData.isPlaying == false &&
+                    message.guild.me.voice.channel
+                  ) {
+                    message.guild.me.voice.channel.leave();
+                    message.channel.send(
+                      ':zzz: Left channel due to inactivity.'
+                    );
+                  }
+                }, LeaveTimeOut * 1000);
+              }
             }
           }
         })
@@ -466,7 +485,7 @@ var searchYoutube = async (query, message, voiceChannel) => {
       },
       {
         max: 1,
-        time: 60000,
+        time: MaxResponseTime * 1000,
         errors: ['time']
       }
     )
