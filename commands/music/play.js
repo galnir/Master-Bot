@@ -623,7 +623,7 @@ var interactiveEmbed = message => {
       '🔉': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTimeout(buttonTimer(message));
 
@@ -642,7 +642,7 @@ var interactiveEmbed = message => {
       '🔊': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTimeout(buttonTimer(message));
 
@@ -658,10 +658,10 @@ var interactiveEmbed = message => {
         }
       },
       // Stop Button
-      '⏹️': function() {
+      '⏹️': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTitle(':stop_button: Stopped')
           .setTimeout(100);
@@ -685,19 +685,19 @@ var interactiveEmbed = message => {
         message.reply(`:grey_exclamation: Leaving the channel.`);
       },
       // Play/Pause Button
-      '⏯️': function() {
+      '⏯️': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
         if (message.guild.musicData.songDispatcher.paused == false) {
           message.guild.musicData.songDispatcher.pause();
-          videoEmbed
+          instance
             .setDescription(songTitle + playbackBar(message.guild.musicData))
             .setTitle(embedTitle(message))
             .setTimeout(600000);
         } else {
           message.guild.musicData.songDispatcher.resume();
 
-          videoEmbed
+          instance
             .setDescription(songTitle + playbackBar(message.guild.musicData))
             .setTitle(embedTitle(message))
             .setTimeout(buttonTimer(message));
@@ -719,10 +719,10 @@ var interactiveEmbed = message => {
         `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
       )
       // Next track Button
-      .addFunctionEmoji('⏭️', function() {
+      .addFunctionEmoji('⏭️', function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTitle(':next_track: Skipped')
           .setTimeout(100);
@@ -734,7 +734,7 @@ var interactiveEmbed = message => {
         }, 100);
       })
       // Repeat One Song Button
-      .addFunctionEmoji('🔂', function() {
+      .addFunctionEmoji('🔂', function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
         if (message.guild.musicData.loopSong) {
@@ -743,13 +743,13 @@ var interactiveEmbed = message => {
           message.guild.musicData.loopQueue = false;
           message.guild.musicData.loopSong = true;
         }
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTitle(embedTitle(message))
           .setTimeout(buttonTimer(message));
       })
       // Repeat Queue Button
-      .addFunctionEmoji('🔁', function() {
+      .addFunctionEmoji('🔁', function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
         if (message.guild.musicData.loopQueue)
@@ -758,14 +758,14 @@ var interactiveEmbed = message => {
           message.guild.musicData.loopSong = false;
           message.guild.musicData.loopQueue = true;
         }
-        videoEmbed
+        instance
           .setDescription(songTitle + playbackBar(message.guild.musicData))
           .setTitle(embedTitle())
           .setTimeout(buttonTimer(message));
       });
   } else {
     // Repeat One Song Button (when queue is 0)
-    videoEmbed.addFunctionEmoji('🔂', function() {
+    videoEmbed.addFunctionEmoji('🔂', function(_, instance) {
       if (!message.guild.musicData.songDispatcher) return;
 
       if (message.guild.musicData.loopSong) {
@@ -774,7 +774,7 @@ var interactiveEmbed = message => {
         message.guild.musicData.loopQueue = false;
         message.guild.musicData.loopSong = true;
       }
-      videoEmbed
+      instance
         .setDescription(songTitle + playbackBar(message.guild.musicData))
         .setTitle(embedTitle(message))
         .setTimeout(buttonTimer(message));
@@ -785,8 +785,14 @@ var interactiveEmbed = message => {
   function buttonTimer(message) {
     const totalDurationInMS = rawDurationToMilliseconds(
       message.guild.musicData.nowPlaying.rawDuration
+        ? message.guild.musicData.nowPlaying.rawDuration
+        : message.guild.musicData.songDispatcher.nowPlaying.rawDuration
     );
-    let timer = totalDurationInMS - message.guild.musicData.streamTime;
+
+    const streamTime = message.guild.musicData.streamTime
+      ? message.guild.musicData.streamTime
+      : message.guild.musicData.songDispatcher.streamTime;
+    let timer = totalDurationInMS - streamTime;
     // Allow controls to stay for at least 30 seconds
     if (timer < 30000) timer = 30000;
 
