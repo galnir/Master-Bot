@@ -222,9 +222,8 @@ module.exports = class PlayCommand extends Command {
         return message.reply(
           'The queue is full, please try adding more songs later'
         );
-      videosArr
-        .splice(0, maxQueueLength - message.guild.musicData.queue.length)
-        .forEach(async (video, key, arr) => {
+      videosArr = videosArr.splice(0, maxQueueLength - message.guild.musicData.queue.length);
+        await videosArr.reduce(async (memo,video, key, arr) => {
           // don't process private videos
           if (
             video.raw.status.privacyStatus == 'private' ||
@@ -233,6 +232,7 @@ module.exports = class PlayCommand extends Command {
             return;
 
           try {
+            await memo;
             const fetchedVideo = await video.fetch();
             message.guild.musicData.queue.push(
               constructSongObj(
@@ -259,7 +259,7 @@ module.exports = class PlayCommand extends Command {
           } catch (err) {
             return console.error(err);
           }
-        });
+        }, undefined);
       return;
     }
 
