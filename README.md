@@ -71,6 +71,8 @@ Default Template for options.json
 - MaxResponseTime : Maximum time in seconds allowed for user to response back to bot before cancelling command (example: using !play song name) : (`integer` between `5` and `150`)
 - deleteOldPlayMessage : Remove play message after playing or no : (`true`,`false`)
 
+**If invalid values are entered, bot will warn user before start, and use the default values**
+
 ### Commands
 
 - Music

@@ -5,6 +5,45 @@ const { prefix, token, discord_owner_id } = require('./config.json');
 const db = require('quick.db');
 const Canvas = require('canvas');
 
+//Check Options and Warn User BEFORE start
+let {
+  playLiveStreams,
+  playVideosLongerThan1Hour,
+  maxQueueLength,
+  AutomaticallyShuffleYouTubePlaylists,
+  LeaveTimeOut,
+  MaxResponseTime,
+  deleteOldPlayMessage
+} = require('./options.json');
+
+if (typeof playLiveStreams !== 'boolean') {
+  console.warn("Invalid value for playLiveStreams in options.json, reverting back to true, check README");
+}
+if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
+  console.warn("Invalid value for maxQueueLength in options.json, reverting back to 1000, check README");
+}
+if (typeof LeaveTimeOut !== 'number') {
+  console.warn("Invalid value for LeaveTimeOut in options.json, reverting back to 90, check README");
+}
+if (LeaveTimeOut > 600 || LeaveTimeOut < 2) {
+  console.warn("Invalid value for LeaveTimeOut in options.json, using the closest number , check README");
+}
+if (typeof MaxResponseTime !== 'number') {
+  console.warn("Invalid value for MaxResponseTime in options.json, reverting back to 30, check README");
+}
+if (MaxResponseTime > 150 || MaxResponseTime < 5) {
+  console.warn("Invalid value for MaxResponseTime in options.json, using the closest number , check README");
+}
+if (typeof AutomaticallyShuffleYouTubePlaylists !== 'boolean') {
+  console.warn("Invalid value for AutomaticallyShuffleYouTubePlaylists in options.json, reverting back to false, check README");
+}
+if (typeof playVideosLongerThan1Hour !== 'boolean') {
+  console.warn("Invalid value for playVideosLongerThan1Hour in options.json, reverting back to true, check README");
+}
+if (typeof deleteOldPlayMessage !== 'boolean') {
+  console.warn("Invalid value for deleteOldPlayMessage in options.json, reverting back to false, check README");
+}
+
 Structures.extend('Guild', function(Guild) {
   class MusicGuild extends Guild {
     constructor(client, data) {
