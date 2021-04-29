@@ -66,12 +66,12 @@ module.exports = class PlayCommand extends Command {
       args: [
         {
           key: 'query',
-          prompt: ':notes: What song or playlist would you like to listen to?',
+          prompt: ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist',
           type: 'string',
           validate: function(query) {
             return query.length > 0 && query.length < 200;
           }
-        }
+        }        
       ]
     });
   }
@@ -87,6 +87,14 @@ module.exports = class PlayCommand extends Command {
       message.reply(':x: Please try after the trivia has ended!');
       return;
     }
+
+    //Parse query to check for shuffle flag
+
+    var splitQuery = query.split(' ');
+    var shuffleFlag = (splitQuery[splitQuery.length-1] == '-s') ? true : false
+    if(shuffleFlag)
+      splitQuery.pop();
+    query = splitQuery.join(' ');
 
     // Check if the query is actually a saved playlist name
 
@@ -206,7 +214,7 @@ module.exports = class PlayCommand extends Command {
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
 
-      if (AutomaticallyShuffleYouTubePlaylists) {
+      if (AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
       }
 
