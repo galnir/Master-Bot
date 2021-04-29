@@ -214,7 +214,7 @@ module.exports = class PlayCommand extends Command {
         return message.reply(
           'The queue is full, please try adding more songs later'
         );
-      videosArr
+      videosArr = videosArr
         .splice(0, maxQueueLength - message.guild.musicData.queue.length)
         .forEach(async (video, key, arr) => {
           // don't process private videos
