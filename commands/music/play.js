@@ -224,6 +224,7 @@ module.exports = class PlayCommand extends Command {
         );
       videosArr = videosArr.splice(0, maxQueueLength - message.guild.musicData.queue.length);
         await videosArr.reduce(async (memo,video, key, arr) => {
+          await memo;
           // don't process private videos
           if (
             video.raw.status.privacyStatus == 'private' ||
@@ -232,7 +233,6 @@ module.exports = class PlayCommand extends Command {
             return;
 
           try {
-            await memo;
             const fetchedVideo = await video.fetch();
             message.guild.musicData.queue.push(
               constructSongObj(
