@@ -189,7 +189,7 @@ module.exports = class MusicTriviaCommand extends Command {
             else if (
               guess.includes(singer)
             ) {
-              if (songSingerFound) return;
+              if (songSingerFound) return; // if singer has already been found
               songSingerFound = true;
               if (songNameFound && songSingerFound) {
                 message.guild.triviaData.triviaScore.set(
@@ -211,7 +211,7 @@ module.exports = class MusicTriviaCommand extends Command {
             } 
             // if user guessed song name
             else if (guess.includes(title)) {
-              if (songNameFound) return; // if song name already found
+              if (songNameFound) return; // if song name has already been found
               songNameFound = true;
 
               if (songNameFound && songSingerFound) {
