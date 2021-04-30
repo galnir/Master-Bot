@@ -66,7 +66,8 @@ module.exports = class PlayCommand extends Command {
       args: [
         {
           key: 'query',
-          prompt: ':notes: What song or playlist would you like to listen to?',
+          prompt:
+            ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist',
           type: 'string',
           validate: function(query) {
             return query.length > 0 && query.length < 200;
@@ -87,6 +88,13 @@ module.exports = class PlayCommand extends Command {
       message.reply(':x: Please try after the trivia has ended!');
       return;
     }
+
+    //Parse query to check for shuffle flag
+
+    var splitQuery = query.split(' ');
+    var shuffleFlag = splitQuery[splitQuery.length - 1] == '-s' ? true : false;
+    if (shuffleFlag) splitQuery.pop();
+    query = splitQuery.join(' ');
 
     // Check if the query is actually a saved playlist name
 
@@ -206,7 +214,7 @@ module.exports = class PlayCommand extends Command {
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
 
-      if (AutomaticallyShuffleYouTubePlaylists) {
+      if (AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
       }
 
@@ -214,44 +222,47 @@ module.exports = class PlayCommand extends Command {
         return message.reply(
           'The queue is full, please try adding more songs later'
         );
-      videosArr
-        .splice(0, maxQueueLength - message.guild.musicData.queue.length)
-        .forEach(async (video, key, arr) => {
-          // don't process private videos
-          if (
-            video.raw.status.privacyStatus == 'private' ||
-            video.raw.status.privacyStatus == 'privacyStatusUnspecified'
-          )
-            return;
+      videosArr = videosArr.splice(
+        0,
+        maxQueueLength - message.guild.musicData.queue.length
+      );
+      await videosArr.reduce(async (memo, video, key, arr) => {
+        await memo;
+        // don't process private videos
+        if (
+          video.raw.status.privacyStatus == 'private' ||
+          video.raw.status.privacyStatus == 'privacyStatusUnspecified'
+        )
+          return;
 
-          try {
-            const fetchedVideo = await video.fetch();
-            message.guild.musicData.queue.push(
-              constructSongObj(
-                fetchedVideo,
-                message.member.voice.channel,
-                message.member.user
-              )
-            );
-            if (Object.is(arr.length - 1, key)) {
-              if (!message.guild.musicData.isPlaying) {
-                message.guild.musicData.isPlaying = true;
-                playSong(message.guild.musicData.queue, message);
-                return;
-              } else {
-                interactiveEmbed(message)
-                  .addField(
-                    'Added Playlist',
-                    `[${playlist.title}](${playlist.url})`
-                  )
-                  .build();
-                return;
-              }
+        try {
+          const fetchedVideo = await video.fetch();
+          message.guild.musicData.queue.push(
+            constructSongObj(
+              fetchedVideo,
+              message.member.voice.channel,
+              message.member.user
+            )
+          );
+          if (Object.is(arr.length - 1, key)) {
+            if (!message.guild.musicData.isPlaying) {
+              message.guild.musicData.isPlaying = true;
+              playSong(message.guild.musicData.queue, message);
+              return;
+            } else {
+              interactiveEmbed(message)
+                .addField(
+                  'Added Playlist',
+                  `[${playlist.title}](${playlist.url})`
+                )
+                .build();
+              return;
             }
-          } catch (err) {
-            return console.error(err);
           }
-        });
+        } catch (err) {
+          return console.error(err);
+        }
+      }, undefined);
       return;
     }
 
