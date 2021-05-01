@@ -88,7 +88,7 @@ module.exports = class PlayCommand extends Command {
       return;
     }
 
-    //Parse query to check for shuffle flag
+    //Parse query to check for flags
 
     var splitQuery = query.split(' ');
     var shuffleFlag = splitQuery[splitQuery.length - 1] == '-s' ? true : false;
