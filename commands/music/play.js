@@ -250,20 +250,16 @@ module.exports = class PlayCommand extends Command {
 
         try {
           const fetchedVideo = await video.fetch();
-          if(nextFlag || jumpFlag){
-            message.guild.musicData.queue.splice((key-skipAmount),0,
+          if (nextFlag || jumpFlag) {
+            message.guild.musicData.queue.splice((key - skipAmount), 0,
               constructSongObj(
                 fetchedVideo,
                 message.member.voice.channel,
                 message.member.user
               )
             );
-            if(jumpFlag){
-              message.guild.musicData.loopSong = false;
-              message.guild.musicData.songDispatcher.end();  
-            }
           }          
-          else{
+          else {
             message.guild.musicData.queue.push(
               constructSongObj(
                 fetchedVideo,
@@ -272,26 +268,27 @@ module.exports = class PlayCommand extends Command {
               )
             );
           }
-          if (Object.is(arr.length - 1, key)) {
-            if (!message.guild.musicData.isPlaying) {
-              message.guild.musicData.isPlaying = true;
-              playSong(message.guild.musicData.queue, message);
-              return;
-            } else {
-              interactiveEmbed(message)
-                .addField(
-                  'Added Playlist',
-                  `[${playlist.title}](${playlist.url})`
-                )
-                .build();
-              return;
-            }
-          }
         } catch (err) {
           return console.error(err);
         }
       }, undefined);
-      return;
+      if (jumpFlag) {
+        message.guild.musicData.loopSong = false;
+        message.guild.musicData.songDispatcher.end();  
+      }
+      if (!message.guild.musicData.isPlaying) {
+        message.guild.musicData.isPlaying = true;        
+        playSong(message.guild.musicData.queue, message);
+        return;
+      } else {
+        interactiveEmbed(message)
+          .addField(
+            'Added Playlist',
+            `[${playlist.title}](${playlist.url})`
+          )
+          .build();
+        return;
+      }
     }
 
     if (isYouTubeVideoURL(query)) {
