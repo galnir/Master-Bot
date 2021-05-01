@@ -250,7 +250,7 @@ module.exports = class PlayCommand extends Command {
 
         try {
           const fetchedVideo = await video.fetch();
-          if(nextFlag){
+          if(nextFlag || jumpFlag){
             message.guild.musicData.queue.splice((key-skipAmount),0,
               constructSongObj(
                 fetchedVideo,
@@ -258,7 +258,11 @@ module.exports = class PlayCommand extends Command {
                 message.member.user
               )
             );
-          }
+            if(jumpFlag){
+              message.guild.musicData.loopSong = false;
+              message.guild.musicData.songDispatcher.end();  
+            }
+          }          
           else{
             message.guild.musicData.queue.push(
               constructSongObj(
@@ -326,7 +330,7 @@ module.exports = class PlayCommand extends Command {
         );
         return;
       }
-      if(nextFlag){
+      if(nextFlag || jumpFlag){
         message.guild.musicData.queue.splice(0,0,
           constructSongObj(
             video,
@@ -334,7 +338,11 @@ module.exports = class PlayCommand extends Command {
             message.member.user
           )
         );
-      }
+        if(jumpFlag){
+          message.guild.musicData.loopSong = false;
+          message.guild.musicData.songDispatcher.end();  
+        }
+      }    
       else{
         message.guild.musicData.queue.push(
           constructSongObj(
