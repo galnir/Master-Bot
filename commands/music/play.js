@@ -91,10 +91,10 @@ module.exports = class PlayCommand extends Command {
     //Parse query to check for flags
 
     var splitQuery = query.split(' ');
-    var shuffleFlag = splitQuery[splitQuery.length - 1] == '-s' ? true : false;
-    var reverseFlag = splitQuery[splitQuery.length - 1] == '-r' ? true : false;
-    var nextFlag = splitQuery[splitQuery.length - 1] == '-n' ? true : false;
-    var jumpFlag = splitQuery[splitQuery.length - 1] == '-j' ? true : false;
+    var shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
+    var reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
+    var nextFlag = splitQuery[splitQuery.length - 1] === '-n';
+    var jumpFlag = splitQuery[splitQuery.length - 1] === '-j';
 
     if (shuffleFlag || reverseFlag || nextFlag || jumpFlag) splitQuery.pop();
     query = splitQuery.join(' ');
