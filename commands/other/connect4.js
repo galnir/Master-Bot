@@ -47,7 +47,7 @@ module.exports = class Connect4Command extends Command {
     const player2Avatar = player2.avatarURL({
       format: 'jpg'
     });
-    let column = [
+    let gameBoard = [
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
@@ -56,7 +56,7 @@ module.exports = class Connect4Command extends Command {
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0]
     ];
-    let row = {
+    const row = {
       0: [],
       1: [],
       2: [],
@@ -100,7 +100,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[0][row[0].length] = 1;
+              gameBoard[0][row[0].length] = 1;
               row[0].push(1);
               currentPlayer = player2.id;
               instance
@@ -108,7 +108,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[0][row[0].length] = 2;
+              gameBoard[0][row[0].length] = 2;
               row[0].push(2);
               currentPlayer = player1.id;
               instance
@@ -118,18 +118,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -141,7 +144,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[1][row[1].length] = 1;
+              gameBoard[1][row[1].length] = 1;
               row[1].push(1);
               currentPlayer = player2.id;
               instance
@@ -149,7 +152,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[1][row[1].length] = 2;
+              gameBoard[1][row[1].length] = 2;
               row[1].push(2);
               currentPlayer = player1.id;
               instance
@@ -160,18 +163,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -183,7 +189,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[2][row[2].length] = 1;
+              gameBoard[2][row[2].length] = 1;
               row[2].push(1);
               currentPlayer = player2.id;
               instance
@@ -191,7 +197,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[2][row[2].length] = 2;
+              gameBoard[2][row[2].length] = 2;
               row[2].push(2);
               currentPlayer = player1.id;
               instance
@@ -202,18 +208,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -225,7 +234,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[3][row[3].length] = 1;
+              gameBoard[3][row[3].length] = 1;
               row[3].push(1);
               currentPlayer = player2.id;
               instance
@@ -233,7 +242,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[3][row[3].length] = 2;
+              gameBoard[3][row[3].length] = 2;
               row[3].push(2);
               currentPlayer = player1.id;
               instance
@@ -244,18 +253,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -267,7 +279,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[4][row[4].length] = 1;
+              gameBoard[4][row[4].length] = 1;
               row[4].push(1);
               currentPlayer = player2.id;
               instance
@@ -275,7 +287,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[4][row[4].length] = 2;
+              gameBoard[4][row[4].length] = 2;
               row[4].push(2);
               currentPlayer = player1.id;
               instance
@@ -286,18 +298,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -309,7 +324,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[5][row[5].length] = 1;
+              gameBoard[5][row[5].length] = 1;
               row[5].push(1);
               currentPlayer = player2.id;
               instance
@@ -317,7 +332,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[5][row[5].length] = 2;
+              gameBoard[5][row[5].length] = 2;
               row[5].push(2);
               currentPlayer = player1.id;
               instance
@@ -328,18 +343,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -351,7 +369,7 @@ module.exports = class Connect4Command extends Command {
 
           if (currentPlayer === user.id) {
             if (currentPlayer === player1.id) {
-              column[6][row[6].length] = 1;
+              gameBoard[6][row[6].length] = 1;
               row[6].push(1);
               currentPlayer = player2.id;
               instance
@@ -359,7 +377,7 @@ module.exports = class Connect4Command extends Command {
                 .setTitle(`Connect 4 - Player 2's Turn`)
                 .setColor('BLUE');
             } else {
-              column[6][row[6].length] = 2;
+              gameBoard[6][row[6].length] = 2;
               row[6].push(2);
               currentPlayer = player1.id;
               instance
@@ -370,18 +388,21 @@ module.exports = class Connect4Command extends Command {
             await createBoard(message);
             ++currentTurn;
           }
-          if (chkWinner(column) === 0) {
+          if (checkWinner(gameBoard) === 0) {
             return instance.setImage(boardImageURL).setTimestamp();
           } else {
             instance
               .setImage(boardImageURL)
-              .setTitle(`Connect 4 - 👑 Player ${chkWinner(column)} Wins! 👑`)
+              .setTitle(
+                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
+              )
               .setTimestamp();
             if (currentPlayer === player1.id) {
               instance.setThumbnail(player2Avatar).setColor('BLUE');
             } else {
               instance.setThumbnail(player1Avatar).setColor('RED');
             }
+            currentPlayer = 'Game Over';
             return;
           }
         },
@@ -424,17 +445,17 @@ module.exports = class Connect4Command extends Command {
             true
           );
           // Empty Spaces
-          if (column[rowIndex][columnIndex] === 0) {
+          if (gameBoard[rowIndex][columnIndex] === 0) {
             ctx.fillStyle = 'grey';
             ctx.fill();
           }
           // Player 1 Pieces
-          if (column[rowIndex][columnIndex] === 1) {
+          if (gameBoard[rowIndex][columnIndex] === 1) {
             ctx.fillStyle = 'red';
             ctx.fill();
           }
           // Player 2 Pieces
-          if (column[rowIndex][columnIndex] === 2) {
+          if (gameBoard[rowIndex][columnIndex] === 2) {
             ctx.fillStyle = 'blue';
             ctx.fill();
           }
@@ -471,49 +492,63 @@ module.exports = class Connect4Command extends Command {
     // Reference https://stackoverflow.com/questions/15457796/four-in-a-row-logic/15457826#15457826
 
     // Check for Win Conditions
-    function chkLine(a, b, c, d) {
+    function checkLine(a, b, c, d) {
       // Check first cell non-zero and all cells match
       return a != 0 && a == b && a == c && a == d;
     }
 
-    function chkWinner(bd) {
+    function checkWinner(board) {
       // Check down
       for (let r = 0; r < 3; r++)
         for (let c = 0; c < 7; c++)
-          if (chkLine(bd[r][c], bd[r + 1][c], bd[r + 2][c], bd[r + 3][c]))
-            return bd[r][c];
+          if (
+            checkLine(
+              board[r][c],
+              board[r + 1][c],
+              board[r + 2][c],
+              board[r + 3][c]
+            )
+          )
+            return board[r][c];
 
       // Check right
       for (let r = 0; r < 6; r++)
         for (let c = 0; c < 4; c++)
-          if (chkLine(bd[r][c], bd[r][c + 1], bd[r][c + 2], bd[r][c + 3]))
-            return bd[r][c];
+          if (
+            checkLine(
+              board[r][c],
+              board[r][c + 1],
+              board[r][c + 2],
+              board[r][c + 3]
+            )
+          )
+            return board[r][c];
 
       // Check down-right
       for (let r = 0; r < 3; r++)
         for (let c = 0; c < 4; c++)
           if (
-            chkLine(
-              bd[r][c],
-              bd[r + 1][c + 1],
-              bd[r + 2][c + 2],
-              bd[r + 3][c + 3]
+            checkLine(
+              board[r][c],
+              board[r + 1][c + 1],
+              board[r + 2][c + 2],
+              board[r + 3][c + 3]
             )
           )
-            return bd[r][c];
+            return board[r][c];
 
       // Check down-left
       for (let r = 3; r < 6; r++)
         for (let c = 0; c < 4; c++)
           if (
-            chkLine(
-              bd[r][c],
-              bd[r - 1][c + 1],
-              bd[r - 2][c + 2],
-              bd[r - 3][c + 3]
+            checkLine(
+              board[r][c],
+              board[r - 1][c + 1],
+              board[r - 2][c + 2],
+              board[r - 3][c + 3]
             )
           )
-            return bd[r][c];
+            return board[r][c];
 
       return 0;
     }
