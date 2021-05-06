@@ -826,10 +826,14 @@ var interactiveEmbed = message => {
 var compose = (f, g) => x => f(g(x));
 
 var isYouTubeVideoURL = arg =>
-  arg.match(/^(http(s)?:\/\/)?(m.)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/);
+  arg.match(
+    /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/
+  );
 
 var isYouTubePlaylistURL = arg =>
-  arg.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/);
+  arg.match(
+    /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/
+  );
 
 var shuffleArray = arr => {
   for (let i = arr.length - 1; i > 0; i--) {
