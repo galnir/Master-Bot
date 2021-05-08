@@ -237,13 +237,13 @@ module.exports = class PlayCommand extends Command {
       //variable to know how many songs were skipped because of privacyStatus
       var skipAmount = 0;
 
-      await videosArr.reduce(async (memo, video, key, arr) => {
+      await videosArr.reduce(async (memo, video, key) => {
         await memo;
         // don't process private videos
         if (
           video.raw.status.privacyStatus == 'private' ||
           video.raw.status.privacyStatus == 'privacyStatusUnspecified'
-        ){
+        ) {
           skipAmount++;
           return;
         }
@@ -251,15 +251,16 @@ module.exports = class PlayCommand extends Command {
         try {
           const fetchedVideo = await video.fetch();
           if (nextFlag || jumpFlag) {
-            message.guild.musicData.queue.splice((key - skipAmount), 0,
+            message.guild.musicData.queue.splice(
+              key - skipAmount,
+              0,
               constructSongObj(
                 fetchedVideo,
                 message.member.voice.channel,
                 message.member.user
               )
             );
-          }          
-          else {
+          } else {
             message.guild.musicData.queue.push(
               constructSongObj(
                 fetchedVideo,
@@ -274,18 +275,15 @@ module.exports = class PlayCommand extends Command {
       }, undefined);
       if (jumpFlag) {
         message.guild.musicData.loopSong = false;
-        message.guild.musicData.songDispatcher.end();  
+        message.guild.musicData.songDispatcher.end();
       }
       if (!message.guild.musicData.isPlaying) {
-        message.guild.musicData.isPlaying = true;        
+        message.guild.musicData.isPlaying = true;
         playSong(message.guild.musicData.queue, message);
         return;
       } else {
         interactiveEmbed(message)
-          .addField(
-            'Added Playlist',
-            `[${playlist.title}](${playlist.url})`
-          )
+          .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
           .build();
         return;
       }
@@ -327,20 +325,21 @@ module.exports = class PlayCommand extends Command {
         );
         return;
       }
-      if(nextFlag || jumpFlag){
-        message.guild.musicData.queue.splice(0,0,
+      if (nextFlag || jumpFlag) {
+        message.guild.musicData.queue.splice(
+          0,
+          0,
           constructSongObj(
             video,
             message.member.voice.channel,
             message.member.user
           )
         );
-        if(jumpFlag){
+        if (jumpFlag) {
           message.guild.musicData.loopSong = false;
-          message.guild.musicData.songDispatcher.end();  
+          message.guild.musicData.songDispatcher.end();
         }
-      }    
-      else{
+      } else {
         message.guild.musicData.queue.push(
           constructSongObj(
             video,
