@@ -35,7 +35,9 @@ Make a config.json file in the root directory of the project and add:
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
   "twitchClientID": "Your-Client-ID",
-  "twitchClientSecret": "Your-Client-Secret"
+  "twitchClientSecret": "Your-Client-Secret",
+  "rawgAPI": "rawg-api-key"
+
 }
 ```
 
@@ -129,6 +131,7 @@ Default Template for options.json
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                   | !twitchstatus MasterBot or !tso MasterBot                                    |
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                 | !tv-show-search Duck                                                         |
 | !nickname         | Sets the selected member's nickname with the provided nickname                                                                                                     | !nickname @Master-Bot Master                                                 |
+| !game-search      | Search for game information                                                                                                                                        | !game-search super metroid                                                   |
 
 - Gifs
 
@@ -164,6 +167,8 @@ Default Template for options.json
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
 [How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+
+[Get a rawg API key here](https://rawg.io/apidocs)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
