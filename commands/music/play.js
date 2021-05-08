@@ -43,7 +43,6 @@ LeaveTimeOut = LeaveTimeOut > 600 ? 600 : LeaveTimeOut &&
 
 MaxResponseTime = MaxResponseTime > 150 ? 150 : MaxResponseTime &&
   MaxResponseTime < 5 ? 5 : MaxResponseTime; // prettier-ignore
-
 module.exports = class PlayCommand extends Command {
   constructor(client) {
     super(client, {
@@ -89,11 +88,15 @@ module.exports = class PlayCommand extends Command {
       return;
     }
 
-    //Parse query to check for shuffle flag
+    //Parse query to check for flags
 
     var splitQuery = query.split(' ');
     var shuffleFlag = splitQuery[splitQuery.length - 1] === '-s';
-    if (shuffleFlag) splitQuery.pop();
+    var reverseFlag = splitQuery[splitQuery.length - 1] === '-r';
+    var nextFlag = splitQuery[splitQuery.length - 1] === '-n';
+    var jumpFlag = splitQuery[splitQuery.length - 1] === '-j';
+
+    if (shuffleFlag || reverseFlag || nextFlag || jumpFlag) splitQuery.pop();
     query = splitQuery.join(' ');
 
     // Check if the query is actually a saved playlist name
@@ -218,6 +221,10 @@ module.exports = class PlayCommand extends Command {
         videosArr = shuffleArray(videosArr);
       }
 
+      if (reverseFlag) {
+        videosArr = videosArr.reverse();
+      }
+
       if (message.guild.musicData.queue.length >= maxQueueLength)
         return message.reply(
           'The queue is full, please try adding more songs later'
@@ -226,44 +233,60 @@ module.exports = class PlayCommand extends Command {
         0,
         maxQueueLength - message.guild.musicData.queue.length
       );
-      await videosArr.reduce(async (memo, video, key, arr) => {
+
+      //variable to know how many songs were skipped because of privacyStatus
+      var skipAmount = 0;
+
+      await videosArr.reduce(async (memo, video, key) => {
         await memo;
         // don't process private videos
         if (
           video.raw.status.privacyStatus == 'private' ||
           video.raw.status.privacyStatus == 'privacyStatusUnspecified'
-        )
+        ) {
+          skipAmount++;
           return;
+        }
 
         try {
           const fetchedVideo = await video.fetch();
-          message.guild.musicData.queue.push(
-            constructSongObj(
-              fetchedVideo,
-              message.member.voice.channel,
-              message.member.user
-            )
-          );
-          if (Object.is(arr.length - 1, key)) {
-            if (!message.guild.musicData.isPlaying) {
-              message.guild.musicData.isPlaying = true;
-              playSong(message.guild.musicData.queue, message);
-              return;
-            } else {
-              interactiveEmbed(message)
-                .addField(
-                  'Added Playlist',
-                  `[${playlist.title}](${playlist.url})`
-                )
-                .build();
-              return;
-            }
+          if (nextFlag || jumpFlag) {
+            message.guild.musicData.queue.splice(
+              key - skipAmount,
+              0,
+              constructSongObj(
+                fetchedVideo,
+                message.member.voice.channel,
+                message.member.user
+              )
+            );
+          } else {
+            message.guild.musicData.queue.push(
+              constructSongObj(
+                fetchedVideo,
+                message.member.voice.channel,
+                message.member.user
+              )
+            );
           }
         } catch (err) {
           return console.error(err);
         }
       }, undefined);
-      return;
+      if (jumpFlag) {
+        message.guild.musicData.loopSong = false;
+        message.guild.musicData.songDispatcher.end();
+      }
+      if (!message.guild.musicData.isPlaying) {
+        message.guild.musicData.isPlaying = true;
+        playSong(message.guild.musicData.queue, message);
+        return;
+      } else {
+        interactiveEmbed(message)
+          .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
+          .build();
+        return;
+      }
     }
 
     if (isYouTubeVideoURL(query)) {
@@ -302,14 +325,29 @@ module.exports = class PlayCommand extends Command {
         );
         return;
       }
-
-      message.guild.musicData.queue.push(
-        constructSongObj(
-          video,
-          message.member.voice.channel,
-          message.member.user
-        )
-      );
+      if (nextFlag || jumpFlag) {
+        message.guild.musicData.queue.splice(
+          0,
+          0,
+          constructSongObj(
+            video,
+            message.member.voice.channel,
+            message.member.user
+          )
+        );
+        if (jumpFlag) {
+          message.guild.musicData.loopSong = false;
+          message.guild.musicData.songDispatcher.end();
+        }
+      } else {
+        message.guild.musicData.queue.push(
+          constructSongObj(
+            video,
+            message.member.voice.channel,
+            message.member.user
+          )
+        );
+      }
 
       if (
         !message.guild.musicData.isPlaying ||
