@@ -67,6 +67,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
     if (found) {
       let urlsArrayClone = savedPlaylistsClone[location].urls;
       const processedURL = await SaveToPlaylistCommand.processURL(url, message);
+      if (!processedURL) return;
       if (Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
@@ -95,7 +96,7 @@ module.exports = class SaveToPlaylistCommand extends Command {
         message.reply(':x: Playlist is either private or it does not exist!');
       });
       if (!playlist) {
-        return;
+        return false;
       }
       const videosArr = await playlist.getVideos().catch(function() {
         message.reply(
