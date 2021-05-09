@@ -93,317 +93,31 @@ module.exports = class Connect4Command extends Command {
       .setFunctionEmojis({
         // Column 1
         '1️⃣': async function(user, instance) {
-          if (row[0].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[0][row[0].length] = 1;
-              row[0].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[0][row[0].length] = 2;
-              row[0].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`);
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(0, user, instance);
         },
         // Column 2
         '2️⃣': async function(user, instance) {
-          if (row[1].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[1][row[1].length] = 1;
-              row[1].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[1][row[1].length] = 2;
-              row[1].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(1, user, instance);
         },
         // Column 3
         '3️⃣': async function(user, instance) {
-          if (row[2].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[2][row[2].length] = 1;
-              row[2].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[2][row[2].length] = 2;
-              row[2].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(2, user, instance);
         },
         // Column 4
         '4️⃣': async function(user, instance) {
-          if (row[3].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[3][row[3].length] = 1;
-              row[3].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[3][row[3].length] = 2;
-              row[3].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(3, user, instance);
         },
         // Column 5
         '5️⃣': async function(user, instance) {
-          if (row[4].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[4][row[4].length] = 1;
-              row[4].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[4][row[4].length] = 2;
-              row[4].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(4, user, instance);
         },
         // Column 6
         '6️⃣': async function(user, instance) {
-          if (row[5].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[5][row[5].length] = 1;
-              row[5].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[5][row[5].length] = 2;
-              row[5].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(5, user, instance);
         },
         // Column 7
         '7️⃣': async function(user, instance) {
-          if (row[6].length === 6) {
-            return; // Ignore Columns that are full
-          }
-
-          if (currentPlayer === user.id) {
-            if (currentPlayer === player1.id) {
-              gameBoard[6][row[6].length] = 1;
-              row[6].push(1);
-              currentPlayer = player2.id;
-              instance
-                .setThumbnail(player2Avatar)
-                .setTitle(`Connect 4 - Player 2's Turn`)
-                .setColor('BLUE');
-            } else {
-              gameBoard[6][row[6].length] = 2;
-              row[6].push(2);
-              currentPlayer = player1.id;
-              instance
-                .setThumbnail(player1Avatar)
-                .setTitle(`Connect 4 - Player 1's Turn`)
-                .setColor('RED');
-            }
-            await createBoard(message);
-            ++currentTurn;
-          }
-          if (checkWinner(gameBoard) === 0) {
-            return instance.setImage(boardImageURL).setTimestamp();
-          } else {
-            instance
-              .setImage(boardImageURL)
-              .setTitle(
-                `Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`
-              )
-              .setTimestamp();
-            if (currentPlayer === player1.id) {
-              instance.setThumbnail(player2Avatar).setColor('BLUE');
-            } else {
-              instance.setThumbnail(player1Avatar).setColor('RED');
-            }
-            currentPlayer = 'Game Over';
-            return;
-          }
+          await playerMove(6, user, instance);
         },
         // Refresh Image
         '🔄': function(_, instance) {
@@ -486,6 +200,48 @@ module.exports = class Connect4Command extends Command {
             console.log(err);
           }
         });
+    }
+    async function playerMove(index, user, instance) {
+      if (row[index].length === 6 || currentPlayer === 'Game Over') {
+        return; // Ignore Columns that are full or if the game is over
+      }
+
+      if (currentPlayer === user.id) {
+        if (currentPlayer === player1.id) {
+          gameBoard[index][row[index].length] = 1;
+          row[index].push(1);
+          currentPlayer = player2.id;
+          instance
+            .setThumbnail(player2Avatar)
+            .setTitle(`Connect 4 - Player 2's Turn`)
+            .setColor('BLUE');
+        } else {
+          gameBoard[index][row[index].length] = 2;
+          row[index].push(2);
+          currentPlayer = player1.id;
+          instance
+            .setThumbnail(player1Avatar)
+            .setTitle(`Connect 4 - Player 1's Turn`)
+            .setColor('RED');
+        }
+        await createBoard(message);
+        ++currentTurn;
+      }
+      if (checkWinner(gameBoard) === 0) {
+        return instance.setImage(boardImageURL).setTimestamp();
+      } else {
+        instance
+          .setImage(boardImageURL)
+          .setTitle(`Connect 4 - 👑 Player ${checkWinner(gameBoard)} Wins! 👑`)
+          .setTimestamp();
+        if (currentPlayer === player1.id) {
+          instance.setThumbnail(player2Avatar).setColor('BLUE');
+        } else {
+          instance.setThumbnail(player1Avatar).setColor('RED');
+        }
+        currentPlayer = 'Game Over';
+        return;
+      }
     }
 
     // Reference https://stackoverflow.com/questions/15457796/four-in-a-row-logic/15457826#15457826
