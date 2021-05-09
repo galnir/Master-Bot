@@ -47,13 +47,13 @@ module.exports = class Connect4Command extends Command {
       format: 'jpg'
     });
     let gameBoard = [
+      [0, 0, 0, 0, 0, 0, 0], //row 1
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0]
+      [0, 0, 0, 0, 0, 0, 0] // row 6
+      // column ->
     ];
     const row = {
       0: [],
@@ -146,12 +146,12 @@ module.exports = class Connect4Command extends Command {
       ctx.fillRect(0, 0, boardWidth, boardHeight);
 
       // Build the Game Board
-      for (let rowIndex = 0; rowIndex < 7; ++rowIndex) {
-        for (let columnIndex = 0; columnIndex < 6; ++columnIndex) {
+      for (let columnIndex = 0; columnIndex < 7; ++columnIndex) {
+        for (let rowIndex = 0; rowIndex < 6; ++rowIndex) {
           ctx.beginPath();
           ctx.arc(
-            offset + (pieceSize + positionX * rowIndex),
-            offset + (pieceSize + positionY * columnIndex),
+            offset + (pieceSize + positionX * columnIndex),
+            offset + (pieceSize + positionY * rowIndex),
             pieceSize,
             0,
             Math.PI * 2,
@@ -208,7 +208,7 @@ module.exports = class Connect4Command extends Command {
 
       if (currentPlayer === user.id) {
         if (currentPlayer === player1.id) {
-          gameBoard[index][row[index].length] = 1;
+          gameBoard[row[index].length][index] = 1;
           row[index].push(1);
           currentPlayer = player2.id;
           instance
@@ -216,7 +216,7 @@ module.exports = class Connect4Command extends Command {
             .setTitle(`Connect 4 - Player 2's Turn`)
             .setColor('BLUE');
         } else {
-          gameBoard[index][row[index].length] = 2;
+          gameBoard[row[index].length][index] = 2;
           row[index].push(2);
           currentPlayer = player1.id;
           instance
