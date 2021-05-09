@@ -365,7 +365,7 @@ module.exports = class PlayCommand extends Command {
     }
 
     // If user provided a song/video name
-    await searchYoutube(query, message, message.member.voice.channel);
+    await searchYoutube(query, message, message.member.voice.channel, nextFlag, jumpFlag);
   }
 };
 
@@ -493,7 +493,7 @@ var playbackBar = data => {
   )} ${songLengthFormatted}`;
 };
 
-var searchYoutube = async (query, message, voiceChannel) => {
+var searchYoutube = async (query, message, voiceChannel, nextFlag, jumpFlag) => {
   const videos = await youtube.searchVideos(query, 5).catch(async function() {
     await message.reply(
       ':x: There was a problem searching the video you requested!'
@@ -573,9 +573,29 @@ var searchYoutube = async (query, message, voiceChannel) => {
             );
             return;
           }
-          message.guild.musicData.queue.push(
-            constructSongObj(video, voiceChannel, message.member.user)
-          );
+          if (nextFlag || jumpFlag) {
+            message.guild.musicData.queue.splice(
+              0,
+              0,
+              constructSongObj(
+                video,
+                voiceChannel,
+                message.member.user
+              )
+            );
+            if (jumpFlag) {
+              message.guild.musicData.loopSong = false;
+              message.guild.musicData.songDispatcher.end();
+            }
+          } else {
+            message.guild.musicData.queue.push(
+              constructSongObj(
+                video,
+                voiceChannel,
+                message.member.user
+              )
+            );
+          }
           if (message.guild.musicData.isPlaying == false) {
             message.guild.musicData.isPlaying = true;
             if (songEmbed) {
