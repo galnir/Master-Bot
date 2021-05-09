@@ -2,7 +2,6 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const Canvas = require('canvas');
-// const db = require('quick.db');
 
 module.exports = class Connect4Command extends Command {
   constructor(client) {
