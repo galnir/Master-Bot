@@ -183,11 +183,17 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'connect4', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
 [Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
+
+[kfirmeg](https://github.com/kfirmeg) - play command flags, dockerization, docker wiki
+
+[rafaeldamasceno](https://github.com/rafaeldamasceno) - 'music-trivia' and Dockerfile improvements
+
+[meiaihara06](https://github.com/meiaihara06) - 'LeaveTimeOut' and 'MaxResponseTime' options
 
 [malokdev](https://github.com/malokdev) - 'uptime' command
 
