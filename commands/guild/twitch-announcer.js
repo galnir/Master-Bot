@@ -12,7 +12,6 @@ const {
 
 // Skips loading if not found in config.json
 if (!twitchClientID || !twitchClientSecret) return;
-var Ticker;
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {
     super(client, {
@@ -61,8 +60,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
       return;
     }
-    let streamInfo;
-    let gameInfo;
 
     try {
       var user = await TwitchAPI.getUserInfo(
@@ -70,13 +67,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         twitchClientID,
         `${DBInfo.name}`
       );
-      // for older version compatibility
-      if (!DBInfo.id) {
-        Twitch_DB.set(
-          `${message.guild.id}.twitchAnnouncer.id`,
-          user.data[0].id
-        );
-      }
     } catch (e) {
       message.reply(':x: Twitch Announcer has stopped!\n' + e);
       return;
@@ -140,10 +130,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     //Check embed trigger
     if (textFiltered == 'check') {
-      if (currentMsgStatus == 'disable') message.channel.send(disabledEmbed);
-      else {
+      if (currentMsgStatus == 'disable') {
+        message.channel.send(disabledEmbed);
+      } else {
         message.channel.send(enabledEmbed);
-        return;
       }
       return;
     }
@@ -154,192 +144,202 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       enabled();
       message.channel.send(enabledEmbed);
     }
+    //Disable Set
     if (textFiltered == 'disable') {
       disable();
       message.channel.send(disabledEmbed);
-      //Ticker Section (Loop)
     }
-    function enabled() {
-      Ticker = setInterval(async function() {
-        if (currentMsgStatus === 'disable') {
-          clearInterval(Ticker);
-          return;
-        }
-        //Disable Set
 
-        let announcedChannel = message.guild.channels.cache.find(
-          channel => channel.id == DBInfo.channelID
+    //Ticker Section (Loop)
+    function enabled() {
+      message.guild.twitchData.Interval = setInterval(async function() {
+        await announcer();
+      }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+    }
+
+    async function announcer() {
+      const announcedChannel = message.guild.channels.cache.find(
+        channel => channel.id == DBInfo.channelID
+      );
+      try {
+        var streamInfo = await TwitchAPI.getStream(
+          TwitchAPI.access_token,
+          twitchClientID,
+          DBInfo.id
         );
+      } catch (e) {
+        message.guild.twitchData.Interval = clearInterval(
+          message.guild.twitchData.Interval
+        );
+        message.reply(':x: Twitch Announcer has stopped!\n' + e);
+        return;
+      }
+
+      //Offline Status Set
+      if (!streamInfo.data[0] && currentMsgStatus == 'sent') {
+        currentMsgStatus = 'offline';
+      }
+      //Online Status set
+      if (
+        currentMsgStatus != 'sent' &&
+        streamInfo.data[0] &&
+        currentMsgStatus != 'disable'
+      ) {
+        currentMsgStatus = 'online';
+      }
+
+      //Online Trigger
+      if (currentMsgStatus == 'online') {
+        currentGame = streamInfo.data[0].game_name;
+
         try {
-          streamInfo = await TwitchAPI.getStream(
+          var gameInfo = await TwitchAPI.getGames(
             TwitchAPI.access_token,
             twitchClientID,
-            DBInfo.id
+            streamInfo.data[0].game_id
+          );
+
+          var result = await probe(
+            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+          );
+          var canvas = Canvas.createCanvas(result.width, result.height);
+          var ctx = canvas.getContext('2d');
+          // Since the image takes time to load, you should await it
+          var background = await Canvas.loadImage(
+            gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
+          );
+          // This uses the canvas dimensions to stretch the image onto the entire canvas
+          ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+          // Use helpful Attachment class structure to process the file for you
+          var attachment = new MessageAttachment(
+            canvas.toBuffer(),
+            'box_art.png'
           );
         } catch (e) {
-          clearInterval(Ticker);
+          message.guild.twitchData.Interval = clearInterval(
+            message.guild.twitchData.Interval
+          );
           message.reply(':x: Twitch Announcer has stopped!\n' + e);
           return;
         }
 
-        //Offline Status Set
-        if (!streamInfo.data[0] && currentMsgStatus == 'sent') {
-          currentMsgStatus = 'offline';
+        //Online Embed
+        const onlineEmbed = new MessageEmbed()
+          .setAuthor(
+            `Twitch Announcement: ${user.data[0].display_name} Online!`,
+            user.data[0].profile_image_url,
+            'https://twitch.tv/' + user.data[0].display_name
+          )
+          .setURL('https://twitch.tv/' + user.data[0].display_name)
+          .setTitle(user.data[0].display_name + ' is playing ' + currentGame)
+          .addField('Stream Title:', streamInfo.data[0].title)
+          .addField('Currently Playing:', streamInfo.data[0].game_name, true)
+          .addField('Viewers:', streamInfo.data[0].viewer_count, true)
+          .setColor('#6441A4')
+          .setFooter(
+            'Stream Started',
+            'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png' // Official icon link from Twitch.tv
+          )
+          .setImage(
+            streamInfo.data[0].thumbnail_url
+              .replace(/{width}x{height}/g, '1280x720')
+              .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
+          )
+          .setTimestamp(streamInfo.data[0].started_at)
+          .attachFiles(attachment)
+          .setThumbnail('attachment://box_art.png');
+
+        if (user.data[0].broadcaster_type == '')
+          onlineEmbed.addField('Rank:', 'BASE!', true);
+        else {
+          onlineEmbed.addField(
+            'Rank:',
+            user.data[0].broadcaster_type.toUpperCase() + '!',
+            true
+          );
         }
-        //Online Status set
-        if (
-          currentMsgStatus != 'sent' &&
-          streamInfo.data[0] &&
-          currentMsgStatus != 'disable'
-        ) {
-          currentMsgStatus = 'online';
-        }
 
-        //Online Trigger
-        if (currentMsgStatus == 'online') {
-          currentGame = streamInfo.data[0].game_name;
-
-          try {
-            gameInfo = await TwitchAPI.getGames(
-              TwitchAPI.access_token,
-              twitchClientID,
-              streamInfo.data[0].game_id
-            );
-
-            var result = await probe(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            );
-            var canvas = Canvas.createCanvas(result.width, result.height);
-            var ctx = canvas.getContext('2d');
-            // Since the image takes time to load, you should await it
-            var background = await Canvas.loadImage(
-              gameInfo.data[0].box_art_url.replace(/-{width}x{height}/g, '')
-            );
-            // This uses the canvas dimensions to stretch the image onto the entire canvas
-            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-            // Use helpful Attachment class structure to process the file for you
-            var attachment = new MessageAttachment(
-              canvas.toBuffer(),
-              'box_art.png'
-            );
-          } catch (e) {
-            clearInterval(Ticker);
-            message.reply(':x: Twitch Announcer has stopped!\n' + e);
-            return;
-          }
-
-          //Online Embed
-          const onlineEmbed = new MessageEmbed()
-            .setAuthor(
-              `Twitch Announcement: ${user.data[0].display_name} Online!`,
-              user.data[0].profile_image_url,
-              'https://twitch.tv/' + user.data[0].display_name
-            )
-            .setURL('https://twitch.tv/' + user.data[0].display_name)
-            .setTitle(user.data[0].display_name + ' is playing ' + currentGame)
-            .addField('Stream Title:', streamInfo.data[0].title)
-            .addField('Currently Playing:', streamInfo.data[0].game_name, true)
-            .addField('Viewers:', streamInfo.data[0].viewer_count, true)
-            .setColor('#6441A4')
-            .setFooter(
-              'Stream Started',
-              'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png' // Official icon link from Twitch.tv
-            )
-            .setImage(
-              streamInfo.data[0].thumbnail_url
-                .replace(/{width}x{height}/g, '1280x720')
-                .concat('?r=' + Math.floor(Math.random() * 10000 + 1)) // to ensure the image updates when refreshed
-            )
-            .setTimestamp(streamInfo.data[0].started_at)
-            .attachFiles(attachment)
-            .setThumbnail('attachment://box_art.png');
-
-          if (user.data[0].broadcaster_type == '')
-            onlineEmbed.addField('Rank:', 'BASE!', true);
-          else {
-            onlineEmbed.addField(
-              'Rank:',
-              user.data[0].broadcaster_type.toUpperCase() + '!',
-              true
-            );
-          }
-
-          //Online Send
-          try {
-            if (DBInfo.botSay.toLowerCase() != 'none') {
-              await announcedChannel.send(DBInfo.botSay),
-                await announcedChannel.send(onlineEmbed);
-              embedID = announcedChannel.lastMessage.id;
-            } else {
+        //Online Send
+        try {
+          if (DBInfo.botSay.toLowerCase() != 'none') {
+            await announcedChannel.send(DBInfo.botSay),
               await announcedChannel.send(onlineEmbed);
-              embedID = announcedChannel.lastMessage.id;
-            }
-          } catch (error) {
-            message.reply(':x: Could not send message to channel');
-            console.log(error);
-            clearInterval(Ticker);
-            return;
+            embedID = announcedChannel.lastMessage.id;
+          } else {
+            await announcedChannel.send(onlineEmbed);
+            embedID = announcedChannel.lastMessage.id;
           }
-          currentMsgStatus = 'sent';
+        } catch (error) {
+          message.reply(':x: Could not send message to channel');
+          console.log(error);
+          message.guild.twitchData.Interval = clearInterval(
+            message.guild.twitchData.Interval
+          );
+          return;
+        }
+        currentMsgStatus = 'sent';
+      }
+
+      //Offline Trigger
+      if (currentMsgStatus == 'offline') {
+        currentMsgStatus = 'end';
+        const offlineEmbed = new MessageEmbed()
+          .setAuthor(
+            `Twitch Announcement: ${user.data[0].display_name} Offline`,
+            user.data[0].profile_image_url,
+            'https://twitch.tv/' + user.data[0].display_name
+          )
+          .setTitle(user.data[0].display_name + ' was playing ' + currentGame)
+          .setColor('#6441A4')
+          .setTimestamp()
+          .setFooter(
+            'Stream Ended',
+            'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
+          )
+          .setThumbnail('attachment://box_art.png');
+
+        // Incase the there is no Profile Description
+        if (!user.data[0].description == '')
+          offlineEmbed
+            .addField('Profile Description:', user.data[0].description)
+
+            .addField('View Counter:', user.data[0].view_count, true);
+        if (user.data[0].broadcaster_type == '')
+          offlineEmbed.addField('Rank:', 'BASE!', true);
+        else {
+          offlineEmbed.addField(
+            'Rank:',
+            user.data[0].broadcaster_type.toUpperCase() + '!',
+            true
+          );
         }
 
-        //Offline Trigger
-        if (currentMsgStatus == 'offline') {
-          currentMsgStatus = 'end';
-          const offlineEmbed = new MessageEmbed()
-            .setAuthor(
-              `Twitch Announcement: ${user.data[0].display_name} Offline`,
-              user.data[0].profile_image_url,
-              'https://twitch.tv/' + user.data[0].display_name
-            )
-            .setTitle(user.data[0].display_name + ' was playing ' + currentGame)
-            .setColor('#6441A4')
-            .setTimestamp()
-            .setFooter(
-              'Stream Ended',
-              'https://static.twitchcdn.net/assets/favicon-32-d6025c14e900565d6177.png'
-            )
-            .setThumbnail('attachment://box_art.png');
-
-          // Incase the there is no Profile Description
-          if (!user.data[0].description == '')
-            offlineEmbed
-              .addField('Profile Description:', user.data[0].description)
-
-              .addField('View Counter:', user.data[0].view_count, true);
-          if (user.data[0].broadcaster_type == '')
-            offlineEmbed.addField('Rank:', 'BASE!', true);
-          else {
-            offlineEmbed.addField(
-              'Rank:',
-              user.data[0].broadcaster_type.toUpperCase() + '!',
-              true
-            );
-          }
-
-          //Offline Edit
-          try {
-            await announcedChannel.messages
-              .fetch({
-                around: embedID,
-                limit: 1
-              })
-              .then(msg => {
-                const fetchedMsg = msg.first();
-                fetchedMsg.edit(offlineEmbed);
-              });
-          } catch (error) {
-            message.reply(':x: Could not edit message');
-            console.log(error);
-            clearInterval(Ticker);
-            return;
-          }
+        //Offline Edit
+        try {
+          await announcedChannel.messages
+            .fetch({
+              around: embedID,
+              limit: 1
+            })
+            .then(msg => {
+              const fetchedMsg = msg.first();
+              fetchedMsg.edit(offlineEmbed);
+            });
+        } catch (error) {
+          message.reply(':x: Could not edit message');
+          console.log(error);
+          message.guild.twitchData.Interval = clearInterval(
+            message.guild.twitchData.Interval
+          );
+          return;
         }
-      }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+      }
     }
 
     function disable() {
-      clearInterval(Ticker);
+      message.guild.twitchData.Interval = clearInterval(
+        message.guild.twitchData.Interval
+      );
     }
   }
 };

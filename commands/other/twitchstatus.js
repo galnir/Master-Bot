@@ -18,8 +18,8 @@ module.exports = class TwitchStatusCommand extends Command {
       description:
         'A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer',
       throttling: {
-        usages: 45, // 45 queries
-        duration: 60 // every 60 seconds
+        usages: 45,
+        duration: 60
       },
       args: [
         {
@@ -46,7 +46,6 @@ module.exports = class TwitchStatusCommand extends Command {
     }
 
     const user_id = user.data[0].id;
-
     try {
       var streamInfo = await TwitchAPI.getStream(
         TwitchAPI.access_token,
@@ -79,8 +78,8 @@ module.exports = class TwitchStatusCommand extends Command {
       if (!user.data[0].description == '')
         offlineEmbed
           .addField('Profile Description:', user.data[0].description)
-
           .addField('View Counter:', user.data[0].view_count, true);
+
       if (user.data[0].broadcaster_type == '')
         offlineEmbed.addField('Rank:', 'BASE!', true);
       else {

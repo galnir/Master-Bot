@@ -38,6 +38,16 @@ Structures.extend('Guild', function(Guild) {
   return MusicGuild;
 });
 
+Structures.extend('Guild', function(Guild) {
+  class TwitchGuild extends Guild {
+    constructor(client, data) {
+      super(client, data);
+      this.twitchData = { Interval: null };
+    }
+  }
+  return TwitchGuild;
+});
+
 const client = new CommandoClient({
   commandPrefix: prefix,
   owner: discord_owner_id

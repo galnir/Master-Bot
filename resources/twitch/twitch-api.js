@@ -121,9 +121,9 @@ module.exports = class TwitchAPI {
   }
 };
 
-// get first access_token
 const TwitchAPI = require('./twitch-api.js'); // having this at the Top gives a Circular Error Message
 const scope = 'user:read:email';
+// get first access_token
 (async function() {
   await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
     .then(result => {
