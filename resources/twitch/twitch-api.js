@@ -51,19 +51,19 @@ module.exports = class TwitchAPI {
         }
 
         if (json.status == `429`) {
-          reject(`:x: Rate Limit exceeded. Please try again in a few minutes.`);
+          reject(`Rate Limit exceeded. Please try again in a few minutes.`);
           return;
         }
 
         if (json.status == `503`) {
           reject(
-            `:x: Twitch service's are currently unavailable. Please try again later.`
+            `Twitch service's are currently unavailable. Please try again later.`
           );
           return;
         }
 
         if (json.data[0] == null) {
-          reject(`:x: Streamer ${username} was not found, Please try again.`);
+          reject(`Streamer ${username} was not found, Please try again.`);
           return;
         }
         resolve(json);

@@ -12,6 +12,7 @@ const {
 
 // Skips loading if not found in config.json
 if (!twitchClientID || !twitchClientSecret) return;
+
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {
     super(client, {
@@ -47,8 +48,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     const DBInfo = Twitch_DB.get(`${message.guild.id}.twitchAnnouncer`);
 
     var textFiltered = textRaw.toLowerCase();
-    var currentMsgStatus;
-    var currentGame;
     var embedID;
 
     //Error Missing DB
@@ -68,7 +67,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         `${DBInfo.name}`
       );
     } catch (e) {
-      message.reply(':x: Twitch Announcer has stopped!\n' + e);
+      message.reply(':x: ' + e);
       return;
     }
 
@@ -130,31 +129,32 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     //Check embed trigger
     if (textFiltered == 'check') {
-      if (currentMsgStatus == 'disable') {
-        message.channel.send(disabledEmbed);
-      } else {
+      if (message.guild.twitchData.isRunning) {
         message.channel.send(enabledEmbed);
+      } else {
+        message.channel.send(disabledEmbed);
       }
       return;
     }
 
-    //Enable Set
+    //Enable Twitch Announcer
     if (textFiltered == 'enable') {
-      currentMsgStatus = 'enable';
-      enabled();
-      message.channel.send(enabledEmbed);
-    }
-    //Disable Set
-    if (textFiltered == 'disable') {
-      disable();
-      message.channel.send(disabledEmbed);
-    }
-
-    //Ticker Section (Loop)
-    function enabled() {
+      message.guild.twitchData.isRunning = true;
       message.guild.twitchData.Interval = setInterval(async function() {
         await announcer();
       }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+      message.channel.send(enabledEmbed);
+      return;
+    }
+
+    //Disable Twitch Announcer
+    if (textFiltered == 'disable') {
+      message.guild.twitchData.isRunning = false;
+      message.guild.twitchData.Interval = clearInterval(
+        message.guild.twitchData.Interval
+      );
+      message.channel.send(disabledEmbed);
+      return;
     }
 
     async function announcer() {
@@ -176,21 +176,34 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       }
 
       //Offline Status Set
-      if (!streamInfo.data[0] && currentMsgStatus == 'sent') {
-        currentMsgStatus = 'offline';
+      if (
+        !streamInfo.data[0] &&
+        message.guild.twitchData.embedStatus == 'sent'
+      ) {
+        message.guild.twitchData.embedStatus = 'offline';
       }
       //Online Status set
       if (
-        currentMsgStatus != 'sent' &&
-        streamInfo.data[0] &&
-        currentMsgStatus != 'disable'
+        message.guild.twitchData.embedStatus != 'sent' &&
+        streamInfo.data[0]
       ) {
-        currentMsgStatus = 'online';
+        message.guild.twitchData.embedStatus = 'online';
       }
 
       //Online Trigger
-      if (currentMsgStatus == 'online') {
-        currentGame = streamInfo.data[0].game_name;
+      if (message.guild.twitchData.embedStatus == 'online') {
+        var currentGame = streamInfo.data[0].game_name;
+
+        try {
+          user = await TwitchAPI.getUserInfo(
+            TwitchAPI.access_token,
+            twitchClientID,
+            `${DBInfo.name}`
+          );
+        } catch (e) {
+          message.reply(':x: Twitch Announcer has stopped!\n' + e);
+          return;
+        }
 
         try {
           var gameInfo = await TwitchAPI.getGames(
@@ -277,12 +290,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
           return;
         }
-        currentMsgStatus = 'sent';
+        message.guild.twitchData.embedStatus = 'sent';
       }
 
       //Offline Trigger
-      if (currentMsgStatus == 'offline') {
-        currentMsgStatus = 'end';
+      if (message.guild.twitchData.embedStatus == 'offline') {
+        message.guild.twitchData.embedStatus = 'end';
         const offlineEmbed = new MessageEmbed()
           .setAuthor(
             `Twitch Announcement: ${user.data[0].display_name} Offline`,
@@ -302,7 +315,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         if (!user.data[0].description == '')
           offlineEmbed
             .addField('Profile Description:', user.data[0].description)
-
             .addField('View Counter:', user.data[0].view_count, true);
         if (user.data[0].broadcaster_type == '')
           offlineEmbed.addField('Rank:', 'BASE!', true);
@@ -334,12 +346,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           return;
         }
       }
-    }
-
-    function disable() {
-      message.guild.twitchData.Interval = clearInterval(
-        message.guild.twitchData.Interval
-      );
     }
   }
 };

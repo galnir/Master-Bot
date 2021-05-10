@@ -42,7 +42,11 @@ Structures.extend('Guild', function(Guild) {
   class TwitchGuild extends Guild {
     constructor(client, data) {
       super(client, data);
-      this.twitchData = { Interval: null };
+      this.twitchData = {
+        Interval: null,
+        embedStatus: null,
+        isRunning: false
+      };
     }
   }
   return TwitchGuild;
