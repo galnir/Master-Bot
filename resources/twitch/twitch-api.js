@@ -46,7 +46,7 @@ module.exports = class TwitchAPI {
         );
         const json = await response.json();
         if (json.status == `400`) {
-          reject(`:x: ${username} was Invaild, Please try again.`);
+          reject(`:x: ${username} was Invalid, Please try again.`);
           return;
         }
 
@@ -120,3 +120,29 @@ module.exports = class TwitchAPI {
     });
   }
 };
+
+// get first access_token
+const TwitchAPI = require('./twitch-api.js'); // having this at the Top gives a Circular Error Message
+const scope = 'user:read:email';
+(async function() {
+  await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+    .then(result => {
+      module.exports.access_token = result;
+      return;
+    })
+    .catch(e => {
+      console.log(e);
+      return;
+    });
+})();
+// 24 Hour access_token refresh
+setInterval(async function() {
+  await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+    .then(result => {
+      module.exports.access_token = result;
+    })
+    .catch(e => {
+      console.log(e);
+      return;
+    });
+}, 86400000);

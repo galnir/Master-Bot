@@ -33,24 +33,10 @@ module.exports = class TwitchStatusCommand extends Command {
 
   async run(message, { textRaw }) {
     // Twitch Section
-    const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
-    let access_token;
-
-    try {
-      access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
-        scope
-      );
-    } catch (e) {
-      message.reply(e);
-      return;
-    }
-
     try {
       var user = await TwitchAPI.getUserInfo(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         textFiltered
       );
@@ -63,7 +49,7 @@ module.exports = class TwitchStatusCommand extends Command {
 
     try {
       var streamInfo = await TwitchAPI.getStream(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         user_id
       );
@@ -111,7 +97,7 @@ module.exports = class TwitchStatusCommand extends Command {
     // Box Art Recreation
     try {
       var gameInfo = await TwitchAPI.getGames(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         streamInfo.data[0].game_id
       );

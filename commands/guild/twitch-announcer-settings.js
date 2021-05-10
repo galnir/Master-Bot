@@ -103,23 +103,10 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     }
 
     //Twitch Section
-    const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
-    let access_token;
-    try {
-      access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
-        scope
-      );
-    } catch (e) {
-      message.reply(':x: ' + e);
-      return;
-    }
-
     try {
       var user = await TwitchAPI.getUserInfo(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         textFiltered
       );
@@ -177,7 +164,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         .setTimestamp();
     }
 
-    //Send Reponse
+    //Send Response
     message.channel.send(embed);
   }
 };

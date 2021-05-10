@@ -63,25 +63,11 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     }
 
     //Get Twitch Ready for Response Embeds
-    const scope = 'user:read:email';
-    let access_token; // Token is only valid for 24 Hours (needed to repeat this in Ticker Sections)
     let streamInfo;
     let gameInfo;
     try {
-      access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
-        scope
-      );
-    } catch (e) {
-      clearInterval(Ticker);
-      message.reply(':x: Twitch Announcer has stopped!\n' + e);
-      return;
-    }
-
-    try {
       var user = await TwitchAPI.getUserInfo(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         `${DBInfo.name}`
       );
@@ -168,7 +154,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       message.channel.send(enabledEmbed);
 
       //Ticker Section (Loop)
-      var Ticker = setInterval(async function() {
+      var Ticker = setInterval(async function(currentMsgStatus) {
         if (currentMsgStatus == 'disable') {
           clearInterval(Ticker);
           return;
@@ -178,20 +164,8 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           channel => channel.id == DBInfo.channelID
         );
         try {
-          access_token = await TwitchAPI.getToken(
-            twitchClientID,
-            twitchClientSecret,
-            scope
-          );
-        } catch (e) {
-          clearInterval(Ticker);
-          message.reply(':x: Twitch Announcer has stopped!\n' + e);
-          return;
-        }
-
-        try {
           user = await TwitchAPI.getUserInfo(
-            access_token,
+            TwitchAPI.access_token,
             twitchClientID,
             `${DBInfo.name}`
           );
@@ -204,7 +178,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         var user_id = user.data[0].id;
         try {
           streamInfo = await TwitchAPI.getStream(
-            access_token,
+            TwitchAPI.access_token,
             twitchClientID,
             user_id
           );
@@ -233,7 +207,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
           try {
             gameInfo = await TwitchAPI.getGames(
-              access_token,
+              TwitchAPI.access_token,
               twitchClientID,
               streamInfo.data[0].game_id
             );
