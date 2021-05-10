@@ -165,7 +165,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         var streamInfo = await TwitchAPI.getStream(
           TwitchAPI.access_token,
           twitchClientID,
-          DBInfo.id
+          user.data[0].id
         );
       } catch (e) {
         message.guild.twitchData.Interval = clearInterval(
