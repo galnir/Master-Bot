@@ -12,7 +12,7 @@ const {
 
 // Skips loading if not found in config.json
 if (!twitchClientID || !twitchClientSecret) return;
-
+var Ticker;
 module.exports = class TwitchAnnouncerCommand extends Command {
   constructor(client) {
     super(client, {
@@ -61,18 +61,23 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       );
       return;
     }
-
-    //Get Twitch Ready for Response Embeds
     let streamInfo;
     let gameInfo;
+
     try {
       var user = await TwitchAPI.getUserInfo(
         TwitchAPI.access_token,
         twitchClientID,
         `${DBInfo.name}`
       );
+      // for older version compatibility
+      if (!DBInfo.id) {
+        Twitch_DB.set(
+          `${message.guild.id}.twitchAnnouncer.id`,
+          user.data[0].id
+        );
+      }
     } catch (e) {
-      clearInterval(Ticker);
       message.reply(':x: Twitch Announcer has stopped!\n' + e);
       return;
     }
@@ -142,45 +147,34 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       }
       return;
     }
-    //Disable Set
-    if (textFiltered == 'disable') {
-      currentMsgStatus = 'disable';
-      message.channel.send(disabledEmbed);
-    }
 
     //Enable Set
     if (textFiltered == 'enable') {
       currentMsgStatus = 'enable';
+      enabled();
       message.channel.send(enabledEmbed);
-
+    }
+    if (textFiltered == 'disable') {
+      disable();
+      message.channel.send(disabledEmbed);
       //Ticker Section (Loop)
-      var Ticker = setInterval(async function(currentMsgStatus) {
-        if (currentMsgStatus == 'disable') {
+    }
+    function enabled() {
+      Ticker = setInterval(async function() {
+        if (currentMsgStatus === 'disable') {
           clearInterval(Ticker);
           return;
         }
+        //Disable Set
 
         let announcedChannel = message.guild.channels.cache.find(
           channel => channel.id == DBInfo.channelID
         );
         try {
-          user = await TwitchAPI.getUserInfo(
-            TwitchAPI.access_token,
-            twitchClientID,
-            `${DBInfo.name}`
-          );
-        } catch (e) {
-          clearInterval(Ticker);
-          message.reply(':x: Twitch Announcer has stopped!\n' + e);
-          return;
-        }
-
-        var user_id = user.data[0].id;
-        try {
           streamInfo = await TwitchAPI.getStream(
             TwitchAPI.access_token,
             twitchClientID,
-            user_id
+            DBInfo.id
           );
         } catch (e) {
           clearInterval(Ticker);
@@ -307,7 +301,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             )
             .setThumbnail('attachment://box_art.png');
 
-          // Incase the there is no Profile Discription
+          // Incase the there is no Profile Description
           if (!user.data[0].description == '')
             offlineEmbed
               .addField('Profile Description:', user.data[0].description)
@@ -342,6 +336,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
         }
       }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+    }
+
+    function disable() {
+      clearInterval(Ticker);
     }
   }
 };
