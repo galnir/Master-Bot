@@ -140,10 +140,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     let failedAttempts = 0;
     //Enable Twitch Announcer
     if (textFiltered == 'enable') {
-      message.guild.twitchData.isRunning = true;
-      message.guild.twitchData.Interval = setInterval(async function() {
-        await announcer();
-      }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+      if (message.guild.twitchData.isRunning == false) {
+        message.guild.twitchData.isRunning = true;
+        message.guild.twitchData.Interval = setInterval(async function() {
+          await announcer();
+        }, DBInfo.timer * 60000); //setInterval() is in MS and needs to be converted to minutes
+      }
       message.channel.send(enabledEmbed);
       return;
     }
