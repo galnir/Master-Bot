@@ -294,11 +294,13 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         try {
           if (DBInfo.botSay.toLowerCase() != 'none') {
             await announcedChannel.send(DBInfo.botSay),
-              await announcedChannel.send(onlineEmbed);
-            embedID = announcedChannel.lastMessage.id;
+              await announcedChannel.send(onlineEmbed).then(result => {
+                embedID = result.id;
+              });
           } else {
-            await announcedChannel.send(onlineEmbed);
-            embedID = announcedChannel.lastMessage.id;
+            await announcedChannel.send(onlineEmbed).then(result => {
+              embedID = result.id;
+            });
           }
         } catch (error) {
           ++failedAttempts;
