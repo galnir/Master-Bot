@@ -75,6 +75,8 @@ module.exports = class TicTacToeCommand extends Command {
          You have 1 minute per turn or it's an automatic forfeit.\n
          Incase of invisible board click 🔄.`
       )
+      .addField('Column', 'None', true)
+      .addField('Row', 'None', true)
       .setImage(boardImageURL)
       .setFooter('Incase of invisible board click 🔄')
       .setTimestamp()
@@ -86,6 +88,7 @@ module.exports = class TicTacToeCommand extends Command {
         '1️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
             column = 0;
+            instance.currentEmbed.fields[0].value = '1';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -96,6 +99,7 @@ module.exports = class TicTacToeCommand extends Command {
         '2️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
             column = 1;
+            instance.currentEmbed.fields[0].value = '2';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -106,6 +110,7 @@ module.exports = class TicTacToeCommand extends Command {
         '3️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
             column = 2;
+            instance.currentEmbed.fields[0].value = '3';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -116,6 +121,7 @@ module.exports = class TicTacToeCommand extends Command {
         '🇦': async function(user, instance) {
           if (currentPlayer === user.id) {
             row = 0;
+            instance.currentEmbed.fields[1].value = 'A';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -126,6 +132,7 @@ module.exports = class TicTacToeCommand extends Command {
         '🇧': async function(user, instance) {
           if (currentPlayer === user.id) {
             row = 1;
+            instance.currentEmbed.fields[1].value = 'B';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -136,6 +143,7 @@ module.exports = class TicTacToeCommand extends Command {
         '🇨': async function(user, instance) {
           if (currentPlayer === user.id) {
             row = 2;
+            instance.currentEmbed.fields[1].value = 'C';
             if (row !== null && column !== null) {
               await playerMove(row, column, user, instance);
               return (row = null), (column = null);
@@ -249,6 +257,10 @@ module.exports = class TicTacToeCommand extends Command {
     }
 
     async function playerMove(row, column, user, instance) {
+      // Reset embed fields 'Column' & 'Row' for next turn
+      instance.currentEmbed.fields[0].value = 'None';
+      instance.currentEmbed.fields[1].value = 'None';
+
       if (gameBoard[row][column] !== 0 || currentPlayer === 'Game Over') {
         return; // Ignore occupied spaces or if the game is over
       }
