@@ -49,6 +49,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
     var textFiltered = textRaw.toLowerCase();
     var embedID;
+    let currentGame;
 
     //Error Missing DB
     if (DBInfo == undefined) {
@@ -199,7 +200,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
       //Online Trigger
       if (message.guild.twitchData.embedStatus == 'online') {
-        var currentGame = streamInfo.data[0].game_name;
+        currentGame = streamInfo.data[0].game_name;
 
         try {
           user = await TwitchAPI.getUserInfo(
