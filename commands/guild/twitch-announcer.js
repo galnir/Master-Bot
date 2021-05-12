@@ -137,6 +137,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       return;
     }
 
+    let failedAttempts = 0;
     //Enable Twitch Announcer
     if (textFiltered == 'enable') {
       message.guild.twitchData.isRunning = true;
@@ -168,11 +169,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           user.data[0].id
         );
       } catch (e) {
-        message.guild.twitchData.isRunning = false;
-        message.guild.twitchData.Interval = clearInterval(
-          message.guild.twitchData.Interval
-        );
-        message.reply(':x: Twitch Announcer has stopped!\n' + e);
+        ++failedAttempts;
+        if (failedAttempts == 5) {
+          message.guild.twitchData.isRunning = false;
+          message.guild.twitchData.Interval = clearInterval(
+            message.guild.twitchData.Interval
+          );
+          message.reply(':x: Twitch Announcer has stopped!\n' + e);
+        }
         return;
       }
 
@@ -202,11 +206,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             `${DBInfo.name}`
           );
         } catch (e) {
-          message.guild.twitchData.isRunning = false;
-          message.guild.twitchData.Interval = clearInterval(
-            message.guild.twitchData.Interval
-          );
-          message.reply(':x: Twitch Announcer has stopped!\n' + e);
+          ++failedAttempts;
+          if (failedAttempts == 5) {
+            message.guild.twitchData.isRunning = false;
+            message.guild.twitchData.Interval = clearInterval(
+              message.guild.twitchData.Interval
+            );
+            message.reply(':x: Twitch Announcer has stopped!\n' + e);
+          }
           return;
         }
 
@@ -234,11 +241,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             'box_art.png'
           );
         } catch (e) {
-          message.guild.twitchData.isRunning = false;
-          message.guild.twitchData.Interval = clearInterval(
-            message.guild.twitchData.Interval
-          );
-          message.reply(':x: Twitch Announcer has stopped!\n' + e);
+          ++failedAttempts;
+          if (failedAttempts == 5) {
+            message.guild.twitchData.isRunning = false;
+            message.guild.twitchData.Interval = clearInterval(
+              message.guild.twitchData.Interval
+            );
+            message.reply(':x: Twitch Announcer has stopped!\n' + e);
+          }
           return;
         }
 
@@ -289,12 +299,15 @@ module.exports = class TwitchAnnouncerCommand extends Command {
             embedID = announcedChannel.lastMessage.id;
           }
         } catch (error) {
-          message.reply(':x: Could not send message to channel');
-          console.log(error);
-          message.guild.twitchData.isRunning = false;
-          message.guild.twitchData.Interval = clearInterval(
-            message.guild.twitchData.Interval
-          );
+          ++failedAttempts;
+          if (failedAttempts == 5) {
+            message.reply(':x: Could not send message to channel');
+            console.log(error);
+            message.guild.twitchData.isRunning = false;
+            message.guild.twitchData.Interval = clearInterval(
+              message.guild.twitchData.Interval
+            );
+          }
           return;
         }
         message.guild.twitchData.embedStatus = 'sent';
@@ -345,15 +358,20 @@ module.exports = class TwitchAnnouncerCommand extends Command {
               fetchedMsg.edit(offlineEmbed);
             });
         } catch (error) {
-          message.reply(':x: Could not edit message');
-          console.log(error);
-          message.guild.twitchData.isRunning = false;
-          message.guild.twitchData.Interval = clearInterval(
-            message.guild.twitchData.Interval
-          );
+          ++failedAttempts;
+          if (failedAttempts == 5) {
+            message.reply(':x: Could not edit message');
+            console.log(error);
+            message.guild.twitchData.isRunning = false;
+            message.guild.twitchData.Interval = clearInterval(
+              message.guild.twitchData.Interval
+            );
+          }
           return;
         }
       }
+      // reset counter when it completes an interval
+      failedAttempts = 0;
     }
   }
 };
