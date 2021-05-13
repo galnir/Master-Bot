@@ -51,7 +51,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
     var embedID;
     let currentGame;
 
-    //Error Missing DB
+    // Error Missing DB
     if (DBInfo == undefined) {
       message.reply(
         ':no_entry: No settings were found, please run `' +
@@ -72,7 +72,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       return;
     }
 
-    //Enable Embed
+    // Enable Embed
     const enabledEmbed = new MessageEmbed()
       .setAuthor(
         message.member.guild.name + ' Announcer Settings',
@@ -100,7 +100,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         .setTimestamp(DBInfo.date);
     }
 
-    //Disable Embed
+    // Disable Embed
     const disabledEmbed = new MessageEmbed()
       .setAuthor(
         message.member.guild.name + ' Announcer Settings',
@@ -128,7 +128,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         .setTimestamp(DBInfo.date);
     }
 
-    //Check embed trigger
+    // Check Twitch Announcer Status
     if (textFiltered == 'check') {
       if (message.guild.twitchData.isRunning) {
         message.channel.send(enabledEmbed);
@@ -138,10 +138,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       return;
     }
 
-    let failedAttempts = 0;
-    //Enable Twitch Announcer
+    // Enable Twitch Announcer
     if (textFiltered == 'enable') {
       if (message.guild.twitchData.isRunning == false) {
+        var failedAttempts = 0;
         message.guild.twitchData.isRunning = true;
         message.guild.twitchData.Interval = setInterval(async function() {
           await announcer();
@@ -151,7 +151,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
       return;
     }
 
-    //Disable Twitch Announcer
+    // Disable Twitch Announcer
     if (textFiltered == 'disable') {
       message.guild.twitchData.isRunning = false;
       message.guild.twitchData.Interval = clearInterval(
@@ -183,14 +183,14 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         return;
       }
 
-      //Offline Status Set
+      // Set Status to Offline
       if (
         !streamInfo.data[0] &&
         message.guild.twitchData.embedStatus == 'sent'
       ) {
         message.guild.twitchData.embedStatus = 'offline';
       }
-      //Online Status set
+      // Set Status To Online
       if (
         message.guild.twitchData.embedStatus != 'sent' &&
         streamInfo.data[0]
@@ -198,7 +198,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
         message.guild.twitchData.embedStatus = 'online';
       }
 
-      //Online Trigger
+      // Online Status
       if (message.guild.twitchData.embedStatus == 'online') {
         currentGame = streamInfo.data[0].game_name;
 
@@ -255,7 +255,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           return;
         }
 
-        //Online Embed
+        // Online Embed
         const onlineEmbed = new MessageEmbed()
           .setAuthor(
             `Twitch Announcement: ${user.data[0].display_name} Online!`,
@@ -291,7 +291,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         }
 
-        //Online Send
+        // Online Send
         try {
           if (DBInfo.botSay.toLowerCase() != 'none') {
             await announcedChannel.send(DBInfo.botSay),
@@ -315,12 +315,12 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
           return;
         }
+        // Change Embed Status
         message.guild.twitchData.embedStatus = 'sent';
       }
 
-      //Offline Trigger
+      // Offline Status
       if (message.guild.twitchData.embedStatus == 'offline') {
-        message.guild.twitchData.embedStatus = 'end';
         const offlineEmbed = new MessageEmbed()
           .setAuthor(
             `Twitch Announcement: ${user.data[0].display_name} Offline`,
@@ -337,10 +337,13 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           .setThumbnail('attachment://box_art.png');
 
         // Incase the there is no Profile Description
-        if (!user.data[0].description == '')
-          offlineEmbed
-            .addField('Profile Description:', user.data[0].description)
-            .addField('View Counter:', user.data[0].view_count, true);
+        if (!user.data[0].description == '') {
+          offlineEmbed.addField(
+            'Profile Description:',
+            user.data[0].description
+          );
+        }
+        offlineEmbed.addField('View Counter:', user.data[0].view_count, true);
         if (user.data[0].broadcaster_type == '')
           offlineEmbed.addField('Rank:', 'BASE!', true);
         else {
@@ -351,7 +354,7 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
         }
 
-        //Offline Edit
+        // Offline Edit
         try {
           await announcedChannel.messages
             .fetch({
@@ -374,8 +377,10 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           }
           return;
         }
+        // Change Embed Status
+        message.guild.twitchData.embedStatus = 'end';
       }
-      // reset counter when it completes an interval
+      // Reset Fail Counter
       failedAttempts = 0;
     }
   }
