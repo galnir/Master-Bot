@@ -365,7 +365,13 @@ module.exports = class PlayCommand extends Command {
     }
 
     // If user provided a song/video name
-    await searchYoutube(query, message, message.member.voice.channel, nextFlag, jumpFlag);
+    await searchYoutube(
+      query,
+      message,
+      message.member.voice.channel,
+      nextFlag,
+      jumpFlag
+    );
   }
 };
 
@@ -493,7 +499,13 @@ var playbackBar = data => {
   )} ${songLengthFormatted}`;
 };
 
-var searchYoutube = async (query, message, voiceChannel, nextFlag, jumpFlag) => {
+var searchYoutube = async (
+  query,
+  message,
+  voiceChannel,
+  nextFlag,
+  jumpFlag
+) => {
   const videos = await youtube.searchVideos(query, 5).catch(async function() {
     await message.reply(
       ':x: There was a problem searching the video you requested!'
@@ -574,14 +586,8 @@ var searchYoutube = async (query, message, voiceChannel, nextFlag, jumpFlag) => 
             return;
           }
           if (nextFlag || jumpFlag) {
-            message.guild.musicData.queue.splice(
-              0,
-              0,
-              constructSongObj(
-                video,
-                voiceChannel,
-                message.member.user
-              )
+            message.guild.musicData.queue.unshift(
+              constructSongObj(video, voiceChannel, message.member.user)
             );
             if (jumpFlag) {
               message.guild.musicData.loopSong = false;
@@ -589,11 +595,7 @@ var searchYoutube = async (query, message, voiceChannel, nextFlag, jumpFlag) => 
             }
           } else {
             message.guild.musicData.queue.push(
-              constructSongObj(
-                video,
-                voiceChannel,
-                message.member.user
-              )
+              constructSongObj(video, voiceChannel, message.member.user)
             );
           }
           if (message.guild.musicData.isPlaying == false) {
