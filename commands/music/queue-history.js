@@ -18,7 +18,7 @@ module.exports = class QueueHistoryCommand extends Command {
       guildOnly: true,
       description: 'Display the queue history!',
       examples: [
-        'For example, how play the 3rd song from the history queue',
+        'For example, to play the 3rd song from the history queue',
         `${prefix}play 3`
       ]
     });
