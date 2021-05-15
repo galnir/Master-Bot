@@ -241,6 +241,13 @@ module.exports = class PlayCommand extends Command {
           switch (response) {
             // 1: Play a song from the history queue
             case '1':
+              if (!message.guild.musicData.isPlaying) {
+                message.guild.musicData.queue.unshift(
+                  message.guild.musicData.queueHistory[index]
+                );
+                playSong(message.guild.musicData.queue, message);
+                break;
+              }
               if (nextFlag || jumpFlag) {
                 message.guild.musicData.queue.unshift(
                   message.guild.musicData.queueHistory[index]
