@@ -53,8 +53,8 @@ module.exports = class TicTacToeCommand extends Command {
       [0, 0, 0]
       // column ->
     ];
-    let row = null;
-    let column = null;
+    let rowChoice = null;
+    let columnChoice = null;
     let currentPlayer = player1.id;
     let boardImageURL = null;
 
@@ -87,67 +87,55 @@ module.exports = class TicTacToeCommand extends Command {
         // Column 1
         '1️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
-            column = 0;
+            columnChoice = 0;
             instance.currentEmbed.fields[0].value = '1';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Column 2
         '2️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
-            column = 1;
+            columnChoice = 1;
             instance.currentEmbed.fields[0].value = '2';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Column 3
         '3️⃣': async function(user, instance) {
           if (currentPlayer === user.id) {
-            column = 2;
+            columnChoice = 2;
             instance.currentEmbed.fields[0].value = '3';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Row A
         '🇦': async function(user, instance) {
           if (currentPlayer === user.id) {
-            row = 0;
+            rowChoice = 0;
             instance.currentEmbed.fields[1].value = 'A';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Row B
         '🇧': async function(user, instance) {
           if (currentPlayer === user.id) {
-            row = 1;
+            rowChoice = 1;
             instance.currentEmbed.fields[1].value = 'B';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Row C
         '🇨': async function(user, instance) {
           if (currentPlayer === user.id) {
-            row = 2;
+            rowChoice = 2;
             instance.currentEmbed.fields[1].value = 'C';
-            if (row !== null && column !== null) {
-              await playerMove(row, column, user, instance);
-              return (row = null), (column = null);
-            }
+            await playerMove(rowChoice, columnChoice, user, instance);
+            return;
           }
         },
         // Refresh Image
@@ -257,6 +245,10 @@ module.exports = class TicTacToeCommand extends Command {
     }
 
     async function playerMove(row, column, user, instance) {
+      // Wait for both
+      if (row === null || column === null) {
+        return;
+      }
       // Reset embed fields 'Column' & 'Row' for next turn
       instance.currentEmbed.fields[0].value = 'None';
       instance.currentEmbed.fields[1].value = 'None';
@@ -280,8 +272,19 @@ module.exports = class TicTacToeCommand extends Command {
             .setTitle(`Tic Tac Toe - Player 1's Turn`)
             .setColor('RED');
         }
+        // No More Possible Moves
+        if (!emptySpaces(gameBoard)) {
+          instance
+            .setImage(boardImageURL)
+            .setTitle(`Tic Tac Toe - Game Over`)
+            .setColor('GREY')
+            .setTimestamp();
+          currentPlayer = 'Game Over';
+          return;
+        }
         await createBoard(message);
         ++currentTurn;
+        (columnChoice = null), (rowChoice = null);
       }
 
       if (checkWinner(gameBoard) === 0) {
@@ -301,6 +304,19 @@ module.exports = class TicTacToeCommand extends Command {
         currentPlayer = 'Game Over';
         return;
       }
+    }
+
+    // Check for available spaces
+    function emptySpaces(board) {
+      let result = false;
+      for (let columnIndex = 0; columnIndex < 3; ++columnIndex) {
+        for (let rowIndex = 0; rowIndex < 3; ++rowIndex) {
+          if (board[columnIndex][rowIndex] == 0) {
+            result = true;
+          }
+        }
+      }
+      return result;
     }
 
     // Check for Win Conditions
