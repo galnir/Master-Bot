@@ -1,7 +1,7 @@
 # A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
-[![image](https://img.shields.io/badge/node-%3E%3D%2012.0.0-blue)](https://nodejs.org/)
+[![image](https://img.shields.io/badge/node-%3E%3D%2014.0.0-blue)](https://nodejs.org/)
 
 ### Installing the dependencies
 
@@ -35,7 +35,9 @@ Make a config.json file in the root directory of the project and add:
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
   "twitchClientID": "Your-Client-ID",
-  "twitchClientSecret": "Your-Client-Secret"
+  "twitchClientSecret": "Your-Client-Secret",
+  "rawgAPI": "rawg-api-key"
+
 }
 ```
 
@@ -43,9 +45,33 @@ Note: When setting `"invite": true` remember to enable the Public Bot option in 
 
 I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
 
-Also, no matter what operating system you have, make sure [python 2.7](https://www.python.org/downloads/) is installed. **Discord.js now requires Node version greater than or equal to 12.0.0** .
+Also, no matter what operating system you have, make sure [python 2.7](https://www.python.org/downloads/) is installed. **Make sure that your Node.js version is v14 at least.** .
 
 If you are not cloning this repo, make sure your dependencies versions are the same as this repo's.
+
+### Options
+
+Default Template for options.json
+
+```
+{
+  "playLiveStreams": true,
+  "playVideosLongerThan1Hour": true,
+  "maxQueueLength": 1000,
+  "AutomaticallyShuffleYouTubePlaylists": false,
+  "LeaveTimeOut": 90,
+  "MaxResponseTime": 30,
+  "deleteOldPlayMessage": false
+}
+```
+
+- playLiveStreams : Allow to play Live Streams (`true`,`false`)
+- playVideosLongerThan1Hour : Allow to play videos longer than 1 hour (`true`,`false`)
+- maxQueueLength : Maximum numbers of songs that can be in queue (`integer > 1`)
+- AutomaticallyShuffleYouTubePlaylists : Automatic shuffle YouTube playlists : (`true`,`false`)
+- LeaveTimeOut : Timeout in seconds before bot leaves channel due to inactivity.(`integer` between `1` and `600`)
+- MaxResponseTime : Maximum time in seconds allowed for user to response back to bot before cancelling command (example: using !play song name) : (`integer` between `5` and `150`)
+- deleteOldPlayMessage : Remove play message after playing or no : (`true`,`false`)
 
 ### Commands
 
@@ -76,6 +102,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !lyrics               | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name                                                 |
 | !now-playing          | Display the current playing song with a playback bar                                                                      | !now-playing                                                      |
 | !move                 | Move song to a desired position in queue                                                                                  | !move 8 1                                                         |
+| !history              | Display the queue history                                                                                                 | !history                                                          |
 
 - Other
 
@@ -105,6 +132,7 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !twitchstatus     | A quick check to see if a streamer is currently online. or to give a shout-out a fellow streamer                                                                   | !twitchstatus MasterBot or !tso MasterBot                                    |
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                 | !tv-show-search Duck                                                         |
 | !nickname         | Sets the selected member's nickname with the provided nickname                                                                                                     | !nickname @Master-Bot Master                                                 |
+| !game-search      | Search for game information                                                                                                                                        | !game-search super metroid                                                   |
 
 - Gifs
 
@@ -126,6 +154,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 | !welcome-message           | Allows you to toggle the welcome message for new members that join the server. | !welcome-message enable              |
 | !twitch-announcer          | Allows you to Enable, Disable or Check the Twitch Announcer.                   | !ta enable                           |
 | !twitch-announcer-settings | Settings for the Twitch Announcer.                                             | !tasettings Bacon_Fixation general 1 |
+| !add-role                  | Adds a specific role to a specified user.                                      | !add-role @johndoe admin             |
+| !remove-role               | Removes a specific role from a specified user.                                 | !remove-role @johndoe admin          |
 
 ### Resources
 
@@ -138,6 +168,8 @@ If you are not cloning this repo, make sure your dependencies versions are the s
 [Get a Genius API key here](https://genius.com/api-clients/new)
 
 [How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+
+[Get a rawg API key here](https://rawg.io/apidocs)
 
 [Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
@@ -152,11 +184,17 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'connect4', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
 [Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
+
+[kfirmeg](https://github.com/kfirmeg) - play command flags, dockerization, docker wiki
+
+[rafaeldamasceno](https://github.com/rafaeldamasceno) - 'music-trivia' and Dockerfile improvements
+
+[meiaihara06](https://github.com/meiaihara06) - 'LeaveTimeOut' and 'MaxResponseTime' options
 
 [malokdev](https://github.com/malokdev) - 'uptime' command
 

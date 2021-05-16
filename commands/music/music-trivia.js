@@ -155,60 +155,14 @@ module.exports = class MusicTriviaCommand extends Command {
             if (!message.guild.triviaData.triviaScore.has(msg.author.username))
               return;
             if (msg.content.startsWith(prefix)) return;
-            // if user guessed song name
-            if (msg.content.toLowerCase() === queue[0].title.toLowerCase()) {
-              if (songNameFound) return; // if song name already found
-              songNameFound = true;
 
-              if (songNameFound && songSingerFound) {
-                message.guild.triviaData.triviaScore.set(
-                  msg.author.username,
-                  message.guild.triviaData.triviaScore.get(
-                    msg.author.username
-                  ) + 1
-                );
-                msg.react('☑');
-                return collector.stop();
-              }
-              message.guild.triviaData.triviaScore.set(
-                msg.author.username,
-                message.guild.triviaData.triviaScore.get(msg.author.username) +
-                  1
-              );
-              msg.react('☑');
-            }
-            // if user guessed singer
-            else if (
-              msg.content.toLowerCase() === queue[0].singer.toLowerCase()
-            ) {
-              if (songSingerFound) return;
-              songSingerFound = true;
-              if (songNameFound && songSingerFound) {
-                message.guild.triviaData.triviaScore.set(
-                  msg.author.username,
-                  message.guild.triviaData.triviaScore.get(
-                    msg.author.username
-                  ) + 1
-                );
-                msg.react('☑');
-                return collector.stop();
-              }
-
-              message.guild.triviaData.triviaScore.set(
-                msg.author.username,
-                message.guild.triviaData.triviaScore.get(msg.author.username) +
-                  1
-              );
-              msg.react('☑');
-            } else if (
-              msg.content.toLowerCase() ===
-                queue[0].singer.toLowerCase() +
-                  ' ' +
-                  queue[0].title.toLowerCase() ||
-              msg.content.toLowerCase() ===
-                queue[0].title.toLowerCase() +
-                  ' ' +
-                  queue[0].singer.toLowerCase()
+            let guess = normalizeValue(msg.content);
+            let title = normalizeValue(queue[0].title);
+            let singer = normalizeValue(queue[0].singer);
+            
+            // if user guessed both
+            if (
+              guess.includes(singer) && guess.includes(title)
             ) {
               if (
                 (songSingerFound && !songNameFound) ||
@@ -230,6 +184,52 @@ module.exports = class MusicTriviaCommand extends Command {
               );
               msg.react('☑');
               return collector.stop();
+            } 
+            // if user guessed singer
+            else if (
+              guess.includes(singer)
+            ) {
+              if (songSingerFound) return; // if singer has already been found
+              songSingerFound = true;
+              if (songNameFound && songSingerFound) {
+                message.guild.triviaData.triviaScore.set(
+                  msg.author.username,
+                  message.guild.triviaData.triviaScore.get(
+                    msg.author.username
+                  ) + 1
+                );
+                msg.react('☑');
+                return collector.stop();
+              }
+
+              message.guild.triviaData.triviaScore.set(
+                msg.author.username,
+                message.guild.triviaData.triviaScore.get(msg.author.username) +
+                  1
+              );
+              msg.react('☑');
+            } 
+            // if user guessed song name
+            else if (guess.includes(title)) {
+              if (songNameFound) return; // if song name has already been found
+              songNameFound = true;
+
+              if (songNameFound && songSingerFound) {
+                message.guild.triviaData.triviaScore.set(
+                  msg.author.username,
+                  message.guild.triviaData.triviaScore.get(
+                    msg.author.username
+                  ) + 1
+                );
+                msg.react('☑');
+                return collector.stop();
+              }
+              message.guild.triviaData.triviaScore.set(
+                msg.author.username,
+                message.guild.triviaData.triviaScore.get(msg.author.username) +
+                  1
+              );
+              msg.react('☑');
             } else {
               // wrong answer
               return msg.react('❌');
@@ -348,3 +348,11 @@ module.exports = class MusicTriviaCommand extends Command {
     });
   }
 };
+
+var normalizeValue = value => 
+  value
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove diacritics
+  .replace(/[^0-9a-zA-Z\s]/g, '') // remove non-alphanumeric characters
+  .trim()
+  .replace(/\s+/g,' ')
+  .toLowerCase(); // remove duplicate spaces

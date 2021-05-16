@@ -64,12 +64,14 @@ module.exports = class LyricsCommand extends Command {
 
       for (let i = 1; i <= lyricsIndex; ++i) {
         let b = i - 1;
-        lyricsArray.push(
-          new MessageEmbed()
-            .setTitle(`Lyrics Page #` + i)
-            .setDescription(lyrics.slice(b * 2048, i * 2048))
-            .setFooter('Provided by genius.com')
-        );
+        if (lyrics.trim().slice(b * 2048, i * 2048).length !== 0) {
+          lyricsArray.push(
+            new MessageEmbed()
+              .setTitle(`Lyrics Page #` + i)
+              .setDescription(lyrics.slice(b * 2048, i * 2048))
+              .setFooter('Provided by genius.com')
+          );
+        }
       }
 
       const lyricsEmbed = new Pagination.Embeds()

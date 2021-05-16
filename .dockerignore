@@ -1,0 +1,15 @@
+# Docker files
+Dockerfile
+.dockerignore
+
+# Git files
+.git
+.github
+.gitignore
+LICENSE
+README.md
+
+# Node modules and lint settings
+node_modules
+.eslintrc.json
+.prettierrc
