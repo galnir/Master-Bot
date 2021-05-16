@@ -11,6 +11,7 @@ Structures.extend('Guild', function(Guild) {
       super(client, data);
       this.musicData = {
         queue: [],
+        queueHistory: [],
         isPlaying: false,
         nowPlaying: null,
         songDispatcher: null,

@@ -107,37 +107,94 @@ module.exports = class PlayCommand extends Command {
 
       // Found a playlist with a name matching the query and it's not empty
       if (found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
+        const fields = [
+          {
+            name: ':arrow_forward: Playlist',
+            value: '1. Play saved playlist'
+          },
+          {
+            name: ':twisted_rightwards_arrows: Shuffle Playlist',
+            value: '2. Shuffle & Play saved playlist'
+          },
+          {
+            name: ':mag: YouTube',
+            value: '3. Search on YouTube'
+          },
+          {
+            name: ':x: Cancel',
+            value: '4. Cancel'
+          }
+        ];
+
+        let hasHistoryField = false;
+        const index = String(Number(query) - 1);
+        if (
+          Number(query) &&
+          typeof message.guild.musicData.queueHistory[index] !== 'undefined'
+        ) {
+          hasHistoryField = true;
+          fields.unshift({
+            name: ':arrow_backward: Previously played song',
+            value: `0. Play '${message.guild.musicData.queueHistory[index].title}'`
+          });
+        }
+
         const clarificationEmbed = new MessageEmbed()
           .setColor('#ff0000')
           .setTitle(':eyes: Clarification Please.')
+          .addFields(fields)
           .setDescription(
             `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
           )
-          .addField(':arrow_forward: Playlist', '1. Play saved playlist')
-          .addField(
-            ':twisted_rightwards_arrows: Shuffle Playlist',
-            '2. Shuffle & Play saved playlist'
-          )
-          .addField(':mag: YouTube', '3. Search on YouTube')
-          .addField(':x: Cancel', '4. Cancel')
-          .setFooter('Choose by commenting a number between 1 and 4.');
+          .setFooter('Choose by commenting a valid number.');
+
         const ClarificationEmbedMessage = await message.channel.send(
           clarificationEmbed
         );
 
         // Wait for a proper response on the clarification embed
         message.channel
-          .awaitMessages(msg => ['1', '2', '3', '4'].includes(msg.content), {
-            max: 1,
-            time: MaxResponseTime * 1000,
-            errors: ['time']
-          })
+          .awaitMessages(
+            msg => ['0', '1', '2', '3', '4'].includes(msg.content),
+            {
+              max: 1,
+              time: MaxResponseTime * 1000,
+              errors: ['time']
+            }
+          )
           .then(async function onProperResponse(response) {
             response = response.first().content;
             if (ClarificationEmbedMessage)
               ClarificationEmbedMessage.delete().catch(console.error);
 
             switch (response) {
+              case '0':
+                if (!hasHistoryField) break;
+                if (!message.guild.musicData.isPlaying) {
+                  message.guild.musicData.queue.unshift(
+                    message.guild.musicData.queueHistory[index]
+                  );
+                  playSong(message.guild.musicData.queue, message);
+                  break;
+                }
+                if (nextFlag || jumpFlag) {
+                  message.guild.musicData.queue.unshift(
+                    message.guild.musicData.queueHistory[index]
+                  );
+                  if (jumpFlag) {
+                    message.guild.musicData.loopSong = false;
+                    message.guild.musicData.songDispatcher.end();
+                  }
+                } else {
+                  message.guild.musicData.queue.push(
+                    message.guild.musicData.queueHistory[index]
+                  );
+                }
+                message.reply(
+                  `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+                );
+
+                break;
               // 1: Play the saved playlist
               case '1':
                 playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
@@ -202,6 +259,79 @@ module.exports = class PlayCommand extends Command {
           });
         return;
       }
+    }
+
+    // check if the user wants to play a song from the history queue
+    if (Number(query)) {
+      const index = String(Number(query) - 1);
+      // continue if there's no index matching the query on the history queue
+      if (typeof message.guild.musicData.queueHistory[index] === 'undefined') {
+        return;
+      }
+      const clarificationEmbed = new MessageEmbed()
+        .setColor('#ff0000')
+        .setTitle(':eyes: Clarification Please.')
+        .setDescription(`Did you mean to play a song from the history queue?`)
+        .addField(
+          `:arrow_forward: History Queue`,
+          `1. Play song number ${query}`
+        )
+        .addField(`:mag: YouTube`, `2. Search '${query}' on YouTube`)
+        .addField(':x: Cancel', '3. Cancel')
+        .setFooter('Choose by commenting a number between 1 and 3.');
+      const ClarificationEmbedMessage = await message.channel.send(
+        clarificationEmbed
+      );
+
+      // Wait for a proper response on the clarification embed
+      message.channel
+        .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
+          max: 1,
+          time: MaxResponseTime * 1000,
+          errors: ['time']
+        })
+        .then(async function onProperResponse(response) {
+          response = response.first().content;
+          if (ClarificationEmbedMessage)
+            ClarificationEmbedMessage.delete().catch(console.error);
+
+          switch (response) {
+            // 1: Play a song from the history queue
+            case '1':
+              if (!message.guild.musicData.isPlaying) {
+                message.guild.musicData.queue.unshift(
+                  message.guild.musicData.queueHistory[index]
+                );
+                playSong(message.guild.musicData.queue, message);
+                break;
+              }
+              if (nextFlag || jumpFlag) {
+                message.guild.musicData.queue.unshift(
+                  message.guild.musicData.queueHistory[index]
+                );
+                if (jumpFlag) {
+                  message.guild.musicData.loopSong = false;
+                  message.guild.musicData.songDispatcher.end();
+                }
+              } else {
+                message.guild.musicData.queue.push(
+                  message.guild.musicData.queueHistory[index]
+                );
+              }
+              message.reply(
+                `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+              );
+              break;
+            // 2: Search for the query on YouTube
+            case '2':
+              await searchYoutube(query, message, message.member.voice.channel);
+              break;
+            // 3: Cancel
+            case '3':
+              break;
+          }
+        });
+      return;
     }
 
     if (isYouTubePlaylistURL(query)) {
@@ -418,6 +548,14 @@ var playSong = (queue, message) => {
             `${message.member.guild.id}.serverSettings.volume`,
             message.guild.musicData.songDispatcher.volume
           );
+
+          message.guild.musicData.queueHistory.unshift(
+            message.guild.musicData.nowPlaying
+          );
+          // limit the history queue at 1000 elements
+          if (message.guild.musicData.queueHistory.length > 1000) {
+            message.guild.musicData.queueHistory.pop();
+          }
 
           queue = message.guild.musicData.queue;
           if (message.guild.musicData.loopSong) {

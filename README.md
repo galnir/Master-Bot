@@ -102,6 +102,7 @@ Default Template for options.json
 | !lyrics               | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name                                                 |
 | !now-playing          | Display the current playing song with a playback bar                                                                      | !now-playing                                                      |
 | !move                 | Move song to a desired position in queue                                                                                  | !move 8 1                                                         |
+| !history              | Display the queue history                                                                                                 | !history                                                          |
 
 - Other
 
