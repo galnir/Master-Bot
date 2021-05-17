@@ -301,18 +301,15 @@ module.exports = class TicTacToeCommand extends Command {
         ++currentTurn;
       }
 
-      // No More Possible Moves
-      if (!emptySpaces(gameBoard)) {
-        instance
-          .setImage(boardImageURL)
-          .setTitle(`Tic Tac Toe - Game Over`)
-          .setColor('GREY')
-          .setThumbnail('')
-          .setTimestamp();
-        return (currentPlayer = 'Game Over');
-      }
-
       if (checkWinner(gameBoard) === 0) {
+        // No More Possible Moves
+        if (!emptySpaces(gameBoard)) {
+          instance
+            .setTitle(`Tic Tac Toe - Game Over`)
+            .setColor('GREY')
+            .setThumbnail('');
+          currentPlayer = 'Game Over';
+        }
         return instance.setImage(boardImageURL).setTimestamp();
       } else {
         instance
