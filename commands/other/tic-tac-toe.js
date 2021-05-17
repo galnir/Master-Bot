@@ -44,15 +44,23 @@ module.exports = class TicTacToeCommand extends Command {
     const player1Avatar = player1.displayAvatarURL({
       format: 'jpg'
     });
+
+    const player1Piece =
+      player1Avatar.length > 0 ? await Canvas.loadImage(player1Avatar) : null;
+
     const player2Avatar = player2.avatarURL({
       format: 'jpg'
     });
+    const player2Piece =
+      player1Avatar.length > 0 ? await Canvas.loadImage(player2Avatar) : null;
+
     let gameBoard = [
       [0, 0, 0], //row 1
       [0, 0, 0],
       [0, 0, 0]
       // column ->
     ];
+
     let rowChoice = null;
     let columnChoice = null;
     let currentPlayer = player1.id;
@@ -72,7 +80,7 @@ module.exports = class TicTacToeCommand extends Command {
       .setDescription(
         `Use the emojis 1️⃣, 2️⃣, 3️⃣ for columns and 🇦, 🇧, 🇨 for rows.\n
          You must click both a **Number** and a **Letter** to place your colored square in that space.\n
-         You have 1 minute per turn or it's an automatic forfeit.\n
+         You have 1 minute per turn or it's an automatic forfeit.
          Incase of invisible board click 🔄.`
       )
       .addField('Column', 'None', true)
@@ -90,7 +98,6 @@ module.exports = class TicTacToeCommand extends Command {
             columnChoice = 0;
             instance.currentEmbed.fields[0].value = '1';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
         // Column 2
@@ -99,7 +106,6 @@ module.exports = class TicTacToeCommand extends Command {
             columnChoice = 1;
             instance.currentEmbed.fields[0].value = '2';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
         // Column 3
@@ -108,7 +114,6 @@ module.exports = class TicTacToeCommand extends Command {
             columnChoice = 2;
             instance.currentEmbed.fields[0].value = '3';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
         // Row A
@@ -117,16 +122,13 @@ module.exports = class TicTacToeCommand extends Command {
             rowChoice = 0;
             instance.currentEmbed.fields[1].value = 'A';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
-        // Row B
         '🇧': async function(user, instance) {
           if (currentPlayer === user.id) {
             rowChoice = 1;
             instance.currentEmbed.fields[1].value = 'B';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
         // Row C
@@ -135,7 +137,6 @@ module.exports = class TicTacToeCommand extends Command {
             rowChoice = 2;
             instance.currentEmbed.fields[1].value = 'C';
             await playerMove(rowChoice, columnChoice, user, instance);
-            return;
           }
         },
         // Refresh Image
@@ -197,31 +198,51 @@ module.exports = class TicTacToeCommand extends Command {
 
           // Player 1 Pieces
           if (gameBoard[rowIndex][columnIndex] === 1) {
-            ctx.fillStyle = 'red';
-            ctx.shadowColor = 'grey';
-            ctx.shadowBlur = 5;
-            ctx.shadowOffsetX = 4;
-            ctx.shadowOffsetY = 2;
-            ctx.fillRect(
-              positionX * columnIndex,
-              positionY * rowIndex,
-              pieceSize,
-              pieceSize
-            );
+            if (player1Piece) {
+              ctx.drawImage(
+                player1Piece,
+                positionX * columnIndex,
+                positionY * rowIndex,
+                pieceSize,
+                pieceSize
+              );
+            } else {
+              ctx.fillStyle = 'red';
+              ctx.shadowColor = 'grey';
+              ctx.shadowBlur = 5;
+              ctx.shadowOffsetX = 4;
+              ctx.shadowOffsetY = 2;
+              ctx.fillRect(
+                positionX * columnIndex,
+                positionY * rowIndex,
+                pieceSize,
+                pieceSize
+              );
+            }
           }
           // Player 2 Pieces
           if (gameBoard[rowIndex][columnIndex] === 2) {
-            ctx.fillStyle = 'blue';
-            ctx.shadowColor = 'grey';
-            ctx.shadowBlur = 5;
-            ctx.shadowOffsetX = 4;
-            ctx.shadowOffsetY = 2;
-            ctx.fillRect(
-              positionX * columnIndex,
-              positionY * rowIndex,
-              pieceSize,
-              pieceSize
-            );
+            if (player2Piece) {
+              ctx.drawImage(
+                player2Piece,
+                positionX * columnIndex,
+                positionY * rowIndex,
+                pieceSize,
+                pieceSize
+              );
+            } else {
+              ctx.fillStyle = 'blue';
+              ctx.shadowColor = 'grey';
+              ctx.shadowBlur = 5;
+              ctx.shadowOffsetX = 4;
+              ctx.shadowOffsetY = 2;
+              ctx.fillRect(
+                positionX * columnIndex,
+                positionY * rowIndex,
+                pieceSize,
+                pieceSize
+              );
+            }
           }
         }
       }
@@ -249,7 +270,9 @@ module.exports = class TicTacToeCommand extends Command {
       if (row === null || column === null) {
         return;
       }
-      // Reset embed fields 'Column' & 'Row' for next turn
+
+      // Reset 'Column' & 'Row' for next turn
+      (columnChoice = null), (rowChoice = null);
       instance.currentEmbed.fields[0].value = 'None';
       instance.currentEmbed.fields[1].value = 'None';
 
@@ -263,28 +286,30 @@ module.exports = class TicTacToeCommand extends Command {
           instance
             .setThumbnail(player2Avatar)
             .setTitle(`Tic Tac Toe - Player 2's Turn`)
-            .setColor('BLUE');
+            .setColor('BLUE')
+            .setTimestamp();
         } else {
           gameBoard[row][column] = 2;
           currentPlayer = player1.id;
           instance
             .setThumbnail(player1Avatar)
             .setTitle(`Tic Tac Toe - Player 1's Turn`)
-            .setColor('RED');
-        }
-        // No More Possible Moves
-        if (!emptySpaces(gameBoard)) {
-          instance
-            .setImage(boardImageURL)
-            .setTitle(`Tic Tac Toe - Game Over`)
-            .setColor('GREY')
+            .setColor('RED')
             .setTimestamp();
-          currentPlayer = 'Game Over';
-          return;
         }
         await createBoard(message);
         ++currentTurn;
-        (columnChoice = null), (rowChoice = null);
+      }
+
+      // No More Possible Moves
+      if (!emptySpaces(gameBoard)) {
+        instance
+          .setImage(boardImageURL)
+          .setTitle(`Tic Tac Toe - Game Over`)
+          .setColor('GREY')
+          .setThumbnail('')
+          .setTimestamp();
+        return (currentPlayer = 'Game Over');
       }
 
       if (checkWinner(gameBoard) === 0) {
