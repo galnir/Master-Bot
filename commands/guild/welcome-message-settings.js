@@ -21,7 +21,8 @@ module.exports = class WelcomeSettingsCommand extends Command {
         '```' + `${prefix}welcomesettings - to restore Defaults`,
         `${prefix}welcomesettings "Channel-name" "My Title" "Upper Text" "MainText" "My Wallpaper URL" 700 250`,
         `${prefix}welcomesettings "" "My Title" "Upper Text" "" "" 800 400`,
-        `${prefix}welcomesettings "s" "s" "s" "Upper Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings` +
+        `${prefix}welcomesettings "s" "s" "s" "Main Text" "My Wallpaper URL" "700" "250" - to only change the Main Text and Wallpaper settings`,
+        `${prefix}welcomesettings "s" "s" "Welcome to {serverName}" "{memberName}" "My Wallpaper URL" "700" "250" - You can use "{serverName}" to parse the server name and "{memberName}" to parse Members Name to the Image` +
           '```'
       ],
       description:
