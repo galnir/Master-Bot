@@ -14,6 +14,8 @@ module.exports = class BotStatusCommand extends Command {
   }
 
   async run(message) {
+    const isOwner = this.client.isOwner(message.author);
+
     // CPU information
     function cpuAverage() {
       var totalIdle = 0,
@@ -113,19 +115,16 @@ module.exports = class BotStatusCommand extends Command {
       .setThumbnail(this.client.user.displayAvatarURL())
       .setTitle(`Status of ${this.client.user.username}`)
       .setColor('#ff0000');
-    if (this.client.isOwner(message.author)) {
-      StatusEmbed.addField('CPU Load', (await getCPULoadAVG()) + '%', true);
-    }
+
+    if (isOwner)
+      StatusEmbed.addField('CPU Load', (await getCPULoadAVG()) + '%', true)
+        .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
+        .addField(`Platform`, `${platform} ${archInfo}`, true);
+
     StatusEmbed.addField(
-      `Memory Usage`,
-      `${Math.round(used * 100) / 100}MB`,
-      true
+      `Uptime`,
+      `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
     )
-      .addField(`Platform`, `${platform} ${archInfo}`, true)
-      .addField(
-        `Uptime`,
-        `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
-      )
       .addField('Operated By', this.client.owners)
       .addField(
         'Available Commands',
@@ -135,13 +134,16 @@ module.exports = class BotStatusCommand extends Command {
         'Servers, Users',
         `On ${this.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
       )
-      .addField(
+
+      .setFooter('Created', this.client.user.avatarURL())
+      .setTimestamp(this.client.user.createdAt);
+
+    if (isOwner)
+      StatusEmbed.addField(
         'Dependency List',
         `node: ${process.version.replace(/v/, '')}
         ${libList}`
-      )
-      .setFooter('Created', this.client.user.avatarURL())
-      .setTimestamp(this.client.user.createdAt);
+      );
 
     message.channel.send(StatusEmbed);
   }
