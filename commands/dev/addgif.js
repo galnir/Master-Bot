@@ -50,8 +50,7 @@ module.exports = class AddGifCommand extends Command {
 
     async run(message, { gifURL, gifTYPE, txtFILE }) {
         if (message.member.roles.cache.some(r => [
-                '834453807056289794',
-                '812947164937715712'
+                'ROLE_ID'
             ].includes(r.id))) {
                    
 
