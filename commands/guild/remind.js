@@ -24,7 +24,7 @@ module.exports = class RemindCommand extends Command {
           validate: function checkNumber(num) {
             if (num > 0) return true;
           },
-          error: ':x: Must be a **Number** and greater than 0'
+          error: ':x: Must be a **Number** and greater than 0.'
         },
         {
           key: 'unit',
@@ -71,20 +71,14 @@ module.exports = class RemindCommand extends Command {
       : number;
 
     message.channel.send(
-      `:white_check_mark: Reminder is set: ${
-        reminderMessage ? reminderMessage : ''
-      }`
+      `:white_check_mark: Reminder is set: ${reminderMessage}`
     );
     setTimeout(() => {
       if (mention == 'author') {
-        message.reply(
-          `:alarm_clock: Reminder: ${reminderMessage ? reminderMessage : ''}`
-        );
+        message.reply(`:alarm_clock: Reminder: ${reminderMessage}`);
       } else {
         message.channel.send(
-          `${mention} :alarm_clock: Reminder: ${
-            reminderMessage ? reminderMessage : ''
-          }`
+          `${mention} :alarm_clock: Reminder: ${reminderMessage}`
         );
       }
     }, timer * 60000);
