@@ -9,7 +9,10 @@ module.exports = class RemindCommand extends Command {
       memberName: 'remind',
       description: 'Sets a timed alert',
       userPermissions: ['ADMINISTRATOR'],
-      examples: ['!remind "Cookies" 2 h', '!remind "Cookies" 2 h @everyone'],
+      examples: [
+        '!remind "Cookies" 2 h',
+        '!remind "Cookies Time!!!" 2 h @everyone'
+      ],
       guildOnly: true,
       args: [
         {
