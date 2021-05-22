@@ -26,6 +26,11 @@ Structures.extend('Guild', function(Guild) {
         triviaQueue: [],
         triviaScore: new Map()
       };
+      this.twitchData = {
+        Interval: null,
+        embedStatus: null,
+        isRunning: false
+      };
     }
     resetMusicDataOnError() {
       this.musicData.queue.length = 0;
@@ -37,20 +42,6 @@ Structures.extend('Guild', function(Guild) {
     }
   }
   return MusicGuild;
-});
-
-Structures.extend('Guild', function(Guild) {
-  class TwitchGuild extends Guild {
-    constructor(client, data) {
-      super(client, data);
-      this.twitchData = {
-        Interval: null,
-        embedStatus: null,
-        isRunning: false
-      };
-    }
-  }
-  return TwitchGuild;
 });
 
 const client = new CommandoClient({
