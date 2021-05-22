@@ -26,17 +26,17 @@ module.exports = class AddGifCommand extends Command {
                 'SEND_MESSAGES'
             ],
             args: [{
-                    key: 'gifTYPE',
+                    key: 'gifCategory',
                     prompt: 'Is the gif SFW or NSFW?',
                     type: 'string'
                 },
                 {
-                    key: 'txtFILE',
-                    prompt: 'Please select a File Name from the list below:\n\n**__SFW__**\n\nAnime\nBaka\nGintama\nJojo\nSlap\n\nHug\nKiss\n\n**__NSFW__**\n\nBlowjob\nBoobs\nHentai\nFurry\nFuta\nTrap\n',
+                    key: 'txtFilePath',
+                    prompt: 'Please select a File Name from the list below:\n\n**__SFW__**\n\nGintama\nJojo\n\n**__NSFW__**\n\nBlowjob\nBoobs\nHentai\nFurry\nFuta\nTrap\n',
                     type: 'string'
                 },
                 {
-                    key: 'gifURL',
+                    key: 'Url',
                     prompt: 'Which gif would you like to add?',
                     type: 'string'
                 }
@@ -48,15 +48,15 @@ module.exports = class AddGifCommand extends Command {
         });
     }
 
-    async run(message, { gifURL, gifTYPE, txtFILE }) {
+    async run(message, { gifCategory, txtFilePath, Url }) {
         if (message.member.roles.cache.some(r => [
+                'ROLE_ID',
                 'ROLE_ID'
             ].includes(r.id))) {
-                   
 
-            fs.writeTxtFILE('././resources/gifs/' + gifTYPE + '/' + txtFILE + '.txt', gifURL + '\n', { flag: 'a+' }, (err) => {
+            fs.writeTxtFILE('././resources/gifs/' + gifCategory + '/' + txtFilePath + '.txt', Url + '\n', { flag: 'a+' }, (err) => {
                 if (err) return console.error(err)
-                else return message.channel.send('<a:legit_tick:834269513498492968> Successfully added `' + gifURL + '` to `../../resources/gifs/' + gifTYPE + '/' + txtFILE + '/.txt`')
+                else return message.channel.send('<a:legit_tick:834269513498492968> Successfully added `' + Url + '` to `../../resources/gifs/' + gifCategory + '/' + txtFilePath + '/.txt`')
             })
         } else {
             return message.channel.send(':x: This command can only be used by my Developers...').catch(err => {
