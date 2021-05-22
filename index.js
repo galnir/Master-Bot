@@ -6,7 +6,7 @@ const db = require('quick.db');
 const Canvas = require('canvas');
 
 Structures.extend('Guild', function(Guild) {
-  class MusicGuild extends Guild {
+  class GuildData extends Guild {
     constructor(client, data) {
       super(client, data);
       this.musicData = {
@@ -41,7 +41,7 @@ Structures.extend('Guild', function(Guild) {
       this.musicData.songDispatcher = null;
     }
   }
-  return MusicGuild;
+  return GuildData;
 });
 
 const client = new CommandoClient({
