@@ -149,24 +149,6 @@ module.exports = class TwitchAnnouncerCommand extends Command {
           );
 
           try {
-            user = await TwitchAPI.getUserInfo(
-              TwitchAPI.access_token,
-              twitchClientID,
-              `${DBInfo.name}`
-            );
-          } catch (e) {
-            ++failedAttempts;
-            if (failedAttempts == 5) {
-              message.guild.twitchData.isRunning = false;
-              message.guild.twitchData.Interval = clearInterval(
-                message.guild.twitchData.Interval
-              );
-              message.reply(':x: Twitch Announcer has stopped!\n' + e);
-            }
-            return;
-          }
-
-          try {
             var streamInfo = await TwitchAPI.getStream(
               TwitchAPI.access_token,
               twitchClientID,
@@ -328,6 +310,24 @@ module.exports = class TwitchAnnouncerCommand extends Command {
 
           // Offline Status
           if (message.guild.twitchData.embedStatus == 'offline') {
+            try {
+              user = await TwitchAPI.getUserInfo(
+                TwitchAPI.access_token,
+                twitchClientID,
+                `${DBInfo.name}`
+              );
+            } catch (e) {
+              ++failedAttempts;
+              if (failedAttempts == 5) {
+                message.guild.twitchData.isRunning = false;
+                message.guild.twitchData.Interval = clearInterval(
+                  message.guild.twitchData.Interval
+                );
+                message.reply(':x: Twitch Announcer has stopped!\n' + e);
+              }
+              return;
+            }
+
             const offlineEmbed = new MessageEmbed()
               .setAuthor(
                 `Twitch Announcement: ${user.data[0].display_name} Offline`,
