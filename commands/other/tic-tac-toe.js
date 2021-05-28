@@ -35,10 +35,12 @@ module.exports = class TicTacToeCommand extends Command {
     const player1 = message.author;
 
     if (player1.id === player2.id) {
-      return message.channel.send("Sorry can't play against yourself");
+      message.channel.send("Sorry can't play against yourself");
+      return;
     }
     if (player2.bot) {
-      return message.channel.send("Sorry can't play against a bot user");
+      message.channel.send("Sorry can't play against a bot user");
+      return;
     }
 
     const player1Avatar = player1.displayAvatarURL({
@@ -157,8 +159,8 @@ module.exports = class TicTacToeCommand extends Command {
       const ctx = canvas.getContext('2d');
 
       // Get Center to Center measurements for grid spacing
-      const positionX = 600 / 3;
-      const positionY = 600 / 3;
+      const positionX = 200;
+      const positionY = 200;
 
       // Tic-Tac-Toe Board
       ctx.fillStyle = 'black';
