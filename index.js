@@ -31,6 +31,9 @@ Structures.extend('Guild', function(Guild) {
         embedStatus: null,
         isRunning: false
       };
+      this.gameData = {
+        tictactoePlayers: new Map()
+      };
     }
     resetMusicDataOnError() {
       this.musicData.queue.length = 0;

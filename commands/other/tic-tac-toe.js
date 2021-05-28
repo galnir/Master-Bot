@@ -35,13 +35,24 @@ module.exports = class TicTacToeCommand extends Command {
     const player1 = message.author;
 
     if (player1.id === player2.id) {
-      message.channel.send("Sorry can't play against yourself");
+      message.reply("Sorry can't play against yourself");
       return;
     }
     if (player2.bot) {
-      message.channel.send("Sorry can't play against a bot user");
+      message.reply("Sorry can't play against a bot user");
       return;
     }
+    if (message.guild.gameData.tictactoePlayers.has(player1.id)) {
+      message.reply("You can't play more than 1 game at a time");
+      return;
+    }
+    if (message.guild.gameData.tictactoePlayers.has(player2.id)) {
+      message.reply(`${player2.username} is already playing`);
+      return;
+    }
+
+    message.guild.gameData.tictactoePlayers.set(player1.id, player1);
+    message.guild.gameData.tictactoePlayers.set(player2.id, player2);
 
     const player1Avatar = player1.displayAvatarURL({
       format: 'jpg'
@@ -311,8 +322,11 @@ module.exports = class TicTacToeCommand extends Command {
             .setColor('GREY')
             .setThumbnail('');
           currentPlayer = 'Game Over';
+          message.guild.gameData.tictactoePlayers.delete(player1.id);
+          message.guild.gameData.tictactoePlayers.delete(player2.id);
         }
-        return instance.setImage(boardImageURL).setTimestamp();
+        instance.setImage(boardImageURL).setTimestamp();
+        return;
       } else {
         instance
           .setImage(boardImageURL)
@@ -326,6 +340,8 @@ module.exports = class TicTacToeCommand extends Command {
           instance.setThumbnail(player1Avatar).setColor('RED');
         }
         currentPlayer = 'Game Over';
+        message.guild.gameData.tictactoePlayers.delete(player1.id);
+        message.guild.gameData.tictactoePlayers.delete(player2.id);
         return;
       }
     }
