@@ -133,6 +133,8 @@ Default Template for options.json
 | !tv-show-search   | Search for Tv shows with a keyword                                                                                                                                 | !tv-show-search Duck                                                         |
 | !nickname         | Sets the selected member's nickname with the provided nickname                                                                                                     | !nickname @Master-Bot Master                                                 |
 | !game-search      | Search for game information                                                                                                                                        | !game-search super metroid                                                   |
+| !connect4         | Play a game of Connect 4 against another player.                                                                                                                   | !connect4 @janedoe                                                           |
+| !tic-tac-toe      | Play a game of Tic Tac Toe against another player.                                                                                                                 | !tic-tac-toe @janedoe                                                        |
 
 - Gifs
 
@@ -184,7 +186,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - 'connect4', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+[Bacon Fixation](https://github.com/Bacon-Fixation) - 'connect4', 'tic-tac-toe', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
