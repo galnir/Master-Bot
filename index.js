@@ -32,6 +32,7 @@ Structures.extend('Guild', function(Guild) {
         isRunning: false
       };
       this.gameData = {
+        connect4Players: new Map(),
         tictactoePlayers: new Map()
       };
     }
