@@ -873,7 +873,6 @@ var interactiveEmbed = message => {
         .setDescription(songTitle + playbackBar(message.guild.musicData))
         .setTitle(':track_previous: Previous Track')
         .setTimeout(100);
-      console.log(message.guild.musicData.queueHistory);
       message.guild.musicData.queue.unshift(message.guild.musicData.nowPlaying);
       message.guild.musicData.queue.unshift(
         message.guild.musicData.queueHistory[0]
