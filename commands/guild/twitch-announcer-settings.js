@@ -52,7 +52,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         {
           key: 'streamChannel',
           prompt: 'What channel would you like to announce in?',
-          type: 'string'
+          type: 'channel'
         },
         {
           key: 'timer',
@@ -88,38 +88,11 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       return;
     }
 
-    // Search by name
-    let announcedChannel = message.guild.channels.cache.find(
-      channel => channel.name == streamChannel
-    );
-
-    // Search by id
-    if (message.guild.channels.cache.get(streamChannel))
-      announcedChannel = message.guild.channels.cache.get(streamChannel);
-
-    if (!announcedChannel) {
-      message.reply(':x: ' + streamChannel + ' could not be found.');
-      return;
-    }
-
     //Twitch Section
-    const scope = 'user:read:email';
     const textFiltered = textRaw.replace(/https\:\/\/twitch.tv\//g, '');
-    let access_token;
-    try {
-      access_token = await TwitchAPI.getToken(
-        twitchClientID,
-        twitchClientSecret,
-        scope
-      );
-    } catch (e) {
-      message.reply(':x: ' + e);
-      return;
-    }
-
     try {
       var user = await TwitchAPI.getUserInfo(
-        access_token,
+        TwitchAPI.access_token,
         twitchClientID,
         textFiltered
       );
@@ -133,8 +106,8 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
     Twitch_DB.set(`${message.guild.id}.twitchAnnouncer`, {
       botSay: sayMsg,
       name: user.data[0].display_name,
-      channelID: announcedChannel.id,
-      channel: announcedChannel.name,
+      channelID: streamChannel.id,
+      channel: streamChannel.name,
       timer: timer,
       savedName: message.member.displayName,
       savedAvatar: message.author.displayAvatarURL(),
@@ -158,7 +131,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
       .setThumbnail(user.data[0].profile_image_url)
       .addField('Pre-Notification Message', sayMsg)
       .addField(`Streamer`, user.data[0].display_name, true)
-      .addField(`Channel`, announcedChannel.name, true)
+      .addField(`Channel`, streamChannel.name, true)
       .addField(`Checking Interval`, `***${timer}*** minute(s)`, true)
       .addField('View Counter:', user.data[0].view_count, true);
     if (user.data[0].broadcaster_type == '')
@@ -177,7 +150,7 @@ module.exports = class TwitchAnnouncerSettingsCommand extends Command {
         .setTimestamp();
     }
 
-    //Send Reponse
+    //Send Response
     message.channel.send(embed);
   }
 };

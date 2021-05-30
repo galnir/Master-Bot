@@ -6,7 +6,7 @@ const db = require('quick.db');
 const Canvas = require('canvas');
 
 Structures.extend('Guild', function(Guild) {
-  class MusicGuild extends Guild {
+  class GuildData extends Guild {
     constructor(client, data) {
       super(client, data);
       this.musicData = {
@@ -26,6 +26,15 @@ Structures.extend('Guild', function(Guild) {
         triviaQueue: [],
         triviaScore: new Map()
       };
+      this.twitchData = {
+        Interval: null,
+        embedStatus: null,
+        isRunning: false
+      };
+      this.gameData = {
+        connect4Players: new Map(),
+        tictactoePlayers: new Map()
+      };
     }
     resetMusicDataOnError() {
       this.musicData.queue.length = 0;
@@ -36,7 +45,7 @@ Structures.extend('Guild', function(Guild) {
       this.musicData.songDispatcher = null;
     }
   }
-  return MusicGuild;
+  return GuildData;
 });
 
 const client = new CommandoClient({
@@ -132,69 +141,47 @@ client.on('guildMemberAdd', async member => {
     ctx.strokeStyle = '#000000';
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-    // Upper Text Options Default
-    if (welcomeMsgSettings.topImageText == 'default') {
-      ctx.font = '26px Open Sans Light'; // This needs to match the family Name on line 65
-      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
-      ctx.fillText(
-        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB -Default
-        canvas.width / 2.5,
-        canvas.height / 3.5
-      );
-      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
-      ctx.strokeText(
-        `Welcome to ${member.guild.name}`, //<-- didn't play nice being stored in DB -Default
-        canvas.width / 2.5,
-        canvas.height / 3.5
-      );
-    } else {
-      // Upper Text Options DB
-      ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 65
-      ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
-      ctx.fillText(
-        welcomeMsgSettings.topImageText,
-        canvas.width / 2.5,
-        canvas.height / 3.5
-      );
-      ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
-      ctx.strokeText(
-        welcomeMsgSettings.topImageText,
-        canvas.width / 2.5,
-        canvas.height / 3.5
-      );
-    }
+    // Upper Text Options
+    ctx.font = '26px Open Sans Light'; // if the font register changed this needs to match the family Name on line 65
+    ctx.fillStyle = '#FFFFFF'; // Main Color of the Text on the top of the welcome image
+    ctx.fillText(
+      welcomeMsgSettings.topImageText
+        .replace(/\{serverName\}/gi, member.guild.name)
+        .replace(/\{memberName\}/gi, member.displayName)
+        .replace('default', `Welcome to ${member.guild.name}`),
+      canvas.width / 2.5,
+      canvas.height / 3.5
+    );
+    ctx.strokeStyle = `#FFFFFF`; // Secondary Color of Text on the top of welcome for depth/shadow the stroke is under the main color
+    ctx.strokeText(
+      welcomeMsgSettings.topImageText
+        .replace(/\{serverName\}/gi, member.guild.name)
+        .replace(/\{memberName\}/gi, member.displayName)
+        .replace('default', `Welcome to ${member.guild.name}`),
+      canvas.width / 2.5,
+      canvas.height / 3.5
+    );
 
-    // Lower Text Options Defaults
-    if (welcomeMsgSettings.bottomImageText == 'default') {
-      ctx.font = applyText(canvas, `${member.displayName}!`);
-      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
-      ctx.fillText(
-        `${member.displayName}!`, //<-- didn't play nice being stored in DB -Default
-        canvas.width / 2.5,
-        canvas.height / 1.8
-      );
-      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
-      ctx.strokeText(
-        `${member.displayName}!`, //<-- didn't play nice being stored in DB -Default
-        canvas.width / 2.5,
-        canvas.height / 1.8
-      );
-    } else {
-      //Lower Text Options DB
-      ctx.font = applyText(canvas, `${member.displayName}!`);
-      ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
-      ctx.fillText(
-        welcomeMsgSettings.bottomImageText,
-        canvas.width / 2.5,
-        canvas.height / 1.8
-      );
-      ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
-      ctx.strokeText(
-        welcomeMsgSettings.bottomImageText,
-        canvas.width / 2.5,
-        canvas.height / 1.8
-      );
-    }
+    //Lower Text Options
+    ctx.font = applyText(canvas, `${member.displayName}!`);
+    ctx.fillStyle = '#FFFFFF'; // Main Color for the members name for the welcome image
+    ctx.fillText(
+      welcomeMsgSettings.bottomImageText
+        .replace(/\{serverName\}/gi, member.guild.name)
+        .replace(/\{memberName\}/gi, member.displayName)
+        .replace('default', `${member.displayName}!`),
+      canvas.width / 2.5,
+      canvas.height / 1.8
+    );
+    ctx.strokeStyle = `#FF0000`; // Secondary Color for the member name to add depth/shadow to the text
+    ctx.strokeText(
+      welcomeMsgSettings.bottomImageText
+        .replace(/\{serverName\}/gi, member.guild.name)
+        .replace(/\{memberName\}/gi, member.displayName)
+        .replace('default', `${member.displayName}!`),
+      canvas.width / 2.5,
+      canvas.height / 1.8
+    );
 
     // Avatar Shape Options
     ctx.beginPath();
@@ -220,12 +207,16 @@ client.on('guildMemberAdd', async member => {
       .attachFiles(attachment)
       .setImage('attachment://welcome-image.png')
       .setFooter(`Type help for a feature list!`)
-      .setTimestamp();
-    if (welcomeMsgSettings.embedTitle == 'default') {
-      embed.setTitle(
-        `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!` //<-- didn't play nice being stored in DB -Default
+      .setTimestamp()
+      .setTitle(
+        welcomeMsgSettings.embedTitle
+          .replace(/\{serverName\}/gi, member.guild.name)
+          .replace(/\{memberName\}/gi, member.displayName)
+          .replace(
+            'default',
+            `:speech_balloon: Hey ${member.displayName}, You look new to ${member.guild.name}!`
+          )
       );
-    } else embed.setTitle(welcomeMsgSettings.embedTitle);
 
     // Sends a DM if set to or if destination is not present in DB(pre channel option users)
     if (

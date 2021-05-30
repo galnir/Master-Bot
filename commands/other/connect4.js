@@ -39,30 +39,47 @@ module.exports = class Connect4Command extends Command {
     if (player2.bot) {
       return message.channel.send("Sorry can't play against a bot user");
     }
+    if (message.guild.gameData.connect4Players.has(player1.id)) {
+      message.reply("You can't play more than 1 game at a time");
+      return;
+    }
+    if (message.guild.gameData.connect4Players.has(player2.id)) {
+      message.reply(`${player2.username} is already playing`);
+      return;
+    }
 
     const player1Avatar = player1.displayAvatarURL({
       format: 'jpg'
     });
+
+    const player1Piece =
+      player1Avatar.length > 0 ? await Canvas.loadImage(player1Avatar) : null;
+
     const player2Avatar = player2.avatarURL({
       format: 'jpg'
     });
+    const player2Piece =
+      player1Avatar.length > 0 ? await Canvas.loadImage(player2Avatar) : null;
+
     let gameBoard = [
-      [0, 0, 0, 0, 0, 0, 0], //row 1
+      [0, 0, 0, 0, 0, 0, 0], // row 6
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0] // row 6
+      [0, 0, 0, 0, 0, 0, 0] // row 1
       // column ->
     ];
+
     const row = {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: []
+      0: [1, 2, 3, 4, 5, 6], // column 1
+      1: [1, 2, 3, 4, 5, 6],
+      2: [1, 2, 3, 4, 5, 6],
+      3: [1, 2, 3, 4, 5, 6],
+      4: [1, 2, 3, 4, 5, 6],
+      5: [1, 2, 3, 4, 5, 6],
+      6: [1, 2, 3, 4, 5, 6] // column 7
+      // row ->
     };
     let currentPlayer = player1.id;
     let boardImageURL = null;
@@ -148,41 +165,108 @@ module.exports = class Connect4Command extends Command {
       // Build the Game Board
       for (let columnIndex = 0; columnIndex < 7; ++columnIndex) {
         for (let rowIndex = 0; rowIndex < 6; ++rowIndex) {
-          ctx.beginPath();
-          ctx.arc(
-            offset + (pieceSize + positionX * columnIndex),
-            offset + (pieceSize + positionY * rowIndex),
-            pieceSize,
-            0,
-            Math.PI * 2,
-            true
-          );
           // Empty Spaces
           if (gameBoard[rowIndex][columnIndex] === 0) {
+            ctx.beginPath();
+            ctx.shadowColor = 'white';
+            ctx.shadowBlur = 7;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            ctx.arc(
+              offset + (pieceSize + positionX * columnIndex),
+              offset + (pieceSize + positionY * rowIndex),
+              pieceSize,
+              0,
+              Math.PI * 2,
+              true
+            );
             ctx.fillStyle = 'grey';
             ctx.fill();
           }
           // Player 1 Pieces
           if (gameBoard[rowIndex][columnIndex] === 1) {
-            ctx.fillStyle = 'red';
-            ctx.fill();
+            ctx.beginPath();
+            ctx.shadowColor = 'grey';
+            ctx.shadowBlur = 7;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            if (player1Piece) {
+              ctx.save();
+              ctx.arc(
+                offset + (pieceSize + positionX * columnIndex),
+                offset + (pieceSize + positionY * rowIndex),
+                pieceSize,
+                0,
+                Math.PI * 2,
+                true
+              );
+              ctx.fillStyle = 'grey';
+              ctx.fill();
+              ctx.clip();
+              ctx.drawImage(
+                player1Piece,
+                offset + positionX * columnIndex,
+                offset + positionY * rowIndex,
+                pieceSize * 2,
+                pieceSize * 2
+              );
+              ctx.restore();
+            } else {
+              ctx.arc(
+                offset + (pieceSize + positionX * columnIndex),
+                offset + (pieceSize + positionY * rowIndex),
+                pieceSize,
+                0,
+                Math.PI * 2,
+                true
+              );
+              ctx.fillStyle = 'red';
+              ctx.fill();
+            }
           }
           // Player 2 Pieces
           if (gameBoard[rowIndex][columnIndex] === 2) {
-            ctx.fillStyle = 'blue';
-            ctx.fill();
+            ctx.beginPath();
+            ctx.shadowColor = 'grey';
+            ctx.shadowBlur = 7;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            if (player2Piece) {
+              ctx.save();
+              ctx.arc(
+                offset + (pieceSize + positionX * columnIndex),
+                offset + (pieceSize + positionY * rowIndex),
+                pieceSize,
+                0,
+                Math.PI * 2,
+                true
+              );
+              ctx.fillStyle = 'grey';
+              ctx.fill();
+              ctx.clip();
+              ctx.drawImage(
+                player2Piece,
+                offset + positionX * columnIndex,
+                offset + positionY * rowIndex,
+                pieceSize * 2,
+                pieceSize * 2
+              );
+              ctx.restore();
+            } else {
+              ctx.arc(
+                offset + (pieceSize + positionX * columnIndex),
+                offset + (pieceSize + positionY * rowIndex),
+                pieceSize,
+                0,
+                Math.PI * 2,
+                true
+              );
+              ctx.fillStyle = 'blue';
+              ctx.fill();
+            }
           }
         }
       }
-
-      // Need to Flip the image Vertically
-      // Save current canvas state
-      ctx.save();
-      // Multiply the y value by -1 to flip vertically
-      ctx.scale(1, -1);
-      // Start at (0, -height), which is now the bottom-left corner
-      ctx.drawImage(canvas, 0, -canvas.height);
-      ctx.restore();
 
       const attachment = new MessageAttachment(
         canvas.toBuffer(),
@@ -202,32 +286,44 @@ module.exports = class Connect4Command extends Command {
         });
     }
     async function playerMove(index, user, instance) {
-      if (row[index].length === 6 || currentPlayer === 'Game Over') {
+      if (row[index].length === 0 || currentPlayer === 'Game Over') {
         return; // Ignore Columns that are full or if the game is over
       }
 
       if (currentPlayer === user.id) {
+        row[index].pop();
         if (currentPlayer === player1.id) {
           gameBoard[row[index].length][index] = 1;
-          row[index].push(1);
           currentPlayer = player2.id;
           instance
             .setThumbnail(player2Avatar)
             .setTitle(`Connect 4 - Player 2's Turn`)
-            .setColor('BLUE');
+            .setColor('BLUE')
+            .setTimestamp();
         } else {
           gameBoard[row[index].length][index] = 2;
-          row[index].push(2);
           currentPlayer = player1.id;
           instance
             .setThumbnail(player1Avatar)
             .setTitle(`Connect 4 - Player 1's Turn`)
-            .setColor('RED');
+            .setColor('RED')
+            .setTimestamp();
         }
         await createBoard(message);
         ++currentTurn;
       }
+
       if (checkWinner(gameBoard) === 0) {
+        // No More Possible Moves
+        if (!emptySpaces(gameBoard)) {
+          instance
+            .setTitle(`Connect 4 - Game Over`)
+            .setColor('GREY')
+            .setThumbnail('');
+          currentPlayer = 'Game Over';
+          message.guild.gameData.connect4Players.delete(player1.id);
+          message.guild.gameData.connect4Players.delete(player2.id);
+        }
         return instance.setImage(boardImageURL).setTimestamp();
       } else {
         instance
@@ -240,8 +336,23 @@ module.exports = class Connect4Command extends Command {
           instance.setThumbnail(player1Avatar).setColor('RED');
         }
         currentPlayer = 'Game Over';
+        message.guild.gameData.connect4Players.delete(player1.id);
+        message.guild.gameData.connect4Players.delete(player2.id);
         return;
       }
+    }
+
+    // Check for available spaces
+    function emptySpaces(board) {
+      let result = false;
+      for (let columnIndex = 0; columnIndex < 7; ++columnIndex) {
+        for (let rowIndex = 0; rowIndex < 6; ++rowIndex) {
+          if (board[rowIndex][columnIndex] == 0) {
+            result = true;
+          }
+        }
+      }
+      return result;
     }
 
     // Reference https://stackoverflow.com/questions/15457796/four-in-a-row-logic/15457826#15457826

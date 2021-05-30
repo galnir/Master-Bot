@@ -46,24 +46,24 @@ module.exports = class TwitchAPI {
         );
         const json = await response.json();
         if (json.status == `400`) {
-          reject(`:x: ${username} was Invaild, Please try again.`);
+          reject(`:x: ${username} was Invalid, Please try again.`);
           return;
         }
 
         if (json.status == `429`) {
-          reject(`:x: Rate Limit exceeded. Please try again in a few minutes.`);
+          reject(`Rate Limit exceeded. Please try again in a few minutes.`);
           return;
         }
 
         if (json.status == `503`) {
           reject(
-            `:x: Twitch service's are currently unavailable. Please try again later.`
+            `Twitch service's are currently unavailable. Please try again later.`
           );
           return;
         }
 
         if (json.data[0] == null) {
-          reject(`:x: Streamer ${username} was not found, Please try again.`);
+          reject(`Streamer ${username} was not found, Please try again.`);
           return;
         }
         resolve(json);
@@ -120,3 +120,29 @@ module.exports = class TwitchAPI {
     });
   }
 };
+
+const TwitchAPI = require('./twitch-api.js'); // having this at the Top gives a Circular Error Message
+const scope = 'user:read:email';
+// get first access_token
+(async function() {
+  await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+    .then(result => {
+      module.exports.access_token = result;
+      return;
+    })
+    .catch(e => {
+      console.log(e);
+      return;
+    });
+})();
+// 24 Hour access_token refresh
+setInterval(async function() {
+  await TwitchAPI.getToken(twitchClientID, twitchClientSecret, scope)
+    .then(result => {
+      module.exports.access_token = result;
+    })
+    .catch(e => {
+      console.log(e);
+      return;
+    });
+}, 86400000);
