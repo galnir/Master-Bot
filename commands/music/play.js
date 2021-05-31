@@ -884,7 +884,7 @@ var interactiveEmbed = message => {
           message.guild.musicData.loopQueue = false;
           message.guild.musicData.songDispatcher.end();
         }
-        message.channel.send(`:grey_exclamation: Leaving the channel.`);
+        message.reply(`:grey_exclamation: Leaving the channel.`);
       },
       // Play/Pause Button
       '⏯️': function(_, instance) {
