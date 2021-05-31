@@ -867,7 +867,7 @@ var interactiveEmbed = message => {
           .setTitle(':stop_button: Stopped')
           .setTimeout(100);
 
-        if (message.guild.musicData.songDispatcher.paused == true) {
+        if (message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.resume();
           message.guild.musicData.queue.length = 0;
           message.guild.musicData.loopSong = false;
@@ -876,26 +876,28 @@ var interactiveEmbed = message => {
           setTimeout(() => {
             message.guild.musicData.songDispatcher.end();
           }, 100);
-        } else {
+        }
+        if (!message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.queue.length = 0;
           message.guild.musicData.skipTimer = true;
           message.guild.musicData.loopSong = false;
           message.guild.musicData.loopQueue = false;
           message.guild.musicData.songDispatcher.end();
         }
-        message.reply(`:grey_exclamation: Leaving the channel.`);
+        message.channel.send(`:grey_exclamation: Leaving the channel.`);
       },
       // Play/Pause Button
       '⏯️': function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
-        if (message.guild.musicData.songDispatcher.paused == false) {
+        if (!message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.pause();
           instance
             .setDescription(songTitle + playbackBar(message.guild.musicData))
             .setTitle(embedTitle(message))
             .setTimeout(600000);
-        } else {
+        }
+        if (message.guild.musicData.songDispatcher.paused) {
           message.guild.musicData.songDispatcher.resume();
 
           instance
