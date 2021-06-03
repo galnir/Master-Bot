@@ -537,6 +537,8 @@ var playSong = (queue, message) => {
             );
           }
 
+          message.guild.musicData.isPreviousTrack = false;
+
           message.guild.musicData.nowPlaying = queue[0];
           queue.shift();
           // Main Message
@@ -549,11 +551,14 @@ var playSong = (queue, message) => {
             message.guild.musicData.songDispatcher.volume
           );
 
-          message.guild.musicData.queueHistory.unshift(
-            message.guild.musicData.nowPlaying
-          );
-          // limit the history queue at 1000 elements
+          if (!message.guild.musicData.isPreviousTrack) {
+            message.guild.musicData.queueHistory.unshift(
+              message.guild.musicData.nowPlaying
+            );
+          }
+
           if (message.guild.musicData.queueHistory.length > 1000) {
+            // limit the history queue at 1000 elements
             message.guild.musicData.queueHistory.pop();
           }
 
@@ -857,9 +862,39 @@ var interactiveEmbed = message => {
             (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
             '%';
         }
-      },
+      }
+    });
+
+  // Previous Track Button
+  if (message.guild.musicData.queueHistory.length > 0) {
+    videoEmbed.addFunctionEmoji('⏮️', function(_, instance) {
+      if (!message.guild.musicData.songDispatcher) return;
+
+      instance
+        .setDescription(songTitle + playbackBar(message.guild.musicData))
+        .setTitle(':track_previous: Previous Track')
+        .setTimeout(100);
+      message.guild.musicData.queue.unshift(
+        message.guild.musicData.queueHistory[0],
+        message.guild.musicData.nowPlaying
+      );
+      message.guild.musicData.queueHistory.shift();
+      message.guild.musicData.isPreviousTrack = true;
+
+      if (message.guild.musicData.songDispatcher.paused)
+        message.guild.musicData.songDispatcher.resume();
+      message.guild.musicData.loopSong = false;
+      setTimeout(() => {
+        message.guild.musicData.songDispatcher.end();
+      }, 100);
+    });
+  }
+
+  videoEmbed
+    .addFunctionEmoji(
       // Stop Button
-      '⏹️': function(_, instance) {
+      '⏹️',
+      function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
         instance
@@ -884,9 +919,12 @@ var interactiveEmbed = message => {
           message.guild.musicData.songDispatcher.end();
         }
         message.reply(`:grey_exclamation: Leaving the channel.`);
-      },
+      }
+    )
+    .addFunctionEmoji(
       // Play/Pause Button
-      '⏯️': function(_, instance) {
+      '⏯️',
+      function(_, instance) {
         if (!message.guild.musicData.songDispatcher) return;
 
         if (message.guild.musicData.songDispatcher.paused == false) {
@@ -904,7 +942,7 @@ var interactiveEmbed = message => {
             .setTimeout(buttonTimer(message));
         }
       }
-    });
+    );
 
   if (message.guild.musicData.queue.length) {
     const songOrSongs =
@@ -917,7 +955,7 @@ var interactiveEmbed = message => {
       )
       .addField(
         'Next Song',
-        `:track_next: [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
+        `⏭️ [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
       )
       // Next track Button
       .addFunctionEmoji('⏭️', function(_, instance) {
@@ -980,6 +1018,14 @@ var interactiveEmbed = message => {
         .setTitle(embedTitle(message))
         .setTimeout(buttonTimer(message));
     });
+  }
+
+  // Previous Track Info
+  if (message.guild.musicData.queueHistory.length > 0) {
+    videoEmbed.addField(
+      'Previous Song',
+      `⏮️ [${message.guild.musicData.queueHistory[0].title}](${message.guild.musicData.queueHistory[0].url})`
+    );
   }
   return videoEmbed;
 

@@ -13,6 +13,7 @@ Structures.extend('Guild', function(Guild) {
         queue: [],
         queueHistory: [],
         isPlaying: false,
+        isPreviousTrack: false,
         nowPlaying: null,
         songDispatcher: null,
         skipTimer: false, // only skip if user used leave command
