@@ -158,7 +158,8 @@ module.exports = class BotStatusCommand extends Command {
         `node: ${process.version.replace(/v/, '')}
         ${libList}`
       );
-    if (isOwner) pingMsg.delete();
+
     message.channel.send(StatusEmbed);
+    if (isOwner) pingMsg.delete();
   }
 };
