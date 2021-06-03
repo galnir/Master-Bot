@@ -16,6 +16,9 @@ module.exports = class BotStatusCommand extends Command {
   async run(message) {
     const isOwner = this.client.isOwner(message.author);
 
+    let pingMsg;
+    if (isOwner) pingMsg = await message.reply('Possessing...');
+
     // CPU information
     function cpuAverage() {
       var totalIdle = 0,
@@ -75,7 +78,6 @@ module.exports = class BotStatusCommand extends Command {
         }, delay);
       });
     }
-
     const commandTotal = this.client.registry.commands.keyArray();
     const platform = os
       .platform()
@@ -116,11 +118,23 @@ module.exports = class BotStatusCommand extends Command {
       .setTitle(`Status of ${this.client.user.username}`)
       .setColor('#ff0000');
 
-    if (isOwner)
+    if (isOwner) {
+      pingMsg.edit('Complete');
       StatusEmbed.addField('CPU Load', (await getCPULoadAVG()) + '%', true)
         .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
-        .addField(`Platform`, `${platform} ${archInfo}`, true);
-
+        .addField(`Platform`, `${platform} ${archInfo}`, true)
+        .addField(
+          'Ping',
+          `Round-trip took ${(pingMsg.editedTimestamp ||
+            pingMsg.createdTimestamp) -
+            (message.editedTimestamp || message.createdTimestamp)}ms.
+			${
+        this.client.ws.ping
+          ? `The heartbeat ping is ${Math.round(this.client.ws.ping)}ms.`
+          : ''
+      }`
+        );
+    }
     StatusEmbed.addField(
       `Uptime`,
       `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
@@ -144,7 +158,7 @@ module.exports = class BotStatusCommand extends Command {
         `node: ${process.version.replace(/v/, '')}
         ${libList}`
       );
-
+    if (isOwner) pingMsg.delete();
     message.channel.send(StatusEmbed);
   }
 };
