@@ -504,7 +504,7 @@ module.exports = class PlayCommand extends Command {
     );
   }
 };
-var isPreviousTrack;
+
 var playSong = (queue, message) => {
   if (queue[0].voiceChannel == undefined) {
     // happens when loading a saved playlist
@@ -537,7 +537,7 @@ var playSong = (queue, message) => {
             );
           }
 
-          isPreviousTrack = false;
+          message.guild.musicData.isPreviousTrack = false;
 
           message.guild.musicData.nowPlaying = queue[0];
           queue.shift();
@@ -551,10 +551,11 @@ var playSong = (queue, message) => {
             message.guild.musicData.songDispatcher.volume
           );
 
-          if (!isPreviousTrack)
+          if (!message.guild.musicData.isPreviousTrack) {
             message.guild.musicData.queueHistory.unshift(
               message.guild.musicData.nowPlaying
             );
+          }
 
           if (message.guild.musicData.queueHistory.length > 1000) {
             // limit the history queue at 1000 elements
@@ -632,8 +633,8 @@ var playbackBar = data => {
   const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
   const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
 
-  const playback = Array(13).fill('▬');
-  playback[Math.floor((passedTimeInMS / songLengthInMS) * 13)] =
+  const playback = Array(11).fill('▬');
+  playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
     ':musical_note:';
 
   return `${formatTime(passedTimeInMS)} ${playback.join(
@@ -873,12 +874,12 @@ var interactiveEmbed = message => {
         .setDescription(songTitle + playbackBar(message.guild.musicData))
         .setTitle(':track_previous: Previous Track')
         .setTimeout(100);
-      message.guild.musicData.queue.unshift(message.guild.musicData.nowPlaying);
       message.guild.musicData.queue.unshift(
-        message.guild.musicData.queueHistory[0]
+        message.guild.musicData.queueHistory[0],
+        message.guild.musicData.nowPlaying
       );
       message.guild.musicData.queueHistory.shift();
-      isPreviousTrack = true;
+      message.guild.musicData.isPreviousTrack = true;
 
       if (message.guild.musicData.songDispatcher.paused)
         message.guild.musicData.songDispatcher.resume();
