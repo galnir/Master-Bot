@@ -16,8 +16,7 @@ module.exports = class BotStatusCommand extends Command {
   async run(message) {
     const isOwner = this.client.isOwner(message.author);
 
-    let pingMsg;
-    if (isOwner) pingMsg = await message.reply('Possessing...');
+    const pingMsg = await message.reply('Possessing...');
 
     // CPU information
     function cpuAverage() {
@@ -113,32 +112,33 @@ module.exports = class BotStatusCommand extends Command {
       memberCount = memberCount + guildCacheArray[i].value.memberCount;
     }
 
+    pingMsg.edit('Complete');
+
     const StatusEmbed = new Discord.MessageEmbed()
       .setThumbnail(this.client.user.displayAvatarURL())
       .setTitle(`Status of ${this.client.user.username}`)
       .setColor('#ff0000');
 
     if (isOwner) {
-      pingMsg.edit('Complete');
       StatusEmbed.addField('CPU Load', (await getCPULoadAVG()) + '%', true)
         .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
-        .addField(`Platform`, `${platform} ${archInfo}`, true)
-        .addField(
-          'Ping',
-          `Round-trip took ${(pingMsg.editedTimestamp ||
-            pingMsg.createdTimestamp) -
-            (message.editedTimestamp || message.createdTimestamp)}ms.
+        .addField(`Platform`, `${platform} ${archInfo}`, true);
+    }
+
+    StatusEmbed.addField(
+      'Ping',
+      `Round-trip took ${(pingMsg.editedTimestamp || pingMsg.createdTimestamp) -
+        (message.editedTimestamp || message.createdTimestamp)}ms.
 			${
         this.client.ws.ping
           ? `The heartbeat ping is ${Math.round(this.client.ws.ping)}ms.`
           : ''
       }`
-        );
-    }
-    StatusEmbed.addField(
-      `Uptime`,
-      `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
     )
+      .addField(
+        `Uptime`,
+        `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
+      )
       .addField('Operated By', this.client.owners)
       .addField(
         'Available Commands',
@@ -160,6 +160,6 @@ module.exports = class BotStatusCommand extends Command {
       );
 
     message.channel.send(StatusEmbed);
-    if (isOwner) pingMsg.delete();
+    pingMsg.delete();
   }
 };
