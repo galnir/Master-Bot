@@ -39,6 +39,14 @@ module.exports = class Connect4Command extends Command {
     if (player2.bot) {
       return message.channel.send("Sorry can't play against a bot user");
     }
+    if (message.guild.gameData.connect4Players.has(player1.id)) {
+      message.reply("You can't play more than 1 game at a time");
+      return;
+    }
+    if (message.guild.gameData.connect4Players.has(player2.id)) {
+      message.reply(`${player2.username} is already playing`);
+      return;
+    }
 
     const player1Avatar = player1.displayAvatarURL({
       format: 'jpg'
@@ -313,6 +321,8 @@ module.exports = class Connect4Command extends Command {
             .setColor('GREY')
             .setThumbnail('');
           currentPlayer = 'Game Over';
+          message.guild.gameData.connect4Players.delete(player1.id);
+          message.guild.gameData.connect4Players.delete(player2.id);
         }
         return instance.setImage(boardImageURL).setTimestamp();
       } else {
@@ -326,6 +336,8 @@ module.exports = class Connect4Command extends Command {
           instance.setThumbnail(player1Avatar).setColor('RED');
         }
         currentPlayer = 'Game Over';
+        message.guild.gameData.connect4Players.delete(player1.id);
+        message.guild.gameData.connect4Players.delete(player2.id);
         return;
       }
     }

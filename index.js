@@ -6,13 +6,14 @@ const db = require('quick.db');
 const Canvas = require('canvas');
 
 Structures.extend('Guild', function(Guild) {
-  class MusicGuild extends Guild {
+  class GuildData extends Guild {
     constructor(client, data) {
       super(client, data);
       this.musicData = {
         queue: [],
         queueHistory: [],
         isPlaying: false,
+        isPreviousTrack: false,
         nowPlaying: null,
         songDispatcher: null,
         skipTimer: false, // only skip if user used leave command
@@ -26,6 +27,15 @@ Structures.extend('Guild', function(Guild) {
         triviaQueue: [],
         triviaScore: new Map()
       };
+      this.twitchData = {
+        Interval: null,
+        embedStatus: null,
+        isRunning: false
+      };
+      this.gameData = {
+        connect4Players: new Map(),
+        tictactoePlayers: new Map()
+      };
     }
     resetMusicDataOnError() {
       this.musicData.queue.length = 0;
@@ -36,7 +46,7 @@ Structures.extend('Guild', function(Guild) {
       this.musicData.songDispatcher = null;
     }
   }
-  return MusicGuild;
+  return GuildData;
 });
 
 const client = new CommandoClient({
