@@ -77,7 +77,7 @@ module.exports = class RemindCommand extends Command {
       ? number * 60
       : number;
 
-    if (!message.member.reminders < 4) {
+    if (message.member.reminders < 5) {
       setTimeout(() => {
         message.channel.send(
           `${
