@@ -34,13 +34,14 @@ module.exports = class RemindCommand extends Command {
           prompt: 'What is the **Unit** of time?',
           type: 'string',
           validate: function validateUnits(units) {
-            if (units.toLowerCase().startsWith('w')) return true;
-            if (units.toLowerCase().startsWith('d')) return true;
-            if (units.toLowerCase().startsWith('h')) return true;
-            if (units.toLowerCase().startsWith('m')) return true;
+            units = units.toLowerCase();
+            if (units.startsWith('w')) return true;
+            if (units.startsWith('d')) return true;
+            if (units.startsWith('h')) return true;
+            if (units.startsWith('m')) return true;
           },
           error: `:x: Please try again.
-           Options are ** Weeks **, ** Days **, ** Hours **, or **Minutes** `
+           Options are **Weeks**, **Days**, **Hours**, or **Minutes**`
         },
         {
           key: 'mention',
@@ -54,6 +55,9 @@ module.exports = class RemindCommand extends Command {
   }
 
   run(message, { reminderMessage, number, unit, mention }) {
+    // Create if not present
+    message.member.reminders ? null : (message.member.reminders = 0);
+
     unit = unit.toLowerCase();
     // Max possible number is (30,758,400,000) because of the MS conversion
     if (
@@ -73,17 +77,21 @@ module.exports = class RemindCommand extends Command {
       ? number * 60
       : number;
 
-    message.channel.send(
-      `:white_check_mark: Reminder is set: ${reminderMessage}`
-    );
-    setTimeout(() => {
-      if (mention == 'author') {
-        message.reply(`:alarm_clock: Reminder: ${reminderMessage}`);
-      } else {
+    if (!message.member.reminders < 4) {
+      setTimeout(() => {
         message.channel.send(
-          `${mention} :alarm_clock: Reminder: ${reminderMessage}`
+          `${
+            mention == 'author' ? message.author : mention
+          } :alarm_clock: Reminder: ${reminderMessage}`
         );
-      }
-    }, timer * 60000);
+        --message.member.reminders;
+      }, timer * 60000);
+
+      ++message.member.reminders;
+      return message.channel.send(
+        `:white_check_mark: Reminder is set: ${reminderMessage}`
+      );
+    }
+    message.channel.send(`:x: Maximum Reminder Limit Reached`);
   }
 };
