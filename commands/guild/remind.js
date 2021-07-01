@@ -18,7 +18,11 @@ module.exports = class RemindCommand extends Command {
         {
           key: 'reminderMessage',
           prompt: 'What would you like the reminder to say?',
-          type: `string`
+          type: `string`,
+          validate: function validateReminder(reminder) {
+            if (reminder.length > 0 && reminder.length < 1024) return true;
+          },
+          error: 'The reminder length must be above 0 and below 1024 characters'
         },
         {
           key: 'number',
@@ -56,7 +60,7 @@ module.exports = class RemindCommand extends Command {
 
   run(message, { reminderMessage, number, unit, mention }) {
     // Create if not present
-    message.member.reminders ? null : (message.member.reminders = 0);
+    message.member.reminders ? null : (message.member.reminders = []);
 
     unit = unit.toLowerCase();
     // Max possible number is (30,758,400,000) because of the MS conversion
@@ -66,7 +70,9 @@ module.exports = class RemindCommand extends Command {
       (number > 8544 && unit.startsWith('h')) ||
       (number > 512640 && unit.startsWith('m'))
     ) {
-      return message.channel.send(`:x: Sorry **${number} ${unit}** is to long`);
+      return message.channel.send(
+        `:x: Sorry **${number} ${unit}** is too long`
+      );
     }
 
     const timer = unit.startsWith('w')
@@ -77,21 +83,28 @@ module.exports = class RemindCommand extends Command {
       ? number * 60
       : number;
 
-    if (message.member.reminders < 5) {
-      setTimeout(() => {
-        message.channel.send(
-          `${
-            mention == 'author' ? message.author : mention
-          } :alarm_clock: Reminder: ${reminderMessage}`
-        );
-        --message.member.reminders;
-      }, timer * 60000);
-
-      ++message.member.reminders;
-      return message.channel.send(
-        `:white_check_mark: Reminder is set: ${reminderMessage}`
-      );
+    if (message.member.reminders.length > 5) {
+      message.channel.send(`:x: Maximum Reminder Limit Reached`);
+      return;
     }
-    message.channel.send(`:x: Maximum Reminder Limit Reached`);
+    const reminder = setTimeout(() => {
+      message.channel.send(
+        `${
+          mention == 'author' ? message.author : mention
+        } :alarm_clock: Reminder: ${reminderMessage}`
+      );
+    }, timer * 60000);
+
+    const reminderObject = {
+      text: reminderMessage,
+      timer: reminder
+    };
+
+    message.member.reminders.push(reminderObject);
+
+    message.channel.send(
+      `:white_check_mark: Reminder is set: ${reminderMessage}`
+    );
+    return;
   }
 };
