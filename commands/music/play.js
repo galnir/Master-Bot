@@ -425,6 +425,19 @@ module.exports = class PlayCommand extends Command {
         .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)[2]
         .split(/[^0-9a-z_\-]/i)[0];
 
+      const timestampRegex = /t=([^#&\n\r]+)/g;
+      let timestamp = timestampRegex.exec(query);
+      if (!timestamp) {
+        timestamp = 0;
+      } else {
+        timestamp = timestamp[1];
+        if (timestamp.endsWith('s')) {
+          timestamp = timestamp.substring(0, timestamp.indexOf('s'));
+        }
+        if (!Number(timestamp)) timestamp = 0;
+      }
+      timestamp = Number(timestamp);
+
       const video = await youtube.getVideoByID(id).catch(function() {
         message.reply(
           ':x: There was a problem getting the video you provided!'
@@ -462,7 +475,8 @@ module.exports = class PlayCommand extends Command {
           constructSongObj(
             video,
             message.member.voice.channel,
-            message.member.user
+            message.member.user,
+            timestamp
           )
         );
         if (jumpFlag) {
@@ -474,7 +488,8 @@ module.exports = class PlayCommand extends Command {
           constructSongObj(
             video,
             message.member.voice.channel,
-            message.member.user
+            message.member.user,
+            timestamp
           )
         );
       }
@@ -524,7 +539,10 @@ var playSong = (queue, message) => {
             filter: 'audio',
             quality: 'highestaudio',
             highWaterMark: 1 << 25
-          })
+          }),
+          {
+            seek: queue[0].timestamp
+          }
         )
         .on('start', function() {
           message.guild.musicData.songDispatcher = dispatcher;
@@ -1108,7 +1126,7 @@ var millisecondsToTimeObj = ms => ({
 var rawDurationToMilliseconds = obj =>
   obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
 
-var constructSongObj = (video, voiceChannel, user) => {
+var constructSongObj = (video, voiceChannel, user, timestamp) => {
   let duration = timeString(video.duration);
   if (duration === '00:00') duration = 'Live Stream';
   return {
@@ -1116,6 +1134,7 @@ var constructSongObj = (video, voiceChannel, user) => {
     title: video.title,
     rawDuration: video.duration,
     duration,
+    timestamp,
     thumbnail: video.thumbnails.high.url,
     voiceChannel,
     memberDisplayName: user.username,
