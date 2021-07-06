@@ -633,8 +633,9 @@ var playSong = (queue, message) => {
           return;
         });
     })
-    .catch(function() {
+    .catch(function(error) {
       message.reply(':no_entry: I have no permission to join your channel!');
+      console.error(error);
       message.guild.resetMusicDataOnError();
       if (message.guild.me.voice.channel) {
         message.guild.me.voice.channel.leave();
