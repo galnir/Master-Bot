@@ -3,17 +3,22 @@
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2014.0.0-blue)](https://nodejs.org/)
 
-### Installing the dependencies
+## System dependencies
 
-`npm i`
+For the bot to run, your system needs to have Node.js v14 or superior and Python 3 (for compiling some Node.js module dependencies) installed.
 
-### Setup
+### Installing the Node.js dependencies
 
-Make a config.json file in the root directory of the project and add:
+After cloning the repository, navigate to the project's folder and run the command `npm ci --production` to install all Node.js module dependencies.
 
-- Minimum
+## Setup
 
-```
+Create a `config.json` file in the root directory of the project with the following contents:
+
+### Minimum settings
+This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
+
+```json
 {
   "prefix": "!",
   "discord_owner_id": "Your-Discord-ID",
@@ -22,9 +27,10 @@ Make a config.json file in the root directory of the project and add:
 }
 ```
 
-- Full Command List
+### Full settings
+For full command support, including lyrics, GIFs, news, Twitch integration, and others, all of the following settings need to be set. You can also choose to add only the ones for the functionalities you want.
 
-```
+```json
 {
   "invite": "false",
   "prefix": "!",
@@ -41,19 +47,13 @@ Make a config.json file in the root directory of the project and add:
 }
 ```
 
-Note: When setting `"invite": true` remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/)
-
-I run the bot on a debian 9 environment so it might not work as intended on other operating systems(although it should), if you need a guide on how to install node.js on debian 9 or ubuntu I will link one in the resources down below.
-
-Also, no matter what operating system you have, make sure [python 2.7](https://www.python.org/downloads/) is installed. **Make sure that your Node.js version is v14 at least.** .
-
-If you are not cloning this repo, make sure your dependencies versions are the same as this repo's.
+NOTE: When setting `"invite": true`, remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/).
 
 ### Options
 
-Default Template for options.json
+This is the default template for `options.json` file, in which you can configure certain aspects of the bot:
 
-```
+```json
 {
   "playLiveStreams": true,
   "playVideosLongerThan1Hour": true,
@@ -65,17 +65,19 @@ Default Template for options.json
 }
 ```
 
-- playLiveStreams : Allow to play Live Streams (`true`,`false`)
-- playVideosLongerThan1Hour : Allow to play videos longer than 1 hour (`true`,`false`)
-- maxQueueLength : Maximum numbers of songs that can be in queue (`integer > 1`)
-- AutomaticallyShuffleYouTubePlaylists : Automatic shuffle YouTube playlists : (`true`,`false`)
-- LeaveTimeOut : Timeout in seconds before bot leaves channel due to inactivity.(`integer` between `1` and `600`)
-- MaxResponseTime : Maximum time in seconds allowed for user to response back to bot before cancelling command (example: using !play song name) : (`integer` between `5` and `150`)
-- deleteOldPlayMessage : Remove play message after playing or no : (`true`,`false`)
+What each option affects can be seen here in further detail:
 
-### Commands
+- `playLiveStreams` (`true`, `false`): allows the bot to play live streams
+- `playVideosLongerThan1Hour` (`true`, `false`): allows the bot to play videos longer than 1 hour
+- `maxQueueLength` (`integer` greater than `1`) : maximum numbers of songs that can be in queue
+- `AutomaticallyShuffleYouTubePlaylists` (`true`, `false`): automatically shuffle YouTube playlists
+- `LeaveTimeOut` (`integer` between `1` and `600`): timeout in seconds before bot leaves channel due to inactivity 
+- `MaxResponseTime` (`integer` between `5` and `150`): amount of time, in seconds, when the user to is allowed to respond back to bot before it cancels the command (e.g. when using `!play song name`)
+- `deleteOldPlayMessage` (`true`, `false`): makes the bot remove the play message after the song ends
 
-- Music
+## Commands
+
+### Music
 
 | Command               | Description                                                                                                               | Usage                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -104,7 +106,7 @@ Default Template for options.json
 | !move                 | Move song to a desired position in queue                                                                                  | !move 8 1                                                         |
 | !history              | Display the queue history                                                                                                 | !history                                                          |
 
-- Other
+### Other
 
 | Command           | Description                                                                                                                                                        | Usage                                                                        |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
@@ -136,7 +138,7 @@ Default Template for options.json
 | !connect4         | Play a game of Connect 4 against another player.                                                                                                                   | !connect4 @janedoe                                                           |
 | !tic-tac-toe      | Play a game of Tic Tac Toe against another player.                                                                                                                 | !tic-tac-toe @janedoe                                                        |
 
-- Gifs
+### GIFs
 
 | Command   | Description                         | Usage                   |
 | --------- | ----------------------------------- | ----------------------- |
@@ -145,7 +147,7 @@ Default Template for options.json
 | !gintama  | Replies with a random gintama gif   | !gintama                |
 | !jojo     | Replies with a random jojo gif      | !jojo                   |
 
-- Guild
+### Guild
 
 | Command                    | Description                                                                    | Usage                                |
 | -------------------------- | ------------------------------------------------------------------------------ | ------------------------------------ |
@@ -159,27 +161,27 @@ Default Template for options.json
 | !add-role                  | Adds a specific role to a specified user.                                      | !add-role @johndoe admin             |
 | !remove-role               | Removes a specific role from a specified user.                                 | !remove-role @johndoe admin          |
 
-### Resources
+## Resources
 
-[Get a Tenor API key here](https://tenor.com/developer/keyregistration)
+[Getting a YouTube API key](https://developers.google.com/youtube/v3/getting-started)
 
-[Get a NewsAPI API key here](https://newsapi.org/)
+[Getting a Tenor API key](https://tenor.com/developer/keyregistration)
 
-[How to get a Youtube API key](https://developers.google.com/youtube/v3/getting-started)
+[Getting a NewsAPI API key](https://newsapi.org/)
 
-[Get a Genius API key here](https://genius.com/api-clients/new)
+[Getting a Genius API key](https://genius.com/api-clients/new)
 
-[How to get a Twitch API Key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
+[Getting a Twitch API key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
 
-[Get a rawg API key here](https://rawg.io/apidocs)
+[Getting a rawg API key](https://rawg.io/apidocs)
 
-[Installing node.js on debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+[Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
-[Installing node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
+[Installing Node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
 [Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
 
-### Contributing
+## Contributing
 
 Fork it and submit a pull request!
 Anyone is welcome to suggest new features and improve code quality!
@@ -194,7 +196,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [kfirmeg](https://github.com/kfirmeg) - play command flags, dockerization, docker wiki
 
-[rafaeldamasceno](https://github.com/rafaeldamasceno) - 'music-trivia' and Dockerfile improvements
+[rafaeldamasceno](https://github.com/rafaeldamasceno) - 'music-trivia' and Dockerfile improvements, minor tweaks
 
 [meiaihara06](https://github.com/meiaihara06) - 'LeaveTimeOut' and 'MaxResponseTime' options
 
