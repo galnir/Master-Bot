@@ -5,7 +5,7 @@
 
 ## System dependencies
 
-For the bot to run, your system needs to have Node.js v14 or superior and Python 3 (for compiling some Node.js module dependencies) installed.
+For the bot to run, your system needs to have Node.js v14 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
 
 ### Installing the Node.js dependencies
 
