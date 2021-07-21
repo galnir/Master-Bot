@@ -181,7 +181,7 @@ module.exports = class PlayCommand extends Command {
                   message.guild.musicData.queue.unshift(
                     message.guild.musicData.queueHistory[index]
                   );
-                  if (jumpFlag) {
+                  if (jumpFlag && message.guild.musicData.songDispatcher) {
                     message.guild.musicData.loopSong = false;
                     message.guild.musicData.songDispatcher.end();
                   }
@@ -309,7 +309,7 @@ module.exports = class PlayCommand extends Command {
                 message.guild.musicData.queue.unshift(
                   message.guild.musicData.queueHistory[index]
                 );
-                if (jumpFlag) {
+                if (jumpFlag && message.guild.musicData.songDispatcher) {
                   message.guild.musicData.loopSong = false;
                   message.guild.musicData.songDispatcher.end();
                 }
@@ -403,7 +403,7 @@ module.exports = class PlayCommand extends Command {
           return console.error(err);
         }
       }, undefined);
-      if (jumpFlag) {
+      if (jumpFlag && message.guild.musicData.songDispatcher) {
         message.guild.musicData.loopSong = false;
         message.guild.musicData.songDispatcher.end();
       }
@@ -479,7 +479,7 @@ module.exports = class PlayCommand extends Command {
             timestamp
           )
         );
-        if (jumpFlag) {
+        if (jumpFlag && message.guild.musicData.songDispatcher) {
           message.guild.musicData.loopSong = false;
           message.guild.musicData.songDispatcher.end();
         }
@@ -751,7 +751,7 @@ var searchYoutube = async (
             message.guild.musicData.queue.unshift(
               constructSongObj(video, voiceChannel, message.member.user)
             );
-            if (jumpFlag) {
+            if (jumpFlag && message.guild.musicData.songDispatcher) {
               message.guild.musicData.loopSong = false;
               message.guild.musicData.songDispatcher.end();
             }
