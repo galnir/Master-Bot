@@ -147,10 +147,10 @@ module.exports = class LyricsCommand extends Command {
           .text()
           .trim();
         if (!lyrics) {
-          $('.Lyrics__Container-sc-1ynbvzw-6')
+          $('.Lyrics__Container-sc-1ynbvzw-8')
             .find('br')
             .replaceWith('\n');
-          lyrics = $('.Lyrics__Container-sc-1ynbvzw-6').text();
+          lyrics = $('.Lyrics__Container-sc-1ynbvzw-8').text();
           if (!lyrics) {
             reject(
               'There was a problem fetching lyrics for this song, please try again'
