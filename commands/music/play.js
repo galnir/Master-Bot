@@ -2,6 +2,8 @@ const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 const Youtube = require('simple-youtube-api');
 const ytdl = require('ytdl-core');
+const ytsr = require('ytsr');
+const { getData } = require('spotify-url-info');
 const { youtubeAPI } = require('../../config.json');
 let {
   playLiveStreams,
@@ -330,6 +332,123 @@ module.exports = class PlayCommand extends Command {
             case '3':
               break;
           }
+        });
+      return;
+    }
+
+    if (isSpotifyURL(query)) {
+      getData(query)
+        .then(async data => {
+          // 'tracks' property only exists on a playlist data object
+          if (data.tracks) {
+            // handle playlist
+            const spotifyPlaylistItems = data.tracks.items;
+            const processingMessage = await message.channel.send(
+              'Processing Playlist...'
+            );
+            for (let i = 0; i < spotifyPlaylistItems.length; i++) {
+              const artistsAndName = concatSongNameAndArtists(
+                spotifyPlaylistItems[i].track
+              );
+              const ytResult = await ytsr(artistsAndName, { limit: 1 });
+              const video = {
+                title: ytResult.items[0].title,
+                url: ytResult.items[0].url,
+                thumbnails: {
+                  high: {
+                    url: `https://i.ytimg.com/vi/${ytResult.items[0].id}/hqdefault.jpg`
+                  }
+                },
+                // the true value is used to differentiate this duration from the rawDuration recieved from the YT API
+                duration: [ytResult.items[0].duration, true]
+              };
+              if (nextFlag || jumpFlag) {
+                message.guild.musicData.queue.splice(
+                  0,
+                  0,
+                  constructSongObj(
+                    video,
+                    message.member.voice.channel,
+                    message.member.user
+                  )
+                );
+                if (jumpFlag && message.guild.musicData.songDispatcher) {
+                  message.guild.musicData.loopSong = false;
+                  message.guild.musicData.songDispatcher.end();
+                }
+              } else {
+                message.guild.musicData.queue.push(
+                  constructSongObj(
+                    video,
+                    message.member.voice.channel,
+                    message.member.user
+                  )
+                );
+              }
+            }
+            processingMessage.edit('Playlist Processed!');
+            if (
+              !message.guild.musicData.isPlaying ||
+              typeof message.guild.musicData.isPlaying == 'undefined'
+            ) {
+              message.guild.musicData.isPlaying = true;
+              playSong(message.guild.musicData.queue, message);
+              return;
+            }
+            return;
+          }
+          // single track
+          else {
+            const artistsAndName = concatSongNameAndArtists(data);
+            // Search on YT
+            const ytResult = await ytsr(artistsAndName, { limit: 1 });
+            const video = {
+              title: ytResult.items[0].title,
+              url: ytResult.items[0].url,
+              thumbnails: {
+                high: {
+                  url: `https://i.ytimg.com/vi/${ytResult.items[0].id}/hqdefault.jpg`
+                }
+              },
+              // the true value is used to differentiate this duration from the rawDuration recieved from the YT API
+              duration: [ytResult.items[0].duration, true]
+            };
+            if (nextFlag || jumpFlag) {
+              message.guild.musicData.queue.splice(
+                0,
+                0,
+                constructSongObj(
+                  video,
+                  message.member.voice.channel,
+                  message.member.user
+                )
+              );
+              if (jumpFlag && message.guild.musicData.songDispatcher) {
+                message.guild.musicData.loopSong = false;
+                message.guild.musicData.songDispatcher.end();
+              }
+            } else {
+              message.guild.musicData.queue.push(
+                constructSongObj(
+                  video,
+                  message.member.voice.channel,
+                  message.member.user
+                )
+              );
+            }
+            if (
+              !message.guild.musicData.isPlaying ||
+              typeof message.guild.musicData.isPlaying == 'undefined'
+            ) {
+              message.guild.musicData.isPlaying = true;
+              playSong(message.guild.musicData.queue, message);
+              return;
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          message.reply(`I couldn't find what you were looking for :(`);
         });
       return;
     }
@@ -1098,6 +1217,9 @@ var isYouTubePlaylistURL = arg =>
     /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/
   );
 
+var isSpotifyURL = arg =>
+  arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
+
 var shuffleArray = arr => {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -1107,8 +1229,9 @@ var shuffleArray = arr => {
 };
 
 // timeString = timeObj => 'HH:MM:SS' // if HH is missing > MM:SS
-var timeString = timeObj =>
-  `${timeObj.hours ? timeObj.hours + ':' : ''}${
+var timeString = timeObj => {
+  if (timeObj[1] === true) return timeObj[0];
+  return `${timeObj.hours ? timeObj.hours + ':' : ''}${
     timeObj.minutes ? timeObj.minutes : '00'
   }:${
     timeObj.seconds < 10
@@ -1117,6 +1240,7 @@ var timeString = timeObj =>
       ? timeObj.seconds
       : '00'
   }`;
+};
 
 var millisecondsToTimeObj = ms => ({
   seconds: Math.floor((ms / 1000) % 60),
@@ -1127,11 +1251,24 @@ var millisecondsToTimeObj = ms => ({
 var rawDurationToMilliseconds = obj =>
   obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
 
+var concatSongNameAndArtists = data => {
+  // Spotify only
+  let artists = '';
+  data.artists.forEach(artist => (artists = artists.concat(' ', artist.name)));
+  const songName = data.name;
+  return `${songName} ${artists}`;
+};
+
 var constructSongObj = (video, voiceChannel, user, timestamp) => {
   let duration = timeString(video.duration);
   if (duration === '00:00') duration = 'Live Stream';
+  // checks if the user searched for a song using a Spotify URL
+  let url =
+    video.duration[1] == true
+      ? video.url
+      : `https://www.youtube.com/watch?v=${video.raw.id}`;
   return {
-    url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+    url,
     title: video.title,
     rawDuration: video.duration,
     duration,
