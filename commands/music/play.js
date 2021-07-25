@@ -363,19 +363,7 @@ module.exports = class PlayCommand extends Command {
                 duration: [ytResult.items[0].duration, true]
               };
               if (nextFlag || jumpFlag) {
-                message.guild.musicData.queue.splice(
-                  0,
-                  0,
-                  constructSongObj(
-                    video,
-                    message.member.voice.channel,
-                    message.member.user
-                  )
-                );
-                if (jumpFlag && message.guild.musicData.songDispatcher) {
-                  message.guild.musicData.loopSong = false;
-                  message.guild.musicData.songDispatcher.end();
-                }
+                flagLogic(message, video, jumpFlag);
               } else {
                 message.guild.musicData.queue.push(
                   constructSongObj(
@@ -414,19 +402,7 @@ module.exports = class PlayCommand extends Command {
               duration: [ytResult.items[0].duration, true]
             };
             if (nextFlag || jumpFlag) {
-              message.guild.musicData.queue.splice(
-                0,
-                0,
-                constructSongObj(
-                  video,
-                  message.member.voice.channel,
-                  message.member.user
-                )
-              );
-              if (jumpFlag && message.guild.musicData.songDispatcher) {
-                message.guild.musicData.loopSong = false;
-                message.guild.musicData.songDispatcher.end();
-              }
+              flagLogic(message, video, jumpFlag);
             } else {
               message.guild.musicData.queue.push(
                 constructSongObj(
@@ -588,20 +564,7 @@ module.exports = class PlayCommand extends Command {
         return;
       }
       if (nextFlag || jumpFlag) {
-        message.guild.musicData.queue.splice(
-          0,
-          0,
-          constructSongObj(
-            video,
-            message.member.voice.channel,
-            message.member.user,
-            timestamp
-          )
-        );
-        if (jumpFlag && message.guild.musicData.songDispatcher) {
-          message.guild.musicData.loopSong = false;
-          message.guild.musicData.songDispatcher.end();
-        }
+        flagLogic(message, video, jumpFlag);
       } else {
         message.guild.musicData.queue.push(
           constructSongObj(
@@ -1200,6 +1163,19 @@ var interactiveEmbed = message => {
       embedTitle = ':pause_button: Paused';
 
     return embedTitle;
+  }
+};
+
+// side effects function
+var flagLogic = (message, video, jumpFlag) => {
+  message.guild.musicData.queue.splice(
+    0,
+    0,
+    constructSongObj(video, message.member.voice.channel, message.member.user)
+  );
+  if (jumpFlag && message.guild.musicData.songDispatcher) {
+    message.guild.musicData.loopSong = false;
+    message.guild.musicData.songDispatcher.end();
   }
 };
 
