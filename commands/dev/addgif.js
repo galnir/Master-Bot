@@ -25,11 +25,7 @@ module.exports = class AddGifCommand extends Command {
                 'MANAGE_MESSAGES',
                 'SEND_MESSAGES'
             ],
-            args: [{
-                    key: 'gifCategory',
-                    prompt: 'Is the gif SFW or NSFW?',
-                    type: 'string'
-                },
+            args: [
                 {
                     key: 'txtFilePath',
                     prompt: 'Please select a File Name from the list below:\n\n**__SFW__**\n\nGintama\nJojo\n\n**__NSFW__**\n\nBlowjob\nBoobs\nHentai\nFurry\nFuta\nTrap\n',
@@ -54,9 +50,9 @@ module.exports = class AddGifCommand extends Command {
                 'ROLE_ID'
             ].includes(r.id))) {
 
-            fs.writeTxtFILE('././resources/gifs/' + gifCategory + '/' + txtFilePath + '.txt', Url + '\n', { flag: 'a+' }, (err) => {
+            fs.writeTxtFILE('././resources/gifs/' + txtFilePath + '.txt', Url + '\n', { flag: 'a+' }, (err) => {
                 if (err) return console.error(err)
-                else return message.channel.send('<a:legit_tick:834269513498492968> Successfully added `' + Url + '` to `../../resources/gifs/' + gifCategory + '/' + txtFilePath + '/.txt`')
+                else return message.channel.send('<a:legit_tick:834269513498492968> Successfully added `' + Url + '` to `../../resources/gifs/' + txtFilePath + '/.txt`')
             })
         } else {
             return message.channel.send(':x: This command can only be used by my Developers...').catch(err => {
