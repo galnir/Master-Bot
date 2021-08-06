@@ -11,8 +11,7 @@ module.exports = class AddGifCommand extends Command {
             group: 'dev',
             description: 'Adds a Gif to the Gif commands.',
             examples: [
-                '`' + prefix + 'addgif nsfw Hentai https://hentai-gif.gif"`',
-                '`' + prefix + 'addgif sfw Jojo https://jojo-gif.gif"`'
+                '`' + prefix + 'addgif Jojo https://jojo-gif.gif"`'
             ],
             guildOnly: false,
             userPermissions: [
@@ -28,7 +27,7 @@ module.exports = class AddGifCommand extends Command {
             args: [
                 {
                     key: 'txtFilePath',
-                    prompt: 'Please select a File Name from the list below:\n\n**__SFW__**\n\nGintama\nJojo\n\n**__NSFW__**\n\nBlowjob\nBoobs\nHentai\nFurry\nFuta\nTrap\n',
+                    prompt: 'Please select a File Name from the list below:\n\nGintama\nJojo\n',
                     type: 'string'
                 },
                 {
