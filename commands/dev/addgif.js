@@ -55,7 +55,7 @@ module.exports = class AddGifCommand extends Command {
             })
         } else {
             return message.channel.send('❌ This command can only be used by my Developers...').catch(err => {
-                console.log(err.code + ': (' + err.message + ')\n' + err.stack)
+                console.log(err.code + ': ' + err.message + '\n' + '---------------------------------------------------\n' + err.stack)
             })
         }
     }
