@@ -10,9 +10,7 @@ module.exports = {
     fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=anime&limit=50`)
       .then(res => res.json())
       .then(json =>
-        interaction.channel.send(
-          json.results[Math.floor(Math.random() * 49)].url
-        )
+        interaction.reply(json.results[Math.floor(Math.random() * 49)].url)
       )
       .catch(function onError() {
         interaction.reply(':x: Failed to find a gif!');
