@@ -14,8 +14,10 @@
     "@discordjs/builders": "^0.5.0",
     "@discordjs/rest": "^0.1.0-canary.0",
     "@discordjs/voice": "^0.5.5",
+    "@vitalets/google-translate-api": "^7.0.0",
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.0.1",
+    "iso-639-1": "^2.1.9",
     "mongoose": "^5.13.5"
   },
   "devDependencies": {
