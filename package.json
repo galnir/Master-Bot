@@ -19,7 +19,11 @@
     "discord-paginationembed": "github:gazmull/discord-paginationembed#v3",
     "discord.js": "^13.0.1",
     "iso-639-1": "^2.1.9",
-    "mongoose": "^5.13.5"
+    "mongoose": "^5.13.5",
+    "simple-youtube-api": "^5.2.1",
+    "spotify-url-info": "^2.2.3",
+    "ytdl-core": "^4.9.1",
+    "ytsr": "^3.5.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
