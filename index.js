@@ -12,13 +12,9 @@ const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILDS
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_VOICE_STATES
   ]
-});
-
-client.guildData = new Collection();
-client.guilds.cache.each(guild => {
-  client.guildData.set(guild.id, createGuildData());
 });
 
 client.commands = new Collection();
@@ -74,6 +70,11 @@ for (const file of eventFiles) {
 }
 
 client.once('ready', () => {
+  client.playerManager = new Map();
+  client.guildData = new Collection();
+  client.guilds.cache.each(guild => {
+    client.guildData.set(guild.id, createGuildData());
+  });
   mongoose
     .connect(encodeURI(mongo_URI), {
       useNewUrlParser: true,

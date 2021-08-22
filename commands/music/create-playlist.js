@@ -33,6 +33,7 @@ module.exports = {
             'An error has occured, please try again later'
           );
       });
+      interaction.reply(`Created a new playlist named **${playlistName}**`);
       return;
     }
     // make sure the playlist name isn't a duplicate
@@ -50,6 +51,7 @@ module.exports = {
     // create and save the playlist in the DB
     userData.savedPlaylists.push({ name: playlistName, urls: [] });
     try {
+      console.log('im here');
       await Member.updateOne({ memberId: interaction.member.id }, userData);
       interaction.reply(`Created a new playlist named **${playlistName}**`);
     } catch (e) {
