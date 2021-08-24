@@ -25,6 +25,7 @@ class MusicPlayer {
     this.loopQueue = false;
     this.volume = 1;
     this.queueLock = false;
+    this.textChannel;
   }
 
   passConnection(connection) {
@@ -78,10 +79,21 @@ class MusicPlayer {
         // Finished playing audio
         if (this.queue.length) {
           this.process(this.queue);
+        } else {
+          // leave channel close connection and subscription
+          if (this.connection._state.status !== 'destroyed') {
+            this.connection.destroy();
+            this.textChannel.client.playerManager.delete(
+              this.textChannel.guildId
+            );
+          }
         }
       } else if (newState.status === AudioPlayerStatus.Playing) {
         // started playing
-        // display embed
+        // display embed to text channel
+        this.textChannel.send({
+          content: `Now playing **${this.nowPlaying.title}**`
+        });
       }
     });
 
@@ -113,7 +125,7 @@ class MusicPlayer {
     this.queueLock = true;
 
     const song = this.queue.shift();
-
+    this.nowPlaying = song;
     try {
       //const resource = await this.createAudioResource(song.url);
       const stream = ytdl(song.url, {

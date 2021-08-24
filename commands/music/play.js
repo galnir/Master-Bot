@@ -1,9 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const {
-  MessageEmbed,
-  MessageSelectMenu,
-  MessageActionRow
-} = require('discord.js');
+const { MessageSelectMenu, MessageActionRow } = require('discord.js');
 const Player = require('../../utils/music/Player');
 const Youtube = require('simple-youtube-api');
 const ytsr = require('ytsr');
@@ -173,7 +169,7 @@ module.exports = {
           }
         );
 
-        clarificationCollector.on('end', collected => {
+        clarificationCollector.on('end', () => {
           if (clarificationOptions)
             clarificationOptions.delete().catch(console.error);
         });
@@ -245,7 +241,7 @@ module.exports = {
                 ).map(song => player.queue.push(song));
 
                 if (
-                  player.audioPlyaer.state.status === AudioPlayerStatus.Playing
+                  player.audioPlayer.state.status === AudioPlayerStatus.Playing
                 ) {
                   // Send a message indicating that the playlist was added to the queue
                   // interactiveEmbed(interaction)
@@ -649,7 +645,7 @@ var handleSubscription = async (queue, interaction, player) => {
     });
     connection.on('error', console.error);
   }
-
+  player.textChannel = interaction.channel;
   player.passConnection(connection);
 
   try {
