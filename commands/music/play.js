@@ -69,7 +69,7 @@ module.exports = {
     });
     // Make sure that only users present in a voice channel can use 'play'
     if (!interaction.member.voice.channel) {
-      interaction.reply(
+      interaction.followUp(
         ':no_entry: Please join a voice channel and try again!'
       );
       return;
@@ -79,7 +79,7 @@ module.exports = {
       interaction.client.guildData.get(interaction.guild.id).triviaData
         .isTriviaRunning
     ) {
-      interaction.reply(':x: Please try after the trivia has ended!');
+      interaction.followUp(':x: Please try after the trivia has ended!');
       return;
     }
     let query = interaction.options.get('query').value;
@@ -206,7 +206,7 @@ module.exports = {
                 } else {
                   player.queue.push(player.queueHistory[index]);
                 }
-                interaction.reply(
+                interaction.followUp(
                   `'${player.queueHistory[index].title}' was added to queue!`
                 );
                 break;
@@ -259,11 +259,11 @@ module.exports = {
                 break;
               // 3: Search for the query on YouTube
               case 'youtube_option':
-                // await searchYoutube(
-                //   query,
-                //   interaction,
-                //   interaction.member.voice.channel
-                // );
+                await searchYoutube(
+                  query,
+                  interaction,
+                  interaction.member.voice.channel
+                );
                 break;
               // 4: Cancel
               case 'cancel_option':
@@ -271,8 +271,8 @@ module.exports = {
             }
           }
         });
+        return;
       }
-      return;
     }
 
     // check if the user wants to play a song from the history queue
@@ -351,17 +351,17 @@ module.exports = {
               } else {
                 player.queue.push(player.queueHistory[index]);
               }
-              interaction.reply(
+              interaction.followUp(
                 `'${player.queueHistory[index].title}' was added to queue!`
               );
               break;
             // 2: Search for the query on YouTube
             case 'youtube_option':
-              // await searchYoutube(
-              //   query,
-              //   interaction,
-              //   interaction.member.voice.channel
-              // );
+              await searchYoutube(
+                query,
+                interaction,
+                interaction.member.voice.channel
+              );
               break;
             // 3: Cancel
             case 'cancel_option':
@@ -451,7 +451,7 @@ module.exports = {
         })
         .catch(error => {
           console.error(error);
-          interaction.reply(`I couldn't find what you were looking for :(`);
+          interaction.followUp(`I couldn't find what you were looking for :(`);
         });
       return;
     }
@@ -459,13 +459,13 @@ module.exports = {
     if (isYouTubePlaylistURL(query)) {
       const playlist = await youtube.getPlaylist(query);
       if (!playlist)
-        return interaction.reply(
+        return interaction.followUp(
           ':x: Playlist is either private or it does not exist!'
         );
 
       let videosArr = await playlist.getVideos();
       if (!videosArr)
-        return interaction.reply(
+        return interaction.followUp(
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
 
@@ -478,7 +478,7 @@ module.exports = {
       }
 
       if (player.queue.length >= maxQueueLength)
-        return interaction.reply(
+        return interaction.followUp(
           'The queue is full, please try adding more songs later'
         );
       videosArr = videosArr.splice(0, maxQueueLength - player.queue.length);
@@ -560,7 +560,7 @@ module.exports = {
       timestamp = Number(timestamp);
 
       const video = await youtube.getVideoByID(id).catch(function() {
-        interaction.reply(
+        interaction.followUp(
           ':x: There was a problem getting the video you provided!'
         );
       });
@@ -570,21 +570,21 @@ module.exports = {
         video.raw.snippet.liveBroadcastContent === 'live' &&
         !playLiveStreams
       ) {
-        interaction.reply(
+        interaction.followUp(
           'Live streams are disabled in this server! Contact the owner'
         );
         return;
       }
 
       if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
-        interaction.reply(
+        interaction.followUp(
           'Videos longer than 1 hour are disabled in this server! Contact the owner'
         );
         return;
       }
 
       if (player.length > maxQueueLength) {
-        interaction.reply(
+        interaction.followUp(
           `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to play more songs`
         );
         return;
@@ -614,13 +614,13 @@ module.exports = {
     }
 
     // If user provided a song/video name
-    // await searchYoutube(
-    //   query,
-    //   interaction,
-    //   interaction.member.voice.channel,
-    //   nextFlag,
-    //   jumpFlag
-    // );
+    await searchYoutube(
+      query,
+      interaction,
+      interaction.member.voice.channel,
+      nextFlag,
+      jumpFlag
+    );
   }
 };
 
@@ -659,33 +659,192 @@ var handleSubscription = async (queue, interaction, player) => {
   await interaction.followUp(`Enqueued ${title}`);
 };
 
-var playbackBar = data => {
-  if (data.nowPlaying.duration === 'Live Stream') return '';
-  const formatTime = compose(timeString, millisecondsToTimeObj);
+// var playbackBar = data => {
+//   if (data.nowPlaying.duration === 'Live Stream') return '';
+//   const formatTime = compose(timeString, millisecondsToTimeObj);
 
-  const passedTimeInMS = data.songDispatcher.streamTime;
-  const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
-  const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
+//   const passedTimeInMS = data.songDispatcher.streamTime;
+//   const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
+//   const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
 
-  const playback = Array(11).fill('▬');
-  playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
-    ':musical_note:';
+//   const playback = Array(11).fill('▬');
+//   playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
+//     ':musical_note:';
 
-  return `${formatTime(passedTimeInMS)} ${playback.join(
-    ''
-  )} ${songLengthFormatted}`;
+//   return `${formatTime(passedTimeInMS)} ${playback.join(
+//     ''
+//   )} ${songLengthFormatted}`;
+// };
+
+var searchYoutube = async (
+  query,
+  interaction,
+  voiceChannel,
+  nextFlag,
+  jumpFlag
+) => {
+  const videos = await youtube.searchVideos(query, 5).catch(async function() {
+    return interaction.followUp(
+      ':x: There was a problem searching the video you requested!'
+    );
+  });
+  if (!videos) {
+    return interaction.followUp(
+      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
+    );
+  }
+  if (videos.length < 5) {
+    return interaction.followUp(
+      `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
+    );
+  }
+  const vidNameArr = [];
+  for (let i = 0; i < videos.length; i++) {
+    vidNameArr.push(videos[i].title.slice(0, 99));
+  }
+  vidNameArr.push('cancel');
+  const row = createSelectMenu(vidNameArr);
+  const playOptions = await interaction.channel.send({
+    content: 'Pick a video',
+    components: [row]
+  });
+  const playOptionsCollector = playOptions.createMessageComponentCollector({
+    componentType: 'SELECT_MENU',
+    time: MaxResponseTime * 1000
+  });
+  playOptionsCollector.on('end', async () => {
+    if (playOptions) {
+      await playOptions.delete().catch(console.error);
+    }
+  });
+
+  playOptionsCollector.on('collect', async i => {
+    if (i.user.id !== interaction.user.id) {
+      i.reply({
+        content: 'This element is not for you!',
+        ephemeral: true
+      });
+    } else {
+      playOptionsCollector.stop();
+      const value = i.values[0];
+      if (value === 'cancel_option') {
+        if (playOptions) {
+          playOptions.delete().catch(console.error);
+          return;
+        }
+      }
+      const videoIndex = parseInt(value);
+
+      youtube
+        .getVideoByID(videos[videoIndex - 1].id)
+        .then(function(video) {
+          if (
+            video.raw.snippet.liveBroadcastContent === 'live' &&
+            !playLiveStreams
+          ) {
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
+              'Live streams are disabled in this server! Contact the owner'
+            );
+          }
+
+          if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
+              'Videos longer than 1 hour are disabled in this server! Contact the owner'
+            );
+          }
+
+          if (
+            interaction.client.playerManager.get(interaction.guildId).queue
+              .length > maxQueueLength
+          ) {
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
+              `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`
+            );
+          }
+
+          if (nextFlag || jumpFlag) {
+            interaction.client.playerManager
+              .get(interaction.guildId)
+              .queue.unshift(
+                constructSongObj(video, voiceChannel, interaction.member.user)
+              );
+            if (
+              jumpFlag &&
+              interaction.client.playerManager.get(interaction.guildId)
+                .audioPlayer.state.status === AudioPlayerStatus.Playing
+            ) {
+              interaction.client.playerManager.get(
+                interaction.guildId
+              ).loopSong = false;
+              interaction.client.playerManager
+                .get(interaction.guildId)
+                .audioPlayer.stop();
+              return interaction.followUp('Skipped song!');
+            }
+          } else {
+            interaction.client.playerManager
+              .get(interaction.guildId)
+              .queue.push(
+                constructSongObj(video, voiceChannel, interaction.member.user)
+              );
+          }
+          if (
+            interaction.client.playerManager.get(interaction.guildId)
+              .audioPlayer.state.status !== AudioPlayerStatus.Playing
+          ) {
+            const player = interaction.client.playerManager.get(
+              interaction.guildId
+            );
+            handleSubscription(player.queue, interaction, player);
+          } else if (
+            interaction.client.playerManager.get(interaction.guildId)
+              .audioPlayer.state.status === AudioPlayerStatus.Playing
+          ) {
+            return interaction.followUp(`Added **${video.title}** to queue`);
+          }
+          return;
+        })
+        .catch(error => {
+          if (playOptions) playOptions.delete().catch(console.error);
+          console.error(error);
+          return interaction.followUp(
+            'An error has occurred while trying to get the video ID from youtube.'
+          );
+        });
+    }
+  });
 };
 
 // side effects function
-var flagLogic = (message, video, jumpFlag) => {
-  message.guild.musicData.queue.splice(
+var flagLogic = (interaction, video, jumpFlag) => {
+  const player = interaction.client.playerManager.get(interaction.guildId);
+  player.queue.splice(
     0,
     0,
-    constructSongObj(video, message.member.voice.channel, message.member.user)
+    constructSongObj(
+      video,
+      interaction.member.voice.channel,
+      interaction.member.user
+    )
   );
-  if (jumpFlag && message.guild.musicData.songDispatcher) {
-    message.guild.musicData.loopSong = false;
-    message.guild.musicData.songDispatcher.end();
+  if (
+    jumpFlag &&
+    player.audioPlayer.state.status === AudioPlayerStatus.Playing
+  ) {
+    player.loopSong = false;
+    player.audioPlayer.stop();
   }
 };
 
@@ -728,14 +887,14 @@ var timeString = timeObj => {
   }`;
 };
 
-var millisecondsToTimeObj = ms => ({
-  seconds: Math.floor((ms / 1000) % 60),
-  minutes: Math.floor((ms / (1000 * 60)) % 60),
-  hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
-});
+// var millisecondsToTimeObj = ms => ({
+//   seconds: Math.floor((ms / 1000) % 60),
+//   minutes: Math.floor((ms / (1000 * 60)) % 60),
+//   hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
+// });
 
-var rawDurationToMilliseconds = obj =>
-  obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
+// var rawDurationToMilliseconds = obj =>
+//   obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
 
 var concatSongNameAndArtists = data => {
   // Spotify only
@@ -765,3 +924,36 @@ var constructSongObj = (video, voiceChannel, user, timestamp) => {
     memberAvatar: user.avatarURL('webp', false, 16)
   };
 };
+
+var createSelectMenu = namesArray =>
+  new MessageActionRow().addComponents(
+    new MessageSelectMenu()
+      .setCustomId('search-yt-menu')
+      .setPlaceholder('Please select a video')
+      .addOptions([
+        {
+          label: `${namesArray[0]}`,
+          value: '1'
+        },
+        {
+          label: `${namesArray[1]}`,
+          value: '2'
+        },
+        {
+          label: `${namesArray[2]}`,
+          value: '3'
+        },
+        {
+          label: `${namesArray[3]}`,
+          value: '4'
+        },
+        {
+          label: `${namesArray[4]}`,
+          value: '5'
+        },
+        {
+          label: 'Cancel',
+          value: 'cancel_option'
+        }
+      ])
+  );
