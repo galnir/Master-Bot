@@ -10,7 +10,7 @@ const {
 const { setTimeout } = require('timers');
 const { promisify } = require('util');
 const ytdl = require('ytdl-core');
-
+const { MessageEmbed } = require('discord.js');
 const wait = promisify(setTimeout);
 
 class MusicPlayer {
@@ -76,6 +76,7 @@ class MusicPlayer {
         newState.status === AudioPlayerStatus.Idle &&
         oldState.status !== AudioPlayerStatus.Idle
       ) {
+        this.queueHistory.push(this.nowPlaying);
         // Finished playing audio
         if (this.queue.length) {
           this.process(this.queue);
@@ -89,11 +90,23 @@ class MusicPlayer {
           }
         }
       } else if (newState.status === AudioPlayerStatus.Playing) {
-        // started playing
-        // display embed to text channel
-        this.textChannel.send({
-          content: `Now playing **${this.nowPlaying.title}**`
-        });
+        const playingEmbed = new MessageEmbed()
+          .setThumbnail(this.nowPlaying.thumbnail)
+          .setTitle(this.nowPlaying.title)
+          .setColor('#ff0000')
+          .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
+          .setFooter(
+            `Requested by ${this.nowPlaying.memberDisplayName}!`,
+            this.nowPlaying.memberAvatar
+          );
+        if (this.queueHistory.length) {
+          playingEmbed.addField(
+            'Previous Song',
+            this.queueHistory[0].title,
+            true
+          );
+        }
+        this.textChannel.send({ embeds: [playingEmbed] });
       }
     });
 
