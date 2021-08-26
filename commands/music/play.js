@@ -21,6 +21,10 @@ const {
   VoiceConnectionStatus,
   AudioPlayerStatus
 } = require('@discordjs/voice');
+const {
+  isMessageComponentDMInteraction
+} = require('discord-api-types/utils/v9');
+const createGuildData = require('../../utils/createGuildData');
 
 const youtube = new Youtube(youtubeAPI);
 // Check If Options are Valid
@@ -64,6 +68,9 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    if (!interaction.client.guildData.get(interaction.guildId)) {
+      interaction.client.guildData.set(interaction.guildId, createGuildData());
+    }
     const message = await interaction.deferReply({
       fetchReply: true
     });

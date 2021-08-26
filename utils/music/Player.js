@@ -76,17 +76,21 @@ class MusicPlayer {
         newState.status === AudioPlayerStatus.Idle &&
         oldState.status !== AudioPlayerStatus.Idle
       ) {
-        this.queueHistory.push(this.nowPlaying);
-        // Finished playing audio
-        if (this.queue.length) {
-          this.process(this.queue);
+        if (this.loopSong) {
+          this.process(this.queue.unshift(this.nowPlaying));
         } else {
-          // leave channel close connection and subscription
-          if (this.connection._state.status !== 'destroyed') {
-            this.connection.destroy();
-            this.textChannel.client.playerManager.delete(
-              this.textChannel.guildId
-            );
+          this.queueHistory.push(this.nowPlaying);
+          // Finished playing audio
+          if (this.queue.length) {
+            this.process(this.queue);
+          } else {
+            // leave channel close connection and subscription
+            if (this.connection._state.status !== 'destroyed') {
+              this.connection.destroy();
+              this.textChannel.client.playerManager.delete(
+                this.textChannel.guildId
+              );
+            }
           }
         }
       } else if (newState.status === AudioPlayerStatus.Playing) {

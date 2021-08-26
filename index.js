@@ -72,9 +72,6 @@ for (const file of eventFiles) {
 client.once('ready', () => {
   client.playerManager = new Map();
   client.guildData = new Collection();
-  client.guilds.cache.each(guild => {
-    client.guildData.set(guild.id, createGuildData());
-  });
   mongoose
     .connect(encodeURI(mongo_URI), {
       useNewUrlParser: true,
