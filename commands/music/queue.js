@@ -10,16 +10,18 @@ module.exports = {
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if (guildData) {
       if (guildData.triviaData.isTriviaRunning) {
-        return interaction.reply(':x: Try again after the trivia has ended!');
+        return interaction.followUp(
+          ':x: Try again after the trivia has ended!'
+        );
       }
     }
     const player = interaction.client.playerManager.get(interaction.guildId);
     if (player) {
       if (player.queue.length == 0) {
-        return interaction.reply(':x: There are no songs in queue!');
+        return interaction.followUp(':x: There are no songs in queue!');
       }
     } else if (!player) {
-      return interaction.reply(':x: There is nothing playing right now!');
+      return interaction.followUp(':x: There is nothing playing right now!');
     }
 
     const queueClone = player.queue.slice(0, 24);
