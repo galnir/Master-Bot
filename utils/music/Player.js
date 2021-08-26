@@ -78,6 +78,8 @@ class MusicPlayer {
       ) {
         if (this.loopSong) {
           this.process(this.queue.unshift(this.nowPlaying));
+        } else if (this.loopQueue) {
+          this.process(this.queue.push(this.nowPlaying));
         } else {
           this.queueHistory.push(this.nowPlaying);
           // Finished playing audio
