@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { AudioPlayerStatus } = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('loopqueue')
