@@ -21,9 +21,6 @@ const {
   VoiceConnectionStatus,
   AudioPlayerStatus
 } = require('@discordjs/voice');
-const {
-  isMessageComponentDMInteraction
-} = require('discord-api-types/utils/v9');
 const createGuildData = require('../../utils/createGuildData');
 
 const youtube = new Youtube(youtubeAPI);
@@ -323,8 +320,6 @@ module.exports = {
           time: MaxResponseTime * 1000
         }
       );
-
-      clarificationCollector.on('end', collected => {});
 
       clarificationCollector.on('collect', async i => {
         if (i.user.id !== interaction.user.id) {
@@ -857,7 +852,7 @@ var flagLogic = (interaction, video, jumpFlag) => {
 
 /********************************** Helper Functions *****************************/
 
-var compose = (f, g) => x => f(g(x));
+// var compose = (f, g) => x => f(g(x));
 
 var isYouTubeVideoURL = arg =>
   arg.match(
