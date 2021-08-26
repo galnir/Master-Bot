@@ -8,6 +8,7 @@
 ## System dependencies
 
 For the bot to run, your system needs to have Node.js v16 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
+A MongoDB database is also needed. I recommend using the free tier of MongoDB Atlas, you can get started using this [guide](https://docs.atlas.mongodb.com/getting-started/). Make sure to generate a valid URI and place it in the config.json file.
 
 ### Installing the Node.js dependencies
 
