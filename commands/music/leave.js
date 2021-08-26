@@ -5,7 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('leave')
     .setDescription('Leaves a voice channel if in one!'),
-  async execute(interaction) {
+  execute(interaction) {
     const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
       return interaction.reply('Please join a voice channel and try again!');
