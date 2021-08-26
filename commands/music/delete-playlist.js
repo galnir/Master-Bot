@@ -17,7 +17,7 @@ module.exports = {
     const userData = await Member.findOne({
       memberId: interaction.member.id
     }).exec();
-    console.log(userData);
+
     if (!userData) {
       interaction.reply('You have zero saved playlists!');
       return;
