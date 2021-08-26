@@ -22,12 +22,11 @@ module.exports = {
       return interaction.reply(':x: There is nothing playing right now!');
     }
 
-    const queueClone = player.queue.slice(0, 10); // max 10 fields
+    const queueClone = player.queue.slice(0, 24);
     const queueEmbed = new MessageEmbed()
       .setColor('#CCE763')
       .setTitle('Music Queue')
       .setTimestamp();
-
     const fields = [];
     for (let i = 0; i < queueClone.length; i++) {
       fields.push({
@@ -36,7 +35,6 @@ module.exports = {
       });
     }
     queueEmbed.setFields(fields);
-
     interaction.followUp({ embeds: [queueEmbed] });
   }
 };
