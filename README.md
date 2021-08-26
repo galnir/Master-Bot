@@ -1,11 +1,13 @@
-# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+# 🚧 This is the v13 migration branch which is still under work 🚧
+
+# A Discord Music Bot written in JavaScript and the discord.js v13 library
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2014.0.0-blue)](https://nodejs.org/)
 
 ## System dependencies
 
-For the bot to run, your system needs to have Node.js v14 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
+For the bot to run, your system needs to have Node.js v16 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
 
 ### Installing the Node.js dependencies
 
@@ -20,23 +22,20 @@ This is the minimum amount of settings that need to be set for the core part (mu
 
 ```json
 {
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
+  "mongo_URI": "your-mongodb-uri",
+  "client_id": "the-bots-discord-id",
+  "guild_id": "guild-id",
   "token": "Your-Bot-Token",
   "youtubeAPI": "youtube-api-key"
 }
 ```
 
 ### Full settings
-For full command support, including lyrics, GIFs, news, Twitch integration, and others, all of the following settings need to be set. You can also choose to add only the ones for the functionalities you want.
+For full command support, including lyrics, GIFs, news, Twitch integration, and others, all of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
 
 ```json
 {
   "invite": "false",
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
-  "token": "Your-Bot-Token",
-  "youtubeAPI": "youtube-api-key",
   "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
