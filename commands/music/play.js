@@ -219,7 +219,7 @@ module.exports = {
                 playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
                   player.queue.push(song)
                 );
-
+                await interaction.followUp('Added playlist to queue');
                 if (
                   player.audioPlayer.state.status === AudioPlayerStatus.Playing
                 ) {
@@ -234,7 +234,6 @@ module.exports = {
                   //   )
                   //   .build();
                 } else {
-                  await interaction.followUp('Added playlist to queue');
                   handleSubscription(player.queue, interaction, player);
                 }
                 break;
