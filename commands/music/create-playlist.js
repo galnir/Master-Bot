@@ -51,7 +51,6 @@ module.exports = {
     // create and save the playlist in the DB
     userData.savedPlaylists.push({ name: playlistName, urls: [] });
     try {
-      console.log('im here');
       await Member.updateOne({ memberId: interaction.member.id }, userData);
       interaction.reply(`Created a new playlist named **${playlistName}**`);
     } catch (e) {
