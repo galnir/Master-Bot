@@ -1,40 +1,47 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+const { PagesBuilder } = require('discord.js-pages');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('queue-history')
     .setDescription('Display the music queue history'),
   execute(interaction) {
-    interaction.deferReply();
     const guildData = interaction.client.guildData.get(interaction.guildId);
-    if (guildData) {
-      if (guildData.triviaData.isTriviaRunning) {
-        return interaction.reply(':x: Try again after the trivia has ended!');
+    if (!guildData) {
+      return interaction.followUp('There is no music queue history!');
+    } else if (guildData) {
+      if (!guildData.queueHistory.length) {
+        return interaction.followUp('There is no music queue history!');
       }
-    }
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    if (player) {
-      if (player.queue.length == 0) {
-        return interaction.reply(':x: There are no songs in queue!');
-      }
-    } else if (!player) {
-      return interaction.reply(':x: There is nothing playing right now!');
     }
 
-    const queueClone = player.queueHistory.slice(0, 24);
-    const queueEmbed = new MessageEmbed()
-      .setColor('#CCE763')
-      .setTitle('Music Queue History')
-      .setTimestamp();
-    const fields = [];
-    for (let i = 0; i < queueClone.length; i++) {
-      fields.push({
-        name: `${i + 1}`,
-        value: `${queueClone[i].title}`
-      });
+    const queueClone = Array.from(guildData.queueHistory);
+    const embeds = [];
+
+    for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
+      const playlistArray = queueClone.splice(0, 24);
+      const fields = [];
+      for (let j = 0; j < playlistArray.length; j++) {
+        if (playlistArray[j] !== null) {
+          fields.push({
+            name: `${j + 1}`,
+            value: `${playlistArray[j].title}`
+          });
+        }
+      }
+      embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
-    queueEmbed.setFields(fields);
-    interaction.followUp({ embeds: [queueEmbed] });
+
+    new PagesBuilder(interaction)
+      .setTitle('Music Queue History')
+      .setPages(embeds)
+      .setListenTimeout(2 * 60 * 1000)
+      .setColor('#9096e6')
+      .setAuthor(
+        interaction.member.user.username,
+        interaction.member.user.displayAvatarURL()
+      )
+      .build();
   }
 };

@@ -18,7 +18,6 @@ class MusicPlayer {
     this.connection = null;
     this.audioPlayer = createAudioPlayer();
     this.queue = [];
-    this.queueHistory = [];
     this.isPreviousTrack = false;
     this.skipTimer = false;
     this.loopSong = false;
@@ -53,6 +52,11 @@ class MusicPlayer {
         }
       } else if (newState.status === VoiceConnectionStatus.Destroyed) {
         // when leaving
+        if (this.nowPlaying !== null) {
+          this.textChannel.client.guildData
+            .get(this.textChannel.guildId)
+            .queueHistory.unshift(this.nowPlaying);
+        }
         this.stop();
       } else if (
         newState.status === VoiceConnectionStatus.Connecting ||
@@ -81,7 +85,11 @@ class MusicPlayer {
         } else if (this.loopQueue) {
           this.process(this.queue.push(this.nowPlaying));
         } else {
-          this.queueHistory.push(this.nowPlaying);
+          if (this.nowPlaying !== null) {
+            this.textChannel.client.guildData
+              .get(this.textChannel.guildId)
+              .queueHistory.unshift(this.nowPlaying);
+          }
           // Finished playing audio
           if (this.queue.length) {
             this.process(this.queue);
@@ -96,6 +104,9 @@ class MusicPlayer {
           }
         }
       } else if (newState.status === AudioPlayerStatus.Playing) {
+        const queueHistory = this.textChannel.client.guildData.get(
+          this.textChannel.guildId
+        ).queueHistory;
         const playingEmbed = new MessageEmbed()
           .setThumbnail(this.nowPlaying.thumbnail)
           .setTitle(this.nowPlaying.title)
@@ -105,12 +116,8 @@ class MusicPlayer {
             `Requested by ${this.nowPlaying.memberDisplayName}!`,
             this.nowPlaying.memberAvatar
           );
-        if (this.queueHistory.length) {
-          playingEmbed.addField(
-            'Previous Song',
-            this.queueHistory[0].title,
-            true
-          );
+        if (queueHistory.length) {
+          playingEmbed.addField('Previous Song', queueHistory[0].title, true);
         }
         this.textChannel.send({ embeds: [playingEmbed] });
       }

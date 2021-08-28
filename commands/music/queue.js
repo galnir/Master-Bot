@@ -24,7 +24,7 @@ module.exports = {
       return interaction.followUp(':x: There is nothing playing right now!');
     }
 
-    const queueClone = player.queue;
+    const queueClone = Array.from(player.queue);
     const embeds = [];
 
     for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {

@@ -1,5 +1,6 @@
 module.exports = function() {
   return {
+    queueHistory: [],
     triviaData: {
       isTriviaRunning: false,
       wasTriviaEndCalled: false,
