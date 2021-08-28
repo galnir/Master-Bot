@@ -43,6 +43,7 @@ module.exports = {
     new PagesBuilder(interaction)
       .setTitle('Music Queue')
       .setPages(embeds)
+      .setListenTimeout(2 * 60 * 1000)
       .setColor('#9096e6')
       .setAuthor(
         interaction.member.user.username,
