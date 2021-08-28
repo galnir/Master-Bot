@@ -28,14 +28,16 @@ module.exports = {
     const embeds = [];
 
     for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
-      const playlistArray = queueClone.splice(0, 24);
+      const playlistArray = queueClone.slice(i * 24, 24 + i * 24);
       const fields = [];
-      for (let j = 0; j < playlistArray.length; j++) {
+
+      playlistArray.forEach((element, index) => {
         fields.push({
-          name: `${j + 1}`,
-          value: `${playlistArray[j].title}`
+          name: `${index + 1 + i * 24}`,
+          value: `${element.title}`
         });
-      }
+      });
+
       embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 

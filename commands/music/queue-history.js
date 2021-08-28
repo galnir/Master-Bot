@@ -20,21 +20,22 @@ module.exports = {
     const embeds = [];
 
     for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
-      const playlistArray = queueClone.splice(0, 24);
+      const playlistArray = queueClone.slice(i * 24, 24 + i * 24);
       const fields = [];
-      for (let j = 0; j < playlistArray.length; j++) {
-        if (playlistArray[j] !== null) {
-          fields.push({
-            name: `${j + 1}`,
-            value: `${playlistArray[j].title}`
-          });
-        }
-      }
+
+      playlistArray.forEach((element, index) => {
+        if (element == null) return;
+        fields.push({
+          name: `${index + 1 + i * 24}`,
+          value: `${element.title}`
+        });
+      });
+
       embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
 
     new PagesBuilder(interaction)
-      .setTitle('Music Queue History')
+      .setTitle('Music Queue')
       .setPages(embeds)
       .setListenTimeout(2 * 60 * 1000)
       .setColor('#9096e6')
