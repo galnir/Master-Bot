@@ -7,7 +7,6 @@ module.exports = {
     .setName('queue')
     .setDescription('Display the music queue'),
   execute(interaction) {
-    //interaction.deferReply({ ephemeral: false });
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if (guildData) {
       if (guildData.triviaData.isTriviaRunning) {
