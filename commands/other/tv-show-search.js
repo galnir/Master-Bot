@@ -80,6 +80,10 @@ module.exports = {
         if (showRuntime === null) showRuntime = 'None listed';
         else showRuntime = showResponse[i - 1].show.runtime + ' Minutes';
 
+        // Filter Ratings Row 4
+        var showRatings = showResponse[i - 1].show.rating.average;
+        if (showRatings === null) showRatings = 'None listed';
+
         // Build each Tv Shows Embed
         embedArray.push(
           new MessageEmbed()
@@ -97,6 +101,7 @@ module.exports = {
             .addField('Network', showNetwork, true)
             .addField('Runtime', showRuntime, true)
             // Row 4
+            .addField('Average Rating', showRatings.toString())
             .setFooter(
               `(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com',
               'https://static.tvmaze.com/images/favico/favicon-32x32.png'
