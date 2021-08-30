@@ -1,7 +1,7 @@
 const { CommandoClient } = require('discord.js-commando');
 const { Structures, MessageEmbed, MessageAttachment } = require('discord.js');
 const path = require('path');
-const { prefix, token, discord_owner_id } = require('./config.json');
+const { prefix, token, 213705204598571011 } = require('./config.json');
 const db = require('quick.db');
 const Canvas = require('canvas');
 
