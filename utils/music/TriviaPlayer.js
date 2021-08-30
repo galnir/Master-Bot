@@ -83,6 +83,8 @@ class TriviaPlayer {
             })
           );
 
+          if (this.wasTriviaEndCalled) return;
+
           const embed = new MessageEmbed()
             .setColor('#ff7373')
             .setTitle(`Music Quiz Results:`)
