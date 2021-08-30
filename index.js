@@ -32,6 +32,7 @@ const commandFiles = fs
 
 for (const file of commandFiles) {
   const command = require(`${file}`);
+  if (Object.keys(command).length === 0) continue;
   commands.push(command.data.toJSON());
   client.commands.set(command.data.name, command);
 }
