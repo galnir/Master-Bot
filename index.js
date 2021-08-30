@@ -2,7 +2,7 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { Client, Collection, Intents } = require('discord.js');
-const { token, mongo_URI, client_id, guild_id } = require('./config.json');
+const { token, mongo_URI, client_id } = require('./config.json');
 const mongoose = require('mongoose');
 
 const rest = new REST({ version: '9' }).setToken(token);
@@ -40,7 +40,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
+    await rest.put(Routes.applicationCommands(client_id), {
       body: commands
     });
 
