@@ -11,6 +11,7 @@ const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_VOICE_STATES
   ]
@@ -64,6 +65,7 @@ for (const file of eventFiles) {
 
 client.once('ready', () => {
   client.playerManager = new Map();
+  client.triviaManager = new Map();
   client.guildData = new Collection();
   mongoose
     .connect(encodeURI(mongo_URI), {
