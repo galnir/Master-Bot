@@ -1,36 +1,30 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { Command } = require('discord.js-commando');
 
-module.exports = class RandomNumberCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'random',
-      aliases: ['random-number', 'number-between', 'rng'],
-      memberName: 'random',
-      group: 'other',
-      description: 'Generate a random number between two provided numbers!',
-      args: [
-        {
-          key: 'min',
-          prompt: 'What is the minimum number?',
-          type: 'integer'
-        },
-        {
-          key: 'max',
-          prompt: 'What is the maximum number?',
-          type: 'integer'
-        }
-      ]
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('random')
+    .setDescription('Generate a random number between two provided numbers!')
+    .addIntegerOption(option =>
+      option
+        .setName('min')
+        .setDescription('What is the minimum number?')
+        .setRequired(true)
+    )
+    .addIntegerOption(option =>
+      option
+        .setName('max')
+        .setDescription('What is the maximum number?')
+        .setRequired(true)
+    ),
 
-  run(message, { min, max }) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    var rngEmbed = new MessageEmbed().setTitle(
-      Math.floor(Math.random() * (max - min + 1)) + min
+  execute(interaction) {
+    const min = Math.ceil(interaction.options.get('min').value);
+    const max = Math.floor(interaction.options.get('max').value);
+    const rngEmbed = new MessageEmbed().setTitle(
+      `${Math.floor(Math.random() * (max - min + 1)) + min}`
     );
-    message.channel.send(rngEmbed);
-    return;
+
+    return interaction.reply({ embeds: [rngEmbed] });
   }
 };

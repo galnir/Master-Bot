@@ -1,32 +1,25 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
+const { PagesBuilder } = require('discord.js-pages');
 const { rawgAPI } = require('../../config.json');
 
 if (!rawgAPI) return;
 
-module.exports = class GameSearchCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'game-search',
-      aliases: ['gs'],
-      memberName: 'game-search',
-      group: 'other',
-      description: 'Search for game information.',
-      args: [
-        {
-          key: 'gameQuery',
-          prompt: 'What game are you looking for?',
-          type: 'string'
-        }
-      ]
-    });
-  }
-
-  async run(message, { gameQuery }) {
-    const gameTitleFiltered = gameQuery
-      .replace(/ /g, '-')
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('game-search')
+    .setDescription('Search for game information')
+    .addStringOption(option =>
+      option
+        .setName('game')
+        .setDescription('What game are you looking for?')
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const gameTitleFiltered = interaction.options
+      .get('game')
+      .value.replace(/ /g, '-')
       .replace(/'/g, '')
       .toLowerCase();
 
@@ -34,8 +27,7 @@ module.exports = class GameSearchCommand extends Command {
     try {
       var response = await getGameDetails(gameTitleFiltered);
     } catch (error) {
-      message.channel.send(error);
-      return;
+      return interaction.reply(error);
     }
 
     let releaseDate;
@@ -151,62 +143,58 @@ module.exports = class GameSearchCommand extends Command {
         )
     );
 
-    const embed = new Pagination.Embeds()
-      .setArray(embedArray)
-      .setAuthorizedUsers([message.author.id])
-      .setChannel(message.channel)
+    const embed = new PagesBuilder(interaction)
+      .setPages(embedArray)
       .setTitle(response.name)
       .setColor(`#b5b5b5`);
     if (response.background_image) {
       embed.setThumbnail(response.background_image);
     }
     embed.build();
-
-    function getGameDetails(query) {
-      return new Promise(async function(resolve, reject) {
-        const url = `https://api.rawg.io/api/games/${query}?key=${rawgAPI}`;
-        try {
-          const body = await fetch(url);
-          if (body.status == `429`) {
-            reject(
-              ':x: Rate Limit exceeded. Please try again in a few minutes.'
-            );
-          }
-          if (body.status == `503`) {
-            reject(
-              ':x: The service is currently unavailable. Please try again later.'
-            );
-          }
-          if (body.status == '404') {
-            reject(`:x: Error: ${query} was not found`);
-          }
-          if (body.status !== 200) {
-            reject(
-              ':x: There was a problem getting data from the API, make sure you entered a valid game tittle'
-            );
-          }
-
-          let data = await body.json();
-          if (data.redirect) {
-            const redirect = await fetch(
-              `https://api.rawg.io/api/games/${body.slug}?key=${rawgAPI}`
-            );
-            data = await redirect.json();
-          }
-          // 'id' is the only value that must be present to all valid queries
-          if (!data.id) {
-            reject(
-              ':x: There was a problem getting data from the API, make sure you entered a valid game title'
-            );
-          }
-          resolve(data);
-        } catch (e) {
-          console.error(e);
-          reject(
-            'There was a problem getting data from the API, make sure you entered a valid game title'
-          );
-        }
-      });
-    }
   }
 };
+
+function getGameDetails(query) {
+  return new Promise(async function(resolve, reject) {
+    const url = `https://api.rawg.io/api/games/${query}?key=${rawgAPI}`;
+    try {
+      const body = await fetch(url);
+      if (body.status == `429`) {
+        reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
+      }
+      if (body.status == `503`) {
+        reject(
+          ':x: The service is currently unavailable. Please try again later.'
+        );
+      }
+      if (body.status == '404') {
+        reject(`:x: Error: ${query} was not found`);
+      }
+      if (body.status !== 200) {
+        reject(
+          ':x: There was a problem getting data from the API, make sure you entered a valid game tittle'
+        );
+      }
+
+      let data = await body.json();
+      if (data.redirect) {
+        const redirect = await fetch(
+          `https://api.rawg.io/api/games/${body.slug}?key=${rawgAPI}`
+        );
+        data = await redirect.json();
+      }
+      // 'id' is the only value that must be present to all valid queries
+      if (!data.id) {
+        reject(
+          ':x: There was a problem getting data from the API, make sure you entered a valid game title'
+        );
+      }
+      resolve(data);
+    } catch (e) {
+      console.error(e);
+      reject(
+        'There was a problem getting data from the API, make sure you entered a valid game title'
+      );
+    }
+  });
+}

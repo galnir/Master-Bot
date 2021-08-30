@@ -1,19 +1,12 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
-module.exports = class WhoMadeMeCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'about',
-      aliases: ['botinfo', 'whomademe', 'bot-maker', 'bot-creator'],
-      memberName: 'about',
-      group: 'other',
-      description: "Learn about the bot and it's creator!"
-    });
-  }
-
-  run(message) {
-    message.channel.send(
-      'Made by @hyperzone#1185 with :heart: full code is available on GitHub https://github.com/galnir/Master-Bot'
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('about')
+    .setDescription('Info about the bot and its creator!'),
+  execute(interaction) {
+    return interaction.reply(
+      'Made by @hyperzone#1185 with :heart: code is available on GitHub https://github.com/galnir/Master-Bot'
     );
   }
 };

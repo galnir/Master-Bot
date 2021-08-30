@@ -1,28 +1,17 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 const fetch = require('node-fetch');
+const { PagesBuilder } = require('discord.js-pages');
 const { newsAPI } = require('../../config.json');
-const { Command } = require('discord.js-commando');
-const Pagination = require('discord-paginationembed');
 
 // Skips loading if not found in config.json
 if (!newsAPI) return;
 
-module.exports = class GlobalNewsCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'world-news',
-      aliases: ['global-news', 'reuters'],
-      group: 'other',
-      memberName: 'world-news',
-      description: 'Replies with the 10 latest world news headlines!',
-      throttling: {
-        usages: 2,
-        duration: 10
-      }
-    });
-  }
-
-  async run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('world-news')
+    .setDescription('Replies with the 10 latest world news headlines!'),
+  async execute(interaction) {
     // powered by NewsAPI.org
     try {
       const response = await fetch(
@@ -45,15 +34,9 @@ module.exports = class GlobalNewsCommand extends Command {
         );
       }
 
-      const embed = new Pagination.Embeds()
-        .setArray(articleArr)
-        .setAuthorizedUsers([message.author.id])
-        .setChannel(message.channel)
-        .setPageIndicator(true);
-
-      embed.build();
+      return new PagesBuilder(interaction).setPages(articleArr).build();
     } catch (e) {
-      message.reply(':x: Something failed along the way!');
+      interaction.reply(':x: Something failed along the way!');
       return console.error(e);
     }
   }

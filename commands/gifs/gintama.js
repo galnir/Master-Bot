@@ -1,29 +1,17 @@
-// const fetch = require("node-fetch");
-// const { tenorAPI } = require("../config.json");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
-const { Command } = require('discord.js-commando');
 
-module.exports = class GintamaCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'gintama',
-      group: 'gifs',
-      memberName: 'gintama',
-      description: 'Replies with a gintama gif!',
-      throttling: {
-        usages: 2,
-        duration: 8
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('gintama')
+    .setDescription('Replies with a gintama gif!'),
+  execute(interaction) {
     try {
       const linkArray = fs
         .readFileSync('././resources/gifs/gintamalinks.txt', 'utf8')
         .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
-      message.channel.send(link);
+      interaction.reply(link);
       return;
 
       /*
@@ -49,7 +37,7 @@ module.exports = class GintamaCommand extends Command {
         })
       */
     } catch (e) {
-      message.reply(':x: Failed to fetch a gintama gif!');
+      interaction.reply(':x: Failed to fetch a gintama gif!');
       return console.error(e);
     }
   }

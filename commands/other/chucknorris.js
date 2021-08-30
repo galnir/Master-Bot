@@ -1,23 +1,12 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
-const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class ChuckNorrisCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'chucknorris',
-      aliases: ['chuckfact', 'norris', 'chuck-norris'],
-      group: 'other',
-      memberName: 'chucknorris',
-      description: 'Get a satirical fact about Chuck Norris!',
-      throttling: {
-        usages: 1,
-        duration: 6
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('chucknorris')
+    .setDescription('Get a satirical fact about Chuck Norris!'),
+  execute(interaction) {
     // thanks to https://api.chucknorris.io
     fetch('https://api.chucknorris.io/jokes/random')
       .then(res => res.json())
@@ -32,11 +21,11 @@ module.exports = class ChuckNorrisCommand extends Command {
           .setDescription(json.value)
           .setTimestamp()
           .setFooter('Powered by chucknorris.io', '');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
         return;
       })
       .catch(err => {
-        message.reply(':x: An error occured, Chuck is investigating this!');
+        interaction.reply(':x: An error occured, Chuck is investigating this!');
         return console.error(err);
       });
   }

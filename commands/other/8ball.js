@@ -1,27 +1,24 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 const fs = require('fs');
 
-module.exports = class EightBallCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: '8ball',
-      aliases: ['eightball'],
-      memberName: '8ball',
-      group: 'other',
-      description: 'Get the answer to anything!',
-      args: [
-        {
-          key: 'text',
-          prompt: 'What do you want to ask?',
-          type: 'string'
-        }
-      ]
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('8ball')
+    .setDescription('Get the answer to anything!')
+    .addStringOption(option =>
+      option
+        .setName('question')
+        .setDescription('What do you want to ask?')
+        .setRequired(true)
+    ),
+  execute(interaction) {
+    // console.log(interaction.options.get('question').value);
 
-  run(message) {
-    const ballAnswers = fs.readFileSync('././resources/other/8ball.json', 'utf8');
+    const ballAnswers = fs.readFileSync(
+      '././resources/other/8ball.json',
+      'utf8'
+    );
     const ballArray = JSON.parse(ballAnswers).answers;
 
     const randomAnswer =
@@ -31,7 +28,8 @@ module.exports = class EightBallCommand extends Command {
       .setAuthor('Magic 8 Ball', 'https://i.imgur.com/HbwMhWM.png')
       .setDescription(randomAnswer.text)
       .setColor('#000000')
-      .setTimestamp()
-    return message.channel.send(answerEmbed);
+      .setTimestamp();
+
+    return interaction.reply({ embeds: [answerEmbed] });
   }
 };

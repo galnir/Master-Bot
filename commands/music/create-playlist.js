@@ -1,48 +1,63 @@
-const { Command } = require('discord.js-commando');
-const db = require('quick.db');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Member = require('../../utils/models/Member');
 
-module.exports = class CreatePlaylistCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'create-playlist',
-      group: 'music',
-      memberName: 'create-playlist',
-      guildOnly: true,
-      description: 'Create a playlist',
-      args: [
-        {
-          key: 'playlistName',
-          prompt: 'What is the name of the playlist you would like to create?',
-          type: 'string'
-        }
-      ]
-    });
-  }
-
-  run(message, { playlistName }) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('create-playlist')
+    .setDescription('Create a custom playlist that you can play anytime')
+    .addStringOption(option =>
+      option
+        .setName('playlistname')
+        .setDescription(
+          'What is the name of the playlist you would like to create?'
+        )
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const playlistName = interaction.options.get('playlistname').value;
     // check if the user exists in the db
-    if (!db.get(message.member.id)) {
-      db.set(message.member.id, {
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec(); // a clone object
+    if (!userData) {
+      const userObject = {
+        memberId: interaction.member.id,
+        username: interaction.member.user.username,
+        joinedAt: interaction.member.joinedAt,
         savedPlaylists: [{ name: playlistName, urls: [] }]
+      };
+      const user = new Member(userObject);
+      user.save(function onErr(err) {
+        if (err)
+          return interaction.reply(
+            'An error has occured, please try again later'
+          );
       });
-      message.reply(`Created a new playlist named **${playlistName}**`);
+      interaction.reply(`Created a new playlist named **${playlistName}**`);
       return;
     }
     // make sure the playlist name isn't a duplicate
-    var savedPlaylistsClone = db.get(message.member.id).savedPlaylists;
     if (
-      savedPlaylistsClone.filter(function searchForDuplicate(playlist) {
+      userData.savedPlaylists.filter(function searchForDuplicate(playlist) {
         return playlist.name == playlistName;
       }).length > 0
     ) {
-      message.reply(
+      interaction.reply(
         `There is already a playlist named **${playlistName}** in your saved playlists!`
       );
       return;
     }
-    // create and save the playlist in the db
-    savedPlaylistsClone.push({ name: playlistName, urls: [] });
-    db.set(`${message.member.id}.savedPlaylists`, savedPlaylistsClone);
-    message.reply(`Created a new playlist named **${playlistName}**`);
+
+    // create and save the playlist in the DB
+    userData.savedPlaylists.push({ name: playlistName, urls: [] });
+    try {
+      await Member.updateOne({ memberId: interaction.member.id }, userData);
+      interaction.reply(`Created a new playlist named **${playlistName}**`);
+    } catch (e) {
+      console.error(e);
+      return interaction.reply(
+        'There was a problem executing this command, please try again later'
+      );
+    }
   }
 };

@@ -1,30 +1,17 @@
-// const fetch = require("node-fetch");
-// const { tenorAPI } = require("../config.json");
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
-const { Command } = require('discord.js-commando');
 
-module.exports = class JojoCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'jojo',
-      aliases: ['jojo-gif', 'jojo-gifs'],
-      group: 'gifs',
-      memberName: 'jojo',
-      description: 'Replies with a random jojo gif!',
-      throttling: {
-        usages: 2,
-        duration: 8
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('jojo')
+    .setDescription('Replies with a random jojo gif!'),
+  execute(interaction) {
     try {
       const linkArray = fs
         .readFileSync('././resources/gifs/jojolinks.txt', 'utf8')
         .split('\n');
       const link = linkArray[Math.floor(Math.random() * linkArray.length)];
-      message.channel.send(link);
+      interaction.reply(link);
       return;
 
       /*
@@ -51,7 +38,7 @@ module.exports = class JojoCommand extends Command {
         })
       */
     } catch (e) {
-      message.reply(':x: Failed to fetch a gif!');
+      interaction.reply(':x: Failed to fetch a gif!');
       return console.error(e);
     }
   }

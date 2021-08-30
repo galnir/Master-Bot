@@ -1,41 +1,38 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { AudioPlayerStatus } = require('@discordjs/voice');
 
-module.exports = class PauseCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'pause',
-      aliases: ['pause-song', 'hold'],
-      memberName: 'pause',
-      group: 'music',
-      description: 'Pause the current playing song!',
-      guildOnly: true
-    });
-  }
-
-  run(message) {
-    var voiceChannel = message.member.voice.channel;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('pause')
+    .setDescription('Pause the playing track'),
+  execute(interaction) {
+    const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
-      return;
+      return interaction.reply('Please join a voice channel and try again!');
     }
 
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      message.reply(':x: There is no song playing right now!');
-      return;
-    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    if (!player) {
+      return interaction.reply('There is no song playing right now!');
+    }
+    if (player.audioPlayer.state.status == AudioPlayerStatus.Paused) {
+      return interaction.reply('You already paused this song!');
+    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+      return interaction.reply(
+        'You must be in the same voice channel as the bot in order to pause!'
       );
-      return;
     }
 
-    message.reply(
-      ':pause_button: Song was paused! To unpause, use the resume command'
-    );
+    const success = player.audioPlayer.pause();
 
-    message.guild.musicData.songDispatcher.pause();
+    if (success) {
+      return interaction.reply(
+        ':pause_button: Song was paused! To unpause, use the resume command'
+      );
+    } else {
+      return interaction.reply(
+        'I was unable to pause this song, please try again soon'
+      );
+    }
   }
 };

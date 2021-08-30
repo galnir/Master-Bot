@@ -1,7 +1,7 @@
-const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageSelectMenu, MessageActionRow } = require('discord.js');
+const Player = require('../../utils/music/Player');
 const Youtube = require('simple-youtube-api');
-const ytdl = require('ytdl-core');
 const ytsr = require('ytsr');
 const { getData } = require('spotify-url-info');
 const { youtubeAPI } = require('../../config.json');
@@ -14,8 +14,14 @@ let {
   MaxResponseTime,
   deleteOldPlayMessage
 } = require('../../options.json');
-const db = require('quick.db');
-const Pagination = require('discord-paginationembed');
+const Member = require('../../utils/models/Member');
+const {
+  joinVoiceChannel,
+  entersState,
+  VoiceConnectionStatus,
+  AudioPlayerStatus
+} = require('@discordjs/voice');
+const createGuildData = require('../../utils/createGuildData');
 
 const youtube = new Youtube(youtubeAPI);
 // Check If Options are Valid
@@ -45,51 +51,42 @@ LeaveTimeOut = LeaveTimeOut > 600 ? 600 : LeaveTimeOut &&
 
 MaxResponseTime = MaxResponseTime > 150 ? 150 : MaxResponseTime &&
   MaxResponseTime < 5 ? 5 : MaxResponseTime; // prettier-ignore
-module.exports = class PlayCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'play',
-      aliases: ['play-song', 'add', 'p'],
-      memberName: 'play',
-      group: 'music',
-      description: 'Play any song or playlist from youtube!',
-      guildOnly: true,
-      clientPermissions: [
-        'SPEAK',
-        'CONNECT',
-        'SEND_MESSAGES',
-        'MANAGE_MESSAGES'
-      ],
-      throttling: {
-        usages: 2,
-        duration: 5
-      },
-      args: [
-        {
-          key: 'query',
-          prompt:
-            ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist',
-          type: 'string',
-          validate: function(query) {
-            return query.length > 0 && query.length < 200;
-          }
-        }
-      ]
-    });
-  }
 
-  async run(message, { query }) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('play')
+    .setDescription('Play any song or playlist from YouTube or Spotify!')
+    .addStringOption(option =>
+      option
+        .setName('query')
+        .setDescription(
+          ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist'
+        )
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    if (!interaction.client.guildData.get(interaction.guildId)) {
+      interaction.client.guildData.set(interaction.guildId, createGuildData());
+    }
+    const message = await interaction.deferReply({
+      fetchReply: true
+    });
     // Make sure that only users present in a voice channel can use 'play'
-    if (!message.member.voice.channel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
+    if (!interaction.member.voice.channel) {
+      interaction.followUp(
+        ':no_entry: Please join a voice channel and try again!'
+      );
       return;
     }
     // Make sure there isn't a 'music-trivia' running
-    if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: Please try after the trivia has ended!');
+    if (
+      interaction.client.guildData.get(interaction.guild.id).triviaData
+        .isTriviaRunning
+    ) {
+      interaction.followUp(':x: Please try after the trivia has ended!');
       return;
     }
-
+    let query = interaction.options.get('query').value;
     //Parse query to check for flags
 
     var splitQuery = query.split(' ');
@@ -101,164 +98,182 @@ module.exports = class PlayCommand extends Command {
     if (shuffleFlag || reverseFlag || nextFlag || jumpFlag) splitQuery.pop();
     query = splitQuery.join(' ');
 
+    let player = interaction.client.playerManager.get(interaction.guildId);
+
+    if (!player) {
+      player = new Player();
+      interaction.client.playerManager.set(interaction.guildId, player);
+    }
+
     // Check if the query is actually a saved playlist name
 
-    if (db.get(message.member.id) !== null) {
-      const playlistsArray = db.get(message.member.id).savedPlaylists;
-      const found = playlistsArray.find(playlist => playlist.name === query);
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec(); // Object
 
+    if (userData !== null) {
+      const playlistsArray = userData.savedPlaylists;
+      const found = playlistsArray.find(playlist => playlist.name === query);
       // Found a playlist with a name matching the query and it's not empty
       if (found && playlistsArray[playlistsArray.indexOf(found)].urls.length) {
         const fields = [
           {
-            name: ':arrow_forward: Playlist',
-            value: '1. Play saved playlist'
+            label: 'Playlist',
+            description: 'Select playlist',
+            value: 'playlist_option',
+            emoji: '⏩'
           },
           {
-            name: ':twisted_rightwards_arrows: Shuffle Playlist',
-            value: '2. Shuffle & Play saved playlist'
+            label: 'Shuffle Playlist',
+            description: 'Select playlist and shuffle',
+            value: 'shuffle_option',
+            emoji: '🔀'
           },
           {
-            name: ':mag: YouTube',
-            value: '3. Search on YouTube'
+            label: 'YouTube',
+            description: 'Search on YouTube',
+            value: 'youtube_option',
+            emoji: '🔍'
           },
           {
-            name: ':x: Cancel',
-            value: '4. Cancel'
+            label: 'Cancel',
+            value: 'cancel_option',
+            emoji: '❌'
           }
         ];
-
         let hasHistoryField = false;
         const index = String(Number(query) - 1);
         if (
           Number(query) &&
-          typeof message.guild.musicData.queueHistory[index] !== 'undefined'
+          typeof player.queueHistory[index] !== 'undefined'
         ) {
           hasHistoryField = true;
           fields.unshift({
-            name: ':arrow_backward: Previously played song',
-            value: `0. Play '${message.guild.musicData.queueHistory[index].title}'`
+            name: `play ${player.queueHistory[index].title}`,
+            description: 'Play last song',
+            value: 'previous_song_option',
+            emoji: '🔙'
           });
         }
-
-        const clarificationEmbed = new MessageEmbed()
-          .setColor('#ff0000')
-          .setTitle(':eyes: Clarification Please.')
-          .addFields(fields)
-          .setDescription(
-            `You have a playlist named **${query}**, did you mean to play the playlist or search for **${query}** on YouTube?`
-          )
-          .setFooter('Choose by commenting a valid number.');
-
-        const ClarificationEmbedMessage = await message.channel.send(
-          clarificationEmbed
+        const row = new MessageActionRow().addComponents(
+          new MessageSelectMenu()
+            .setCustomId('1')
+            .setPlaceholder('Please select an option')
+            .addOptions(fields)
+        );
+        const clarificationOptions = await message.channel.send({
+          content: 'Clarify Please',
+          components: [row]
+        });
+        //await message.delete();
+        const clarificationCollector = clarificationOptions.createMessageComponentCollector(
+          {
+            componentType: 'SELECT_MENU',
+            time: MaxResponseTime * 1000
+          }
         );
 
-        // Wait for a proper response on the clarification embed
-        message.channel
-          .awaitMessages(
-            msg => ['0', '1', '2', '3', '4'].includes(msg.content),
-            {
-              max: 1,
-              time: MaxResponseTime * 1000,
-              errors: ['time']
-            }
-          )
-          .then(async function onProperResponse(response) {
-            response = response.first().content;
-            if (ClarificationEmbedMessage)
-              ClarificationEmbedMessage.delete().catch(console.error);
+        clarificationCollector.on('end', () => {
+          if (clarificationOptions)
+            clarificationOptions.delete().catch(console.error);
+        });
 
-            switch (response) {
-              case '0':
+        clarificationCollector.on('collect', async i => {
+          if (i.user.id !== interaction.user.id) {
+            i.reply({
+              content: `This element is not for you!`,
+              ephemeral: true
+            });
+          } else {
+            clarificationCollector.stop();
+            const value = i.values[0];
+
+            switch (value) {
+              case 'previous_song_option':
                 if (!hasHistoryField) break;
-                if (!message.guild.musicData.isPlaying) {
-                  message.guild.musicData.queue.unshift(
-                    message.guild.musicData.queueHistory[index]
-                  );
-                  playSong(message.guild.musicData.queue, message);
+                if (
+                  player.audioPlayer.state.status !== AudioPlayerStatus.Playing
+                ) {
+                  player.queue.unshift(player.queueHistory[index]);
+                  handleSubscription(player.queue, interaction, player);
                   break;
                 }
                 if (nextFlag || jumpFlag) {
-                  message.guild.musicData.queue.unshift(
-                    message.guild.musicData.queueHistory[index]
-                  );
-                  if (jumpFlag && message.guild.musicData.songDispatcher) {
-                    message.guild.musicData.loopSong = false;
-                    message.guild.musicData.songDispatcher.end();
+                  player.queue.unshift(player.queueHistory[index]);
+                  if (
+                    jumpFlag &&
+                    player.audioPlayer.state.status == AudioPlayerStatus.Playing
+                  ) {
+                    player.loopSong = false;
+                    player.audioPlayer.stop();
                   }
                 } else {
-                  message.guild.musicData.queue.push(
-                    message.guild.musicData.queueHistory[index]
-                  );
+                  player.queue.push(player.queueHistory[index]);
                 }
-                message.reply(
-                  `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+                interaction.followUp(
+                  `'${player.queueHistory[index].title}' was added to queue!`
                 );
-
                 break;
               // 1: Play the saved playlist
-              case '1':
+              case 'playlist_option':
                 playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
-                  message.guild.musicData.queue.push(song)
+                  player.queue.push(song)
                 );
-
-                if (message.guild.musicData.isPlaying) {
+                await interaction.followUp('Added playlist to queue');
+                if (
+                  player.audioPlayer.state.status === AudioPlayerStatus.Playing
+                ) {
                   // Send a message indicating that the playlist was added to the queue
-                  interactiveEmbed(message)
-                    .addField(
-                      'Added Playlist',
-                      `:new: **${query}** added ${
-                        playlistsArray[playlistsArray.indexOf(found)].urls
-                          .length
-                      } songs to the queue!`
-                    )
-                    .build();
+                  // interactiveEmbed(interaction)
+                  //   .addField(
+                  //     'Added Playlist',
+                  //     `:new: **${query}** added ${
+                  //       playlistsArray[playlistsArray.indexOf(found)].urls
+                  //         .length
+                  //     } songs to the queue!`
+                  //   )
+                  //   .build();
                 } else {
-                  message.guild.musicData.isPlaying = true;
-                  playSong(message.guild.musicData.queue, message);
+                  handleSubscription(player.queue, interaction, player);
                 }
                 break;
               // 2: Play the shuffled saved playlist
-              case '2':
+              case 'shuffle_option':
                 shuffleArray(
                   playlistsArray[playlistsArray.indexOf(found)].urls
-                ).map(song => message.guild.musicData.queue.push(song));
+                ).map(song => player.queue.push(song));
 
-                if (message.guild.musicData.isPlaying) {
+                if (
+                  player.audioPlayer.state.status === AudioPlayerStatus.Playing
+                ) {
                   // Send a message indicating that the playlist was added to the queue
-                  interactiveEmbed(message)
-                    .addField(
-                      'Added Playlist',
-                      `:new: **${query}** added ${
-                        playlistsArray[playlistsArray.indexOf(found)].urls
-                          .length
-                      } songs to the queue!`
-                    )
-                    .build();
+                  // interactiveEmbed(interaction)
+                  //   .addField(
+                  //     'Added Playlist',
+                  //     `:new: **${query}** added ${
+                  //       playlistsArray[playlistsArray.indexOf(found)].urls
+                  //         .length
+                  //     } songs to the queue!`
+                  //   )
+                  //   .build();
                 } else {
-                  message.guild.musicData.isPlaying = true;
-                  playSong(message.guild.musicData.queue, message);
+                  handleSubscription(player.queue, interaction, player);
                 }
                 break;
               // 3: Search for the query on YouTube
-              case '3':
+              case 'youtube_option':
                 await searchYoutube(
                   query,
-                  message,
-                  message.member.voice.channel
+                  interaction,
+                  interaction.member.voice.channel
                 );
                 break;
               // 4: Cancel
-              case '4':
+              case 'cancel_option':
                 break;
             }
-          })
-          .catch(function onResponseError() {
-            if (ClarificationEmbedMessage)
-              ClarificationEmbedMessage.delete().catch(console.error);
-            return;
-          });
+          }
+        });
         return;
       }
     }
@@ -267,75 +282,96 @@ module.exports = class PlayCommand extends Command {
     if (Number(query)) {
       const index = String(Number(query) - 1);
       // continue if there's no index matching the query on the history queue
-      if (typeof message.guild.musicData.queueHistory[index] === 'undefined') {
+      if (typeof player.queueHistory[index] === 'undefined') {
         return;
       }
-      const clarificationEmbed = new MessageEmbed()
-        .setColor('#ff0000')
-        .setTitle(':eyes: Clarification Please.')
-        .setDescription(`Did you mean to play a song from the history queue?`)
-        .addField(
-          `:arrow_forward: History Queue`,
-          `1. Play song number ${query}`
-        )
-        .addField(`:mag: YouTube`, `2. Search '${query}' on YouTube`)
-        .addField(':x: Cancel', '3. Cancel')
-        .setFooter('Choose by commenting a number between 1 and 3.');
-      const ClarificationEmbedMessage = await message.channel.send(
-        clarificationEmbed
+      const row = new MessageActionRow().addComponents(
+        new MessageSelectMenu()
+          .setCustomId('history-select')
+          .setPlaceholder('Please select an option')
+          .addOptions([
+            {
+              label: 'History Queue',
+              description: `Play song number ${query}`,
+              value: 'history_option',
+              emoji: '🔙'
+            },
+            {
+              label: 'YouTube',
+              description: `Search '${query}' on YouTube`,
+              value: 'youtube_option',
+              emoji: '🔍'
+            },
+            {
+              label: 'Cancel',
+              value: 'cancel_option',
+              emoji: '❌'
+            }
+          ])
+      );
+      const clarificationOptions = await message.channel.send({
+        content: 'Did you mean to play a song from the history queue?',
+        components: [row]
+      });
+      const clarificationCollector = clarificationOptions.createMessageComponentCollector(
+        {
+          componentType: 'SELECT_MENU',
+          time: MaxResponseTime * 1000
+        }
       );
 
-      // Wait for a proper response on the clarification embed
-      message.channel
-        .awaitMessages(msg => ['1', '2', '3'].includes(msg.content), {
-          max: 1,
-          time: MaxResponseTime * 1000,
-          errors: ['time']
-        })
-        .then(async function onProperResponse(response) {
-          response = response.first().content;
-          if (ClarificationEmbedMessage)
-            ClarificationEmbedMessage.delete().catch(console.error);
+      clarificationCollector.on('collect', async i => {
+        if (i.user.id !== interaction.user.id) {
+          i.reply({
+            content: `This element is not for you!`,
+            ephemeral: true
+          });
+        } else {
+          clarificationCollector.stop();
+          const value = i.values[0];
 
-          switch (response) {
+          switch (value) {
             // 1: Play a song from the history queue
-            case '1':
-              if (!message.guild.musicData.isPlaying) {
-                message.guild.musicData.queue.unshift(
-                  message.guild.musicData.queueHistory[index]
-                );
-                playSong(message.guild.musicData.queue, message);
+            case 'history_option':
+              if (
+                player.audioPlayer.state.status !== AudioPlayerStatus.Playing
+              ) {
+                player.queue.unshift(player.queueHistory[index]);
+                handleSubscription(player.queue, interaction, player);
                 break;
               }
               if (nextFlag || jumpFlag) {
-                message.guild.musicData.queue.unshift(
-                  message.guild.musicData.queueHistory[index]
-                );
-                if (jumpFlag && message.guild.musicData.songDispatcher) {
-                  message.guild.musicData.loopSong = false;
-                  message.guild.musicData.songDispatcher.end();
+                player.queue.unshift(player.queueHistory[index]);
+                if (
+                  jumpFlag &&
+                  player.audioPlayer.state.status === AudioPlayerStatus.Playing
+                ) {
+                  player.loopSong = false;
+                  player.audioPlayer.stop();
                 }
               } else {
-                message.guild.musicData.queue.push(
-                  message.guild.musicData.queueHistory[index]
-                );
+                player.queue.push(player.queueHistory[index]);
               }
-              message.reply(
-                `'${message.guild.musicData.queueHistory[index].title}' was added to queue!`
+              interaction.followUp(
+                `'${player.queueHistory[index].title}' was added to queue!`
               );
               break;
             // 2: Search for the query on YouTube
-            case '2':
-              await searchYoutube(query, message, message.member.voice.channel);
+            case 'youtube_option':
+              await searchYoutube(
+                query,
+                interaction,
+                interaction.member.voice.channel
+              );
               break;
             // 3: Cancel
-            case '3':
+            case 'cancel_option':
               break;
           }
-        });
+        }
+      });
       return;
     }
-
     if (isSpotifyURL(query)) {
       getData(query)
         .then(async data => {
@@ -343,9 +379,9 @@ module.exports = class PlayCommand extends Command {
           if (data.tracks) {
             // handle playlist
             const spotifyPlaylistItems = data.tracks.items;
-            const processingMessage = await message.channel.send(
-              'Processing Playlist...'
-            );
+            const processingMessage = await interaction.channel.send({
+              content: 'Processing Playlist...'
+            });
             for (let i = 0; i < spotifyPlaylistItems.length; i++) {
               const artistsAndName = concatSongNameAndArtists(
                 spotifyPlaylistItems[i].track
@@ -363,24 +399,20 @@ module.exports = class PlayCommand extends Command {
                 duration: [ytResult.items[0].duration, true]
               };
               if (nextFlag || jumpFlag) {
-                flagLogic(message, video, jumpFlag);
+                flagLogic(interaction, video, jumpFlag);
               } else {
-                message.guild.musicData.queue.push(
+                player.queue.push(
                   constructSongObj(
                     video,
-                    message.member.voice.channel,
-                    message.member.user
+                    interaction.member.voice.channel,
+                    interaction.member.user
                   )
                 );
               }
             }
             processingMessage.edit('Playlist Processed!');
-            if (
-              !message.guild.musicData.isPlaying ||
-              typeof message.guild.musicData.isPlaying == 'undefined'
-            ) {
-              message.guild.musicData.isPlaying = true;
-              playSong(message.guild.musicData.queue, message);
+            if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+              handleSubscription(player.queue, interaction, player);
               return;
             }
             return;
@@ -402,29 +434,25 @@ module.exports = class PlayCommand extends Command {
               duration: [ytResult.items[0].duration, true]
             };
             if (nextFlag || jumpFlag) {
-              flagLogic(message, video, jumpFlag);
+              flagLogic(interaction, video, jumpFlag);
             } else {
-              message.guild.musicData.queue.push(
+              player.queue.push(
                 constructSongObj(
                   video,
-                  message.member.voice.channel,
-                  message.member.user
+                  interaction.member.voice.channel,
+                  interaction.member.user
                 )
               );
             }
-            if (
-              !message.guild.musicData.isPlaying ||
-              typeof message.guild.musicData.isPlaying == 'undefined'
-            ) {
-              message.guild.musicData.isPlaying = true;
-              playSong(message.guild.musicData.queue, message);
+            if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+              handleSubscription(player.queue, interaction, player);
               return;
             }
           }
         })
         .catch(error => {
           console.error(error);
-          message.reply(`I couldn't find what you were looking for :(`);
+          interaction.followUp(`I couldn't find what you were looking for :(`);
         });
       return;
     }
@@ -432,13 +460,13 @@ module.exports = class PlayCommand extends Command {
     if (isYouTubePlaylistURL(query)) {
       const playlist = await youtube.getPlaylist(query);
       if (!playlist)
-        return message.reply(
+        return interaction.followUp(
           ':x: Playlist is either private or it does not exist!'
         );
 
       let videosArr = await playlist.getVideos();
       if (!videosArr)
-        return message.reply(
+        return interaction.followUp(
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
 
@@ -450,14 +478,11 @@ module.exports = class PlayCommand extends Command {
         videosArr = videosArr.reverse();
       }
 
-      if (message.guild.musicData.queue.length >= maxQueueLength)
-        return message.reply(
+      if (player.queue.length >= maxQueueLength)
+        return interaction.followUp(
           'The queue is full, please try adding more songs later'
         );
-      videosArr = videosArr.splice(
-        0,
-        maxQueueLength - message.guild.musicData.queue.length
-      );
+      videosArr = videosArr.splice(0, maxQueueLength - player.queue.length);
 
       //variable to know how many songs were skipped because of privacyStatus
       var skipAmount = 0;
@@ -476,21 +501,21 @@ module.exports = class PlayCommand extends Command {
         try {
           const fetchedVideo = await video.fetch();
           if (nextFlag || jumpFlag) {
-            message.guild.musicData.queue.splice(
+            player.queue.splice(
               key - skipAmount,
               0,
               constructSongObj(
                 fetchedVideo,
-                message.member.voice.channel,
-                message.member.user
+                interaction.member.voice.channel,
+                interaction.member.user
               )
             );
           } else {
-            message.guild.musicData.queue.push(
+            player.queue.push(
               constructSongObj(
                 fetchedVideo,
-                message.member.voice.channel,
-                message.member.user
+                interaction.member.voice.channel,
+                interaction.member.user
               )
             );
           }
@@ -498,18 +523,20 @@ module.exports = class PlayCommand extends Command {
           return console.error(err);
         }
       }, undefined);
-      if (jumpFlag && message.guild.musicData.songDispatcher) {
-        message.guild.musicData.loopSong = false;
-        message.guild.musicData.songDispatcher.end();
+      if (
+        jumpFlag &&
+        player.audioPlayer.state.status === AudioPlayerStatus.Playing
+      ) {
+        player.loopSong = false;
+        player.audioPlayer.stop();
       }
-      if (!message.guild.musicData.isPlaying) {
-        message.guild.musicData.isPlaying = true;
-        playSong(message.guild.musicData.queue, message);
+      if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+        handleSubscription(player.queue, interaction, player);
         return;
       } else {
-        interactiveEmbed(message)
-          .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
-          .build();
+        // interactiveEmbed(interaction)
+        //   .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
+        //   .build();
         return;
       }
     }
@@ -534,7 +561,7 @@ module.exports = class PlayCommand extends Command {
       timestamp = Number(timestamp);
 
       const video = await youtube.getVideoByID(id).catch(function() {
-        message.reply(
+        interaction.followUp(
           ':x: There was a problem getting the video you provided!'
         );
       });
@@ -544,262 +571,171 @@ module.exports = class PlayCommand extends Command {
         video.raw.snippet.liveBroadcastContent === 'live' &&
         !playLiveStreams
       ) {
-        message.reply(
+        interaction.followUp(
           'Live streams are disabled in this server! Contact the owner'
         );
         return;
       }
 
       if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
-        message.reply(
+        interaction.followUp(
           'Videos longer than 1 hour are disabled in this server! Contact the owner'
         );
         return;
       }
 
-      if (message.guild.musicData.queue.length > maxQueueLength) {
-        message.reply(
+      if (player.length > maxQueueLength) {
+        interaction.followUp(
           `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to play more songs`
         );
         return;
       }
       if (nextFlag || jumpFlag) {
-        flagLogic(message, video, jumpFlag);
+        flagLogic(interaction, video, jumpFlag);
       } else {
-        message.guild.musicData.queue.push(
+        player.queue.push(
           constructSongObj(
             video,
-            message.member.voice.channel,
-            message.member.user,
+            interaction.member.voice.channel,
+            interaction.member.user,
             timestamp
           )
         );
       }
 
-      if (
-        !message.guild.musicData.isPlaying ||
-        typeof message.guild.musicData.isPlaying == 'undefined'
-      ) {
-        message.guild.musicData.isPlaying = true;
-        playSong(message.guild.musicData.queue, message);
+      if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+        handleSubscription(player.queue, interaction, player);
         return;
       }
 
-      interactiveEmbed(message)
-        .addField('Added to Queue', `:new: [${video.title}](${video.url})`)
-        .build();
+      // interactiveEmbed(interaction)
+      //   .addField('Added to Queue', `:new: [${video.title}](${video.url})`)
+      //   .build();
       return;
     }
 
     // If user provided a song/video name
     await searchYoutube(
       query,
-      message,
-      message.member.voice.channel,
+      interaction,
+      interaction.member.voice.channel,
       nextFlag,
       jumpFlag
     );
   }
 };
 
-var playSong = (queue, message) => {
-  if (queue[0].voiceChannel == undefined) {
+var handleSubscription = async (queue, interaction, player) => {
+  let voiceChannel = queue[0].voiceChannel;
+  if (!voiceChannel) {
     // happens when loading a saved playlist
-    queue[0].voiceChannel = message.member.voice.channel;
+    voiceChannel = interaction.member.voice.channel;
   }
-  if (message.guild.me.voice.channel !== null) {
-    if (message.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
-      queue[0].voiceChannel = message.guild.me.voice.channel;
-    }
-  }
-  queue[0].voiceChannel
-    .join()
-    .then(function(connection) {
-      const dispatcher = connection
-        .play(
-          ytdl(queue[0].url, {
-            filter: 'audio',
-            quality: 'highestaudio',
-            highWaterMark: 1 << 25
-          }),
-          {
-            seek: queue[0].timestamp
-          }
-        )
-        .on('start', function() {
-          message.guild.musicData.songDispatcher = dispatcher;
-          // Volume Settings
-          if (!db.get(`${message.guild.id}.serverSettings.volume`)) {
-            dispatcher.setVolume(message.guild.musicData.volume);
-          } else {
-            dispatcher.setVolume(
-              db.get(`${message.guild.id}.serverSettings.volume`)
-            );
-          }
-
-          message.guild.musicData.isPreviousTrack = false;
-
-          message.guild.musicData.nowPlaying = queue[0];
-          queue.shift();
-          // Main Message
-          interactiveEmbed(message).build();
-        })
-        .on('finish', function() {
-          // Save the volume when the song ends
-          db.set(
-            `${message.member.guild.id}.serverSettings.volume`,
-            message.guild.musicData.songDispatcher.volume
-          );
-
-          if (!message.guild.musicData.isPreviousTrack) {
-            message.guild.musicData.queueHistory.unshift(
-              message.guild.musicData.nowPlaying
-            );
-          }
-
-          if (message.guild.musicData.queueHistory.length > 1000) {
-            // limit the history queue at 1000 elements
-            message.guild.musicData.queueHistory.pop();
-          }
-
-          queue = message.guild.musicData.queue;
-          if (message.guild.musicData.loopSong) {
-            queue.unshift(message.guild.musicData.nowPlaying);
-          } else if (message.guild.musicData.loopQueue) {
-            queue.push(message.guild.musicData.nowPlaying);
-          }
-          if (queue.length >= 1) {
-            playSong(queue, message);
-            return;
-          } else {
-            message.guild.musicData.isPlaying = false;
-            message.guild.musicData.nowPlaying = null;
-            message.guild.musicData.songDispatcher = null;
-            if (
-              message.guild.me.voice.channel &&
-              message.guild.musicData.skipTimer
-            ) {
-              message.guild.me.voice.channel.leave();
-              message.guild.musicData.skipTimer = false;
-              return;
-            }
-            if (message.guild.me.voice.channel) {
-              if (LeaveTimeOut > 0) {
-                setTimeout(function onTimeOut() {
-                  if (
-                    message.guild.musicData.isPlaying == false &&
-                    message.guild.me.voice.channel
-                  ) {
-                    message.guild.me.voice.channel.leave();
-                    message.channel.send(
-                      ':zzz: Left channel due to inactivity.'
-                    );
-                  }
-                }, LeaveTimeOut * 1000);
-              }
-            }
-          }
-        })
-        .on('error', function(e) {
-          message.reply(':x: Cannot play song!');
-          console.error(e);
-          if (queue.length > 1) {
-            queue.shift();
-            playSong(queue, message);
-            return;
-          }
-          message.guild.resetMusicDataOnError();
-          if (message.guild.me.voice.channel) {
-            message.guild.me.voice.channel.leave();
-          }
-          return;
-        });
-    })
-    .catch(function(error) {
-      message.reply(':no_entry: I have no permission to join your channel!');
-      console.error(error);
-      message.guild.resetMusicDataOnError();
-      if (message.guild.me.voice.channel) {
-        message.guild.me.voice.channel.leave();
-      }
-      return;
+  // if (interaction.guild.me.voice.channel !== null) {
+  //   if (interaction.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
+  //     queue[0].voiceChannel = interaction.guild.me.voice.channel;
+  //   }
+  // }
+  const title = player.queue[0].title;
+  let connection = player.connection;
+  if (!connection) {
+    connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: interaction.guild.id,
+      adapterCreator: interaction.guild.voiceAdapterCreator
     });
+    connection.on('error', console.error);
+  }
+  player.textChannel = interaction.channel;
+  player.passConnection(connection);
+
+  try {
+    await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
+  } catch (err) {
+    console.error(err);
+    await interaction.followUp({ content: 'Failed to join your channel!' });
+    return;
+  }
+  player.process(player.queue);
+  await interaction.followUp(`Enqueued ${title}`);
 };
 
-var playbackBar = data => {
-  if (data.nowPlaying.duration === 'Live Stream') return '';
-  const formatTime = compose(timeString, millisecondsToTimeObj);
+// var playbackBar = data => {
+//   if (data.nowPlaying.duration === 'Live Stream') return '';
+//   const formatTime = compose(timeString, millisecondsToTimeObj);
 
-  const passedTimeInMS = data.songDispatcher.streamTime;
-  const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
-  const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
+//   const passedTimeInMS = data.songDispatcher.streamTime;
+//   const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
+//   const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
 
-  const playback = Array(11).fill('▬');
-  playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
-    ':musical_note:';
+//   const playback = Array(11).fill('▬');
+//   playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
+//     ':musical_note:';
 
-  return `${formatTime(passedTimeInMS)} ${playback.join(
-    ''
-  )} ${songLengthFormatted}`;
-};
+//   return `${formatTime(passedTimeInMS)} ${playback.join(
+//     ''
+//   )} ${songLengthFormatted}`;
+// };
 
 var searchYoutube = async (
   query,
-  message,
+  interaction,
   voiceChannel,
   nextFlag,
   jumpFlag
 ) => {
   const videos = await youtube.searchVideos(query, 5).catch(async function() {
-    await message.reply(
+    return interaction.followUp(
       ':x: There was a problem searching the video you requested!'
     );
-    return;
   });
   if (!videos) {
-    message.reply(
+    return interaction.followUp(
       `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
     );
-    return;
   }
   if (videos.length < 5) {
-    message.reply(
+    return interaction.followUp(
       `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
     );
-    return;
   }
   const vidNameArr = [];
   for (let i = 0; i < videos.length; i++) {
-    vidNameArr.push(
-      `${i + 1}: [${videos[i].title
-        .replace(/&lt;/g, '<')
-        .replace(/&gt;/g, '>')
-        .replace(/&apos;/g, "'")
-        .replace(/&quot;/g, '"')
-        .replace(/&amp;/g, '&')
-        .replace(/&#39;/g, "'")}](${videos[i].shortURL})`
-    );
+    vidNameArr.push(videos[i].title.slice(0, 99));
   }
   vidNameArr.push('cancel');
-  const embed = createResultsEmbed(vidNameArr, videos[0]);
-  var songEmbed = await message.channel.send({ embed });
-  message.channel
-    .awaitMessages(
-      function(msg) {
-        return (msg.content > 0 && msg.content < 6) || msg.content === 'cancel';
-      },
-      {
-        max: 1,
-        time: MaxResponseTime * 1000,
-        errors: ['time']
+  const row = createSelectMenu(vidNameArr);
+  const playOptions = await interaction.channel.send({
+    content: 'Pick a video',
+    components: [row]
+  });
+  const playOptionsCollector = playOptions.createMessageComponentCollector({
+    componentType: 'SELECT_MENU',
+    time: MaxResponseTime * 1000
+  });
+  playOptionsCollector.on('end', async () => {
+    if (playOptions) {
+      await playOptions.delete().catch(console.error);
+    }
+  });
+
+  playOptionsCollector.on('collect', async i => {
+    if (i.user.id !== interaction.user.id) {
+      i.reply({
+        content: 'This element is not for you!',
+        ephemeral: true
+      });
+    } else {
+      playOptionsCollector.stop();
+      const value = i.values[0];
+      if (value === 'cancel_option') {
+        if (playOptions) {
+          playOptions.delete().catch(console.error);
+          return;
+        }
       }
-    )
-    .then(function(response) {
-      const videoIndex = parseInt(response.first().content);
-      if (response.first().content === 'cancel') {
-        songEmbed.delete();
-        return;
-      }
+      const videoIndex = parseInt(value);
+
       youtube
         .getVideoByID(videos[videoIndex - 1].id)
         .then(function(video) {
@@ -807,381 +743,115 @@ var searchYoutube = async (
             video.raw.snippet.liveBroadcastContent === 'live' &&
             !playLiveStreams
           ) {
-            songEmbed.delete();
-            message.reply(
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
               'Live streams are disabled in this server! Contact the owner'
             );
-            return;
           }
 
           if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
-            songEmbed.delete();
-            message.reply(
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
               'Videos longer than 1 hour are disabled in this server! Contact the owner'
             );
-            return;
           }
 
-          if (message.guild.musicData.queue.length > maxQueueLength) {
-            songEmbed.delete();
-            message.reply(
+          if (
+            interaction.client.playerManager.get(interaction.guildId).queue
+              .length > maxQueueLength
+          ) {
+            if (playOptions) {
+              playOptions.delete().catch(console.error);
+              return;
+            }
+            return interaction.followUp(
               `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`
             );
-            return;
           }
+
           if (nextFlag || jumpFlag) {
-            message.guild.musicData.queue.unshift(
-              constructSongObj(video, voiceChannel, message.member.user)
-            );
-            if (jumpFlag && message.guild.musicData.songDispatcher) {
-              message.guild.musicData.loopSong = false;
-              message.guild.musicData.songDispatcher.end();
+            interaction.client.playerManager
+              .get(interaction.guildId)
+              .queue.unshift(
+                constructSongObj(video, voiceChannel, interaction.member.user)
+              );
+            if (
+              jumpFlag &&
+              interaction.client.playerManager.get(interaction.guildId)
+                .audioPlayer.state.status === AudioPlayerStatus.Playing
+            ) {
+              interaction.client.playerManager.get(
+                interaction.guildId
+              ).loopSong = false;
+              interaction.client.playerManager
+                .get(interaction.guildId)
+                .audioPlayer.stop();
+              return interaction.followUp('Skipped song!');
             }
           } else {
-            message.guild.musicData.queue.push(
-              constructSongObj(video, voiceChannel, message.member.user)
+            interaction.client.playerManager
+              .get(interaction.guildId)
+              .queue.push(
+                constructSongObj(video, voiceChannel, interaction.member.user)
+              );
+          }
+          if (
+            interaction.client.playerManager.get(interaction.guildId)
+              .audioPlayer.state.status !== AudioPlayerStatus.Playing
+          ) {
+            const player = interaction.client.playerManager.get(
+              interaction.guildId
             );
+            handleSubscription(player.queue, interaction, player);
+          } else if (
+            interaction.client.playerManager.get(interaction.guildId)
+              .audioPlayer.state.status === AudioPlayerStatus.Playing
+          ) {
+            return interaction.followUp(`Added **${video.title}** to queue`);
           }
-          if (message.guild.musicData.isPlaying == false) {
-            message.guild.musicData.isPlaying = true;
-            if (songEmbed) {
-              songEmbed.delete();
-            }
-            playSong(message.guild.musicData.queue, message);
-          } else if (message.guild.musicData.isPlaying == true) {
-            if (songEmbed) {
-              songEmbed.delete();
-            }
-            // Added song to queue message (search)
-            interactiveEmbed(message)
-              .addField(
-                'Added to Queue',
-                `:new: [${video.title}](${video.url})`
-              )
-              .build();
-            return;
-          }
-        })
-        .catch(function() {
-          if (songEmbed) {
-            songEmbed.delete();
-          }
-          message.reply(
-            ':x: An error has occurred when trying to get the video ID from youtube.'
-          );
           return;
+        })
+        .catch(error => {
+          if (playOptions) playOptions.delete().catch(console.error);
+          console.error(error);
+          return interaction.followUp(
+            'An error has occurred while trying to get the video ID from youtube.'
+          );
         });
-    })
-    .catch(function() {
-      if (songEmbed) {
-        songEmbed.delete();
-      }
-      message.reply(
-        ':x: Please try again and enter a number between 1 and 5 or cancel.'
-      );
-      return;
-    });
-};
-
-var interactiveEmbed = message => {
-  // Builds Member ID array for buttons
-  //const rawMembers = Object.fromEntries(message.member.voice.channel.members);
-  const rawMembers = Object.fromEntries(
-    message.member.voice.channel
-      ? message.member.voice.channel.members
-      : message.guild.musicData.nowPlaying.voiceChannel.members
-  );
-  const memberArray = [Object.keys(rawMembers)];
-
-  const songTitle = `[${message.guild.musicData.nowPlaying.title}](${message.guild.musicData.nowPlaying.url})\n`;
-
-  const baseEmbed = new MessageEmbed()
-    .setThumbnail(message.guild.musicData.nowPlaying.thumbnail)
-    .setColor('#ff0000')
-    .addField(
-      'Duration',
-      ':stopwatch: ' + message.guild.musicData.nowPlaying.duration,
-      true
-    )
-    .addField(
-      'Volume',
-      ':loud_sound: ' +
-        (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
-        '%',
-      true
-    )
-    .setFooter(
-      `Requested by ${message.guild.musicData.nowPlaying.memberDisplayName}!`,
-      message.guild.musicData.nowPlaying.memberAvatar
-    );
-
-  const videoEmbed = new Pagination.Embeds()
-    .setArray([baseEmbed])
-    .setAuthorizedUsers(memberArray[0])
-    .setDisabledNavigationEmojis(['all'])
-    .setChannel(message.channel)
-    .setDeleteOnTimeout(deleteOldPlayMessage)
-    .setTimeout(buttonTimer(message))
-    .setTitle(embedTitle(message))
-    .setDescription(songTitle + playbackBar(message.guild.musicData))
-    // Reaction Controls
-    .setFunctionEmojis({
-      // Volume Down Button
-      '🔉': function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTimeout(buttonTimer(message));
-
-        if (message.guild.musicData.songDispatcher.volume > 0) {
-          message.guild.musicData.songDispatcher.setVolume(
-            message.guild.musicData.songDispatcher.volume - 0.1
-          );
-          const embed = instance.array[0];
-          embed.fields[1].value =
-            ':loud_sound: ' +
-            (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
-            '%';
-        }
-      },
-      // Volume Up Button
-      '🔊': function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTimeout(buttonTimer(message));
-
-        if (message.guild.musicData.songDispatcher.volume < 2) {
-          message.guild.musicData.songDispatcher.setVolume(
-            message.guild.musicData.songDispatcher.volume + 0.1
-          );
-          const embed = instance.array[0];
-          embed.fields[1].value =
-            ':loud_sound: ' +
-            (message.guild.musicData.songDispatcher.volume * 100).toFixed(0) +
-            '%';
-        }
-      }
-    });
-
-  // Previous Track Button
-  if (message.guild.musicData.queueHistory.length > 0) {
-    videoEmbed.addFunctionEmoji('⏮️', function(_, instance) {
-      if (!message.guild.musicData.songDispatcher) return;
-
-      instance
-        .setDescription(songTitle + playbackBar(message.guild.musicData))
-        .setTitle(':track_previous: Previous Track')
-        .setTimeout(100);
-      message.guild.musicData.queue.unshift(
-        message.guild.musicData.queueHistory[0],
-        message.guild.musicData.nowPlaying
-      );
-      message.guild.musicData.queueHistory.shift();
-      message.guild.musicData.isPreviousTrack = true;
-
-      if (message.guild.musicData.songDispatcher.paused)
-        message.guild.musicData.songDispatcher.resume();
-      message.guild.musicData.loopSong = false;
-      setTimeout(() => {
-        message.guild.musicData.songDispatcher.end();
-      }, 100);
-    });
-  }
-
-  videoEmbed
-    .addFunctionEmoji(
-      // Stop Button
-      '⏹️',
-      function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTitle(':stop_button: Stopped')
-          .setTimeout(100);
-
-        if (message.guild.musicData.songDispatcher.paused == true) {
-          message.guild.musicData.songDispatcher.resume();
-          message.guild.musicData.queue.length = 0;
-          message.guild.musicData.loopSong = false;
-          message.guild.musicData.loopQueue = false;
-          message.guild.musicData.skipTimer = true;
-          setTimeout(() => {
-            message.guild.musicData.songDispatcher.end();
-          }, 100);
-        } else {
-          message.guild.musicData.queue.length = 0;
-          message.guild.musicData.skipTimer = true;
-          message.guild.musicData.loopSong = false;
-          message.guild.musicData.loopQueue = false;
-          message.guild.musicData.songDispatcher.end();
-        }
-        message.reply(`:grey_exclamation: Leaving the channel.`);
-      }
-    )
-    .addFunctionEmoji(
-      // Play/Pause Button
-      '⏯️',
-      function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        if (message.guild.musicData.songDispatcher.paused == false) {
-          message.guild.musicData.songDispatcher.pause();
-          instance
-            .setDescription(songTitle + playbackBar(message.guild.musicData))
-            .setTitle(embedTitle(message))
-            .setTimeout(600000);
-        } else {
-          message.guild.musicData.songDispatcher.resume();
-
-          instance
-            .setDescription(songTitle + playbackBar(message.guild.musicData))
-            .setTitle(embedTitle(message))
-            .setTimeout(buttonTimer(message));
-        }
-      }
-    );
-
-  if (message.guild.musicData.queue.length) {
-    const songOrSongs =
-      message.guild.musicData.queue.length > 1 ? ' Songs' : ' Song'; // eslint-disable-line
-    videoEmbed
-      .addField(
-        'Queue',
-        ':notes: ' + message.guild.musicData.queue.length + songOrSongs,
-        true
-      )
-      .addField(
-        'Next Song',
-        `⏭️ [${message.guild.musicData.queue[0].title}](${message.guild.musicData.queue[0].url})`
-      )
-      // Next track Button
-      .addFunctionEmoji('⏭️', function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTitle(':next_track: Skipped')
-          .setTimeout(100);
-        if (message.guild.musicData.songDispatcher.paused)
-          message.guild.musicData.songDispatcher.resume();
-        message.guild.musicData.loopSong = false;
-        setTimeout(() => {
-          message.guild.musicData.songDispatcher.end();
-        }, 100);
-      })
-      // Repeat One Song Button
-      .addFunctionEmoji('🔂', function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        if (message.guild.musicData.loopSong) {
-          message.guild.musicData.loopSong = false;
-        } else {
-          message.guild.musicData.loopQueue = false;
-          message.guild.musicData.loopSong = true;
-        }
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTitle(embedTitle(message))
-          .setTimeout(buttonTimer(message));
-      })
-      // Repeat Queue Button
-      .addFunctionEmoji('🔁', function(_, instance) {
-        if (!message.guild.musicData.songDispatcher) return;
-
-        if (message.guild.musicData.loopQueue)
-          message.guild.musicData.loopQueue = false;
-        else {
-          message.guild.musicData.loopSong = false;
-          message.guild.musicData.loopQueue = true;
-        }
-        instance
-          .setDescription(songTitle + playbackBar(message.guild.musicData))
-          .setTitle(embedTitle())
-          .setTimeout(buttonTimer(message));
-      });
-  } else {
-    // Repeat One Song Button (when queue is 0)
-    videoEmbed.addFunctionEmoji('🔂', function(_, instance) {
-      if (!message.guild.musicData.songDispatcher) return;
-
-      if (message.guild.musicData.loopSong) {
-        message.guild.musicData.loopSong = false;
-      } else {
-        message.guild.musicData.loopQueue = false;
-        message.guild.musicData.loopSong = true;
-      }
-      instance
-        .setDescription(songTitle + playbackBar(message.guild.musicData))
-        .setTitle(embedTitle(message))
-        .setTimeout(buttonTimer(message));
-    });
-  }
-
-  // Previous Track Info
-  if (message.guild.musicData.queueHistory.length > 0) {
-    videoEmbed.addField(
-      'Previous Song',
-      `⏮️ [${message.guild.musicData.queueHistory[0].title}](${message.guild.musicData.queueHistory[0].url})`
-    );
-  }
-  return videoEmbed;
-
-  function buttonTimer(message) {
-    const totalDurationInMS = rawDurationToMilliseconds(
-      message.guild.musicData.nowPlaying.rawDuration
-        ? message.guild.musicData.nowPlaying.rawDuration
-        : message.guild.musicData.songDispatcher.nowPlaying.rawDuration
-    );
-
-    const streamTime = message.guild.musicData.streamTime
-      ? message.guild.musicData.streamTime
-      : message.guild.musicData.songDispatcher.streamTime;
-    let timer = totalDurationInMS - streamTime;
-    // Allow controls to stay for at least 30 seconds
-    if (timer < 30000) timer = 30000;
-
-    // Uncomment below for 5 min maximum timer limit
-    // if (timer > 300000) timer = 300000;
-
-    // Live Stream timer
-    if (totalDurationInMS == 0) timer = 300000;
-
-    return timer;
-  }
-
-  function embedTitle(message) {
-    let embedTitle = ':musical_note: Now Playing';
-    if (message.guild.musicData.loopQueue)
-      embedTitle += ' :repeat: Queue on repeat';
-    if (message.guild.musicData.loopSong)
-      embedTitle += ' :repeat_one: on repeat';
-    if (message.guild.musicData.songDispatcher.paused)
-      embedTitle = ':pause_button: Paused';
-
-    return embedTitle;
-  }
+    }
+  });
 };
 
 // side effects function
-var flagLogic = (message, video, jumpFlag) => {
-  message.guild.musicData.queue.splice(
+var flagLogic = (interaction, video, jumpFlag) => {
+  const player = interaction.client.playerManager.get(interaction.guildId);
+  player.queue.splice(
     0,
     0,
-    constructSongObj(video, message.member.voice.channel, message.member.user)
+    constructSongObj(
+      video,
+      interaction.member.voice.channel,
+      interaction.member.user
+    )
   );
-  if (jumpFlag && message.guild.musicData.songDispatcher) {
-    message.guild.musicData.loopSong = false;
-    message.guild.musicData.songDispatcher.end();
+  if (
+    jumpFlag &&
+    player.audioPlayer.state.status === AudioPlayerStatus.Playing
+  ) {
+    player.loopSong = false;
+    player.audioPlayer.stop();
   }
 };
 
 /********************************** Helper Functions *****************************/
 
-var compose = (f, g) => x => f(g(x));
+// var compose = (f, g) => x => f(g(x));
 
 var isYouTubeVideoURL = arg =>
   arg.match(
@@ -1218,14 +888,14 @@ var timeString = timeObj => {
   }`;
 };
 
-var millisecondsToTimeObj = ms => ({
-  seconds: Math.floor((ms / 1000) % 60),
-  minutes: Math.floor((ms / (1000 * 60)) % 60),
-  hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
-});
+// var millisecondsToTimeObj = ms => ({
+//   seconds: Math.floor((ms / 1000) % 60),
+//   minutes: Math.floor((ms / (1000 * 60)) % 60),
+//   hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
+// });
 
-var rawDurationToMilliseconds = obj =>
-  obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
+// var rawDurationToMilliseconds = obj =>
+//   obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
 
 var concatSongNameAndArtists = data => {
   // Spotify only
@@ -1256,18 +926,35 @@ var constructSongObj = (video, voiceChannel, user, timestamp) => {
   };
 };
 
-var createResultsEmbed = (namesArray, firstVideo) =>
-  new MessageEmbed()
-    .setColor('#ff0000')
-    .setTitle(`:mag: Search Results!`)
-    .addField(':notes: Result 1', namesArray[0])
-    .setURL(firstVideo.url)
-    .addField(':notes: Result 2', namesArray[1])
-    .addField(':notes: Result 3', namesArray[2])
-    .addField(':notes: Result 4', namesArray[3])
-    .addField(':notes: Result 5', namesArray[4])
-    .setThumbnail(firstVideo.thumbnails.high.url)
-    .setFooter('Choose a song by commenting a number between 1 and 5')
-    .addField(':x: Cancel', 'to cancel ');
-
-module.exports.createResponse = interactiveEmbed;
+var createSelectMenu = namesArray =>
+  new MessageActionRow().addComponents(
+    new MessageSelectMenu()
+      .setCustomId('search-yt-menu')
+      .setPlaceholder('Please select a video')
+      .addOptions([
+        {
+          label: `${namesArray[0]}`,
+          value: '1'
+        },
+        {
+          label: `${namesArray[1]}`,
+          value: '2'
+        },
+        {
+          label: `${namesArray[2]}`,
+          value: '3'
+        },
+        {
+          label: `${namesArray[3]}`,
+          value: '4'
+        },
+        {
+          label: `${namesArray[4]}`,
+          value: '5'
+        },
+        {
+          label: 'Cancel',
+          value: 'cancel_option'
+        }
+      ])
+  );

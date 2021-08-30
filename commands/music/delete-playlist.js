@@ -1,34 +1,30 @@
-const { Command } = require('discord.js-commando');
-const db = require('quick.db');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Member = require('../../utils/models/Member');
 
-module.exports = class DeletePlaylistCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'delete-playlist',
-      group: 'music',
-      memberName: 'delete-playlist',
-      guildOnly: true,
-      description: 'Delete a playlist from your saved playlists',
-      args: [
-        {
-          key: 'playlistName',
-          prompt: 'Which playlist would you like to delete?',
-          type: 'string'
-        }
-      ]
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('delete-playlist')
+    .setDescription('Delete a playlist from your saved playlists')
+    .addStringOption(option =>
+      option
+        .setName('playlistname')
+        .setDescription('Which playlist would you like to delete?')
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const playlistName = interaction.options.get('playlistname').value;
+    // check if user has playlists or if user is saved in the DB
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec();
 
-  run(message, { playlistName }) {
-    // check if user has playlists or user is in the db
-    const dbUserFetch = db.get(message.member.id);
-    if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+    if (!userData) {
+      interaction.reply('You have zero saved playlists!');
       return;
     }
-    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    const savedPlaylistsClone = userData.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      interaction.reply('You have zero saved playlists!');
       return;
     }
 
@@ -43,10 +39,15 @@ module.exports = class DeletePlaylistCommand extends Command {
     }
     if (found) {
       savedPlaylistsClone.splice(location, 1);
-      db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      message.reply(`I removed **${playlistName}** from your saved playlists!`);
+      await Member.updateOne(
+        { memberId: interaction.member.id },
+        { savedPlaylists: savedPlaylistsClone }
+      );
+      interaction.reply(
+        `I removed **${playlistName}** from your saved playlists!`
+      );
     } else {
-      message.reply(`You have no playlist named ${playlistName}`);
+      interaction.reply(`You have no playlist named ${playlistName}`);
     }
   }
 };

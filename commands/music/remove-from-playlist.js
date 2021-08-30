@@ -1,51 +1,47 @@
-const { Command } = require('discord.js-commando');
-const db = require('quick.db');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Member = require('../../utils/models/Member');
 
-module.exports = class SaveToPlaylistCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'remove-from-playlist',
-      aliases: ['delete-song', 'remove-song'],
-      group: 'music',
-      memberName: 'remove-from-playlist',
-      guildOnly: true,
-      description: 'Remove a song from a saved playlist',
-      args: [
-        {
-          key: 'playlist',
-          prompt: 'What is the playlist you would like to delete a video from?',
-          type: 'string'
-        },
-        {
-          key: 'index',
-          prompt:
-            'What is the index of the video you would like to delete from your saved playlist?',
-          type: 'string',
-          validate: function validateIndex(index) {
-            return index > 0;
-          }
-        }
-      ]
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('remove-from-playlist')
+    .setDescription('Remove a song from a saved playlist')
+    .addStringOption(option =>
+      option
+        .setName('playlist')
+        .setDescription(
+          'What is the playlist you would like to delete a song from?'
+        )
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option
+        .setName('index')
+        .setDescription(
+          'What is the index of the video you would like to delete from your saved playlist?'
+        )
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    await interaction.deferReply();
 
-  async run(message, { playlist, index }) {
-    // check if user has playlists or user is in the db
-    const dbUserFetch = db.get(message.member.id);
-    if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
-      return;
+    const playlistName = interaction.options.get('playlist').value;
+    const index = interaction.options.get('index').value;
+
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec();
+    if (!userData) {
+      return interaction.followUp('You have no custom playlists!');
     }
-    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    const savedPlaylistsClone = userData.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
-      return;
+      return interaction.followUp('You have no custom playlists!');
     }
 
     let found = false;
     let location;
     for (let i = 0; i < savedPlaylistsClone.length; i++) {
-      if (savedPlaylistsClone[i].name == playlist) {
+      if (savedPlaylistsClone[i].name == playlistName) {
         found = true;
         location = i;
         break;
@@ -54,12 +50,11 @@ module.exports = class SaveToPlaylistCommand extends Command {
     if (found) {
       const urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
-        message.reply(`**${playlist}** is empty!`);
+        interaction.followUp(`**${playlistName}** is empty!`);
         return;
       }
-
       if (index > urlsArrayClone.length) {
-        message.reply(
+        interaction.followUp(
           `The index you provided is larger than the playlist's length`
         );
         return;
@@ -67,14 +62,17 @@ module.exports = class SaveToPlaylistCommand extends Command {
       const title = urlsArrayClone[index - 1].title;
       urlsArrayClone.splice(index - 1, 1);
       savedPlaylistsClone[location].urls = urlsArrayClone;
-      db.set(message.member.id, { savedPlaylists: savedPlaylistsClone });
-      message.reply(
+      Member.updateOne(
+        { memberId: interaction.member.id },
+        { savedPlaylists: savedPlaylistsClone }
+      ).exec();
+
+      interaction.followUp(
         `I removed **${title}** from **${savedPlaylistsClone[location].name}**`
       );
       return;
     } else {
-      message.reply(`You have no playlist named **${playlist}**`);
-      return;
+      return interaction.followUp(`You have no playlist named ${playlistName}`);
     }
   }
 };

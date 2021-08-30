@@ -1,18 +1,12 @@
-const { Command } = require('discord.js-commando');
-const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
+const { MessageEmbed } = require('discord.js');
 
-module.exports = class MotivationCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'motivation',
-      aliases: ['motivational', 'motivation-quote', 'motivate'],
-      group: 'other',
-      memberName: 'motivation',
-      description: 'Get a random motivational quote!'
-    });
-  }
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('motivation')
+    .setDescription('Get a random motivational quote!'),
+  execute(interaction) {
     // thanks to https://type.fit/api/quotes
 
     const jsonQuotes = fs.readFileSync(
@@ -34,6 +28,6 @@ module.exports = class MotivationCommand extends Command {
       .setTimestamp()
       .setFooter('Powered by type.fit')
       .setColor('#FFD77A');
-    return message.channel.send(quoteEmbed);
+    return interaction.reply({ embeds: [quoteEmbed] });
   }
 };

@@ -1,83 +1,19 @@
-const { Command, version } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 const os = require('os');
 const pkg = require('../../package.json');
 
-module.exports = class BotStatusCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'bot-status',
-      group: 'other',
-      memberName: 'bot-status',
-      description: 'Shows the current system status'
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('bot-status')
+    .setDescription('Shows the current system status'),
+  async execute(interaction) {
+    const owner = await interaction.guild.fetchOwner();
+    const isOwner = owner.id == interaction.member.id ? true : false;
 
-  async run(message) {
-    const isOwner = this.client.isOwner(message.author);
+    const pingMsg = await interaction.channel.send('Possessing...');
 
-    const pingMsg = await message.reply('Possessing...');
-
-    // CPU information
-    function cpuAverage() {
-      var totalIdle = 0,
-        totalTick = 0;
-      var cpus = os.cpus();
-
-      // Loop through CPU cores
-      for (var i = 0, len = cpus.length; i < len; i++) {
-        var cpu = cpus[i];
-
-        for (var type in cpu.times) {
-          totalTick += cpu.times[type];
-        }
-        totalIdle += cpu.times.idle;
-      }
-
-      //Return the average Idle and Tick times
-      return {
-        idle: totalIdle / cpus.length,
-        total: totalTick / cpus.length
-      };
-    }
-
-    // function to calculate average of array
-    const arrAvg = function(arr) {
-      if (arr && arr.length >= 1) {
-        const sumArr = arr.reduce((a, b) => a + b, 0);
-        return sumArr / arr.length;
-      }
-    };
-
-    // load average for the past 250 milliseconds calculated every 100
-    function getCPULoadAVG(avgTime = 250, delay = 100) {
-      return new Promise((resolve, reject) => {
-        const n = ~~(avgTime / delay);
-        if (n <= 1) {
-          reject('Error: interval to small');
-        }
-
-        let i = 0;
-        let samples = [];
-        const avg1 = cpuAverage();
-
-        let interval = setInterval(() => {
-          if (i >= n) {
-            clearInterval(interval);
-            resolve(~~(arrAvg(samples) * 100));
-          }
-
-          const avg2 = cpuAverage();
-          const totalDiff = avg2.total - avg1.total;
-          const idleDiff = avg2.idle - avg1.idle;
-
-          samples[i] = 1 - idleDiff / totalDiff;
-
-          i++;
-        }, delay);
-      });
-    }
-    const commandTotal = this.client.registry.commands.keyArray();
+    const commandTotal = interaction.client.commands.size;
     const platform = os
       .platform()
       .replace(/win32/, 'Windows')
@@ -90,8 +26,7 @@ module.exports = class BotStatusCommand extends Command {
       .replace(/{/g, '')
       .replace(/}/g, '')
       .replace(/\^/g, '')
-      .replace(/github\:discordjs\/Commando/, `${version}`)
-      .replace(/github\:discordjs\/discord.js#stable/, `${Discord.version}`)
+      .replace(/github\:discordjs\/discord.js#master/, `${Discord.version}`)
       .replace(/:/g, ': ');
 
     const used = process.memoryUsage().heapUsed / 1024 / 1024;
@@ -102,7 +37,7 @@ module.exports = class BotStatusCommand extends Command {
     let hours = Math.floor((totalSeconds / 3600) % 24);
     let mins = Math.floor((totalSeconds / 60) % 60);
 
-    const guildCacheMap = this.client.guilds.cache;
+    const guildCacheMap = interaction.client.guilds.cache;
     const guildCacheArray = Array.from(guildCacheMap, ([name, value]) => ({
       name,
       value
@@ -112,26 +47,28 @@ module.exports = class BotStatusCommand extends Command {
       memberCount = memberCount + guildCacheArray[i].value.memberCount;
     }
 
-    pingMsg.edit('Complete');
+    await pingMsg.edit('Complete');
 
     const StatusEmbed = new Discord.MessageEmbed()
-      .setThumbnail(this.client.user.displayAvatarURL())
-      .setTitle(`Status of ${this.client.user.username}`)
+      .setThumbnail(interaction.client.user.displayAvatarURL())
+      .setTitle(`Status of ${interaction.client.user.username}`)
       .setColor('#ff0000');
 
     if (isOwner) {
-      StatusEmbed.addField('CPU Load', (await getCPULoadAVG()) + '%', true)
-        .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
-        .addField(`Platform`, `${platform} ${archInfo}`, true);
+      StatusEmbed.addField(
+        `Memory Usage`,
+        `${Math.round(used * 100) / 100}MB`,
+        true
+      ).addField(`Platform`, `${platform} ${archInfo}`, true);
     }
 
     StatusEmbed.addField(
       'Ping',
       `Round-trip took ${(pingMsg.editedTimestamp || pingMsg.createdTimestamp) -
-        (message.editedTimestamp || message.createdTimestamp)}ms.
+        interaction.createdTimestamp}ms.
 			${
-        this.client.ws.ping
-          ? `The heartbeat ping is ${Math.round(this.client.ws.ping)}ms.`
+        interaction.client.ws.ping
+          ? `The heartbeat ping is ${Math.round(interaction.client.ws.ping)}ms.`
           : ''
       }`
     )
@@ -139,18 +76,14 @@ module.exports = class BotStatusCommand extends Command {
         `Uptime`,
         `${days} D ${hours} H : ${mins} M : ${realTotalSecs} S`
       )
-      .addField('Operated By', this.client.owners)
-      .addField(
-        'Available Commands',
-        `${commandTotal.length} Commands Available`
-      )
+      .addField('Available Commands', `${commandTotal} Commands Available`)
       .addField(
         'Servers, Users',
-        `On ${this.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
+        `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
       )
 
-      .setFooter('Created', this.client.user.avatarURL())
-      .setTimestamp(this.client.user.createdAt);
+      .setFooter('Created', interaction.client.user.avatarURL())
+      .setTimestamp(interaction.client.user.createdAt);
 
     if (isOwner)
       StatusEmbed.addField(
@@ -159,7 +92,7 @@ module.exports = class BotStatusCommand extends Command {
         ${libList}`
       );
 
-    message.channel.send(StatusEmbed);
-    pingMsg.delete();
+    interaction.reply({ embeds: [StatusEmbed] });
+    await pingMsg.delete();
   }
 };

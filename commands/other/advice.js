@@ -1,22 +1,12 @@
 const fetch = require('node-fetch');
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class AdviceCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'advice',
-      group: 'other',
-      memberName: 'advice',
-      description: 'Get some advice!',
-      throttling: {
-        usages: 1,
-        duration: 6
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('advice')
+    .setDescription('Get some advice!'),
+  execute(interaction) {
     fetch('https://api.adviceslip.com/advice')
       .then(res => res.json())
       .then(json => {
@@ -30,11 +20,11 @@ module.exports = class AdviceCommand extends Command {
           .setDescription(json.slip.advice)
           .setTimestamp()
           .setFooter('Powered by adviceslip.com', '');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
         return;
       })
       .catch(err => {
-        message.reply('Failed to deliver advice :sob:');
+        interaction.reply('Failed to deliver advice :sob:');
         return console.error(err);
       });
   }

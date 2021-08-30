@@ -1,41 +1,37 @@
-const { Command } = require('discord.js-commando');
-const { prefix } = require('../../config.json');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { AudioPlayerStatus } = require('@discordjs/voice');
 
-module.exports = class SkipCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'skip',
-      aliases: ['skip-song', 'advance-song', 'next'],
-      memberName: 'skip',
-      group: 'music',
-      description: 'Skip the current playing song!',
-      guildOnly: true
-    });
-  }
-
-  run(message) {
-    const voiceChannel = message.member.voice.channel;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('skip')
+    .setDescription('Skip the currently playing song!'),
+  async execute(interaction) {
+    const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
-      return;
+      return interaction.reply('Please join a voice channel and try again!');
     }
 
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      message.reply(':x: There is no song playing right now!');
-      return;
-    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+      return interaction.reply('There is no song playing right now!');
+    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+      return interaction.reply(
+        'You must be in the same voice channel as the bot in order to skip!'
       );
-      return;
-    } else if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(`You can't skip a trivia! Use ${prefix}end-trivia`);
-      return;
+    } else if (
+      interaction.guild.client.guildData.get(interaction.guild.id)
+        .isTriviaRunning
+    ) {
+      return interaction.reply(
+        `You can't skip a trivia! Use end-trivia command instead`
+      );
     }
-    message.guild.musicData.loopSong = false;
-    message.guild.musicData.songDispatcher.end();
+    interaction.reply(
+      `Skipped **${
+        interaction.client.playerManager.get(interaction.guildId).nowPlaying
+          .title
+      }**`
+    );
+    player.audioPlayer.stop();
   }
 };
