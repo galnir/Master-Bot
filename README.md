@@ -1,9 +1,9 @@
-# 🚧 This is the v13 migration branch which is still under work 🚧
-
 # A Discord Music Bot written in JavaScript and the discord.js v13 library
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
+
+## 🚧 The bot is transitioning from discord.js v12 to v13 so you may encounter bugs 🚧
 
 ## System dependencies
 
@@ -26,7 +26,6 @@ This is the minimum amount of settings that need to be set for the core part (mu
 {
   "mongo_URI": "your-mongodb-uri",
   "client_id": "the-bots-discord-id",
-  "guild_id": "guild-id",
   "token": "Your-Bot-Token",
   "youtubeAPI": "youtube-api-key"
 }
