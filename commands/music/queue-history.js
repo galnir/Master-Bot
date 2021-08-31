@@ -1,56 +1,48 @@
-const { Command } = require('discord.js-commando');
-const Pagination = require('discord-paginationembed');
-const { prefix } = require('../../config.json');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
+const { PagesBuilder } = require('discord.js-pages');
 
-module.exports = class QueueHistoryCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'history',
-      aliases: [
-        'song-history',
-        'queue-history',
-        'history-queue',
-        'play-history',
-        'history-play'
-      ],
-      group: 'music',
-      memberName: 'history',
-      guildOnly: true,
-      description: 'Display the queue history!',
-      examples: [
-        'For example, to play the 3rd song from the history queue',
-        `${prefix}play 3`
-      ]
-    });
-  }
-
-  run(message) {
-    if (message.guild.triviaData.isTriviaRunning) {
-      message.reply(':x: Try again after the trivia has ended!');
-      return;
-    }
-    if (message.guild.musicData.queueHistory.length === 0) {
-      message.reply(':x: There are no songs in the queue history!');
-      return;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('queue-history')
+    .setDescription('Display the music queue history'),
+  execute(interaction) {
+    const guildData = interaction.client.guildData.get(interaction.guildId);
+    if (!guildData) {
+      return interaction.followUp('There is no music queue history!');
+    } else if (guildData) {
+      if (!guildData.queueHistory.length) {
+        return interaction.followUp('There is no music queue history!');
+      }
     }
 
-    const paginateArray = [];
-    message.guild.musicData.queueHistory.forEach((element, index) => {
-      paginateArray.push(
-        `**${index + 1}**: [${element.title}](${element.url})`
-      );
-    });
+    const queueClone = Array.from(guildData.queueHistory);
+    const embeds = [];
 
-    const queueEmbed = new Pagination.FieldsEmbed()
-      .setArray(paginateArray)
-      .setAuthorizedUsers([message.author.id])
-      .setChannel(message.channel)
-      .setElementsPerPage(8)
-      .formatField('# - Song', function(element) {
-        return element;
+    for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
+      const playlistArray = queueClone.slice(i * 24, 24 + i * 24);
+      const fields = [];
+
+      playlistArray.forEach((element, index) => {
+        if (element == null) return;
+        fields.push({
+          name: `${index + 1 + i * 24}`,
+          value: `${element.title}`
+        });
       });
 
-    queueEmbed.embed.setColor('#ff7373').setTitle('Music Queue History');
-    queueEmbed.build();
+      embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
+    }
+
+    new PagesBuilder(interaction)
+      .setTitle('Music Queue')
+      .setPages(embeds)
+      .setListenTimeout(2 * 60 * 1000)
+      .setColor('#9096e6')
+      .setAuthor(
+        interaction.member.user.username,
+        interaction.member.user.displayAvatarURL()
+      )
+      .build();
   }
 };

@@ -1,41 +1,37 @@
-const { Command } = require('discord.js-commando');
-const db = require('quick.db');
-const Pagination = require('discord-paginationembed');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Member = require('../../utils/models/Member');
+const { MessageEmbed } = require('discord.js');
 
-module.exports = class MyPlaylistsCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'my-playlists',
-      aliases: ['mps', 'my-queues', 'my-saved-queues', 'playlists'],
-      group: 'music',
-      memberName: 'my-playlists',
-      guildOnly: true,
-      description: 'List your saved playlists'
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('my-playlists')
+    .setDescription('Lists your saved playlists'),
 
-  run(message) {
-    // check if user has playlists or user is in the db
-    const dbUserFetch = db.get(message.member.id);
-    if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+  async execute(interaction) {
+    interaction.deferReply();
+
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec();
+    if (!userData) {
+      interaction.followUp('You have zero saved playlists!');
       return;
     }
-    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    const savedPlaylistsClone = userData.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      interaction.followUp('You have zero saved playlists!');
       return;
     }
-    const playlistsEmbed = new Pagination.FieldsEmbed()
-      .setArray(savedPlaylistsClone)
-      .setAuthorizedUsers([message.author.id])
-      .setChannel(message.channel)
-      .setElementsPerPage(5)
-      .formatField('# - Playlist', function(e) {
-        return `**${savedPlaylistsClone.indexOf(e) + 1}**: ${e.name}`;
-      });
+    const fields = [];
+    savedPlaylistsClone.forEach((playlist, i) =>
+      fields.push({ name: `${i + 1}`, value: playlist.name, inline: true })
+    );
 
-    playlistsEmbed.embed.setColor('#ff7373').setTitle('Saved Playlists');
-    playlistsEmbed.build();
+    const playlistsEmbed = new MessageEmbed()
+      .setTitle('Your saved playlists')
+      .setFields(fields)
+      .setTimestamp();
+
+    interaction.followUp({ embeds: [playlistsEmbed] });
   }
 };

@@ -1,22 +1,12 @@
 const fetch = require('node-fetch');
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class BoredCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'bored',
-      group: 'other',
-      memberName: 'bored',
-      description: 'Generate a random activity!',
-      throttling: {
-        usages: 1,
-        duration: 6
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('bored')
+    .setDescription('Generate a random activity!'),
+  execute(interaction) {
     fetch('https://www.boredapi.com/api/activity?participants=1')
       .then(res => res.json())
       .then(json => {
@@ -30,11 +20,11 @@ module.exports = class BoredCommand extends Command {
           .setDescription(json.activity)
           .setTimestamp()
           .setFooter('Powered by boredapi.com', '');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
         return;
       })
       .catch(err => {
-        message.reply('Failed to deliver activity :sob:');
+        interaction.reply('Failed to deliver activity :sob:');
         return console.error(err);
       });
   }

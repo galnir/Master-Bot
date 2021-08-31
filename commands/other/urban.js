@@ -1,39 +1,28 @@
-const fetch = require('node-fetch');
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
+const fetch = require('node-fetch');
 
-module.exports = class UrbanCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'urban',
-      group: 'other',
-      aliases: ['ud', 'urbandictionary'],
-      memberName: 'urban',
-      description: 'Get definitions from urban dictonary.',
-      throttling: {
-        usages: 1,
-        duration: 4
-      },
-      args: [
-        {
-          key: 'text',
-          prompt: 'What do you want to search for?',
-          type: 'string',
-          validate: function validateTextLength(text) {
-            return text.length < 50;
-          }
-        }
-      ]
-    });
-  }
-
-  run(message, { text }) {
-    fetch(`https://api.urbandictionary.com/v0/define?term=${text}`)
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('urban')
+    .setDescription('Get definitions from urban dictonary.')
+    .addStringOption(option =>
+      option
+        .setName('query')
+        .setDescription('What do you want to search for?')
+        .setRequired(true)
+    ),
+  execute(interaction) {
+    fetch(
+      `https://api.urbandictionary.com/v0/define?term=${
+        interaction.options.get('query').value
+      }`
+    )
       .then(res => res.json())
       .then(json => {
         const embed = new MessageEmbed()
           .setColor('#BB7D61')
-          .setTitle(`${text}`)
+          .setTitle(`${interaction.options.get('query').value}`)
           .setAuthor(
             'Urban Dictionary',
             'https://i.imgur.com/vdoosDm.png',
@@ -45,11 +34,11 @@ module.exports = class UrbanCommand extends Command {
           .setURL(json.list[0].permalink)
           .setTimestamp()
           .setFooter('Powered by UrbanDictionary', '');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
         return;
       })
       .catch(() => {
-        message.reply('Failed to deliver definition :sob:');
+        interaction.reply('Failed to deliver definition :sob:');
         // console.error(err); // no need to spam console for each time it doesn't find a query
         return;
       });

@@ -6,11 +6,11 @@ const youtube = new Youtube(youtubeAPI);
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('save-to-playlist')
+    .setName('add-to-playlist')
     .setDescription('Save a song or a playlist to a custom playlist')
     .addStringOption(option =>
       option
-        .setName('playlistname')
+        .setName('playlist')
         .setDescription('What is the playlist you would like to save to?')
         .setRequired(true)
     )
@@ -24,8 +24,7 @@ module.exports = {
     ),
   async execute(interaction) {
     await interaction.deferReply();
-
-    const playlistName = interaction.options.get('playlistname').value;
+    const playlistName = interaction.options.get('playlist').value;
     const url = interaction.options.get('url').value;
 
     const userData = await Member.findOne({
@@ -38,11 +37,6 @@ module.exports = {
     if (savedPlaylistsClone.length == 0) {
       return interaction.followUp('You have no custom playlists!');
     }
-
-    if (!validateURL(url)) {
-      return interaction.followUp('Please enter a valid YouTube URL!');
-    }
-
     let found = false;
     let location;
     for (let i = 0; i < savedPlaylistsClone.length; i++) {
@@ -59,9 +53,9 @@ module.exports = {
       if (Array.isArray(processedURL)) {
         urlsArrayClone = urlsArrayClone.concat(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
-        interaction.followUp(
-          'The playlist you provided was successfully saved!'
-        );
+        interaction.followUp({
+          content: 'The playlist you provided was successfully saved!'
+        });
       } else {
         urlsArrayClone.push(processedURL);
         savedPlaylistsClone[location].urls = urlsArrayClone;
@@ -82,40 +76,6 @@ module.exports = {
     }
   }
 };
-
-function validateURL(url) {
-  return (
-    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) ||
-    url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/) ||
-    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
-  );
-}
-
-function formatDuration(durationObj) {
-  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
-    durationObj.minutes ? durationObj.minutes : '00'
-  }:${
-    durationObj.seconds < 10
-      ? '0' + durationObj.seconds
-      : durationObj.seconds
-      ? durationObj.seconds
-      : '00'
-  }`;
-  return duration;
-}
-
-function constructSongObj(video, user) {
-  let duration = formatDuration(video.duration);
-  return {
-    url: `https://www.youtube.com/watch?v=${video.raw.id}`,
-    title: video.title,
-    rawDuration: video.duration,
-    duration,
-    thumbnail: video.thumbnails.high.url,
-    memberDisplayName: user.username,
-    memberAvatar: user.avatarURL('webp', false, 16)
-  };
-}
 
 async function processURL(url, interaction) {
   if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -163,4 +123,31 @@ async function processURL(url, interaction) {
     return false;
   }
   return constructSongObj(video, interaction.member.user);
+}
+
+function constructSongObj(video, user) {
+  let duration = formatDuration(video.duration);
+  return {
+    url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+    title: video.title,
+    rawDuration: video.duration,
+    duration,
+    thumbnail: video.thumbnails.high.url,
+    memberDisplayName: user.username,
+    memberAvatar: user.avatarURL('webp', false, 16)
+  };
+}
+
+// prettier-ignore
+function formatDuration(durationObj) {
+  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
+    durationObj.minutes ? durationObj.minutes : '00'
+  }:${
+    durationObj.seconds < 10
+      ? '0' + durationObj.seconds
+      : durationObj.seconds
+      ? durationObj.seconds
+      : '00'
+  }`;
+  return duration;
 }

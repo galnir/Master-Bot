@@ -1,66 +1,48 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
-module.exports = class SkipToCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'skipto',
-      memberName: 'skipto',
-      group: 'music',
-      description:
-        'Skip to a specific song in the queue, provide the song number as an argument!',
-      guildOnly: true,
-      args: [
-        {
-          key: 'songNumber',
-          prompt:
-            'What is the number in queue of the song you want to skip to?, it needs to be greater than 1!',
-          type: 'integer'
-        }
-      ]
-    });
-  }
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('skipto')
+    .setDescription('Skip to a song in queue')
+    .addIntegerOption(option =>
+      option
+        .setName('position')
+        .setDescription('What is the position in queue you want to skip to?')
+        .setRequired(true)
+    ),
 
-  run(message, { songNumber }) {
-    if (songNumber < 1 && songNumber >= message.guild.musicData.queue.length) {
-      message.reply(':x: Please enter a valid song number!');
-      return;
-    }
-    var voiceChannel = message.member.voice.channel;
+  execute(interaction) {
+    interaction.deferReply();
+    const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
-      return;
-    }
-
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      message.reply(':x: There is no song playing right now!');
-      return;
-    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
+      return interaction.followUp(
         `:no_entry: You must be in the same voice channel as the bot in order to use that!`
       );
-      return;
     }
-
-    if (message.guild.musicData.queue < 1) {
-      message.reply(':x: There are no songs in queue!');
-      return;
-    }
-
-    if (!message.guild.musicData.loopQueue) {
-      message.guild.musicData.queue.splice(0, songNumber - 1);
-      message.guild.musicData.loopSong = false;
-      message.guild.musicData.songDispatcher.end();
-    } else if (message.guild.musicData.loopQueue) {
-      const slicedBefore = message.guild.musicData.queue.slice(
-        0,
-        songNumber - 1
+    if (voiceChannel.id !== interaction.member.voice.channelId) {
+      return interaction.followUp(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
       );
-      const slicedAfter = message.guild.musicData.queue.slice(songNumber - 1);
-      message.guild.musicData.queue = slicedAfter.concat(slicedBefore);
-      message.guild.musicData.songDispatcher.end();
     }
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    if (!player) {
+      return interaction.followUp(':x: There is nothing playing right now!');
+    }
+    if (player.queue.length < 1) {
+      return interaction.followUp('There are no songs in queue!');
+    }
+
+    const position = interaction.options.get('position').value;
+
+    if (player.loopQueue) {
+      const slicedBefore = player.queue.slice(0, position - 1);
+      const slicedAfter = player.queue.slice(position - 1);
+      player.queue = slicedAfter.concat(slicedBefore);
+    } else {
+      player.queue.splice(0, position - 1);
+      player.loopSong = false;
+    }
+    player.audioPlayer.stop();
+    return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
   }
 };

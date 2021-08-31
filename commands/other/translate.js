@@ -1,46 +1,35 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 const ISO6391 = require('iso-639-1');
 const translate = require('@vitalets/google-translate-api');
 
-module.exports = class TranslateCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'translate',
-      memberName: 'translate',
-      group: 'other',
-      description: 'Translate to any language using Google translate.',
-      throttling: {
-        usages: 2,
-        duration: 12
-      },
-      args: [
-        {
-          key: 'targetLang',
-          prompt:
-            'What is the target language?(language you want to translate to)',
-          type: 'string',
-          validate: function(text) {
-            return text.length > 0;
-          }
-        },
-        {
-          key: 'queryText',
-          prompt: 'What text do you want to translate?',
-          type: 'string',
-          validate: function(queryText) {
-            return queryText.length < 3000;
-          }
-        }
-      ]
-    });
-  }
-
-  run(message, { queryText, targetLang }) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('translate')
+    .setDescription('Translate to any language using Google translate.')
+    .addStringOption(option =>
+      option
+        .setName('targetlang')
+        .setDescription(
+          'What is the target language?(language you want to translate to)'
+        )
+        .setRequired(true)
+    )
+    .addStringOption(option =>
+      option
+        .setName('text')
+        .setDescription('What text do you want to translate?')
+        .setRequired(true)
+    ),
+  execute(interaction) {
+    const targetLang = interaction.options.get('targetlang').value;
     const langCode = ISO6391.getCode(targetLang);
-    if (langCode === '')
-      return message.channel.send(':x: Please provide a valid language!');
-    translate(queryText, { to: targetLang })
+
+    if (langCode === '') {
+      return interaction.reply(':x: Please provide a valid language!');
+    }
+
+    translate(interaction.options.get('text').value, { to: targetLang })
       .then(response => {
         const embed = new MessageEmbed()
           .setColor('#FF0000')
@@ -48,10 +37,10 @@ module.exports = class TranslateCommand extends Command {
           .setURL('https://translate.google.com/')
           .setDescription(response.text)
           .setFooter('Powered by Google Translate!');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
       })
       .catch(error => {
-        message.reply(
+        interaction.reply(
           ':x: Something went wrong when trying to translate the text'
         );
         console.error(error);

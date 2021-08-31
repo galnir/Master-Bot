@@ -1,50 +1,43 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
-module.exports = class RemoveSongCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'remove',
-      memberName: 'remove',
-      group: 'music',
-      description: 'Remove a specific song from queue!',
-      guildOnly: true,
-      args: [
-        {
-          key: 'songNumber',
-          prompt:
-            ':wastebasket: What song number do you want to remove from queue?',
-          type: 'integer'
-        }
-      ]
-    });
-  }
-  run(message, { songNumber }) {
-    if (songNumber < 1 || songNumber > message.guild.musicData.queue.length) {
-      message.reply(':x: Please enter a valid song number!');
-      return;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('remove')
+    .setDescription('Remove a specific song from queue')
+    .addIntegerOption(option =>
+      option
+        .setName('position')
+        .setDescription('What song number do you want to remove from queue?')
+        .setRequired(true)
+    ),
+  execute(interaction) {
+    const position = interaction.options.get('position').value;
+    const player = interaction.client.playerManager.get(interaction.guildId);
+
+    if (!player) {
+      return interaction.reply('There is nothing playing now!');
     }
-    var voiceChannel = message.member.voice.channel;
+
+    const voiceChannel = interaction.member.voice.channel;
+
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
-      return;
-    }
-
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      message.reply(':x: There is no song playing right now!');
-      return;
-    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
+      return interaction.reply(
+        ':no_entry: Please join a voice channel and try again!'
+      );
+    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+      interaction.reply(
         `:no_entry: You must be in the same voice channel as the bot in order to use that!`
       );
       return;
     }
 
-    message.guild.musicData.queue.splice(songNumber - 1, 1);
-    message.reply(
-      `:wastebasket: Removed song number ${songNumber} from queue!`
+    if (position < 1 || position > player.queue.length) {
+      return interaction.reply('Please enter a valid position!');
+    }
+
+    player.queue.splice(position - 1, 1);
+    return interaction.reply(
+      `:wastebasket: Removed song number ${position} from queue!`
     );
   }
 };

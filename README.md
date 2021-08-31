@@ -1,11 +1,14 @@
-# A Discord Music Bot written in JavaScript, the discord.js library and discord.js-commando framework
+# A Discord Music Bot written in JavaScript and the discord.js v13 library
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
-[![image](https://img.shields.io/badge/node-%3E%3D%2014.0.0-blue)](https://nodejs.org/)
+[![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
+
+## 🚧 The bot is transitioning from discord.js v12 to v13 so you may encounter bugs 🚧
 
 ## System dependencies
 
-For the bot to run, your system needs to have Node.js v14 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
+For the bot to run, your system needs to have Node.js v16 atleast and Python 3 (for compiling some Node.js module dependencies) installed.
+A MongoDB database is also needed. I recommend using the free tier of MongoDB Atlas, you can get started using this [guide](https://docs.atlas.mongodb.com/getting-started/). Make sure to generate a valid URI and place it in the config.json file.
 
 ### Installing the Node.js dependencies
 
@@ -16,34 +19,31 @@ After cloning the repository, navigate to the project's folder and run the comma
 Create a `config.json` file in the root directory of the project with the following contents:
 
 ### Minimum settings
+
 This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
 
 ```json
 {
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
+  "mongo_URI": "your-mongodb-uri",
+  "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token",
   "youtubeAPI": "youtube-api-key"
 }
 ```
 
 ### Full settings
-For full command support, including lyrics, GIFs, news, Twitch integration, and others, all of the following settings need to be set. You can also choose to add only the ones for the functionalities you want.
+
+For full command support, including lyrics, GIFs, news, Twitch integration, and others, all of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
 
 ```json
 {
   "invite": "false",
-  "prefix": "!",
-  "discord_owner_id": "Your-Discord-ID",
-  "token": "Your-Bot-Token",
-  "youtubeAPI": "youtube-api-key",
   "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret",
   "rawgAPI": "rawg-api-key"
-
 }
 ```
 
@@ -71,7 +71,7 @@ What each option affects can be seen here in further detail:
 - `playVideosLongerThan1Hour` (`true`, `false`): allows the bot to play videos longer than 1 hour
 - `maxQueueLength` (`integer` greater than `1`) : maximum numbers of songs that can be in queue
 - `AutomaticallyShuffleYouTubePlaylists` (`true`, `false`): automatically shuffle YouTube playlists
-- `LeaveTimeOut` (`integer` between `1` and `600`): timeout in seconds before bot leaves channel due to inactivity 
+- `LeaveTimeOut` (`integer` between `1` and `600`): timeout in seconds before bot leaves channel due to inactivity
 - `MaxResponseTime` (`integer` between `5` and `150`): amount of time, in seconds, when the user to is allowed to respond back to bot before it cancels the command (e.g. when using `!play song name`)
 - `deleteOldPlayMessage` (`true`, `false`): makes the bot remove the play message after the song ends
 

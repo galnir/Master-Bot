@@ -1,61 +1,38 @@
-const { Command } = require('discord.js-commando');
-const Pagination = require('discord-paginationembed');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
-module.exports = class ShuffleQueueCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'shuffle',
-      memberName: 'shuffle',
-      group: 'music',
-      description: 'Shuffle the song queue!',
-      guildOnly: true
-    });
-  }
-  run(message) {
-    var voiceChannel = message.member.voice.channel;
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('shuffle')
+    .setDescription('Shuffle the music queue!'),
+
+  execute(interaction) {
+    interaction.deferReply();
+    const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      message.reply(':no_entry: Please join a voice channel and try again!');
-      return;
-    }
-
-    if (
-      typeof message.guild.musicData.songDispatcher == 'undefined' ||
-      message.guild.musicData.songDispatcher == null
-    ) {
-      message.reply(':x: There is nothing playing right now!');
-      return;
-    } else if (voiceChannel.id !== message.guild.me.voice.channel.id) {
-      message.reply(
+      return interaction.followUp(
         `:no_entry: You must be in the same voice channel as the bot in order to use that!`
       );
-      return;
-    } else if (message.guild.musicData.loopSong) {
-      message.reply(
+    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+      return interaction.followUp(
+        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
+      );
+    }
+    const player = interaction.client.playerManager.get(interaction.guildId);
+    if (!player) {
+      return interaction.followUp(':x: There is nothing playing right now!');
+    } else if (player.loopSong) {
+      return interaction.followUp(
         ':x: Turn off the **loop** command before using the **shuffle** command!'
       );
-      return;
-    }
-    if (message.guild.musicData.queue.length < 1) {
-      message.reply(':x: There are no songs in queue!');
-      return;
     }
 
-    shuffleQueue(message.guild.musicData.queue);
+    if (player.queue.length < 1) {
+      return interaction.reply('There are no songs in queue!');
+    }
 
-    const queueClone = message.guild.musicData.queue;
-    const queueEmbed = new Pagination.FieldsEmbed()
-      .setArray(queueClone)
-      .setAuthorizedUsers([message.author.id])
-      .setChannel(message.channel)
-      .setElementsPerPage(10)
-      .formatField('# - Song', function(e) {
-        return `**${queueClone.indexOf(e) + 1}**: ${e.title}`;
-      });
+    shuffleQueue(player.queue);
 
-    queueEmbed.embed
-      .setColor('#ff7373')
-      .setTitle(':twisted_rightwards_arrows: New Music Queue!');
-    queueEmbed.build();
+    return interaction.followUp('The music queue has been shuffled!');
   }
 };
 

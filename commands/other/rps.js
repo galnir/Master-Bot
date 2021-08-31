@@ -1,26 +1,19 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class RPSCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'rps',
-      aliases: ['rock-paper-scissors', 'rock'],
-      group: 'other',
-      memberName: 'rps',
-      description: 'Rock paper scissors',
-      args: [
-        {
-          key: 'text',
-          prompt:
-            'You ready for a game of Rock, Paper, Scissors? \n What is your move?',
-          type: 'string'
-        }
-      ]
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('rps')
+    .setDescription('Rock paper scissors!')
+    .addStringOption(option =>
+      option
+        .setName('move')
+        .setDescription(
+          'You ready for a game of Rock, Paper, Scissors? \n What is your move?'
+        )
+        .setRequired(true)
+    ),
+  execute(interaction) {
     const replies = ['Rock', 'Paper', 'Scissors'];
     const reply = replies[Math.floor(Math.random() * replies.length)];
 
@@ -28,7 +21,6 @@ module.exports = class RPSCommand extends Command {
       .setColor('RANDOM')
       .setTitle('Rock, Paper, Scissors')
       .setDescription(`**${reply}**`);
-    message.channel.send(embed);
-    return;
+    return interaction.reply({ embeds: [embed] });
   }
 };

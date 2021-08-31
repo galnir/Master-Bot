@@ -1,22 +1,12 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
-const { Command } = require('discord.js-commando');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = class InsultCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'insult',
-      group: 'other',
-      memberName: 'insult',
-      description: 'Generate an evil insult!',
-      throttling: {
-        usages: 1,
-        duration: 6
-      }
-    });
-  }
-
-  run(message) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('insult')
+    .setDescription('Generate an evil insult!'),
+  execute(interaction) {
     // thanks to https://evilinsult.com :)
     fetch('https://evilinsult.com/generate_insult.php?lang=en&type=json')
       .then(res => res.json())
@@ -31,11 +21,11 @@ module.exports = class InsultCommand extends Command {
           .setDescription(json.insult)
           .setTimestamp()
           .setFooter('Powered by evilinsult.com', '');
-        message.channel.send(embed);
+        interaction.reply({ embeds: [embed] });
         return;
       })
       .catch(err => {
-        message.reply(':x: Failed to deliver insult!');
+        interaction.reply(':x: Failed to deliver insult!');
         return console.error(err);
       });
   }

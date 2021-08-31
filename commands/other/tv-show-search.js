@@ -1,31 +1,25 @@
-const { Command } = require('discord.js-commando');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const Pagination = require('discord-paginationembed');
 const fetch = require('node-fetch');
+const { PagesBuilder } = require('discord.js-pages');
 
-module.exports = class TvShowSearchCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'tv-show-search',
-      group: 'other',
-      aliases: ['tv-search', 'tvsearch', 'showsearch', 'show-search'],
-      memberName: 'tv-show-search',
-      description: 'Search for TV shows',
-      args: [
-        {
-          key: 'showQuery',
-          prompt: 'What TV show are you looking for?',
-          type: 'string'
-        }
-      ]
-    });
-  }
-  async run(message, { showQuery }) {
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('tv-show-search')
+    .setDescription('Search for TV shows')
+    .addStringOption(option =>
+      option
+        .setName('tvshow')
+        .setDescription('What TV show are you looking for?')
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    const tvshow = interaction.options.get('tvshow').value;
+
     try {
-      var showResponse = await TvShowSearchCommand.getShowSearch(showQuery);
+      var showResponse = await getShowSearch(tvshow);
     } catch (e) {
-      message.channel.send(e);
-      return;
+      return interaction.reply(e);
     }
 
     try {
@@ -63,6 +57,7 @@ module.exports = class TvShowSearchCommand extends Command {
         // Filter Genere Row 2
         var showGenre = showResponse[i - 1].show.genres;
         if (showGenre.length == 0) showGenre = 'None listed';
+        if (typeof showGenre === 'object') showGenre = showGenre.join(' ');
 
         // Filter Types Row 2
         var showType = showResponse[i - 1].show.type;
@@ -106,7 +101,7 @@ module.exports = class TvShowSearchCommand extends Command {
             .addField('Network', showNetwork, true)
             .addField('Runtime', showRuntime, true)
             // Row 4
-            .addField('Average Rating', showRatings)
+            .addField('Average Rating', showRatings.toString())
             .setFooter(
               `(Page ${i}/${showResponse.length}) ` + 'Powered by tvmaze.com',
               'https://static.tvmaze.com/images/favico/favicon-32x32.png'
@@ -114,53 +109,47 @@ module.exports = class TvShowSearchCommand extends Command {
         );
       }
 
-      const showsEmbed = new Pagination.Embeds()
-        .setArray(embedArray)
-        .setAuthorizedUsers([message.author.id])
-        .setChannel(message.channel)
-        .setColor('#17a589');
-
-      // Build Embeds
-      showsEmbed.build();
+      new PagesBuilder(interaction)
+        .setPages(embedArray)
+        .setColor('#17a589')
+        .build();
     } catch (error) {
-      message.reply(':x: Something went wrong with your request.');
       console.log(error);
+      return interaction.reply(':x: Something went wrong with your request.');
     }
   }
+};
 
-  static getShowSearch(showQuery) {
-    return new Promise(async function(resolve, reject) {
-      const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(
-        showQuery
-      )}`;
-      try {
-        const body = await fetch(url);
-        if (body.status == `429`) {
-          reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
-        }
-        if (body.status == `503`) {
-          reject(
-            ':x: The service is currently unavailable. Please try again later.'
-          );
-        }
-        if (body.status !== 200) {
-          reject(
-            'There was a problem getting data from the API, make sure you entered a valid TV show name'
-          );
-        }
-        const data = await body.json();
-        if (!data.length) {
-          reject(
-            'There was a problem getting data from the API, make sure you entered a valid TV show name'
-          );
-        }
-        resolve(data);
-      } catch (e) {
-        console.error(e);
+async function getShowSearch(showQuery) {
+  return new Promise(async function(resolve, reject) {
+    const url = `http://api.tvmaze.com/search/shows?q=${encodeURI(showQuery)}`;
+    try {
+      const body = await fetch(url);
+      if (body.status == `429`) {
+        reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
+      }
+      if (body.status == `503`) {
+        reject(
+          ':x: The service is currently unavailable. Please try again later.'
+        );
+      }
+      if (body.status !== 200) {
         reject(
           'There was a problem getting data from the API, make sure you entered a valid TV show name'
         );
       }
-    });
-  }
-};
+      const data = await body.json();
+      if (!data.length) {
+        reject(
+          'There was a problem getting data from the API, make sure you entered a valid TV show name'
+        );
+      }
+      resolve(data);
+    } catch (e) {
+      console.error(e);
+      reject(
+        'There was a problem getting data from the API, make sure you entered a valid TV show name'
+      );
+    }
+  });
+}

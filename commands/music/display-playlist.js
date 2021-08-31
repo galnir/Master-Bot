@@ -1,36 +1,33 @@
-const { Command } = require('discord.js-commando');
-const db = require('quick.db');
-const Pagination = require('discord-paginationembed');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Member = require('../../utils/models/Member');
+const { MessageEmbed } = require('discord.js');
 
-module.exports = class DisplayPlaylistCommand extends Command {
-  constructor(client) {
-    super(client, {
-      name: 'display-playlist',
-      group: 'music',
-      aliases: ['my-playlist', 'show-playlist', 'songs-in'],
-      memberName: 'display-playlist',
-      guildOnly: true,
-      description: 'Display a saved playlist',
-      args: [
-        {
-          key: 'playlistName',
-          prompt: 'What is the name of the playlist you would like to display?',
-          type: 'string'
-        }
-      ]
-    });
-  }
-
-  run(message, { playlistName }) {
-    // check if user has playlists or user is in the db
-    const dbUserFetch = db.get(message.member.id);
-    if (!dbUserFetch) {
-      message.reply('You have zero saved playlists!');
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('display-playlist')
+    .setDescription('Display a saved playlist')
+    .addStringOption(option =>
+      option
+        .setName('playlistname')
+        .setDescription(
+          'What is the name of the playlist you would like to display?'
+        )
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    interaction.deferReply();
+    const playlistName = interaction.options.get('playlistname').value;
+    // check if user has playlists or if user is saved in the DB
+    const userData = await Member.findOne({
+      memberId: interaction.member.id
+    }).exec();
+    if (!userData) {
+      interaction.followUp('You have zero saved playlists!');
       return;
     }
-    const savedPlaylistsClone = dbUserFetch.savedPlaylists;
+    const savedPlaylistsClone = userData.savedPlaylists;
     if (savedPlaylistsClone.length == 0) {
-      message.reply('You have zero saved playlists!');
+      interaction.followUp('You have zero saved playlists!');
       return;
     }
 
@@ -44,23 +41,28 @@ module.exports = class DisplayPlaylistCommand extends Command {
       }
     }
     if (found) {
-      const urlsArrayClone = savedPlaylistsClone[location].urls;
+      let urlsArrayClone = savedPlaylistsClone[location].urls;
       if (urlsArrayClone.length == 0) {
-        message.reply(`**${playlistName}** is empty!`);
+        interaction.followUp(`**${playlistName}** is empty!`);
         return;
       }
-      const savedSongsEmbed = new Pagination.FieldsEmbed()
-        .setArray(urlsArrayClone)
-        .setAuthorizedUsers([message.member.id])
-        .setChannel(message.channel)
-        .setElementsPerPage(8)
-        .formatField('# - Title', function(e) {
-          return `**${urlsArrayClone.indexOf(e) + 1}**: [${e.title}](${e.url})`;
+      const savedPlaylistEmbed = new MessageEmbed()
+        .setColor('#ff7373')
+        .setTitle(playlistName)
+        .setTimestamp();
+      urlsArrayClone = urlsArrayClone.slice(0, 24);
+      const fields = [];
+      for (let i = 0; i < urlsArrayClone.length; i++) {
+        fields.push({
+          name: `${i + 1}`,
+          value: `${urlsArrayClone[i].title}`
         });
-      savedSongsEmbed.embed.setColor('#ff7373').setTitle('Saved Songs');
-      savedSongsEmbed.build();
+      }
+      savedPlaylistEmbed.setFields(fields);
+
+      interaction.followUp({ embeds: [savedPlaylistEmbed] });
     } else {
-      message.reply(`You have no playlist named ${playlistName}`);
+      interaction.followUp(`You have no playlist named ${playlistName}`);
     }
   }
 };
