@@ -18,12 +18,11 @@ class MusicPlayer {
     this.connection = null;
     this.audioPlayer = createAudioPlayer();
     this.queue = [];
-    this.isPreviousTrack = false;
     this.skipTimer = false;
     this.loopSong = false;
     this.loopQueue = false;
     this.volume = 1;
-    this.queueLock = false;
+    this.commandLock = false;
     this.textChannel;
   }
 

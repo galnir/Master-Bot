@@ -105,6 +105,8 @@ module.exports = {
       interaction.client.playerManager.set(interaction.guildId, player);
     }
 
+    player.commandLock = true;
+
     // Check if the query is actually a saved playlist name
 
     const userData = await Member.findOne({
@@ -165,7 +167,7 @@ module.exports = {
           content: 'Clarify Please',
           components: [row]
         });
-        //await message.delete();
+
         const clarificationCollector = clarificationOptions.createMessageComponentCollector(
           {
             componentType: 'SELECT_MENU',
@@ -270,6 +272,7 @@ module.exports = {
                 break;
               // 4: Cancel
               case 'cancel_option':
+                deletePlayerIfNeeded(interaction);
                 break;
             }
           }
@@ -366,6 +369,7 @@ module.exports = {
               break;
             // 3: Cancel
             case 'cancel_option':
+              deletePlayerIfNeeded(interaction);
               break;
           }
         }
@@ -451,6 +455,7 @@ module.exports = {
           }
         })
         .catch(error => {
+          deletePlayerIfNeeded(interaction);
           console.error(error);
           interaction.followUp(`I couldn't find what you were looking for :(`);
         });
@@ -459,16 +464,20 @@ module.exports = {
 
     if (isYouTubePlaylistURL(query)) {
       const playlist = await youtube.getPlaylist(query);
-      if (!playlist)
+      if (!playlist) {
+        deletePlayerIfNeeded(interaction);
         return interaction.followUp(
           ':x: Playlist is either private or it does not exist!'
         );
+      }
 
       let videosArr = await playlist.getVideos();
-      if (!videosArr)
+      if (!videosArr) {
+        deletePlayerIfNeeded(interaction);
         return interaction.followUp(
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
+      }
 
       if (AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
@@ -561,6 +570,7 @@ module.exports = {
       timestamp = Number(timestamp);
 
       const video = await youtube.getVideoByID(id).catch(function() {
+        deletePlayerIfNeeded(interaction);
         interaction.followUp(
           ':x: There was a problem getting the video you provided!'
         );
@@ -571,6 +581,7 @@ module.exports = {
         video.raw.snippet.liveBroadcastContent === 'live' &&
         !playLiveStreams
       ) {
+        deletePlayerIfNeeded(interaction);
         interaction.followUp(
           'Live streams are disabled in this server! Contact the owner'
         );
@@ -578,6 +589,7 @@ module.exports = {
       }
 
       if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
+        deletePlayerIfNeeded(interaction);
         interaction.followUp(
           'Videos longer than 1 hour are disabled in this server! Contact the owner'
         );
@@ -652,6 +664,7 @@ var handleSubscription = async (queue, interaction, player) => {
   try {
     await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
   } catch (err) {
+    deletePlayerIfNeeded(interaction);
     console.error(err);
     await interaction.followUp({ content: 'Failed to join your channel!' });
     return;
@@ -818,6 +831,7 @@ var searchYoutube = async (
           return;
         })
         .catch(error => {
+          deletePlayerIfNeeded(interaction);
           if (playOptions) playOptions.delete().catch(console.error);
           console.error(error);
           return interaction.followUp(
@@ -958,3 +972,15 @@ var createSelectMenu = namesArray =>
         }
       ])
   );
+
+var deletePlayerIfNeeded = interaction => {
+  const player = interaction.client.playerManager.get(interaction.guildId);
+  if (player) {
+    if (
+      (player.queue.length && !player.nowPlaying) ||
+      (!player.queue.length && !player.nowPlaying)
+    )
+      return;
+    return interaction.client.playerManager.delete(interaction.guildId);
+  }
+};
