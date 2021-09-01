@@ -68,6 +68,7 @@ client.once('ready', () => {
   client.playerManager = new Map();
   client.triviaManager = new Map();
   client.guildData = new Collection();
+  client.user.setActivity('/', { type: 'WATCHING' });
   mongoose
     .connect(encodeURI(mongo_URI), {
       useNewUrlParser: true,
