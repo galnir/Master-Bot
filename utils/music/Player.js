@@ -141,16 +141,14 @@ class MusicPlayer {
 
   async process(queue) {
     if (
-      this.queueLock ||
       this.audioPlayer.state.status !== AudioPlayerStatus.Idle ||
       this.queue.length === 0
-    ) {
+    )
       return;
-    }
-    this.queueLock = true;
 
     const song = this.queue.shift();
     this.nowPlaying = song;
+    if (this.commandLock) this.commandLock = false;
     try {
       //const resource = await this.createAudioResource(song.url);
       const stream = ytdl(song.url, {
@@ -162,10 +160,8 @@ class MusicPlayer {
         inputType: StreamType.Arbitrary
       });
       this.audioPlayer.play(resource);
-      this.queueLock = false;
     } catch (err) {
       console.error(err);
-      this.queueLock = false;
       return this.process(queue);
     }
   }

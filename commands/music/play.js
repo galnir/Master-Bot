@@ -105,6 +105,12 @@ module.exports = {
       interaction.client.playerManager.set(interaction.guildId, player);
     }
 
+    if (player.commandLock) {
+      return interaction.followUp(
+        'Please wait until the last play call is processed'
+      );
+    }
+
     player.commandLock = true;
 
     // Check if the query is actually a saved playlist name
@@ -212,6 +218,7 @@ module.exports = {
                 } else {
                   player.queue.push(player.queueHistory[index]);
                 }
+                player.commandLock = false;
                 interaction.followUp(
                   `'${player.queueHistory[index].title}' was added to queue!`
                 );
@@ -221,6 +228,7 @@ module.exports = {
                 playlistsArray[playlistsArray.indexOf(found)].urls.map(song =>
                   player.queue.push(song)
                 );
+                player.commandLock = false;
                 await interaction.followUp('Added playlist to queue');
                 if (
                   player.audioPlayer.state.status === AudioPlayerStatus.Playing
@@ -267,6 +275,7 @@ module.exports = {
                 await searchYoutube(
                   query,
                   interaction,
+                  player,
                   interaction.member.voice.channel
                 );
                 break;
@@ -355,6 +364,7 @@ module.exports = {
               } else {
                 player.queue.push(player.queueHistory[index]);
               }
+              player.commandLock = false;
               interaction.followUp(
                 `'${player.queueHistory[index].title}' was added to queue!`
               );
@@ -364,6 +374,7 @@ module.exports = {
               await searchYoutube(
                 query,
                 interaction,
+                player,
                 interaction.member.voice.channel
               );
               break;
@@ -630,6 +641,7 @@ module.exports = {
     await searchYoutube(
       query,
       interaction,
+      player,
       interaction.member.voice.channel,
       nextFlag,
       jumpFlag
@@ -693,6 +705,7 @@ var handleSubscription = async (queue, interaction, player) => {
 var searchYoutube = async (
   query,
   interaction,
+  player,
   voiceChannel,
   nextFlag,
   jumpFlag
@@ -826,6 +839,7 @@ var searchYoutube = async (
             interaction.client.playerManager.get(interaction.guildId)
               .audioPlayer.state.status === AudioPlayerStatus.Playing
           ) {
+            player.commandLock = false;
             return interaction.followUp(`Added **${video.title}** to queue`);
           }
           return;
