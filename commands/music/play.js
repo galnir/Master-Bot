@@ -281,6 +281,8 @@ module.exports = {
                 break;
               // 4: Cancel
               case 'cancel_option':
+                player.commandLock = false;
+                interaction.followUp('Canceled search');
                 deletePlayerIfNeeded(interaction);
                 break;
             }
@@ -381,6 +383,7 @@ module.exports = {
             // 3: Cancel
             case 'cancel_option':
               deletePlayerIfNeeded(interaction);
+              interaction.followUp('Canceled search');
               break;
           }
         }
@@ -716,11 +719,13 @@ var searchYoutube = async (
     );
   });
   if (!videos) {
+    player.commandLock = false;
     return interaction.followUp(
       `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
     );
   }
   if (videos.length < 5) {
+    player.commandLock = false;
     return interaction.followUp(
       `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
     );
@@ -756,8 +761,10 @@ var searchYoutube = async (
       const value = i.values[0];
       if (value === 'cancel_option') {
         if (playOptions) {
-          playOptions.delete().catch(console.error);
+          interaction.followUp('Search canceled');
+          player.commandLock = false;
           return;
+          //playOptions.delete().catch(console.error);
         }
       }
       const videoIndex = parseInt(value);
@@ -773,6 +780,7 @@ var searchYoutube = async (
               playOptions.delete().catch(console.error);
               return;
             }
+            player.commandLock = false;
             return interaction.followUp(
               'Live streams are disabled in this server! Contact the owner'
             );
@@ -783,6 +791,7 @@ var searchYoutube = async (
               playOptions.delete().catch(console.error);
               return;
             }
+            player.commandLock = false;
             return interaction.followUp(
               'Videos longer than 1 hour are disabled in this server! Contact the owner'
             );
@@ -796,6 +805,7 @@ var searchYoutube = async (
               playOptions.delete().catch(console.error);
               return;
             }
+            player.commandLock = false;
             return interaction.followUp(
               `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to add more songs`
             );
@@ -845,6 +855,7 @@ var searchYoutube = async (
           return;
         })
         .catch(error => {
+          player.commandLock = false;
           deletePlayerIfNeeded(interaction);
           if (playOptions) playOptions.delete().catch(console.error);
           console.error(error);
