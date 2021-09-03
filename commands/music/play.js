@@ -764,7 +764,6 @@ var searchYoutube = async (
           interaction.followUp('Search canceled');
           player.commandLock = false;
           return;
-          //playOptions.delete().catch(console.error);
         }
       }
       const videoIndex = parseInt(value);
