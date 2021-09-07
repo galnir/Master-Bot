@@ -26,8 +26,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
 {
   "mongo_URI": "your-mongodb-uri",
   "client_id": "the-bots-discord-id",
-  "token": "Your-Bot-Token",
-  "youtubeAPI": "youtube-api-key"
+  "token": "Your-Bot-Token"
 }
 ```
 
@@ -162,8 +161,6 @@ What each option affects can be seen here in further detail:
 | !remove-role               | Removes a specific role from a specified user.                                 | !remove-role @johndoe admin          |
 
 ## Resources
-
-[Getting a YouTube API key](https://developers.google.com/youtube/v3/getting-started)
 
 [Getting a Tenor API key](https://tenor.com/developer/keyregistration)
 

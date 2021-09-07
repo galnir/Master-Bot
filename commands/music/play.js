@@ -1,10 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageSelectMenu, MessageActionRow } = require('discord.js');
 const Player = require('../../utils/music/Player');
-const Youtube = require('simple-youtube-api');
-const ytsr = require('ytsr');
 const { getData } = require('spotify-url-info');
-const { youtubeAPI } = require('../../config.json');
+const YouTube = require('youtube-sr').default;
 let {
   playLiveStreams,
   playVideosLongerThan1Hour,
@@ -23,7 +21,6 @@ const {
 } = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
 
-const youtube = new Youtube(youtubeAPI);
 // Check If Options are Valid
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
 if (typeof maxQueueLength !== 'number' || maxQueueLength < 1) {
@@ -404,17 +401,17 @@ module.exports = {
               const artistsAndName = concatSongNameAndArtists(
                 spotifyPlaylistItems[i].track
               );
-              const ytResult = await ytsr(artistsAndName, { limit: 1 });
+              const ytResult = await YouTube.search(artistsAndName, {
+                limit: 1
+              });
               const video = {
-                title: ytResult.items[0].title,
-                url: ytResult.items[0].url,
-                thumbnails: {
-                  high: {
-                    url: `https://i.ytimg.com/vi/${ytResult.items[0].id}/hqdefault.jpg`
-                  }
+                title: ytResult[0].title,
+                url: ytResult[0].url,
+                thumbnail: {
+                  url: video.thumbnail.url
                 },
-                // the true value is used to differentiate this duration from the rawDuration recieved from the YT API
-                duration: [ytResult.items[0].duration, true]
+                durationFormatted: ytResult[0].durationFormatted,
+                duration: ytResult[0].duration
               };
               if (nextFlag || jumpFlag) {
                 flagLogic(interaction, video, jumpFlag);
@@ -439,17 +436,15 @@ module.exports = {
           else {
             const artistsAndName = concatSongNameAndArtists(data);
             // Search on YT
-            const ytResult = await ytsr(artistsAndName, { limit: 1 });
+            const ytResult = await YouTube.search(artistsAndName, { limit: 1 });
             const video = {
-              title: ytResult.items[0].title,
-              url: ytResult.items[0].url,
-              thumbnails: {
-                high: {
-                  url: `https://i.ytimg.com/vi/${ytResult.items[0].id}/hqdefault.jpg`
-                }
+              title: ytResult[0].title,
+              url: `https://www.youtube.com/watch?v=${ytResult[0].id}`,
+              thumbnail: {
+                url: ytResult[0].thumbnail.url
               },
-              // the true value is used to differentiate this duration from the rawDuration recieved from the YT API
-              duration: [ytResult.items[0].duration, true]
+              durationFormatted: ytResult[0].durationFormatted,
+              duration: ytResult[0].duration
             };
             if (nextFlag || jumpFlag) {
               flagLogic(interaction, video, jumpFlag);
@@ -477,7 +472,7 @@ module.exports = {
     }
 
     if (isYouTubePlaylistURL(query)) {
-      const playlist = await youtube.getPlaylist(query);
+      const playlist = await YouTube.getPlaylist(query);
       if (!playlist) {
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(
@@ -485,13 +480,14 @@ module.exports = {
         );
       }
 
-      let videosArr = await playlist.getVideos();
+      let videosArr = await playlist.fetch();
       if (!videosArr) {
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(
           ":x: I hit a problem when trying to fetch the playlist's videos"
         );
       }
+      videosArr = videosArr.videos;
 
       if (AutomaticallyShuffleYouTubePlaylists || shuffleFlag) {
         videosArr = shuffleArray(videosArr);
@@ -510,42 +506,32 @@ module.exports = {
       //variable to know how many songs were skipped because of privacyStatus
       var skipAmount = 0;
 
-      await videosArr.reduce(async (memo, video, key) => {
-        await memo;
+      await videosArr.reduce(async (__, video, key) => {
         // don't process private videos
-        if (
-          video.raw.status.privacyStatus == 'private' ||
-          video.raw.status.privacyStatus == 'privacyStatusUnspecified'
-        ) {
+        if (video.private) {
           skipAmount++;
           return;
         }
-
-        try {
-          const fetchedVideo = await video.fetch();
-          if (nextFlag || jumpFlag) {
-            player.queue.splice(
-              key - skipAmount,
-              0,
-              constructSongObj(
-                fetchedVideo,
-                interaction.member.voice.channel,
-                interaction.member.user
-              )
-            );
-          } else {
-            player.queue.push(
-              constructSongObj(
-                fetchedVideo,
-                interaction.member.voice.channel,
-                interaction.member.user
-              )
-            );
-          }
-        } catch (err) {
-          return console.error(err);
+        if (nextFlag || jumpFlag) {
+          player.queue.splice(
+            key - skipAmount,
+            0,
+            constructSongObj(
+              video,
+              interaction.member.voice.channel,
+              interaction.member.user
+            )
+          );
+        } else {
+          player.queue.push(
+            constructSongObj(
+              video,
+              interaction.member.voice.channel,
+              interaction.member.user
+            )
+          );
         }
-      }, undefined);
+      });
       if (
         jumpFlag &&
         player.audioPlayer.state.status === AudioPlayerStatus.Playing
@@ -560,15 +546,15 @@ module.exports = {
         // interactiveEmbed(interaction)
         //   .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
         //   .build();
-        return;
+        return interaction.followUp('Added playlist to queue!');
       }
     }
 
     if (isYouTubeVideoURL(query)) {
-      const id = query
-        .replace(/(>|<)/gi, '')
-        .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)[2]
-        .split(/[^0-9a-z_\-]/i)[0];
+      // const id = query
+      //   .replace(/(>|<)/gi, '')
+      //   .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)[2]
+      //   .split(/[^0-9a-z_\-]/i)[0];
 
       const timestampRegex = /t=([^#&\n\r]+)/g;
       let timestamp = timestampRegex.exec(query);
@@ -583,18 +569,15 @@ module.exports = {
       }
       timestamp = Number(timestamp);
 
-      const video = await youtube.getVideoByID(id).catch(function() {
+      const video = await YouTube.getVideo(query).catch(function() {
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
           ':x: There was a problem getting the video you provided!'
         );
       });
       if (!video) return;
-
-      if (
-        video.raw.snippet.liveBroadcastContent === 'live' &&
-        !playLiveStreams
-      ) {
+      console.log(video);
+      if (video.live === 'live' && !playLiveStreams) {
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
           'Live streams are disabled in this server! Contact the owner'
@@ -713,11 +696,13 @@ var searchYoutube = async (
   nextFlag,
   jumpFlag
 ) => {
-  const videos = await youtube.searchVideos(query, 5).catch(async function() {
-    return interaction.followUp(
-      ':x: There was a problem searching the video you requested!'
-    );
-  });
+  const videos = await YouTube.search(query, { limit: 5 }).catch(
+    async function() {
+      return interaction.followUp(
+        ':x: There was a problem searching the video you requested!'
+      );
+    }
+  );
   if (!videos) {
     player.commandLock = false;
     return interaction.followUp(
@@ -768,13 +753,11 @@ var searchYoutube = async (
       }
       const videoIndex = parseInt(value);
 
-      youtube
-        .getVideoByID(videos[videoIndex - 1].id)
+      YouTube.getVideo(
+        `https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`
+      )
         .then(function(video) {
-          if (
-            video.raw.snippet.liveBroadcastContent === 'live' &&
-            !playLiveStreams
-          ) {
+          if (video.live && !playLiveStreams) {
             if (playOptions) {
               playOptions.delete().catch(console.error);
               return;
@@ -912,20 +895,6 @@ var shuffleArray = arr => {
   return arr;
 };
 
-// timeString = timeObj => 'HH:MM:SS' // if HH is missing > MM:SS
-var timeString = timeObj => {
-  if (timeObj[1] === true) return timeObj[0];
-  return `${timeObj.hours ? timeObj.hours + ':' : ''}${
-    timeObj.minutes ? timeObj.minutes : '00'
-  }:${
-    timeObj.seconds < 10
-      ? '0' + timeObj.seconds
-      : timeObj.seconds
-      ? timeObj.seconds
-      : '00'
-  }`;
-};
-
 // var millisecondsToTimeObj = ms => ({
 //   seconds: Math.floor((ms / 1000) % 60),
 //   minutes: Math.floor((ms / (1000 * 60)) % 60),
@@ -944,20 +913,16 @@ var concatSongNameAndArtists = data => {
 };
 
 var constructSongObj = (video, voiceChannel, user, timestamp) => {
-  let duration = timeString(video.duration);
+  let duration = video.durationFormatted;
   if (duration === '00:00') duration = 'Live Stream';
   // checks if the user searched for a song using a Spotify URL
-  let url =
-    video.duration[1] == true
-      ? video.url
-      : `https://www.youtube.com/watch?v=${video.raw.id}`;
   return {
-    url,
+    url: video.url,
     title: video.title,
     rawDuration: video.duration,
     duration,
     timestamp,
-    thumbnail: video.thumbnails.high.url,
+    thumbnail: video.thumbnail.url,
     voiceChannel,
     memberDisplayName: user.username,
     memberAvatar: user.avatarURL('webp', false, 16)

@@ -1,8 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
-const Youtube = require('simple-youtube-api');
-const { youtubeAPI } = require('../../config.json');
-const youtube = new Youtube(youtubeAPI);
+const YouTube = require('youtube-sr').default;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -91,27 +89,14 @@ function validateURL(url) {
   );
 }
 
-function formatDuration(durationObj) {
-  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
-    durationObj.minutes ? durationObj.minutes : '00'
-  }:${
-    durationObj.seconds < 10
-      ? '0' + durationObj.seconds
-      : durationObj.seconds
-      ? durationObj.seconds
-      : '00'
-  }`;
-  return duration;
-}
-
 function constructSongObj(video, user) {
-  let duration = formatDuration(video.duration);
+  let duration = video.durationFormatted;
   return {
-    url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+    url: `https://www.youtube.com/watch?v=${video.id}`,
     title: video.title,
     rawDuration: video.duration,
     duration,
-    thumbnail: video.thumbnails.high.url,
+    thumbnail: video.thumbnail.url,
     memberDisplayName: user.username,
     memberAvatar: user.avatarURL('webp', false, 16)
   };
@@ -119,7 +104,7 @@ function constructSongObj(video, user) {
 
 async function processURL(url, interaction) {
   if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-    const playlist = await youtube.getPlaylist(url).catch(function() {
+    const playlist = await YouTube.getPlaylist(url).catch(function() {
       interaction.followUp(
         ':x: Playlist is either private or it does not exist!'
       );
@@ -127,19 +112,15 @@ async function processURL(url, interaction) {
     if (!playlist) {
       return false;
     }
-    const videosArr = await playlist.getVideos().catch(function() {
-      interaction.followUp(
-        ':x: There was a problem getting one of the videos in the playlist!'
-      );
-      return;
-    });
+    let videosArr = await playlist.fetch();
+    videosArr = videosArr.videos;
     let urlsArr = [];
     for (let i = 0; i < videosArr.length; i++) {
-      if (videosArr[i].raw.status.privacyStatus == 'private') {
+      if (videosArr[i].private) {
         continue;
       } else {
         try {
-          const video = await videosArr[i].fetch();
+          const video = videosArr[i];
           urlsArr.push(constructSongObj(video, interaction.member.user));
         } catch (err) {
           return console.error(err);
@@ -148,17 +129,14 @@ async function processURL(url, interaction) {
     }
     return urlsArr;
   }
-  url = url
-    .replace(/(>|<)/gi, '')
-    .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  const id = url[2].split(/[^0-9a-z_\-]/i)[0];
-  const video = await youtube.getVideoByID(id).catch(function() {
+
+  const video = await YouTube.getVideo(url).catch(function() {
     interaction.followUp(
       ':x: There was a problem getting the video you provided!'
     );
     return;
   });
-  if (video.raw.snippet.liveBroadcastContent === 'live') {
+  if (video.live) {
     interaction.followUp("I don't support live streams!");
     return false;
   }
