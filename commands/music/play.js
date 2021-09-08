@@ -551,11 +551,6 @@ module.exports = {
     }
 
     if (isYouTubeVideoURL(query)) {
-      // const id = query
-      //   .replace(/(>|<)/gi, '')
-      //   .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)[2]
-      //   .split(/[^0-9a-z_\-]/i)[0];
-
       const timestampRegex = /t=([^#&\n\r]+)/g;
       let timestamp = timestampRegex.exec(query);
       if (!timestamp) {
@@ -641,11 +636,7 @@ var handleSubscription = async (queue, interaction, player) => {
     // happens when loading a saved playlist
     voiceChannel = interaction.member.voice.channel;
   }
-  // if (interaction.guild.me.voice.channel !== null) {
-  //   if (interaction.guild.me.voice.channel.id !== queue[0].voiceChannel.id) {
-  //     queue[0].voiceChannel = interaction.guild.me.voice.channel;
-  //   }
-  // }
+
   const title = player.queue[0].title;
   let connection = player.connection;
   if (!connection) {
@@ -894,15 +885,6 @@ var shuffleArray = arr => {
   }
   return arr;
 };
-
-// var millisecondsToTimeObj = ms => ({
-//   seconds: Math.floor((ms / 1000) % 60),
-//   minutes: Math.floor((ms / (1000 * 60)) % 60),
-//   hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
-// });
-
-// var rawDurationToMilliseconds = obj =>
-//   obj.hours * 3600000 + obj.minutes * 60000 + obj.seconds * 1000;
 
 var concatSongNameAndArtists = data => {
   // Spotify only
