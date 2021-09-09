@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "pretest": "eslint --ignore-path .gitignore .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "pretest": "eslint --ignore-path .gitignore ."
   },
   "author": "Nir Gal",
   "license": "ISC",
@@ -32,6 +33,8 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
+    "eslint-plugin-jest": "^24.4.0",
+    "jest": "^27.1.1",
     "nodemon": "^1.19.4",
     "prettier": "^1.19.1"
   }
