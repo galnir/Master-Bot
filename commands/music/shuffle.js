@@ -27,7 +27,13 @@ module.exports = {
     }
 
     if (player.queue.length < 1) {
-      return interaction.reply('There are no songs in queue!');
+      return interaction.followUp('There are no songs in queue!');
+    }
+
+    if (player.commandLock) {
+      return interaction.followUp(
+        'Please wait until play command is done processing'
+      );
     }
 
     shuffleQueue(player.queue);

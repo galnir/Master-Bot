@@ -469,6 +469,7 @@ module.exports = {
 
       let videosArr = await playlist.fetch();
       if (!videosArr) {
+        player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         return interaction.followUp(
           ":x: I hit a problem when trying to fetch the playlist's videos"
@@ -484,10 +485,12 @@ module.exports = {
         videosArr = videosArr.reverse();
       }
 
-      if (player.queue.length >= maxQueueLength)
+      if (player.queue.length >= maxQueueLength) {
+        player.commandLock = false;
         return interaction.followUp(
           'The queue is full, please try adding more songs later'
         );
+      }
       videosArr = videosArr.splice(0, maxQueueLength - player.queue.length);
 
       //variable to know how many songs were skipped because of privacyStatus
@@ -533,6 +536,7 @@ module.exports = {
         // interactiveEmbed(interaction)
         //   .addField('Added Playlist', `[${playlist.title}](${playlist.url})`)
         //   .build();
+        player.commandLock = false;
         return interaction.followUp('Added playlist to queue!');
       }
     }
@@ -559,6 +563,7 @@ module.exports = {
       });
       if (!video) return;
       if (video.live === 'live' && !playLiveStreams) {
+        player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
           'Live streams are disabled in this server! Contact the owner'
@@ -567,6 +572,7 @@ module.exports = {
       }
 
       if (video.duration.hours !== 0 && !playVideosLongerThan1Hour) {
+        player.commandLock = false;
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
           'Videos longer than 1 hour are disabled in this server! Contact the owner'
@@ -575,6 +581,7 @@ module.exports = {
       }
 
       if (player.length > maxQueueLength) {
+        player.commandLock = false;
         interaction.followUp(
           `The queue hit its limit of ${maxQueueLength}, please wait a bit before attempting to play more songs`
         );
@@ -639,6 +646,7 @@ var handleSubscription = async (queue, interaction, player) => {
   try {
     await entersState(player.connection, VoiceConnectionStatus.Ready, 10000);
   } catch (err) {
+    player.commandLock = false;
     deletePlayerIfNeeded(interaction);
     console.error(err);
     await interaction.followUp({ content: 'Failed to join your channel!' });
