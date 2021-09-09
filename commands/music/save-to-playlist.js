@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
 const { getData } = require('spotify-url-info');
+const { searchOne } = require('../../utils/music/searchOne');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -116,20 +117,8 @@ async function processURL(url, interaction) {
             const spotifyPlaylistItems = data.tracks.items;
             const urlsArr = [];
             for (let i = 0; i < spotifyPlaylistItems.length; i++) {
-              const artistsAndName = concatSongNameAndArtists(
-                spotifyPlaylistItems[i].track
-              );
               try {
-                const ytResult = await YouTube.searchOne(artistsAndName);
-                const video = {
-                  title: ytResult.title,
-                  url: ytResult.url,
-                  thumbnail: {
-                    url: ytResult.thumbnail.url
-                  },
-                  durationFormatted: ytResult.durationFormatted,
-                  duration: ytResult.duration
-                };
+                const video = await searchOne(spotifyPlaylistItems[i].track);
                 urlsArr.push(constructSongObj(video, interaction.member.user));
               } catch (error) {
                 console.error(error);
@@ -137,20 +126,7 @@ async function processURL(url, interaction) {
             }
             resolve(urlsArr);
           } else {
-            const artistsAndName = concatSongNameAndArtists(data);
-            const ytResult = await YouTube.searchOne(artistsAndName);
-            if (ytResult.live) {
-              reject("I don't support live streams!");
-            }
-            const video = {
-              title: ytResult.title,
-              url: `https://www.youtube.com/watch?v=${ytResult.id}`,
-              thumbnail: {
-                url: ytResult.thumbnail.url
-              },
-              durationFormatted: ytResult.durationFormatted,
-              duration: ytResult.duration
-            };
+            const video = await searchOne(data);
             resolve(constructSongObj(video, interaction.member.user));
           }
         })
@@ -187,11 +163,3 @@ async function processURL(url, interaction) {
 
 var isSpotifyURL = arg =>
   arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
-
-var concatSongNameAndArtists = data => {
-  // Spotify only
-  let artists = '';
-  data.artists.forEach(artist => (artists = artists.concat(' ', artist.name)));
-  const songName = data.name;
-  return `${songName} ${artists}`;
-};

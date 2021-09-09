@@ -20,6 +20,7 @@ const {
   AudioPlayerStatus
 } = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
+const { searchOne } = require('../../utils/music/searchOne');
 
 // Check If Options are Valid
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
@@ -398,31 +399,22 @@ module.exports = {
               content: 'Processing Playlist...'
             });
             for (let i = 0; i < spotifyPlaylistItems.length; i++) {
-              const artistsAndName = concatSongNameAndArtists(
-                spotifyPlaylistItems[i].track
-              );
-              const ytResult = await YouTube.search(artistsAndName, {
-                limit: 1
-              });
-              const video = {
-                title: ytResult[0].title,
-                url: ytResult[0].url,
-                thumbnail: {
-                  url: ytResult[0].thumbnail.url
-                },
-                durationFormatted: ytResult[0].durationFormatted,
-                duration: ytResult[0].duration
-              };
-              if (nextFlag || jumpFlag) {
-                flagLogic(interaction, video, jumpFlag);
-              } else {
-                player.queue.push(
-                  constructSongObj(
-                    video,
-                    interaction.member.voice.channel,
-                    interaction.member.user
-                  )
-                );
+              try {
+                const video = await searchOne(spotifyPlaylistItems[i].track);
+
+                if (nextFlag || jumpFlag) {
+                  flagLogic(interaction, video, jumpFlag);
+                } else {
+                  player.queue.push(
+                    constructSongObj(
+                      video,
+                      interaction.member.voice.channel,
+                      interaction.member.user
+                    )
+                  );
+                }
+              } catch (error) {
+                return interaction.followup(error);
               }
             }
             processingMessage.edit('Playlist Processed!');
@@ -434,32 +426,27 @@ module.exports = {
           }
           // single track
           else {
-            const artistsAndName = concatSongNameAndArtists(data);
-            // Search on YT
-            const ytResult = await YouTube.search(artistsAndName, { limit: 1 });
-            const video = {
-              title: ytResult[0].title,
-              url: `https://www.youtube.com/watch?v=${ytResult[0].id}`,
-              thumbnail: {
-                url: ytResult[0].thumbnail.url
-              },
-              durationFormatted: ytResult[0].durationFormatted,
-              duration: ytResult[0].duration
-            };
-            if (nextFlag || jumpFlag) {
-              flagLogic(interaction, video, jumpFlag);
-            } else {
-              player.queue.push(
-                constructSongObj(
-                  video,
-                  interaction.member.voice.channel,
-                  interaction.member.user
-                )
-              );
-            }
-            if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-              handleSubscription(player.queue, interaction, player);
-              return;
+            try {
+              const video = await searchOne(data);
+              if (nextFlag || jumpFlag) {
+                flagLogic(interaction, video, jumpFlag);
+              } else {
+                player.queue.push(
+                  constructSongObj(
+                    video,
+                    interaction.member.voice.channel,
+                    interaction.member.user
+                  )
+                );
+              }
+              if (
+                player.audioPlayer.state.status !== AudioPlayerStatus.Playing
+              ) {
+                handleSubscription(player.queue, interaction, player);
+                return;
+              }
+            } catch (error) {
+              return interaction.followUp(error);
             }
           }
         })
@@ -883,14 +870,6 @@ var shuffleArray = arr => {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
-};
-
-var concatSongNameAndArtists = data => {
-  // Spotify only
-  let artists = '';
-  data.artists.forEach(artist => (artists = artists.concat(' ', artist.name)));
-  const songName = data.name;
-  return `${songName} ${artists}`;
 };
 
 var constructSongObj = (video, voiceChannel, user, timestamp) => {
