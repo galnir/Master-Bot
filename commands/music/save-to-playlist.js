@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
+const { getData } = require('spotify-url-info');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -38,7 +39,9 @@ module.exports = {
     }
 
     if (!validateURL(url)) {
-      return interaction.followUp('Please enter a valid YouTube URL!');
+      return interaction.followUp(
+        'Please enter a valid YouTube or Spotify URL!'
+      );
     }
 
     let found = false;
@@ -52,29 +55,30 @@ module.exports = {
     }
     if (found) {
       let urlsArrayClone = savedPlaylistsClone[location].urls;
-      const processedURL = await processURL(url, interaction);
-      if (!processedURL) return;
-      if (Array.isArray(processedURL)) {
-        urlsArrayClone = urlsArrayClone.concat(processedURL);
-        savedPlaylistsClone[location].urls = urlsArrayClone;
-        interaction.followUp(
-          'The playlist you provided was successfully saved!'
-        );
-      } else {
-        urlsArrayClone.push(processedURL);
-        savedPlaylistsClone[location].urls = urlsArrayClone;
-        interaction.followUp(
-          `I added **${
-            savedPlaylistsClone[location].urls[
-              savedPlaylistsClone[location].urls.length - 1
-            ].title
-          }** to **${playlistName}**`
-        );
-      }
-      Member.updateOne(
-        { memberId: interaction.member.id },
-        { savedPlaylists: savedPlaylistsClone }
-      ).exec();
+      processURL(url, interaction).then(processedURL => {
+        if (!processedURL) return;
+        if (Array.isArray(processedURL)) {
+          urlsArrayClone = urlsArrayClone.concat(processedURL);
+          savedPlaylistsClone[location].urls = urlsArrayClone;
+          interaction.followUp(
+            'The playlist you provided was successfully saved!'
+          );
+        } else {
+          urlsArrayClone.push(processedURL);
+          savedPlaylistsClone[location].urls = urlsArrayClone;
+          interaction.followUp(
+            `I added **${
+              savedPlaylistsClone[location].urls[
+                savedPlaylistsClone[location].urls.length - 1
+              ].title
+            }** to **${playlistName}**`
+          );
+        }
+        Member.updateOne(
+          { memberId: interaction.member.id },
+          { savedPlaylists: savedPlaylistsClone }
+        ).exec();
+      });
     } else {
       return interaction.followUp(`You have no playlist named ${playlistName}`);
     }
@@ -85,7 +89,8 @@ function validateURL(url) {
   return (
     url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) ||
     url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/) ||
-    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)
+    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) ||
+    url.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/)
   );
 }
 
@@ -103,42 +108,90 @@ function constructSongObj(video, user) {
 }
 
 async function processURL(url, interaction) {
-  if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-    const playlist = await YouTube.getPlaylist(url).catch(function() {
-      interaction.followUp(
-        ':x: Playlist is either private or it does not exist!'
-      );
-    });
-    if (!playlist) {
-      return false;
-    }
-    let videosArr = await playlist.fetch();
-    videosArr = videosArr.videos;
-    let urlsArr = [];
-    for (let i = 0; i < videosArr.length; i++) {
-      if (videosArr[i].private) {
-        continue;
-      } else {
-        try {
+  return new Promise(async function(resolve, reject) {
+    if (isSpotifyURL(url)) {
+      getData(url)
+        .then(async data => {
+          if (data.tracks) {
+            const spotifyPlaylistItems = data.tracks.items;
+            const urlsArr = [];
+            for (let i = 0; i < spotifyPlaylistItems.length; i++) {
+              const artistsAndName = concatSongNameAndArtists(
+                spotifyPlaylistItems[i].track
+              );
+              try {
+                const ytResult = await YouTube.searchOne(artistsAndName);
+                const video = {
+                  title: ytResult.title,
+                  url: ytResult.url,
+                  thumbnail: {
+                    url: ytResult.thumbnail.url
+                  },
+                  durationFormatted: ytResult.durationFormatted,
+                  duration: ytResult.duration
+                };
+                urlsArr.push(constructSongObj(video, interaction.member.user));
+              } catch (error) {
+                console.error(error);
+              }
+            }
+            resolve(urlsArr);
+          } else {
+            const artistsAndName = concatSongNameAndArtists(data);
+            const ytResult = await YouTube.searchOne(artistsAndName);
+            if (ytResult.live) {
+              reject("I don't support live streams!");
+            }
+            const video = {
+              title: ytResult.title,
+              url: `https://www.youtube.com/watch?v=${ytResult.id}`,
+              thumbnail: {
+                url: ytResult.thumbnail.url
+              },
+              durationFormatted: ytResult.durationFormatted,
+              duration: ytResult.duration
+            };
+            resolve(constructSongObj(video, interaction.member.user));
+          }
+        })
+        .catch(err => console.error(err));
+    } else if (
+      url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
+    ) {
+      const playlist = await YouTube.getPlaylist(url).catch(function() {
+        reject(':x: Playlist is either private or it does not exist!');
+      });
+      let videosArr = await playlist.fetch();
+      videosArr = videosArr.videos;
+      let urlsArr = [];
+      for (let i = 0; i < videosArr.length; i++) {
+        if (videosArr[i].private) {
+          continue;
+        } else {
           const video = videosArr[i];
           urlsArr.push(constructSongObj(video, interaction.member.user));
-        } catch (err) {
-          return console.error(err);
         }
       }
+      resolve(urlsArr);
+    } else {
+      const video = await YouTube.getVideo(url).catch(function() {
+        reject(':x: There was a problem getting the video you provided!');
+      });
+      if (video.live) {
+        reject("I don't support live streams!");
+      }
+      resolve(constructSongObj(video, interaction.member.user));
     }
-    return urlsArr;
-  }
-
-  const video = await YouTube.getVideo(url).catch(function() {
-    interaction.followUp(
-      ':x: There was a problem getting the video you provided!'
-    );
-    return;
   });
-  if (video.live) {
-    interaction.followUp("I don't support live streams!");
-    return false;
-  }
-  return constructSongObj(video, interaction.member.user);
 }
+
+var isSpotifyURL = arg =>
+  arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
+
+var concatSongNameAndArtists = data => {
+  // Spotify only
+  let artists = '';
+  data.artists.forEach(artist => (artists = artists.concat(' ', artist.name)));
+  const songName = data.name;
+  return `${songName} ${artists}`;
+};

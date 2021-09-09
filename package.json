@@ -24,7 +24,6 @@
     "iso-639-1": "^2.1.9",
     "libsodium-wrappers": "^0.7.9",
     "mongoose": "^5.13.5",
-    "simple-youtube-api": "^5.2.1",
     "spotify-url-info": "^2.2.3",
     "youtube-dl-exec": "^1.2.4",
     "youtube-sr": "^4.1.7",

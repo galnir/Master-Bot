@@ -408,7 +408,7 @@ module.exports = {
                 title: ytResult[0].title,
                 url: ytResult[0].url,
                 thumbnail: {
-                  url: video.thumbnail.url
+                  url: ytResult[0].thumbnail.url
                 },
                 durationFormatted: ytResult[0].durationFormatted,
                 duration: ytResult[0].duration
@@ -571,7 +571,6 @@ module.exports = {
         );
       });
       if (!video) return;
-      console.log(video);
       if (video.live === 'live' && !playLiveStreams) {
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
