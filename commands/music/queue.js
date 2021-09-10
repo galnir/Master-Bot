@@ -6,7 +6,8 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('queue')
     .setDescription('Display the music queue'),
-  execute(interaction) {
+  async execute(interaction) {
+    await interaction.deferReply();
     const guildData = interaction.client.guildData.get(interaction.guildId);
     if (guildData) {
       if (guildData.triviaData.isTriviaRunning) {
