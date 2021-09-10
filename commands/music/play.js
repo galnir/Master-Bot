@@ -438,6 +438,9 @@ module.exports = {
                     interaction.member.user
                   )
                 );
+                return interaction.followUp(
+                  `Added **${video.title}** to queue`
+                );
               }
               if (
                 player.audioPlayer.state.status !== AudioPlayerStatus.Playing
