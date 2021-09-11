@@ -439,15 +439,16 @@ module.exports = {
                   )
                 );
                 player.commandLock = false;
-                return interaction.followUp(
-                  `Added **${video.title}** to queue`
-                );
-              }
-              if (
-                player.audioPlayer.state.status !== AudioPlayerStatus.Playing
-              ) {
-                handleSubscription(player.queue, interaction, player);
-                return;
+                if (
+                  player.audioPlayer.state.status !== AudioPlayerStatus.Playing
+                ) {
+                  handleSubscription(player.queue, interaction, player);
+                  return;
+                } else {
+                  return interaction.followUp(
+                    `Added **${video.title}** to queue`
+                  );
+                }
               }
             } catch (error) {
               return interaction.followUp(error);
