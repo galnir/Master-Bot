@@ -438,6 +438,7 @@ module.exports = {
                     interaction.member.user
                   )
                 );
+                player.commandLock = false;
                 return interaction.followUp(
                   `Added **${video.title}** to queue`
                 );
