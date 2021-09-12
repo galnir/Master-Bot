@@ -17,20 +17,23 @@ module.exports = {
         .setName('length')
         .setDescription('How many songs would you like the trivia to have?')
     ),
-  execute(interaction) {
+  async execute(interaction) {
+    await interaction.deferReply();
     const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      return interaction.reply(
+      return interaction.followUp(
         ':no_entry: Please join a voice channel and try again!'
       );
     }
 
     if (interaction.client.playerManager.get(interaction.guildId)) {
-      return interaction.reply(`You can't use this while a track is playing!`);
+      return interaction.followUp(
+        `You can't use this while a track is playing!`
+      );
     }
 
     if (interaction.client.triviaManager.get(interaction.guildId)) {
-      return interaction.reply('There is already a trivia in play!');
+      return interaction.followUp('There is already a trivia in play!');
     }
 
     const numberOfSongs = interaction.options.get('length')
@@ -104,7 +107,7 @@ async function handleSubscription(interaction, player) {
     Vote skip the song by entering the word 'skip'.
     You can end the trivia at any point by using the end-trivia command!`
     );
-  return interaction.reply({ embeds: [startTriviaEmbed] });
+  return interaction.followUp({ embeds: [startTriviaEmbed] });
 }
 
 function getRandom(arr, n) {
