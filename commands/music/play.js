@@ -400,7 +400,20 @@ module.exports = {
             });
             for (let i = 0; i < spotifyPlaylistItems.length; i++) {
               try {
-                const video = await searchOne(spotifyPlaylistItems[i].track);
+                let trackData;
+                if (data.type == 'album') {
+                  trackData = {
+                    artists: spotifyPlaylistItems[i].artists,
+                    name: spotifyPlaylistItems[i].name
+                  };
+                } else {
+                  trackData = {
+                    artists: spotifyPlaylistItems[i].track.artists,
+                    name: spotifyPlaylistItems[i].track.name
+                  };
+                }
+
+                const video = await searchOne(trackData);
 
                 if (nextFlag || jumpFlag) {
                   flagLogic(interaction, video, jumpFlag);
@@ -413,8 +426,11 @@ module.exports = {
                     )
                   );
                 }
-              } catch (error) {
-                return interaction.followup(error);
+              } catch (err) {
+                processingMessage.delete();
+                return interaction.followUp(
+                  'Failed to process playlist, please try again later'
+                );
               }
             }
             processingMessage.edit('Playlist Processed!');
