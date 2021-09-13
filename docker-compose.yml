@@ -1,0 +1,10 @@
+services:
+  master-bot:
+    build: .
+    depends_on: 
+      - mongo
+  mongo:
+    image: mongo:4-focal
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: master-bot
+      MONGO_INITDB_ROOT_PASSWORD: admin
