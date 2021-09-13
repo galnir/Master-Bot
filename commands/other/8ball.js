@@ -13,7 +13,11 @@ module.exports = {
         .setRequired(true)
     ),
   execute(interaction) {
-    // console.log(interaction.options.get('question').value);
+    const question = interaction.options.get('question').value;
+
+    if (question.length > 255) {
+      return interaction.reply('Please ask a shorter question!');
+    }
 
     const ballAnswers = fs.readFileSync(
       '././resources/other/8ball.json',
@@ -25,6 +29,7 @@ module.exports = {
       ballArray[Math.floor(Math.random() * ballArray.length)];
 
     const answerEmbed = new MessageEmbed()
+      .setTitle(question)
       .setAuthor('Magic 8 Ball', 'https://i.imgur.com/HbwMhWM.png')
       .setDescription(randomAnswer.text)
       .setColor('#000000')
