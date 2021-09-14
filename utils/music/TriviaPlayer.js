@@ -146,7 +146,7 @@ class TriviaPlayer {
             }
             this.score.set(
               msg.author.username,
-              this.score(msg.author.username) + 2
+              this.score.get(msg.author.username) + 2
             );
             msg.react('☑');
             return collector.stop();
