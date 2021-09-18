@@ -18,12 +18,11 @@ class MusicPlayer {
     this.connection = null;
     this.audioPlayer = createAudioPlayer();
     this.queue = [];
-    this.isPreviousTrack = false;
     this.skipTimer = false;
     this.loopSong = false;
     this.loopQueue = false;
     this.volume = 1;
-    this.queueLock = false;
+    this.commandLock = false;
     this.textChannel;
   }
 
@@ -142,16 +141,14 @@ class MusicPlayer {
 
   async process(queue) {
     if (
-      this.queueLock ||
       this.audioPlayer.state.status !== AudioPlayerStatus.Idle ||
       this.queue.length === 0
-    ) {
+    )
       return;
-    }
-    this.queueLock = true;
 
     const song = this.queue.shift();
     this.nowPlaying = song;
+    if (this.commandLock) this.commandLock = false;
     try {
       //const resource = await this.createAudioResource(song.url);
       const stream = ytdl(song.url, {
@@ -163,10 +160,8 @@ class MusicPlayer {
         inputType: StreamType.Arbitrary
       });
       this.audioPlayer.play(resource);
-      this.queueLock = false;
     } catch (err) {
       console.error(err);
-      this.queueLock = false;
       return this.process(queue);
     }
   }
