@@ -12,14 +12,11 @@ module.exports = {
     }
 
     const player = interaction.client.playerManager.get(interaction.guildId);
-    if (
-      player.audioPlayer.state.status !== AudioPlayerStatus.Playing ||
-      !player
-    ) {
+    if (!player) {
       return interaction.reply('There is no song playing right now!');
     } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
       return interaction.reply(
-        'You must be in the same voice channel as the bot in order to skip!'
+        'You must be in the same voice channel as the bot in order for bot to leave!'
       );
     }
 
