@@ -26,8 +26,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. Windows, Ubuntu...]
- - Node Version(Should be v14 atleast): 
+ - OS: [e.g. Windows, Ubuntu...]:
+ - Node.js Version(Should be v16 at least): 
  - Is python 2.7 installed?:
  - How are you hosting the bot(Locally, on a vps, heroku, glitch...):
 
