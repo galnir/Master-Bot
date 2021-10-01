@@ -4,6 +4,8 @@ const { Routes } = require('discord-api-types/v9');
 const { Client, Collection, Intents } = require('discord.js');
 const { token, mongo_URI, client_id } = require('./config.json');
 const mongoose = require('mongoose');
+const Reminder = require('./utils/models/Reminder');
+const setUpReminders = require('./utils/setUpReminders');
 
 const rest = new REST({ version: '9' }).setToken(token);
 
@@ -64,7 +66,7 @@ for (const file of eventFiles) {
   }
 }
 
-client.once('ready', () => {
+client.once('ready', async () => {
   client.playerManager = new Map();
   client.triviaManager = new Map();
   client.guildData = new Collection();
@@ -78,6 +80,9 @@ client.once('ready', () => {
       console.log('Mongo is ready');
     })
     .catch(console.error);
+
+    const reminders = await Reminder.find({});
+    setUpReminders(reminders, client);
 
   console.log('Ready!');
 });
