@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const Reminder = require('../../utils/models/Reminder');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,7 +27,7 @@ module.exports = {
                 .addChoice('Hours', 'hours')
                 .addChoice('Minutes', 'minutes')
         ),
-    execute(interaction) {
+    async execute(interaction) {
         // Create if not present
         interaction.member.reminders ? null : (interaction.member.reminders = []);
 
@@ -51,30 +52,39 @@ module.exports = {
             );
         }
 
-        const timer = unit.startsWith('w')
+        const timer = (unit.startsWith('w')
             ? number * 10080
             : null || unit.startsWith('d')
                 ? number * 1440
                 : null || unit.startsWith('h')
                     ? number * 60
-                    : number;
+                    : number);
 
-        const reminder = setTimeout(async () => {
+        setTimeout(async () => {
             await interaction.channel.send(
-                `${reminderObject.author} :alarm_clock: Reminder: ${reminderMessage}`
+                `<@${reminderObject.author}> :alarm_clock: Reminder: ${reminderMessage}`
             );
+
             for (let i = 0; i < interaction.member.reminders.length; i++) {
                 if (interaction.member.reminders[i] === reminderObject) {
-                    interaction.member.reminders.splice(i,1);
+                    interaction.member.reminders.splice(i, 1);
+                    await Reminder.deleteOne({ _id: reminderObject.id });
+                    break;
                 }
             }
         }, timer * 60000);
 
         const reminderObject = {
-            author: interaction.member,
+            author: interaction.user.id,
             text: reminderMessage,
-            timer: reminder
-        };
+            guildId: interaction.guildId,
+            channelId: interaction.channelId,
+            time: timer
+        }
+
+        if (timer * 60000 >= 3600000 ) { //only save if reminder is more than 1 hour
+            await Reminder.create(reminderObject);
+        }
 
         interaction.member.reminders.push(reminderObject);
 
