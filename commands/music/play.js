@@ -58,7 +58,7 @@ module.exports = {
       option
         .setName('query')
         .setDescription(
-          ':notes: What song or playlist would you like to listen to? Add -s to shuffle a playlist'
+          '🎶 What song or playlist would you like to listen to? Add -s to shuffle a playlist'
         )
         .setRequired(true)
     ),

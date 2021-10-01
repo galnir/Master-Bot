@@ -197,6 +197,12 @@ Anyone is welcome to suggest new features and improve code quality!
 
 [meiaihara06](https://github.com/meiaihara06) - 'LeaveTimeOut' and 'MaxResponseTime' options
 
+[Kyoyo](https://github.com/NotKyoyo) - added back 'now-playing'
+
+[MontejoJorge](https://github.com/MontejoJorge) - added back 'remind'
+
+[navidmafi](https://github.com/navidmafi) - update issue template, fix leave command
+
 [malokdev](https://github.com/malokdev) - 'uptime' command
 
 [chimaerra](https://github.com/chimaerra) - minor command tweaks
