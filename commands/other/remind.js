@@ -59,10 +59,15 @@ module.exports = {
                     ? number * 60
                     : number;
 
-        const reminder = setTimeout(() => {
-            interaction.channel.send(
+        const reminder = setTimeout(async () => {
+            await interaction.channel.send(
                 `${reminderObject.author} :alarm_clock: Reminder: ${reminderMessage}`
             );
+            for (let i = 0; i < interaction.member.reminders.length; i++) {
+                if (interaction.member.reminders[i] === reminderObject) {
+                    interaction.member.reminders.splice(i,1);
+                }
+            }
         }, timer * 60000);
 
         const reminderObject = {
