@@ -8,7 +8,7 @@ const setUpReminders = (reminders, client) => {
 
         const time = (remind.createdAt + remind.time * 60000) - new Date();
 
-        if ( time < 0 ) { //In case for some reason it was not deleted from the database.
+        if ( time > 0 ) { //In case for some reason it was not deleted from the database.
             setTimeout(async () => {
 
                 client.channels.cache.find((channel) => {
@@ -23,8 +23,6 @@ const setUpReminders = (reminders, client) => {
     
             }, time)
         }
-
-        console.log((remind.createdAt + remind.time * 60000) - new Date());
         
     });
 
