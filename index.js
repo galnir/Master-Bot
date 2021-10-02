@@ -41,9 +41,10 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationCommands(client_id), {
-      body: commands
-    });
+    await rest.put(
+      Routes.applicationCommands(client_id),
+      { body: commands },
+    );
 
     console.log('Successfully reloaded application (/) commands.');
   } catch (error) {
@@ -68,7 +69,7 @@ client.once('ready', () => {
   client.playerManager = new Map();
   client.triviaManager = new Map();
   client.guildData = new Collection();
-  client.user.setActivity('/', { type: 'WATCHING' });
+  client.user.setActivity('Spiny (/)', { type: 'PLAYING' });
   mongoose
     .connect(encodeURI(mongo_URI), {
       useNewUrlParser: true,
