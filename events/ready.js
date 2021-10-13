@@ -1,8 +1,8 @@
 const { Collection } = require('discord.js');
 const { mongo_URI } = require('../config.json');
 const mongoose = require('mongoose');
-const Reminder = require('./utils/models/Reminder');
-const setUpReminders = require('./utils/setUpReminders');
+const Reminder = require('../utils/models/Reminder');
+const setUpReminders = require('../utils/setUpReminders');
 
 module.exports = {
   name: 'ready',
