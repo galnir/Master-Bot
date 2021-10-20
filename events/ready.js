@@ -22,8 +22,12 @@ module.exports = {
       })
       .catch(console.error);
 
-    const reminders = await Reminder.find({});
-    setUpReminders(reminders, client);
+    try {
+      const reminders = await Reminder.find({});
+      setUpReminders(reminders, client);
+    } catch {
+      console.log('no reminders found');
+    }
 
     console.log('Ready!');
   }
