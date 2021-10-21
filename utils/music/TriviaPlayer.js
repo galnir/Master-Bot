@@ -8,16 +8,18 @@ const {
   StreamType
 } = require('@discordjs/voice');
 const { setTimeout } = require('timers');
-const { promisify } = require('util');
 const ytdl = require('ytdl-core');
 const { MessageEmbed } = require('discord.js');
+const { promisify } = require('util');
 const wait = promisify(setTimeout);
+const Member = require('../models/Member');
 
 class TriviaPlayer {
   constructor() {
     this.connection = null;
     this.audioPlayer = createAudioPlayer();
     this.score = new Map();
+    this.users = new Map();
     this.queue = [];
     this.textChannel;
     this.wasTriviaEndCalled = false;
@@ -66,7 +68,7 @@ class TriviaPlayer {
       }
     });
 
-    this.audioPlayer.on('stateChange', (oldState, newState) => {
+    this.audioPlayer.on('stateChange', async (oldState, newState) => {
       if (
         newState.status === AudioPlayerStatus.Idle &&
         oldState.status !== AudioPlayerStatus.Idle
@@ -77,13 +79,52 @@ class TriviaPlayer {
           // play next song
           this.process(this.queue);
         } else {
+          if (this.wasTriviaEndCalled) return;
+
           const sortedScoreMap = new Map(
             [...this.score.entries()].sort(function(a, b) {
               return b[1] - a[1];
             })
           );
 
-          if (this.wasTriviaEndCalled) return;
+          const usersArray = [...sortedScoreMap.entries()];
+
+          // only save score if user was competing against someone
+          if (usersArray.length > 1) {
+            // fetch that users member id
+            const collection = await this.textChannel.guild.members.search({
+              query: usersArray[0][0],
+              limit: 1
+            });
+
+            const user = collection.first();
+
+            const essentials = {
+              memberId: user.user.id,
+              username: user.user.username,
+              joinedAt: user.joinedAt
+            };
+
+            const userData = await Member.findOne({ memberId: user.id });
+
+            if (!userData) {
+              const userObject = {
+                ...essentials,
+                triviaAllTimeScore: usersArray[0][1]
+              };
+
+              const user = new Member(userObject);
+              user.save();
+            } else {
+              await Member.findOneAndUpdate(
+                { memberId: user.id },
+                {
+                  triviaAllTimeScore:
+                    userData.triviaAllTimeScore + usersArray[0][1]
+                }
+              );
+            }
+          }
 
           const embed = new MessageEmbed()
             .setColor('#ff7373')

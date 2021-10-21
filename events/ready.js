@@ -15,7 +15,8 @@ module.exports = {
     mongoose
       .connect(encodeURI(mongo_URI), {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useFindAndModify: false
       })
       .then(() => {
         console.log('Mongo is ready');
