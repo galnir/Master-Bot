@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
-const { tenorAPI } = require('../../config.json');
+const { tenorAPI } = require('aws-sdk');
 
 if (!tenorAPI) return;
 

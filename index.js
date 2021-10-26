@@ -2,7 +2,7 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { Client, Collection, Intents } = require('discord.js');
-const { token, client_id } = require('./config.json');
+const { token, client_id } = require('aws-sdk');
 
 const rest = new REST({ version: '9' }).setToken(token);
 
