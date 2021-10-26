@@ -2,7 +2,15 @@ const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { Client, Collection, Intents } = require('discord.js');
-const { token, client_id } = require('aws-sdk');
+const aws = require('aws-sdk');
+
+const token = new aws.Token({
+  token: process.env.token
+});
+
+const client_id = new aws.Client_id({
+  client_id: process.env.client_id
+});
 
 const rest = new REST({ version: '9' }).setToken(token);
 
