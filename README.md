@@ -42,7 +42,9 @@ For full command support, including lyrics, GIFs, news, Twitch integration, and 
   "newsAPI": "news-api-key",
   "twitchClientID": "Your-Client-ID",
   "twitchClientSecret": "Your-Client-Secret",
-  "rawgAPI": "rawg-api-key"
+  "rawgAPI": "rawg-api-key",
+  "ownerID": "discord-user-id",
+  "devID": "discord-user-id"
 }
 ```
 
