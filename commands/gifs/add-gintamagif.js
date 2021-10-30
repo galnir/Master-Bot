@@ -4,7 +4,7 @@ const { ownerID, devID } = require('../../config.json');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('add-gintamagif')
-        .setDescription('Add a Ginatma Gif.')
+        .setDescription('Add a Gintama Gif.')
         .addStringOption(option =>
             option
                 .setName('gif')
