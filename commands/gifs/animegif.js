@@ -7,7 +7,7 @@ if (!tenorAPI) return;
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('animegif')
-    .setDescription('Responds with a random anime gif'),
+    .setDescription('Suche nach einen Begriff, um ein Anime Gif dazu zu finden!'),
   execute(interaction) {
     fetch(`https://g.tenor.com/v1/random?key=${tenorAPI}&q=anime&limit=50`)
       .then(res => res.json())
@@ -15,7 +15,7 @@ module.exports = {
         interaction.reply(json.results[Math.floor(Math.random() * 49)].url)
       )
       .catch(function onError() {
-        interaction.reply(':x: Failed to find a gif!');
+        interaction.reply(':x: Konnte dein Gif nicht laden.');
         return;
       });
   }
