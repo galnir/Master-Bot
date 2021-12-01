@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { AudioPlayerStatus } = require('@discordjs/voice');
 const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
 const { getData } = require('spotify-url-info');
@@ -20,13 +21,27 @@ module.exports = {
         .setDescription(
           'What url would you like to save to playlist? It can also be a playlist url'
         )
-        .setRequired(true)
     ),
   async execute(interaction) {
     await interaction.deferReply();
 
     const playlistName = interaction.options.get('playlistname').value;
-    const url = interaction.options.get('url').value;
+
+    let url = interaction.options.get('url');
+
+    if (!url) {
+      const player = await interaction.client.playerManager.get(interaction.guildId);
+
+      if (!player) {
+        return interaction.followUp('There is no song playing right now! Provide a valid URL to save');
+        // can happen between songs, not a redundant statement
+      } else if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
+        return interaction.followUp('There is no song playing right now! Provide a valid URL to save');
+      }
+      url = player.nowPlaying.url;
+    } else {
+      url = url.value;
+    }
 
     const userData = await Member.findOne({
       memberId: interaction.member.id
@@ -68,10 +83,9 @@ module.exports = {
           urlsArrayClone.push(processedURL);
           savedPlaylistsClone[location].urls = urlsArrayClone;
           interaction.followUp(
-            `I added **${
-              savedPlaylistsClone[location].urls[
-                savedPlaylistsClone[location].urls.length - 1
-              ].title
+            `I added **${savedPlaylistsClone[location].urls[
+              savedPlaylistsClone[location].urls.length - 1
+            ].title
             }** to **${playlistName}**`
           );
         }
@@ -109,7 +123,7 @@ function constructSongObj(video, user) {
 }
 
 async function processURL(url, interaction) {
-  return new Promise(async function(resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     if (isSpotifyURL(url)) {
       getData(url)
         .then(async data => {
@@ -134,7 +148,7 @@ async function processURL(url, interaction) {
     } else if (
       url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
     ) {
-      const playlist = await YouTube.getPlaylist(url).catch(function() {
+      const playlist = await YouTube.getPlaylist(url).catch(function () {
         reject(':x: Playlist is either private or it does not exist!');
       });
       let videosArr = await playlist.fetch();
@@ -150,7 +164,7 @@ async function processURL(url, interaction) {
       }
       resolve(urlsArr);
     } else {
-      const video = await YouTube.getVideo(url).catch(function() {
+      const video = await YouTube.searchOne(url).catch(function () {
         reject(':x: There was a problem getting the video you provided!');
       });
       if (video.live) {
