@@ -576,11 +576,13 @@ module.exports = {
       }
       timestamp = Number(timestamp);
 
-      const video = await YouTube.getVideo(query).catch(function() {
+      const video = await YouTube.searchOne(query).catch(function (e) {
+        console.error(e);
         deletePlayerIfNeeded(interaction);
         interaction.followUp(
           ':x: There was a problem getting the video you provided!'
         );
+        player.commandLock = false;
       });
       if (!video) return;
       if (video.live === 'live' && !playLiveStreams) {
@@ -703,14 +705,14 @@ var searchYoutube = async (
   jumpFlag
 ) => {
   const videos = await YouTube.search(query, { limit: 5 }).catch(
-    async function() {
+    async function () {
+      player.commandLock = false;
       return interaction.followUp(
         ':x: There was a problem searching the video you requested!'
       );
     }
   );
   if (!videos) {
-    player.commandLock = false;
     return interaction.followUp(
       `:x: I had some trouble finding what you were looking for, please try again or be more specific.`
     );
@@ -759,10 +761,10 @@ var searchYoutube = async (
       }
       const videoIndex = parseInt(value);
 
-      YouTube.getVideo(
+      YouTube.searchOne(
         `https://www.youtube.com/watch?v=${videos[videoIndex - 1].id}`
       )
-        .then(function(video) {
+        .then(function (video) {
           if (video.live && !playLiveStreams) {
             if (playOptions) {
               playOptions.delete().catch(console.error);
