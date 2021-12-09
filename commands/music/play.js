@@ -679,23 +679,6 @@ var handleSubscription = async (queue, interaction, player) => {
   await interaction.followUp(`Enqueued ${title}`);
 };
 
-// var playbackBar = data => {
-//   if (data.nowPlaying.duration === 'Live Stream') return '';
-//   const formatTime = compose(timeString, millisecondsToTimeObj);
-
-//   const passedTimeInMS = data.songDispatcher.streamTime;
-//   const songLengthFormatted = timeString(data.nowPlaying.rawDuration);
-//   const songLengthInMS = rawDurationToMilliseconds(data.nowPlaying.rawDuration);
-
-//   const playback = Array(11).fill('▬');
-//   playback[Math.floor((passedTimeInMS / songLengthInMS) * 11)] =
-//     ':musical_note:';
-
-//   return `${formatTime(passedTimeInMS)} ${playback.join(
-//     ''
-//   )} ${songLengthFormatted}`;
-// };
-
 var searchYoutube = async (
   query,
   interaction,
