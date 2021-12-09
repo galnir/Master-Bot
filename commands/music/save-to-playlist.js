@@ -144,7 +144,7 @@ async function processURL(url, interaction) {
         })
         .catch(err => console.error(err));
     } else if (
-      url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)
+      isYouTubePlaylistURL(url)
     ) {
       const playlist = await YouTube.getPlaylist(url).catch(function () {
         reject(':x: Playlist is either private or it does not exist!');
