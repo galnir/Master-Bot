@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageSelectMenu, MessageActionRow } = require('discord.js');
-const Player = require('../../utils/music/Player');
 const { getData } = require('spotify-url-info');
+const Player = require('../../utils/music/Player');
 const YouTube = require('youtube-sr').default;
 let {
   playLiveStreams,
@@ -21,6 +21,7 @@ const {
 } = require('@discordjs/voice');
 const createGuildData = require('../../utils/createGuildData');
 const { searchOne } = require('../../utils/music/searchOne');
+const { isYouTubeVideoURL, isYouTubePlaylistURL, isSpotifyURL } = require('../../utils/music/urlChecking')
 
 // Check If Options are Valid
 if (typeof playLiveStreams !== 'boolean') playLiveStreams = true;
@@ -862,21 +863,6 @@ var flagLogic = (interaction, video, jumpFlag) => {
 };
 
 /********************************** Helper Functions *****************************/
-
-// var compose = (f, g) => x => f(g(x));
-
-var isYouTubeVideoURL = arg =>
-  arg.match(
-    /^(http(s)?:\/\/)?(m.)?((w){3}.)?(music.)?youtu(be|.be)?(\.com)?\/.+/
-  );
-
-var isYouTubePlaylistURL = arg =>
-  arg.match(
-    /^https?:\/\/(music.)?(www.youtube.com|youtube.com)\/playlist(.*)$/
-  );
-
-var isSpotifyURL = arg =>
-  arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
 
 var shuffleArray = arr => {
   for (let i = arr.length - 1; i > 0; i--) {

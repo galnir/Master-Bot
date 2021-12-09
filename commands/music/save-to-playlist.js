@@ -4,6 +4,7 @@ const Member = require('../../utils/models/Member');
 const YouTube = require('youtube-sr').default;
 const { getData } = require('spotify-url-info');
 const { searchOne } = require('../../utils/music/searchOne');
+const { isYouTubeVideoURL, isYouTubePlaylistURL, isSpotifyURL } = require('../../utils/music/urlChecking')
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -102,10 +103,7 @@ module.exports = {
 
 function validateURL(url) {
   return (
-    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) ||
-    url.match(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/) ||
-    url.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/) ||
-    url.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/)
+    isYouTubeVideoURL(url) || isYouTubePlaylistURL(url) || isSpotifyURL(url)
   );
 }
 
@@ -174,6 +172,3 @@ async function processURL(url, interaction) {
     }
   });
 }
-
-var isSpotifyURL = arg =>
-  arg.match(/^(spotify:|https:\/\/[a-z]+\.spotify\.com\/)/);
