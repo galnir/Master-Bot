@@ -152,11 +152,11 @@ module.exports = {
         const index = String(Number(query) - 1);
         if (
           Number(query) &&
-          typeof player.queueHistory[index] !== 'undefined'
+          typeof interaction.client.guildData.get(interaction.guildId)[index] !== 'undefined'
         ) {
           hasHistoryField = true;
           fields.unshift({
-            name: `play ${player.queueHistory[index].title}`,
+            name: `play ${interaction.client.guildData.get(interaction.guildId)[index].title}`,
             description: 'Play last song',
             value: 'previous_song_option',
             emoji: '🔙'
@@ -201,12 +201,12 @@ module.exports = {
                 if (
                   player.audioPlayer.state.status !== AudioPlayerStatus.Playing
                 ) {
-                  player.queue.unshift(player.queueHistory[index]);
+                  player.queue.unshift(interaction.client.guildData.get(interaction.guildId)[index]);
                   handleSubscription(player.queue, interaction, player);
                   break;
                 }
                 if (nextFlag || jumpFlag) {
-                  player.queue.unshift(player.queueHistory[index]);
+                  player.queue.unshift(interaction.client.guildData.get(interaction.guildId)[index]);
                   if (
                     jumpFlag &&
                     player.audioPlayer.state.status == AudioPlayerStatus.Playing
@@ -215,11 +215,11 @@ module.exports = {
                     player.audioPlayer.stop();
                   }
                 } else {
-                  player.queue.push(player.queueHistory[index]);
+                  player.queue.push(interaction.client.guildData.get(interaction.guildId)[index]);
                 }
                 player.commandLock = false;
                 interaction.followUp(
-                  `'${player.queueHistory[index].title}' was added to queue!`
+                  `'${interaction.client.guildData.get(interaction.guildId)[index].title}' was added to queue!`
                 );
                 break;
               // 1: Play the saved playlist
@@ -295,7 +295,7 @@ module.exports = {
     if (Number(query)) {
       const index = String(Number(query) - 1);
       // continue if there's no index matching the query on the history queue
-      if (typeof player.queueHistory[index] === 'undefined') {
+      if (typeof interaction.client.guildData.get(interaction.guildId).queueHistory[index] === 'undefined') {
         return;
       }
       const row = new MessageActionRow().addComponents(
@@ -349,12 +349,12 @@ module.exports = {
               if (
                 player.audioPlayer.state.status !== AudioPlayerStatus.Playing
               ) {
-                player.queue.unshift(player.queueHistory[index]);
+                player.queue.unshift(interaction.client.guildData.get(interaction.guildId).queueHistory[index]);
                 handleSubscription(player.queue, interaction, player);
                 break;
               }
               if (nextFlag || jumpFlag) {
-                player.queue.unshift(player.queueHistory[index]);
+                player.queue.unshift(interaction.client.guildData.get(interaction.guildId).queueHistory[index]);
                 if (
                   jumpFlag &&
                   player.audioPlayer.state.status === AudioPlayerStatus.Playing
@@ -363,11 +363,11 @@ module.exports = {
                   player.audioPlayer.stop();
                 }
               } else {
-                player.queue.push(player.queueHistory[index]);
+                player.queue.push(interaction.client.guildData.get(interaction.guildId).queueHistory[index]);
               }
               player.commandLock = false;
               interaction.followUp(
-                `'${player.queueHistory[index].title}' was added to queue!`
+                `'${interaction.client.guildData.get(interaction.guildId).queueHistory[index].title}' was added to queue!`
               );
               break;
             // 2: Search for the query on YouTube
