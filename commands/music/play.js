@@ -333,6 +333,11 @@ module.exports = {
         }
       );
 
+      clarificationCollector.on('end', () => {
+        if (clarificationOptions)
+          clarificationOptions.delete().catch(console.error);
+      });
+
       clarificationCollector.on('collect', async i => {
         if (i.user.id !== interaction.user.id) {
           i.reply({
