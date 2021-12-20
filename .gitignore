@@ -3,3 +3,5 @@ config.json
 test.js
 json.sqlite
 .vscode
+Lavalink.jar
+logs
