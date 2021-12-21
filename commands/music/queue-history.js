@@ -1,48 +1,60 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { PagesBuilder } = require('discord.js-pages');
+const {
+  PaginatedFieldMessageEmbed
+} = require('@sapphire/discord.js-utilities');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('queue-history')
-    .setDescription('Display the music queue history'),
-  execute(interaction) {
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    if (!guildData) {
-      return interaction.followUp('There is no music queue history!');
-    } else if (guildData) {
-      if (!guildData.queueHistory.length) {
-        return interaction.followUp('There is no music queue history!');
-      }
+    .setDescription('Display the music queue history in the form of an embed'),
+  async execute(interaction) {
+    const client = interaction.client;
+
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) {
+      return interaction.reply(
+        'You have to be in my channel in order to use that!'
+      );
     }
 
-    const queueClone = Array.from(guildData.queueHistory);
-    const embeds = [];
+    const queueHistory = client.queueHistory.get(interaction.guild.id);
+    if (!queueHistory) {
+      return interaction.reply('There are no songs in the queue!');
+    }
 
-    for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
-      const playlistArray = queueClone.slice(i * 24, 24 + i * 24);
-      const fields = [];
-
-      playlistArray.forEach((element, index) => {
-        if (element == null) return;
-        fields.push({
-          name: `${index + 1 + i * 24}`,
-          value: `${element.title}`
-        });
+    const queueItems = [];
+    for (let i = 0; i < queueHistory.length; i++) {
+      queueItems.push({
+        title: `${i + 1}`,
+        value: queueHistory[i].title
       });
-
-      embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
     }
-
-    new PagesBuilder(interaction)
-      .setTitle('Music Queue')
-      .setPages(embeds)
-      .setListenTimeout(2 * 60 * 1000)
+    const baseEmbed = new MessageEmbed()
+      .setTitle('Music History Queue')
       .setColor('#9096e6')
       .setAuthor(
         interaction.member.user.username,
         interaction.member.user.displayAvatarURL()
-      )
-      .build();
+      );
+
+    const message = {
+      author: {
+        id: interaction.member.id,
+        bot: interaction.user.bot
+      },
+      channel: interaction.channel
+    };
+
+    interaction.reply('Queue history generated');
+
+    new PaginatedFieldMessageEmbed()
+      .setTitleField('Queue history item')
+      .setTemplate({ baseEmbed })
+      .setItems(queueItems)
+      .formatItems((item) => `${item.title}\n${item.value}`)
+      .setItemsPerPage(5)
+      .make()
+      .run(message);
   }
 };

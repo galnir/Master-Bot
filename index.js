@@ -37,9 +37,26 @@ client.music.on('queueFinish', (queue) => {
   queue.player.node.destroyPlayer(queue.player.guildId);
 });
 
-client.music.on('trackStart', (queue, song) => {
-  queue.channel.send({ content: `Now playing ${song.title}` });
-});
+client.music.on(
+  'trackStart',
+  (queue, { title, uri, author, length, isSeekable }) => {
+    const queueHistory = client.queueHistory.get(queue.player.guildId);
+    if (!queueHistory) {
+      client.queueHistory.set(queue.player.guildId, []);
+    }
+    client.queueHistory.set(queue.player.guildId, [
+      {
+        title,
+        uri,
+        author,
+        length,
+        isSeekable
+      },
+      ...client.queueHistory.get(queue.player.guildId)
+    ]);
+    queue.channel.send({ content: `Now playing ${title}` });
+  }
+);
 
 client.on('ready', () => {
   client.music.connect(client.user.id);

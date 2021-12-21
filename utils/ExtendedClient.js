@@ -23,6 +23,8 @@ class ExtendedClient extends Client {
       }
     });
 
+    this.queueHistory = new Map();
+
     this.ws.on('VOICE_SERVER_UPDATE', (data) =>
       this.music.handleVoiceUpdate(data)
     );
