@@ -1,30 +1,58 @@
+require('@lavaclient/queue/register');
 const fs = require('fs');
+const ExtendedClient = require('./utils/ExtendedClient');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { Client, Collection, Intents } = require('discord.js');
-const { token, client_id } = require('./config.json');
+const { Collection } = require('discord.js');
+const {
+  token,
+  client_id,
+  guild_id,
+  spotify_client_id,
+  spotify_client_secret
+} = require('./config.json');
+const { load } = require('@lavaclient/spotify');
+
+load({
+  client: {
+    id: spotify_client_id,
+    secret: spotify_client_secret
+  },
+  autoResolveYoutubeTracks: true
+});
 
 const rest = new REST({ version: '9' }).setToken(token);
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES
-  ]
-});
-
+const client = new ExtendedClient();
 client.commands = new Collection();
 const commands = [];
 
+client.music.on('connect', () => {
+  console.log('Connected to LavaLink');
+});
+
+client.music.on('queueFinish', (queue) => {
+  queue.channel.send({ content: 'No more songs in queue' });
+  queue.player.disconnect();
+  queue.player.node.destroyPlayer(queue.player.guildId);
+});
+
+client.music.on('trackStart', (queue, song) => {
+  queue.channel.send({ content: `Now playing ${song.title}` });
+});
+
+client.on('ready', () => {
+  client.music.connect(client.user.id);
+  console.log('ready!');
+});
+
 const commandFiles = fs
   .readdirSync('./commands')
-  .map(folder =>
+  .map((folder) =>
     fs
       .readdirSync(`./commands/${folder}`)
-      .filter(file => file.endsWith('.js'))
-      .map(file => `./commands/${folder}/${file}`)
+      .filter((file) => file.endsWith('.js'))
+      .map((file) => `./commands/${folder}/${file}`)
   )
   .flat();
 
@@ -39,7 +67,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationCommands(client_id), {
+    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
       body: commands
     });
 
@@ -51,7 +79,7 @@ for (const file of commandFiles) {
 
 const eventFiles = fs
   .readdirSync('./events')
-  .filter(file => file.endsWith('.js'));
+  .filter((file) => file.endsWith('.js'));
 
 for (const file of eventFiles) {
   const event = require(`./events/${file}`);
