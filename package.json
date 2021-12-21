@@ -16,6 +16,7 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "@lavaclient/queue": "^2.0.6",
     "@lavaclient/spotify": "^3.0.0",
+    "@sapphire/discord.js-utilities": "^4.1.5",
     "@vitalets/google-translate-api": "^7.0.0",
     "cheerio": "^1.0.0-rc.10",
     "discord-api-types": "^0.25.2",
