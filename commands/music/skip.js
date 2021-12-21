@@ -1,37 +1,24 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { AudioPlayerStatus } = require('@discordjs/voice');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('skip')
-    .setDescription('Skip the currently playing song!'),
-  async execute(interaction) {
-    const voiceChannel = interaction.member.voice.channel;
-    if (!voiceChannel) {
-      return interaction.reply('Please join a voice channel and try again!');
+    .setDescription('Skip the current song playng'),
+  execute(interaction) {
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guild.id);
+    if (!player) {
+      return interaction.reply('There is nothing playing right now!');
     }
 
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-      return interaction.reply('There is no song playing right now!');
-    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel || player.channelId !== voiceChannel.id) {
       return interaction.reply(
-        'You must be in the same voice channel as the bot in order to skip!'
-      );
-    } else if (
-      interaction.guild.client.guildData.get(interaction.guild.id)
-        .isTriviaRunning
-    ) {
-      return interaction.reply(
-        `You can't skip a trivia! Use end-trivia command instead`
+        'You need to be in the same channel as the bot in order to use that!'
       );
     }
-    interaction.reply(
-      `Skipped **${
-        interaction.client.playerManager.get(interaction.guildId).nowPlaying
-          .title
-      }**`
-    );
-    player.audioPlayer.stop();
+
+    interaction.reply('Skipped song');
+    player.queue.next();
   }
 };
