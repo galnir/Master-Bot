@@ -15,19 +15,14 @@ module.exports = {
       );
     }
 
-    const voiceState = interaction.guild.voiceStates.cache.get(
-      interaction.user.id
-    );
-    if (!voiceState) {
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) {
       return interaction.reply({
         content: 'Join the bots channel and try again!'
       });
     }
-    const voiceChannel = voiceState.channel;
-    if (voiceChannel) {
-      interaction.reply('Leaving the voice channel!');
-      player.disconnect();
-      client.music.destroyPlayer(player.guildId);
-    }
+    interaction.reply('Leaving the voice channel!');
+    player.disconnect();
+    client.music.destroyPlayer(player.guildId);
   }
 };
