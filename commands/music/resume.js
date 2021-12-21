@@ -17,6 +17,10 @@ module.exports = {
       return interaction.reply('Join my voice channel and try again!');
     }
 
+    if (!player.pause) {
+      return interaction.reply('The song is not on pause!');
+    }
+
     interaction.reply('Song resumed');
     player.resume();
   }
