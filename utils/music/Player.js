@@ -133,6 +133,7 @@ class MusicPlayer {
   stop() {
     this.queue.length = 0;
     this.nowPlaying = null;
+    this.nowPlayingResource = null;
     this.skipTimer = false;
     this.isPreviousTrack = false;
     this.loopSong = false;
@@ -158,8 +159,11 @@ class MusicPlayer {
         highWaterMark: 1 << 25
       });
       const resource = createAudioResource(stream, {
-        inputType: StreamType.Arbitrary
+        inputType: StreamType.Arbitrary,
+        inlineVolume: true
       });
+      resource.volume.setVolume(this.volume);
+      this.nowPlayingResource = resource;
       this.audioPlayer.play(resource);
     } catch (err) {
       console.error(err);
