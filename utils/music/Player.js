@@ -14,14 +14,14 @@ const { MessageEmbed } = require('discord.js');
 const wait = promisify(setTimeout);
 
 class MusicPlayer {
-  constructor() {
+  constructor(volume = 1) {
     this.connection = null;
     this.audioPlayer = createAudioPlayer();
     this.queue = [];
     this.skipTimer = false;
     this.loopSong = false;
     this.loopQueue = false;
-    this.volume = 1;
+    this.volume = volume;
     this.commandLock = false;
     this.textChannel;
   }
