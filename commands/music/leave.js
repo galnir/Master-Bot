@@ -6,7 +6,7 @@ module.exports = {
     .setDescription('Make the bot leave its voice channel'),
   execute(interaction) {
     const client = interaction.client;
-    const player = client.music.players.get(interaction.guild.id);
+    const player = client.music.players.get(interaction.guildId);
 
     if (!player) {
       return interaction.reply(

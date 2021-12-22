@@ -19,7 +19,7 @@ module.exports = {
     }
     const query = interaction.options.get('query').value; // the user's query
 
-    let player = client.music.players.get(interaction.guild.id);
+    let player = client.music.players.get(interaction.guildId);
     if (player && player.channelId !== voiceChannel.id) {
       return interaction.reply(`Join <#${player.channelId}`);
     }
@@ -81,7 +81,7 @@ module.exports = {
 
     // create a player if missing
     if (!player) {
-      player = client.music.createPlayer(interaction.guild.id);
+      player = client.music.createPlayer(interaction.guildId);
       player.queue.channel = interaction.channel;
       await player.connect(voiceChannel.id, { deafened: true });
     }

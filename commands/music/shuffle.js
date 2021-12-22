@@ -6,7 +6,7 @@ module.exports = {
     .setDescription('Shuffle the music queue'),
   execute(interaction) {
     const client = interaction.client;
-    const player = client.music.players.get(interaction.guild.id);
+    const player = client.music.players.get(interaction.guildId);
     if (!player) {
       return interaction.reply('There is nothing playing at the moment!');
     }

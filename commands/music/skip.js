@@ -6,7 +6,7 @@ module.exports = {
     .setDescription('Skip the current song playng'),
   execute(interaction) {
     const client = interaction.client;
-    const player = client.music.players.get(interaction.guild.id);
+    const player = client.music.players.get(interaction.guildId);
     if (!player) {
       return interaction.reply('There is nothing playing right now!');
     }

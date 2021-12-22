@@ -8,7 +8,7 @@ module.exports = {
     const client = interaction.client;
     const voiceChannel = interaction.member.voice.channel;
 
-    const player = client.music.players.get(interaction.guild.id);
+    const player = client.music.players.get(interaction.guildId);
     if (!player) {
       return interaction.reply('There is nothing playing right now!');
     }

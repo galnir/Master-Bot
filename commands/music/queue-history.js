@@ -18,7 +18,7 @@ module.exports = {
       );
     }
 
-    const queueHistory = client.queueHistory.get(interaction.guild.id);
+    const queueHistory = client.queueHistory.get(interaction.guildId);
     if (!queueHistory) {
       return interaction.reply('There are no songs in the queue!');
     }
