@@ -111,6 +111,7 @@ class MusicPlayer {
           .setTitle(this.nowPlaying.title)
           .setColor('#ff0000')
           .addField('Duration', ':stopwatch: ' + this.nowPlaying.duration, true)
+          .addField('Volume', '🔊 ' + Number(this.volume * 100) + '%', true)
           .setFooter(
             `Requested by ${this.nowPlaying.memberDisplayName}!`,
             this.nowPlaying.memberAvatar
