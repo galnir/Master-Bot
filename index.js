@@ -13,6 +13,7 @@ const {
 } = require('./config.json');
 const { load } = require('@lavaclient/spotify');
 const { LoopType } = require('@lavaclient/queue');
+const NowPlayingEmbed = require('./utils/music/NowPlayingEmbed');
 
 load({
   client: {
@@ -38,26 +39,35 @@ client.music.on('queueFinish', (queue) => {
   queue.player.node.destroyPlayer(queue.player.guildId);
 });
 
-client.music.on('trackStart', (queue, { title, uri, length, isSeekable }) => {
-  if (queue.loop.type == LoopType.Queue) {
-    queue.tracks.push(queue.previous);
+client.music.on(
+  'trackStart',
+  async (queue, { title, uri, length, isSeekable }) => {
+    if (queue.loop.type == LoopType.Queue) {
+      queue.tracks.push(queue.previous);
+    }
+    queue.previous = queue.current;
+    const queueHistory = client.queueHistory.get(queue.player.guildId);
+    if (!queueHistory) {
+      client.queueHistory.set(queue.player.guildId, []);
+    }
+    client.queueHistory.set(queue.player.guildId, [
+      {
+        title,
+        uri,
+        length,
+        isSeekable
+      },
+      ...client.queueHistory.get(queue.player.guildId)
+    ]);
+    const embed = NowPlayingEmbed(
+      queue.current,
+      queue.player.position,
+      queue.current.length,
+      queue.current.requester
+    );
+    queue.channel.send({ embeds: [embed] });
   }
-  queue.previous = queue.current;
-  const queueHistory = client.queueHistory.get(queue.player.guildId);
-  if (!queueHistory) {
-    client.queueHistory.set(queue.player.guildId, []);
-  }
-  client.queueHistory.set(queue.player.guildId, [
-    {
-      title,
-      uri,
-      length,
-      isSeekable
-    },
-    ...client.queueHistory.get(queue.player.guildId)
-  ]);
-  queue.channel.send({ content: `Now playing ${title}` });
-});
+);
 
 client.on('ready', () => {
   client.music.connect(client.user.id);
