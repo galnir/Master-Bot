@@ -1,10 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { LoopType } = require('@lavaclient/queue');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('skip')
     .setDescription('Skip the current song playng'),
-  execute(interaction) {
+  async execute(interaction) {
     const client = interaction.client;
     const player = client.music.players.get(interaction.guildId);
     if (!player) {
@@ -18,7 +19,10 @@ module.exports = {
       );
     }
 
-    interaction.reply('Skipped song');
-    player.queue.next();
+    if (player.queue.loop.type == LoopType.Song) {
+      player.queue.tracks.unshift(player.queue.current);
+    }
+    await player.queue.next();
+    interaction.reply('Skipped track');
   }
 };
