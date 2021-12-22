@@ -4,7 +4,8 @@ const Guild = mongoose.model('guild', {
   guildId: String,
   ownerId: String,
   welcomeMessage: String,
-  welcomeMessageChannelId: String
+  welcomeMessageChannelId: String,
+  volume: Number
 });
 
 module.exports = Guild;
