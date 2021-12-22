@@ -16,8 +16,16 @@ module.exports = {
       return interaction.reply('Join my voice channel and try again!');
     }
 
-    player.queue.shuffle();
+    shuffleQueue(player.queue.tracks);
 
     interaction.reply('Queue shuffled');
   }
 };
+
+// temp method until the shuffle method gets fixed in the lavaclient queue plugin
+function shuffleQueue(queue) {
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+}
