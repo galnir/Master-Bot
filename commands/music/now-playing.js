@@ -1,29 +1,30 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { AudioPlayerStatus } = require('@discordjs/voice');
-const { MessageEmbed } = require('discord.js');
+const NowPlayingEmbed = require('../../utils/music/NowPlayingEmbed');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('nowplaying')
-    .setDescription('Display the current playing song'),
-  async execute(interaction) {
-    const player = await interaction.client.playerManager.get(
-      interaction.guildId
-    );
+    .setName('now-playing')
+    .setDescription('Display an embed detailing the song playing'),
+  execute(interaction) {
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guildId);
 
     if (!player) {
-      return interaction.reply('There is nothing playing now!');
-    } else if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-      return interaction.reply('There is no song playing right now!');
+      return interaction.reply('There is nothing playing at the moment!');
     }
 
-    const nowPlayingEmbed = new MessageEmbed()
-      .setTitle('Now playing')
-      .setColor('#ff0000')
-      .setDescription(
-        `[${player.nowPlaying.title}](${player.nowPlaying.url}) - **[${player.nowPlaying.memberDisplayName}]**`
+    const voiceChannel = interaction.member.voice.channel;
+    if (voiceChannel.id !== player.channelId) {
+      return interaction.reply(
+        'You must be in my channel in order to use that!'
       );
+    }
 
-    interaction.reply({ embeds: [nowPlayingEmbed] });
+    const embed = NowPlayingEmbed(
+      player.queue.current,
+      player.position,
+      player.queue.current.length
+    );
+    return interaction.reply({ embeds: [embed] });
   }
 };
