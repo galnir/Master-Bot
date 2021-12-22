@@ -39,6 +39,7 @@ module.exports = {
     if (guildData) {
       guildData.welcomeMessage = welcomeMessage;
       guildData.welcomeMessage.channel = channel;
+      guildData.welcomeMessageChannelId = channel.channel.id
       guildData.save();
     } else {
       const guildObject = {
