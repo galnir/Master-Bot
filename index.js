@@ -12,6 +12,7 @@ const {
   spotify_client_secret
 } = require('./config.json');
 const { load } = require('@lavaclient/spotify');
+const { LoopType } = require('@lavaclient/queue');
 
 load({
   client: {
@@ -38,6 +39,10 @@ client.music.on('queueFinish', (queue) => {
 });
 
 client.music.on('trackStart', (queue, { title, uri, length, isSeekable }) => {
+  if (queue.loop.type == LoopType.Queue) {
+    queue.tracks.push(queue.previous);
+  }
+  queue.previous = queue.current;
   const queueHistory = client.queueHistory.get(queue.player.guildId);
   if (!queueHistory) {
     client.queueHistory.set(queue.player.guildId, []);
