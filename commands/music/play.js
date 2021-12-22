@@ -13,6 +13,7 @@ let {
   deleteOldPlayMessage
 } = require('../../options.json');
 const Member = require('../../utils/models/Member');
+const Guild = require('../../utils/models/Guild');
 const {
   joinVoiceChannel,
   entersState,
@@ -100,7 +101,10 @@ module.exports = {
     let player = interaction.client.playerManager.get(interaction.guildId);
 
     if (!player) {
-      player = new Player();
+      const guildData = await Guild.findOne({
+        guildId: interaction.guild.id
+      }).exec();
+      player = new Player(guildData?.volume ?? 1);
       interaction.client.playerManager.set(interaction.guildId, player);
     }
 
