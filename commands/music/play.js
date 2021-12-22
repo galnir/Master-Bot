@@ -90,8 +90,10 @@ module.exports = {
     await interaction.reply({
       content: displayMessage
     });
-    // , next: true
-    player.queue.add(tracks, { requester: interaction.user.id });
+
+    player.queue.add(tracks, {
+      requester: interaction.user.id
+    });
     if (!started) {
       await player.queue.start();
     }
