@@ -1,68 +1,51 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { AudioPlayerStatus } = require('@discordjs/voice');
-const createGuildData = require('../../utils/createGuildData');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('move')
-    .setDescription('Move a song to a desired position in queue!')
-    .addIntegerOption(option =>
-      option
-        .setName('oldposition')
+    .setDescription('Move a song to a different position in queue')
+    .addIntegerOption((option) => {
+      return option
+        .setName('current-position')
         .setDescription('What is the position of the song you want to move?')
-        .setRequired(true)
-    )
-    .addIntegerOption(option =>
-      option
-        .setName('newposition')
-        .setDescription('What position do you want to move the song to?')
-        .setRequired(true)
-    ),
-
+        .setRequired(true);
+    })
+    .addIntegerOption((option) => {
+      return option
+        .setName('new-position')
+        .setDescription('What is the position you want to move the song to?')
+        .setRequired(true);
+    }),
   execute(interaction) {
-    if (!interaction.client.guildData.get(interaction.guildId)) {
-      interaction.client.guildData.set(interaction.guildId, createGuildData());
-    }
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guildId);
+
     if (!player) {
-      return interaction.reply('There is no song playing now!');
-    } else if (player.audioPlayer.state.status !== AudioPlayerStatus.Playing) {
-      return interaction.reply('There is no song playing now!');
-    } else if (
-      player.audioPlayer.state.status === AudioPlayerStatus.Playing &&
-      guildData.triviaData.isTriviaRunning
-    ) {
-      return interaction.reply(
-        `You can't use this command while a trivia is running!`
-      );
-    } else if (
-      interaction.member.voice.channelId !==
-      interaction.guild.me.voice.channelId
-    ) {
-      return interaction.reply(
-        `You must be in the same voice channel as the bot in order to use that!`
-      );
+      return interaction.reply('There is nothing playing at the moment!');
     }
-    const oldPosition = interaction.options.get('oldposition').value;
-    const newPosition = interaction.options.get('newposition').value;
+
+    const voiceChannel = interaction.member.voice.channel;
+    if (voiceChannel.id !== player.channelId) {
+      return interaction.reply('Join my voice channel and try again!');
+    }
+
+    const currentPosition = interaction.options.get('current-position').value;
+    const newPosition = interaction.options.get('new-position').value;
 
     if (
-      oldPosition < 1 ||
-      oldPosition > player.queue.length ||
+      currentPosition < 1 ||
+      currentPosition > player.queue.tracks.length ||
       newPosition < 1 ||
-      newPosition > player.queue.length ||
-      oldPosition == newPosition
+      newPosition > player.queue.tracks.length ||
+      currentPosition == newPosition
     ) {
-      return interaction.reply(
-        ':x: Try again and enter a valid song position number'
-      );
+      return interaction.reply('Please enter valid position numbers!');
     }
 
-    const songName = player.queue[oldPosition - 1].title;
-    array_move(player.queue, oldPosition - 1, newPosition - 1);
+    const title = player.queue.tracks[currentPosition - 1].title;
+    array_move(player.queue.tracks, currentPosition - 1, newPosition - 1);
 
-    interaction.reply(`**${songName}** moved to position ${newPosition}`);
+    interaction.reply(`**${title}** moved to position ${newPosition}`);
   }
 };
 
