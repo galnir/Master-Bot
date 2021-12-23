@@ -95,6 +95,7 @@ module.exports = {
       requester: interaction.user.id
     });
     if (!started) {
+      await player.setVolume(50); // default 100 is too much, todo: import this from db at startup
       await player.queue.start();
     }
   }
