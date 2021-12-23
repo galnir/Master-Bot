@@ -1,48 +1,47 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { LoopType } = require('@lavaclient/queue');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('skipto')
     .setDescription('Skip to a song in queue')
-    .addIntegerOption(option =>
-      option
+    .addIntegerOption((option) => {
+      return option
         .setName('position')
-        .setDescription('What is the position in queue you want to skip to?')
-        .setRequired(true)
-    ),
-
+        .setDescription(
+          'What is the position of the song you want to skip to in queue?'
+        )
+        .setRequired(true);
+    }),
   execute(interaction) {
-    interaction.deferReply();
-    const voiceChannel = interaction.member.voice.channel;
-    if (!voiceChannel) {
-      return interaction.followUp(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
-      );
-    }
-    if (voiceChannel.id !== interaction.member.voice.channelId) {
-      return interaction.followUp(
-        `:no_entry: You must be in the same voice channel as the bot in order to use that!`
-      );
-    }
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guildId);
+
     if (!player) {
-      return interaction.followUp(':x: There is nothing playing right now!');
+      return interaction.reply('There is nothing playing at the moment!');
     }
-    if (player.queue.length < 1) {
-      return interaction.followUp('There are no songs in queue!');
+
+    const voiceChannel = interaction.member.voice.channel;
+    if (voiceChannel.id !== player.channelId) {
+      return interaction.reply('Join my voice channel and try again!');
+    }
+
+    if (player.queue.tracks.length < 1) {
+      return interaction.reply('There are no songs in the queue!');
     }
 
     const position = interaction.options.get('position').value;
 
-    if (player.loopQueue) {
-      const slicedBefore = player.queue.slice(0, position - 1);
-      const slicedAfter = player.queue.slice(position - 1);
-      player.queue = slicedAfter.concat(slicedBefore);
+    if (player.queue.loop.type == LoopType.Queue) {
+      const slicedBefore = player.queue.tracks.slice(0, position - 1);
+      const slicedAfter = player.queue.tracks.slice(position - 1);
+      player.queue.tracks = slicedAfter.concat(slicedBefore);
     } else {
-      player.queue.splice(0, position - 1);
-      player.loopSong = false;
+      player.queue.tracks.splice(0, position - 1);
+      player.queue.setLoop(LoopType.None);
     }
-    player.audioPlayer.stop();
-    return interaction.followUp(`Skipped to **${player.queue[0].title}**`);
+
+    player.queue.next();
+    return interaction.reply(`Skipped to **${player.queue.current.title}**`);
   }
 };
