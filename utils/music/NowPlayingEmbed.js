@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const prettyMilliseconds = require('pretty-ms');
+const progressbar = require('string-progressbar');
 
 function NowPlayingEmbed(track, position, length) {
   let baseEmbed = new MessageEmbed()
