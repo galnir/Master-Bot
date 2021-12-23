@@ -1,4 +1,4 @@
-# A Discord Music Bot written in JavaScript and the discord.js v13 library
+# A Discord Music Bot written in JavaScript using the discord.js v13 library
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
