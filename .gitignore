@@ -5,3 +5,4 @@ json.sqlite
 .vscode
 Lavalink.jar
 logs
+application.yml
