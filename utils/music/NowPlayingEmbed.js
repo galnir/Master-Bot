@@ -1,6 +1,5 @@
 const { MessageEmbed } = require('discord.js');
 const prettyMilliseconds = require('pretty-ms');
-const progressbar = require('string-progressbar');
 
 function NowPlayingEmbed(track, position, length) {
   let baseEmbed = new MessageEmbed()
@@ -17,11 +16,31 @@ function NowPlayingEmbed(track, position, length) {
   }
   const bar = progressbar.splitBar(length, position, 22)[0];
   baseEmbed.setDescription(
-    `${prettyMilliseconds(position, {
-      colonNotation: true
-    })} ${bar} ${prettyMilliseconds(length, { colonNotation: true })}`
+    `${timeString(millisecondsToTimeObj(position))} ${bar} ${prettyMilliseconds(
+      length,
+      { colonNotation: true }
+    )}`
   );
   return baseEmbed;
 }
 
 module.exports = NowPlayingEmbed;
+
+var timeString = (timeObj) => {
+  if (timeObj[1] === true) return timeObj[0];
+  return `${timeObj.hours ? timeObj.hours + ':' : ''}${
+    timeObj.minutes ? timeObj.minutes : '00'
+  }:${
+    timeObj.seconds < 10
+      ? '0' + timeObj.seconds
+      : timeObj.seconds
+      ? timeObj.seconds
+      : '00'
+  }`;
+};
+
+var millisecondsToTimeObj = (ms) => ({
+  seconds: Math.floor((ms / 1000) % 60),
+  minutes: Math.floor((ms / (1000 * 60)) % 60),
+  hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
+});

@@ -25,7 +25,8 @@
     "iso-639-1": "^2.1.11",
     "lavaclient": "^4.0.5",
     "libsodium-wrappers": "^0.7.9",
-    "mongoose": "^6.1.2"
+    "mongoose": "^6.1.2",
+    "string-progressbar": "^1.0.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
