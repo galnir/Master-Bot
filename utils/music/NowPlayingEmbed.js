@@ -2,13 +2,10 @@ const { MessageEmbed } = require('discord.js');
 const progressbar = require('string-progressbar');
 
 function NowPlayingEmbed(track, position, length) {
+  const trackLength = timeString(millisecondsToTimeObj(length));
   let baseEmbed = new MessageEmbed()
     .setTitle(track.title)
-    .addField(
-      'Duration',
-      ':stopwatch: ' + prettyMilliseconds(length, { colonNotation: true }),
-      true
-    );
+    .addField('Duration', ':stopwatch: ' + trackLength, true);
 
   // song just started embed
   if (position == undefined) {
@@ -16,10 +13,7 @@ function NowPlayingEmbed(track, position, length) {
   }
   const bar = progressbar.splitBar(length, position, 22)[0];
   baseEmbed.setDescription(
-    `${timeString(millisecondsToTimeObj(position))} ${bar} ${prettyMilliseconds(
-      length,
-      { colonNotation: true }
-    )}`
+    `${timeString(millisecondsToTimeObj(position))} ${bar} ${trackLength}`
   );
   return baseEmbed;
 }

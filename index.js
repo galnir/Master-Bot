@@ -61,9 +61,8 @@ client.music.on(
     ]);
     const embed = NowPlayingEmbed(
       queue.current,
-      queue.player.position,
-      queue.current.length,
-      queue.current.requester
+      undefined,
+      queue.current.length
     );
     queue.channel.send({ embeds: [embed] });
   }

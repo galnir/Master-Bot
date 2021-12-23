@@ -22,7 +22,7 @@ module.exports = {
 
     const embed = NowPlayingEmbed(
       player.queue.current,
-      player.position,
+      player.accuratePosition,
       player.queue.current.length
     );
     return interaction.reply({ embeds: [embed] });
