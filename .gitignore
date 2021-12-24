@@ -5,4 +5,5 @@ json.sqlite
 .vscode
 Lavalink.jar
 logs
+application.yml
 .DS_STORE
