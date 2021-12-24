@@ -14,6 +14,10 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+
+**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
+
 Create a `config.json` file in the root directory of the project with the following contents:
 
 ### Minimum settings
