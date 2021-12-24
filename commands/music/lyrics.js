@@ -11,18 +11,21 @@ module.exports = {
     .setDescription(
       'Get the lyrics of any song or the lyrics of the currently playing song!'
     )
-    .addStringOption((option) => {
+    .addStringOption(option => {
       return option
         .setName('title')
         .setDescription(':mag: What song lyrics would you like to get?');
     }),
   async execute(interaction) {
+    interaction.deferReply({
+      fetchReply: true
+    });
     const client = interaction.client;
     const player = client.music.players.get(interaction.guildId);
     const titleObject = interaction.options.get('title');
 
     if (!player && !titleObject) {
-      return interaction.reply(
+      return interaction.followUp(
         'Please provide a valid song name or start playing one and try again!'
       );
     }
@@ -49,7 +52,7 @@ module.exports = {
       for (let i = 1; i <= lyricsIndex; ++i) {
         let b = i - 1;
         if (lyrics.trim().slice(b * 4096, i * 4096).length !== 0) {
-          paginatedLyrics.addPageEmbed((embed) => {
+          paginatedLyrics.addPageEmbed(embed => {
             return embed.setDescription(lyrics.slice(b * 4096, i * 4096));
           });
         }
@@ -61,11 +64,11 @@ module.exports = {
         },
         channel: interaction.channel
       };
-      await interaction.reply('Lyrics generated');
+      await interaction.followUp('Lyrics generated');
       paginatedLyrics.run(message);
     } catch (e) {
       console.log(e);
-      return interaction.reply(
+      return interaction.followUp(
         'Something when wrong when trying to fetch lyrics :('
       );
     }
