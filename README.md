@@ -14,8 +14,6 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-Place 
-
 Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
