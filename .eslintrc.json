@@ -8,9 +8,6 @@
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
-  "plugins": [
-    "jest"
-  ],
   "rules": {
     "//": "The no-console rule is only for development purposes",
     "no-console": "off",
