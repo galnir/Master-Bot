@@ -5,14 +5,18 @@
 
 ## System dependencies
 
-For the bot to run, your system needs to have Node.js LTS or latest.
-A MongoDB database is also needed. I recommend using the free tier of MongoDB Atlas, you can get started using this [guide](https://docs.atlas.mongodb.com/getting-started/). Make sure to generate a valid URI and place it in the config.json file.
+- [Node.js LTS or latest](https://nodejs.org/en/download/)
+- [Java 13](https://www.azul.com/downloads/?package=jdk#download-openjdk) (other versions have some issues with Lavalink)
 
 ### Installing the Node.js dependencies
 
 After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies.
 
 ## Setup
+
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+
+**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
 Create a `config.json` file in the root directory of the project with the following contents:
 
@@ -22,7 +26,6 @@ This is the minimum amount of settings that need to be set for the core part (mu
 
 ```json
 {
-  "mongo_URI": "your-mongodb-uri",
   "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token"
 }
@@ -70,8 +73,7 @@ NOTE: When setting `"invite": true`, remember to enable the Public Bot option in
 | !skipto               | Skip to a specific song in the queue, provide the song number as an argument                                              | !skipto 5                                                         |
 | !volume               | Adjust song volume                                                                                                        | !volume 80                                                        |
 | !music-trivia         | Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json | !music-trivia                                                     |
-| !loop                 | Loop the currently playing song                                                                                           | !loop 5                                                           |
-| !loopqueue            | Loop the queue                                                                                                            | !loopqueue 2                                                      |
+| !loop                 | Loop the currently playing song                                                                                           | !loop 5                                                           |                                                   |
 | !lyrics               | Get lyrics of any song or the lyrics of the currently playing song                                                        | !lyrics song-name                                                 |
 | !now-playing          | Display the current playing song with a playback bar                                                                      | !now-playing                                                      |
 | !move                 | Move song to a desired position in queue                                                                                  | !move 8 1                                                         |
