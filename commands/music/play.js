@@ -5,23 +5,26 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('play')
     .setDescription('Play any song or playlist from YouTube and Spotify!')
-    .addStringOption((option) =>
+    .addStringOption(option =>
       option
         .setName('query')
         .setDescription('What song or playlist would you like to listen to?')
         .setRequired(true)
     ),
   async execute(interaction) {
+    interaction.deferReply({
+      fetchReply: true
+    });
     const client = interaction.client;
     const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
-      return interaction.reply('Join a voice channel and try again!');
+      return interaction.followUp('Join a voice channel and try again!');
     }
     const query = interaction.options.get('query').value; // the user's query
 
     let player = client.music.players.get(interaction.guildId);
     if (player && player.channelId !== voiceChannel.id) {
-      return interaction.reply(`Join <#${player.channelId}`);
+      return interaction.followUp(`Join <#${player.channelId}`);
     }
 
     let tracks = [];
@@ -49,7 +52,7 @@ module.exports = {
           }**](${query}).`;
           break;
         default:
-          return interaction.reply({
+          return interaction.followUp({
             content: `Couldn't find what you were looking for :(`,
             ephemeral: true
           });
@@ -62,7 +65,7 @@ module.exports = {
       switch (results.loadType) {
         case 'LOAD_FAILED':
         case 'NO_MATCHES':
-          return interaction.reply({
+          return interaction.followUp({
             content: `Couldn't find what you were looking for :(`,
             ephemeral: true
           });
@@ -87,9 +90,8 @@ module.exports = {
     }
 
     const started = player.playing || player.paused;
-    await interaction.reply({
-      content: displayMessage
-    });
+
+    await interaction.followUp(displayMessage);
 
     player.queue.add(tracks, {
       requester: interaction.user.id
