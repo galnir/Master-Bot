@@ -8,8 +8,8 @@ module.exports = {
     .setDescription('Get some advice!'),
   execute(interaction) {
     fetch('https://api.adviceslip.com/advice')
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         const embed = new MessageEmbed()
           .setColor('#403B3A')
           .setAuthor(
@@ -23,7 +23,7 @@ module.exports = {
         interaction.reply({ embeds: [embed] });
         return;
       })
-      .catch(err => {
+      .catch((err) => {
         interaction.reply('Failed to deliver advice :sob:');
         return console.error(err);
       });

@@ -7,7 +7,7 @@ if (!tenorAPI) return;
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('dog')
+    .setName('doggo')
     .setDescription('Replies with a cute dog picture!'),
   execute(interaction) {
     fetch(`https://api.tenor.com/v1/random?key=${tenorAPI}&q=dog&limit=1`)

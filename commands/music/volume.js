@@ -2,17 +2,15 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('remove')
-    .setDescription('Remove a song from the queue')
+    .setName('volume')
+    .setDescription('Change the volume of the music')
     .addIntegerOption((option) => {
       return option
-        .setName('position')
-        .setDescription(
-          'What is the position of the song you want to remove from the queue?'
-        )
+        .setName('volume')
+        .setDescription('What volume would you like to set?')
         .setRequired(true);
     }),
-  execute(interaction) {
+  async execute(interaction) {
     const client = interaction.client;
     const player = client.music.players.get(interaction.guildId);
 
@@ -25,14 +23,11 @@ module.exports = {
       return interaction.reply('Join my voice channel and try again!');
     }
 
-    const position = interaction.options.get('position').value;
-    if (position < 1 || position > player.queue.tracks.length) {
-      return interaction.reply('Please enter a valid position number!');
+    const volume = interaction.options.get('volume').value;
+    if (volume > 200 || volume < 0) {
+      return interaction.reply('Please enter a valid number between 0 and 200');
     }
-
-    player.queue.tracks.splice(position - 1, 1);
-    return interaction.reply(
-      `:wastebasket: Removed song number ${position} from queue!`
-    );
+    await player.setVolume(volume); // the lib handles the number
+    return interaction.reply(`Set the volume to ${volume}`);
   }
 };

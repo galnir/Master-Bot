@@ -1,27 +1,28 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { AudioPlayerStatus } = require('@discordjs/voice');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leave')
-    .setDescription('Leaves a voice channel if in one!'),
+    .setDescription('Make the bot leave its voice channel'),
   execute(interaction) {
-    const voiceChannel = interaction.member.voice.channel;
-    if (!voiceChannel) {
-      return interaction.reply('Please join a voice channel and try again!');
-    }
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guildId);
 
-    const player = interaction.client.playerManager.get(interaction.guildId);
     if (!player) {
-      return interaction.reply('There is no song playing right now!');
-    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
       return interaction.reply(
-        'You must be in the same voice channel as the bot in order for bot to leave!'
+        { content: 'There is no song playing right now!' },
+        { ephemeral: true }
       );
     }
 
-    player.connection.destroy();
-    interaction.client.playerManager.delete(interaction.guildId);
-    return interaction.reply('Left your voice channel!');
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) {
+      return interaction.reply({
+        content: 'Join the bots channel and try again!'
+      });
+    }
+    interaction.reply('Leaving the voice channel!');
+    player.disconnect();
+    client.music.destroyPlayer(player.guildId);
   }
 };

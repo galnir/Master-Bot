@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const { tenorAPI } = require('../../config.json');
 
+if (!tenorAPI) return;
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('cat')

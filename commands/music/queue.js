@@ -1,56 +1,64 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { PagesBuilder } = require('discord.js-pages');
+const {
+  PaginatedFieldMessageEmbed
+} = require('@sapphire/discord.js-utilities');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('queue')
-    .setDescription('Display the music queue'),
+    .setDescription('Display the music queue in the form of an embed'),
   async execute(interaction) {
-    await interaction.deferReply();
-    const guildData = interaction.client.guildData.get(interaction.guildId);
-    if (guildData) {
-      if (guildData.triviaData.isTriviaRunning) {
-        return interaction.followUp(
-          ':x: Try again after the trivia has ended!'
-        );
-      }
-    }
-    const player = interaction.client.playerManager.get(interaction.guildId);
-    if (player) {
-      if (player.queue.length == 0) {
-        return interaction.followUp(':x: There are no songs in queue!');
-      }
-    } else if (!player) {
-      return interaction.followUp(':x: There is nothing playing right now!');
+    const client = interaction.client;
+    const player = client.music.players.get(interaction.guildId);
+    if (!player) {
+      return interaction.reply('There is nothing playing at the moment');
     }
 
-    const queueClone = Array.from(player.queue);
-    const embeds = [];
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel || voiceChannel.id !== player.channelId) {
+      return interaction.reply(
+        'You have to be in my channel in order to use that!'
+      );
+    }
 
-    for (let i = 0; i < Math.ceil(queueClone.length / 24); i++) {
-      const playlistArray = queueClone.slice(i * 24, 24 + i * 24);
-      const fields = [];
+    const queueLength = player.queue.tracks.length;
+    if (!queueLength) {
+      return interaction.reply('There are no songs in the queue!');
+    }
 
-      playlistArray.forEach((element, index) => {
-        fields.push({
-          name: `${index + 1 + i * 24}`,
-          value: `${element.title}`
-        });
+    const queueItems = [];
+    for (let i = 0; i < queueLength; i++) {
+      queueItems.push({
+        title: `${i + 1}`,
+        value: player.queue.tracks[i].title
+      });
+    }
+    const baseEmbed = new MessageEmbed()
+      .setTitle('Music Queue')
+      .setColor('#9096e6')
+      .setAuthor({
+        name: interaction.member.user.username,
+        iconURL: interaction.member.user.displayAvatarURL()
       });
 
-      embeds.push(new MessageEmbed().setTitle(`Page ${i}`).setFields(fields));
-    }
+    const message = {
+      author: {
+        id: interaction.member.id,
+        bot: interaction.user.bot
+      },
+      channel: interaction.channel
+    };
 
-    new PagesBuilder(interaction)
-      .setTitle('Music Queue')
-      .setPages(embeds)
-      .setListenTimeout(2 * 60 * 1000)
-      .setColor('#9096e6')
-      .setAuthor(
-        interaction.member.user.username,
-        interaction.member.user.displayAvatarURL()
-      )
-      .build();
+    interaction.reply('Queue generated');
+
+    new PaginatedFieldMessageEmbed()
+      .setTitleField('Queue item')
+      .setTemplate({ baseEmbed })
+      .setItems(queueItems)
+      .formatItems(item => `${item.title}\n${item.value}`)
+      .setItemsPerPage(5)
+      .make()
+      .run(message);
   }
 };

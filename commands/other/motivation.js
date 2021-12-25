@@ -1,22 +1,19 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const fs = require('fs');
+const fetch = require('node-fetch');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('motivation')
     .setDescription('Get a random motivational quote!'),
-  execute(interaction) {
+  async execute(interaction) {
     // thanks to https://type.fit/api/quotes
 
-    const jsonQuotes = fs.readFileSync(
-      '././resources/quotes/motivational.json',
-      'utf8'
-    );
-    const quoteArray = JSON.parse(jsonQuotes).quotes;
+    const response = await fetch('https://type.fit/api/quotes');
+    const jsonQuotes = await response.json();
 
     const randomQuote =
-      quoteArray[Math.floor(Math.random() * quoteArray.length)];
+      jsonQuotes[Math.floor(Math.random() * jsonQuotes.length)];
 
     const quoteEmbed = new MessageEmbed()
       .setAuthor(

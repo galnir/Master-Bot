@@ -1,38 +1,27 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { AudioPlayerStatus } = require('@discordjs/voice');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('pause')
-    .setDescription('Pause the playing track'),
+    .setDescription('Pause a playing song'),
   execute(interaction) {
+    const client = interaction.client;
     const voiceChannel = interaction.member.voice.channel;
-    if (!voiceChannel) {
-      return interaction.reply('Please join a voice channel and try again!');
-    }
 
-    const player = interaction.client.playerManager.get(interaction.guildId);
+    const player = client.music.players.get(interaction.guildId);
     if (!player) {
-      return interaction.reply('There is no song playing right now!');
-    }
-    if (player.audioPlayer.state.status == AudioPlayerStatus.Paused) {
-      return interaction.reply('You already paused this song!');
-    } else if (voiceChannel.id !== interaction.guild.me.voice.channel.id) {
-      return interaction.reply(
-        'You must be in the same voice channel as the bot in order to pause!'
-      );
+      return interaction.reply('There is nothing playing right now!');
     }
 
-    const success = player.audioPlayer.pause();
-
-    if (success) {
-      return interaction.reply(
-        ':pause_button: Song was paused! To unpause, use the resume command'
-      );
-    } else {
-      return interaction.reply(
-        'I was unable to pause this song, please try again soon'
-      );
+    if (!voiceChannel || voiceChannel.id !== player.channelId) {
+      return interaction.reply('Join my voice channel and try again!');
     }
+
+    if (player.paused) {
+      return interaction.reply('The song is already on pause!');
+    }
+
+    interaction.reply('Song paused');
+    player.pause();
   }
 };

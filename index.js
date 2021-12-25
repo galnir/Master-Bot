@@ -1,22 +1,76 @@
+require('@lavaclient/queue/register');
 const fs = require('fs');
+const ExtendedClient = require('./utils/ExtendedClient');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { Client, Collection, Intents } = require('discord.js');
-const { token, client_id } = require('./config.json');
+const { Collection } = require('discord.js');
+const {
+  token,
+  client_id,
+  spotify_client_id,
+  spotify_client_secret
+} = require('./config.json');
+const { load } = require('@lavaclient/spotify');
+const { LoopType } = require('@lavaclient/queue');
+const NowPlayingEmbed = require('./utils/music/NowPlayingEmbed');
+
+load({
+  client: {
+    id: spotify_client_id,
+    secret: spotify_client_secret
+  },
+  autoResolveYoutubeTracks: true
+});
 
 const rest = new REST({ version: '9' }).setToken(token);
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES
-  ]
-});
-
+const client = new ExtendedClient();
 client.commands = new Collection();
 const commands = [];
+
+client.music.on('connect', () => {
+  console.log('Connected to LavaLink');
+});
+
+client.music.on('queueFinish', queue => {
+  queue.channel.send({ content: 'No more songs in queue' });
+  queue.player.disconnect();
+  queue.player.node.destroyPlayer(queue.player.guildId);
+});
+
+client.music.on(
+  'trackStart',
+  async (queue, { title, uri, length, isSeekable }) => {
+    if (queue.loop.type == LoopType.Queue) {
+      queue.tracks.push(queue.previous);
+    }
+    queue.previous = queue.current;
+    const queueHistory = client.queueHistory.get(queue.player.guildId);
+    if (!queueHistory) {
+      client.queueHistory.set(queue.player.guildId, []);
+    }
+    client.queueHistory.set(queue.player.guildId, [
+      {
+        title,
+        uri,
+        length,
+        isSeekable
+      },
+      ...client.queueHistory.get(queue.player.guildId)
+    ]);
+    const embed = NowPlayingEmbed(
+      queue.current,
+      undefined,
+      queue.current.length
+    );
+    queue.channel.send({ embeds: [embed] });
+  }
+);
+
+client.on('ready', () => {
+  client.music.connect(client.user.id);
+  console.log('ready!');
+});
 
 const commandFiles = fs
   .readdirSync('./commands')
