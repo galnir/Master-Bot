@@ -49,7 +49,7 @@ module.exports = {
     interaction.reply('Queue history generated');
 
     new PaginatedFieldMessageEmbed()
-      .setTitleField('Queue history item')
+      .setTitleField('Queue History')
       .setTemplate({ baseEmbed })
       .setItems(queueItems)
       .formatItems(item => `${item.title}\n${item.value}`)
