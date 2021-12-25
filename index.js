@@ -7,7 +7,6 @@ const { Collection } = require('discord.js');
 const {
   token,
   client_id,
-  guild_id,
   spotify_client_id,
   spotify_client_secret
 } = require('./config.json');
@@ -33,7 +32,7 @@ client.music.on('connect', () => {
   console.log('Connected to LavaLink');
 });
 
-client.music.on('queueFinish', (queue) => {
+client.music.on('queueFinish', queue => {
   queue.channel.send({ content: 'No more songs in queue' });
   queue.player.disconnect();
   queue.player.node.destroyPlayer(queue.player.guildId);
@@ -75,11 +74,11 @@ client.on('ready', () => {
 
 const commandFiles = fs
   .readdirSync('./commands')
-  .map((folder) =>
+  .map(folder =>
     fs
       .readdirSync(`./commands/${folder}`)
-      .filter((file) => file.endsWith('.js'))
-      .map((file) => `./commands/${folder}/${file}`)
+      .filter(file => file.endsWith('.js'))
+      .map(file => `./commands/${folder}/${file}`)
   )
   .flat();
 
@@ -94,7 +93,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
+    await rest.put(Routes.applicationCommands(client_id), {
       body: commands
     });
 
@@ -106,7 +105,7 @@ for (const file of commandFiles) {
 
 const eventFiles = fs
   .readdirSync('./events')
-  .filter((file) => file.endsWith('.js'));
+  .filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
   const event = require(`./events/${file}`);
