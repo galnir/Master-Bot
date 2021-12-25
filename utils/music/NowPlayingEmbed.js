@@ -2,7 +2,12 @@ const { MessageEmbed } = require('discord.js');
 const progressbar = require('string-progressbar');
 
 function NowPlayingEmbed(track, position, length) {
-  const trackLength = timeString(millisecondsToTimeObj(length));
+  let trackLength = timeString(millisecondsToTimeObj(length));
+  if (!track.isSeekable) {
+    trackLength = 'Live Stream';
+    position = undefined;
+  }
+
   let baseEmbed = new MessageEmbed()
     .setTitle(track.title)
     .addField('Duration', ':stopwatch: ' + trackLength, true);
@@ -20,7 +25,7 @@ function NowPlayingEmbed(track, position, length) {
 
 module.exports = NowPlayingEmbed;
 
-var timeString = (timeObj) => {
+var timeString = timeObj => {
   if (timeObj[1] === true) return timeObj[0];
   return `${timeObj.hours ? timeObj.hours + ':' : ''}${
     timeObj.minutes ? timeObj.minutes : '00'
@@ -33,7 +38,7 @@ var timeString = (timeObj) => {
   }`;
 };
 
-var millisecondsToTimeObj = (ms) => ({
+var millisecondsToTimeObj = ms => ({
   seconds: Math.floor((ms / 1000) % 60),
   minutes: Math.floor((ms / (1000 * 60)) % 60),
   hours: Math.floor((ms / (1000 * 60 * 60)) % 24)
