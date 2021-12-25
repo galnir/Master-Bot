@@ -33,10 +33,10 @@ module.exports = {
     const baseEmbed = new MessageEmbed()
       .setTitle('Music History Queue')
       .setColor('#9096e6')
-      .setAuthor(
-        interaction.member.user.username,
-        interaction.member.user.displayAvatarURL()
-      );
+      .setAuthor({
+        name: interaction.member.user.username,
+        iconURL: interaction.member.user.displayAvatarURL()
+      });
 
     const message = {
       author: {
@@ -52,7 +52,7 @@ module.exports = {
       .setTitleField('Queue history item')
       .setTemplate({ baseEmbed })
       .setItems(queueItems)
-      .formatItems((item) => `${item.title}\n${item.value}`)
+      .formatItems(item => `${item.title}\n${item.value}`)
       .setItemsPerPage(5)
       .make()
       .run(message);
