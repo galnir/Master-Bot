@@ -12,7 +12,7 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    interaction.deferReply({
+    await interaction.deferReply({
       fetchReply: true
     });
     const client = interaction.client;
@@ -20,11 +20,20 @@ module.exports = {
     if (!voiceChannel) {
       return interaction.followUp('Join a voice channel and try again!');
     }
-    const query = interaction.options.get('query').value; // the user's query
+    let query = interaction.options.get('query').value; // the user's query
 
     let player = client.music.players.get(interaction.guildId);
     if (player && player.channelId !== voiceChannel.id) {
       return interaction.followUp(`Join <#${player.channelId}`);
+    }
+
+    // If user wants to play a track from the history queue
+    const queueHistory = interaction.client.queueHistory.get(
+      interaction.guildId
+    );
+    if (Number(query) && queueHistory.length > 0) {
+      const index = String(Number(query) - 1);
+      query = queueHistory[index].title;
     }
 
     let tracks = [];
