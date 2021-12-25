@@ -41,11 +41,11 @@ client.music.on('queueFinish', queue => {
 client.music.on(
   'trackStart',
   async (queue, { title, uri, length, isSeekable }) => {
+    const queueHistory = client.queueHistory.get(queue.player.guildId);
     if (queue.loop.type == LoopType.Queue) {
       queue.tracks.push(queue.previous);
     }
-    queue.previous = queue.current;
-    const queueHistory = client.queueHistory.get(queue.player.guildId);
+
     if (!queueHistory) {
       client.queueHistory.set(queue.player.guildId, []);
     }
@@ -58,6 +58,7 @@ client.music.on(
       },
       ...client.queueHistory.get(queue.player.guildId)
     ]);
+
     const embed = NowPlayingEmbed(
       queue.current,
       undefined,
@@ -93,7 +94,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationCommands(client_id), {
+    await rest.put(Routes.applicationGuildCommands(client_id), {
       body: commands
     });
 
