@@ -94,7 +94,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationGuildCommands(client_id), {
+    await rest.put(Routes.applicationCommands(client_id), {
       body: commands
     });
 
