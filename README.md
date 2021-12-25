@@ -26,10 +26,14 @@ Create a `config.json` file in the root directory of the project with the follow
 
 This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
 
+**If you're running the bot using Docker, set lava_host's value to "lavalink" in config.json and in application.yml at line 3**
+
 ```json
 {
   "client_id": "the-bots-discord-id",
-  "token": "Your-Bot-Token"
+  "token": "Your-Bot-Token",
+  "lava_host": "0.0.0.0",
+  "lava_pass": "youshallnotpass"
 }
 ```
 
@@ -43,8 +47,6 @@ For full command support, including lyrics, GIFs, news, Twitch integration, and 
   "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "twitchClientID": "Your-Client-ID",
-  "twitchClientSecret": "Your-Client-Secret",
   "rawgAPI": "rawg-api-key"
 }
 ```
