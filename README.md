@@ -26,6 +26,8 @@ Create a `config.json` file in the root directory of the project with the follow
 
 This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
 
+**Generate spotify client id and secret [here](https://developer.spotify.com/dashboard/applications)**
+
 **If you're running the bot using Docker, set lava_host's value to "lavalink" in config.json and in application.yml at line 3**
 
 ```json
@@ -33,7 +35,9 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token",
   "lava_host": "0.0.0.0",
-  "lava_pass": "youshallnotpass"
+  "lava_pass": "youshallnotpass",
+  "spotify_client_id": "get-it-from-spotify-dev",
+  "spotify_client_secret": "get-it-from-spotify-dev"
 }
 ```
 
