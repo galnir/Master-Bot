@@ -7,6 +7,7 @@ const { Collection } = require('discord.js');
 const {
   token,
   client_id,
+  guild_id,
   spotify_client_id,
   spotify_client_secret
 } = require('./config.json');
@@ -70,6 +71,9 @@ client.music.on(
 
 client.on('ready', () => {
   client.music.connect(client.user.id);
+  client.user.setPresence({
+    activities: [{ name: 'Slash commands /', type: 'WATCHING' }]
+  });
   console.log('ready!');
 });
 
@@ -94,7 +98,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationCommands(client_id), {
+    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
       body: commands
     });
 
