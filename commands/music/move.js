@@ -4,13 +4,13 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('move')
     .setDescription('Move a song to a different position in queue')
-    .addIntegerOption((option) => {
+    .addIntegerOption(option => {
       return option
         .setName('current-position')
         .setDescription('What is the position of the song you want to move?')
         .setRequired(true);
     })
-    .addIntegerOption((option) => {
+    .addIntegerOption(option => {
       return option
         .setName('new-position')
         .setDescription('What is the position you want to move the song to?')
@@ -18,6 +18,13 @@ module.exports = {
     }),
   execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
 
     if (!player) {

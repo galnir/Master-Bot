@@ -6,6 +6,13 @@ module.exports = {
     .setDescription('Shuffle the music queue'),
   execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
     if (!player) {
       return interaction.reply('There is nothing playing at the moment!');

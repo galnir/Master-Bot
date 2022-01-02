@@ -6,6 +6,13 @@ module.exports = {
     .setDescription('Make the bot leave its voice channel'),
   execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
 
     if (!player) {
