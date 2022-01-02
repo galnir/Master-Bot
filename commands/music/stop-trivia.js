@@ -21,7 +21,11 @@ module.exports = {
 
     const player = client.music.players.get(interaction.guildId);
 
-    client.triviaMap.delete(interaction.guildId);
+    const trivia = client.triviaMap.get(interaction.guildId);
+    const collector = trivia.collector;
+    trivia.wasTriviaEndCalled = true;
+    collector.stop();
+
     player.queue.length = 0;
     player.disconnect();
     client.music.destroyPlayer(player.guildId);
