@@ -5,7 +5,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('loop')
     .setDescription('Loop the playing song')
-    .addStringOption((option) => {
+    .addStringOption(option => {
       return option
         .setName('loop-type')
         .setDescription('Loop the queue or the song?')
@@ -16,6 +16,13 @@ module.exports = {
   execute(interaction) {
     const option = interaction.options.get('loop-type').value;
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
     if (!player) {
       return interaction.reply('There is nothing playing at the moment!');

@@ -12,10 +12,17 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
+    const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     await interaction.deferReply({
       fetchReply: true
     });
-    const client = interaction.client;
     const voiceChannel = interaction.member.voice.channel;
     if (!voiceChannel) {
       return interaction.followUp('Join a voice channel and try again!');
