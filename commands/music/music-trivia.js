@@ -62,7 +62,6 @@ module.exports = {
     player.queue.add(tracks);
     await player.setVolume(50);
 
-    client.triviaMap.set(interaction.guildId, songsArray);
     const score = new Map();
 
     const membersInChannel = interaction.member.voice.channel.members;
@@ -93,9 +92,19 @@ function getRandom(arr, n) {
 }
 
 async function playTrivia(textChannel, player, songsArray, score) {
+  // Randomize a number but one that won't be too close to the track ending
+  const max = player.queue.tracks[0].length - 40 * 1000; // milliseconds
+  const min = 10 * 1000; // milliseconds
+  const randomTime = Math.floor(Math.random() * (max - min + 1)) + min;
+
   if (!player.playing) {
     await player.queue.start();
+  } else {
+    await player.queue.next();
   }
+
+  await player.seek(randomTime);
+
   let songNameFound = false;
   let songSingerFound = false;
 
@@ -103,6 +112,11 @@ async function playTrivia(textChannel, player, songsArray, score) {
 
   const collector = textChannel.createMessageCollector({
     time: 30000
+  });
+
+  textChannel.client.triviaMap.set(textChannel.guildId, {
+    collector,
+    wasTriviaEndCalled: false
   });
 
   collector.on('collect', msg => {
@@ -175,7 +189,11 @@ async function playTrivia(textChannel, player, songsArray, score) {
   collector.on('end', async () => {
     const client = textChannel.client;
     const trivia = client.triviaMap.get(textChannel.guildId);
-    if (!trivia) return; // if end-trivia was called
+    // if stop-trivia was called
+    if (trivia.wasTriviaEndCalled) {
+      client.triviaMap.delete(textChannel.guildId);
+      return;
+    }
 
     const sortedScoreMap = new Map(
       [...score.entries()].sort(function (a, b) {
@@ -210,8 +228,7 @@ async function playTrivia(textChannel, player, songsArray, score) {
       return;
     }
 
-    playTrivia(textChannel, player, songsArray, score);
-    return await player.queue.next();
+    return playTrivia(textChannel, player, songsArray, score);
   });
 }
 
