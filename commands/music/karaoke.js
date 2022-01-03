@@ -6,6 +6,13 @@ module.exports = {
     .setDescription('Turn the playing track to karaoke!'),
   async execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
 
     if (!player) {

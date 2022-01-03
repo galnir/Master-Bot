@@ -41,6 +41,7 @@ client.music.on('queueFinish', queue => {
 client.music.on(
   'trackStart',
   async (queue, { title, uri, length, isSeekable }) => {
+    if (client.triviaMap.has(queue.channel.guildId)) return;
     const queueHistory = client.queueHistory.get(queue.player.guildId);
     if (queue.loop.type == LoopType.Queue) {
       queue.tracks.push(queue.previous);

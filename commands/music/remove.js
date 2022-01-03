@@ -4,7 +4,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('remove')
     .setDescription('Remove a song from the queue')
-    .addIntegerOption((option) => {
+    .addIntegerOption(option => {
       return option
         .setName('position')
         .setDescription(
@@ -14,6 +14,13 @@ module.exports = {
     }),
   execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const player = client.music.players.get(interaction.guildId);
 
     if (!player) {

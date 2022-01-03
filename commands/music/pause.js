@@ -6,6 +6,13 @@ module.exports = {
     .setDescription('Pause a playing song'),
   execute(interaction) {
     const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     const voiceChannel = interaction.member.voice.channel;
 
     const player = client.music.players.get(interaction.guildId);

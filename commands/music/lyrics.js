@@ -18,10 +18,17 @@ module.exports = {
         .setDescription(':mag: What song lyrics would you like to get?');
     }),
   async execute(interaction) {
+    const client = interaction.client;
+
+    if (client.triviaMap.has(interaction.guildId)) {
+      return interaction.reply(
+        'You cannot use this command while a music trivia is playing!'
+      );
+    }
+
     await interaction.deferReply({
       fetchReply: true
     });
-    const client = interaction.client;
     const player = client.music.players.get(interaction.guildId);
     const titleObject = interaction.options.get('title');
 
