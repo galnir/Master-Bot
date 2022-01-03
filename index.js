@@ -7,7 +7,6 @@ const { Collection } = require('discord.js');
 const {
   token,
   client_id,
-  guild_id,
   spotify_client_id,
   spotify_client_secret
 } = require('./config.json');
@@ -98,7 +97,7 @@ for (const file of commandFiles) {
   try {
     console.log('Started refreshing application (/) commands.');
 
-    await rest.put(Routes.applicationGuildCommands(client_id, guild_id), {
+    await rest.put(Routes.applicationCommands(client_id), {
       body: commands
     });
 
