@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageEmbed } = require('discord.js');
 const { PaginatedMessage } = require('@sapphire/discord.js-utilities');
 const fetch = require('node-fetch');
 const { rawgAPI } = require('../../config.json');
