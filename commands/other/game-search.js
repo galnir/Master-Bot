@@ -25,7 +25,7 @@ module.exports = {
       return interaction.reply(error);
     }
 
-    const paginatedEmbed = new PaginatedMessage();
+    const PaginatedEmbed = new PaginatedMessage();
 
     const firstPageTuple = []; // releaseDate, esrbRating, userRating
 
@@ -49,7 +49,7 @@ module.exports = {
       firstPageTuple.push(data.rating + '/5');
     }
 
-    paginatedEmbed.addPageEmbed(embed =>
+    PaginatedEmbed.addPageEmbed(embed =>
       embed
         .setDescription(
           '**Game Description**\n' + data.description_raw.slice(0, 2000) + '...'
@@ -106,7 +106,7 @@ module.exports = {
       retailerArray.push('None Listed');
     }
 
-    paginatedEmbed.addPageEmbed(embed =>
+    PaginatedEmbed.addPageEmbed(embed =>
       embed // Row 1
         .addField(
           'Developer(s)',
@@ -140,7 +140,7 @@ module.exports = {
     };
 
     await interaction.reply('Game info:');
-    paginatedEmbed.run(message);
+    PaginatedEmbed.run(message);
   }
 };
 
