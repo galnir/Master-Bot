@@ -11,6 +11,9 @@
   },
   "author": "Nir Gal",
   "license": "ISC",
+  "engines": {
+    "node": "^16"
+  },
   "dependencies": {
     "@discordjs/builders": "^0.10.0",
     "@discordjs/rest": "^0.2.0-canary.0",
