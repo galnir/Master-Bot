@@ -24,22 +24,17 @@ export class AvatarCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand(
-      {
-        name: this.name,
-        description: this.description,
-        options: [
-          {
-            type: 'USER',
-            required: true,
-            name: 'user',
-            description: `Which user's avatar do you want to look at?`
-          }
-        ]
-      },
-      {
-        guildIds: ['336505000828076032']
-      }
-    );
+    registery.registerChatInputCommand({
+      name: this.name,
+      description: this.description,
+      options: [
+        {
+          type: 'USER',
+          required: true,
+          name: 'user',
+          description: `Which user's avatar do you want to look at?`
+        }
+      ]
+    });
   }
 }
