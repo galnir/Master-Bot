@@ -20,14 +20,9 @@ export class AboutCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand(
-      {
-        name: this.name,
-        description: this.description
-      },
-      {
-        guildIds: ['336505000828076032']
-      }
-    );
+    registery.registerChatInputCommand({
+      name: this.name,
+      description: this.description
+    });
   }
 }
