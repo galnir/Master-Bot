@@ -73,10 +73,10 @@
     "@sapphire/utilities" "^3.2.0"
     tslib "^2.3.1"
 
-"@sapphire/framework@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@sapphire/framework/-/framework-2.3.0.tgz#db5184f546f1bcc3cc96f131ae18c06e5b215ea4"
-  integrity sha512-mMvqDb0OFcQsR+F3QY+8xYlz/wRqFej63UUrOtmAZ6vUCEXizk1v9av8iWPGk3zNqy7FYoofk6dVThdaIzK6vA==
+"@sapphire/framework@^2.3.0-pr-293.69c030f.0":
+  version "2.3.0-pr-293.69c030f.0"
+  resolved "https://registry.yarnpkg.com/@sapphire/framework/-/framework-2.3.0-pr-293.69c030f.0.tgz#35e36dbc925b00f11367727fa3ecc2c91a893054"
+  integrity sha512-ISob5gK36yKfAUQNCPzQhoiKlOYFrGRCOErQMT/r9tobJz7MLiqHfgTbO904z1qCKlHcxVZ56Go77hF3TqOvaA==
   dependencies:
     "@sapphire/discord-utilities" "^2.4.0"
     "@sapphire/discord.js-utilities" "^4.1.5"

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@sapphire/decorators": "^3.1.5",
-    "@sapphire/framework": "^2.3.0",
+    "@sapphire/framework": "^2.3.0-pr-293.69c030f.0",
     "axios": "^0.24.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1"
