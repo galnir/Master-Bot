@@ -13,28 +13,5 @@
   "license": "ISC",
   "engines": {
     "node": "^16"
-  },
-  "dependencies": {
-    "@discordjs/builders": "^0.10.0",
-    "@discordjs/rest": "^0.2.0-canary.0",
-    "@lavaclient/queue": "^2.0.6",
-    "@lavaclient/spotify": "^3.0.0",
-    "@sapphire/discord.js-utilities": "^4.1.5",
-    "@vitalets/google-translate-api": "^7.0.0",
-    "cheerio": "^1.0.0-rc.10",
-    "discord-api-types": "^0.25.2",
-    "discord.js": "^13.4.0",
-    "genius-discord-lyrics": "^1.0.1",
-    "iso-639-1": "^2.1.11",
-    "lavaclient": "^4.0.6",
-    "libsodium-wrappers": "^0.7.9",
-    "mongoose": "^6.1.3",
-    "string-progressbar": "^1.0.4"
-  },
-  "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^8.5.0",
-    "nodemon": "^2.0.15",
-    "prettier": "^2.5.1"
   }
 }
