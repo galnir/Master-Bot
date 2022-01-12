@@ -41,27 +41,24 @@ export class TranslateCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand(
-      {
-        name: this.name,
-        description: this.description,
-        options: [
-          {
-            name: 'target',
-            type: 'STRING',
-            required: true,
-            description:
-              'What is the target language?(language you want to translate to)'
-          },
-          {
-            name: 'text',
-            type: 'STRING',
-            required: true,
-            description: 'What text do you want to translate?'
-          }
-        ]
-      },
-      { guildIds: ['336505000828076032'] }
-    );
+    registery.registerChatInputCommand({
+      name: this.name,
+      description: this.description,
+      options: [
+        {
+          name: 'target',
+          type: 'STRING',
+          required: true,
+          description:
+            'What is the target language?(language you want to translate to)'
+        },
+        {
+          name: 'text',
+          type: 'STRING',
+          required: true,
+          description: 'What text do you want to translate?'
+        }
+      ]
+    });
   }
 }
