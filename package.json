@@ -16,9 +16,11 @@
   "dependencies": {
     "@sapphire/decorators": "^3.1.5",
     "@sapphire/framework": "^2.3.0-pr-293.69c030f.0",
+    "@vitalets/google-translate-api": "^7.0.0",
     "axios": "^0.24.0",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^13.5.1"
+    "discord.js": "^13.5.1",
+    "iso-639-1": "^2.1.11"
   },
   "devDependencies": {
     "@sapphire/ts-config": "^3.1.7",

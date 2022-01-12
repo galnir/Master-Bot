@@ -4,7 +4,8 @@
     "rootDir": "src",
     "outDir": "dist",
     "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noUnusedParameters": false
   },
   "include": ["src"]
 }
