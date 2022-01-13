@@ -42,20 +42,17 @@ export class UrbanCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand(
-      {
-        name: this.name,
-        description: this.description,
-        options: [
-          {
-            name: 'query',
-            type: 'STRING',
-            description: 'What term do you want to look up?',
-            required: true
-          }
-        ]
-      },
-      { guildIds: ['336505000828076032'] }
-    );
+    registery.registerChatInputCommand({
+      name: this.name,
+      description: this.description,
+      options: [
+        {
+          name: 'query',
+          type: 'STRING',
+          description: 'What term do you want to look up?',
+          required: true
+        }
+      ]
+    });
   }
 }

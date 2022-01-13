@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@sapphire/decorators": "^3.1.5",
+    "@sapphire/discord.js-utilities": "^4.2.0",
     "@sapphire/framework": "^2.3.0-pr-293.69c030f.0",
     "@vitalets/google-translate-api": "^7.0.0",
     "axios": "^0.24.0",
