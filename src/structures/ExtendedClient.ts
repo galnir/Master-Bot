@@ -1,10 +1,10 @@
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
-import { ExtendedNode } from './ExtendedNode';
+import { Node } from 'lavaclient';
 import * as data from '../config.json';
 
 export class ExtendedClient extends SapphireClient {
-  readonly music: ExtendedNode;
+  readonly music: Node;
 
   public constructor() {
     super({
@@ -16,7 +16,7 @@ export class ExtendedClient extends SapphireClient {
       ]
     });
 
-    this.music = new ExtendedNode({
+    this.music = new Node({
       sendGatewayPayload: (id, payload) =>
         this.guilds.cache.get(id)?.shard.send(payload),
       connection: {
@@ -37,6 +37,6 @@ export class ExtendedClient extends SapphireClient {
 
 declare module '@sapphire/framework' {
   interface SapphireClient {
-    readonly music: ExtendedNode;
+    readonly music: Node;
   }
 }
