@@ -4,14 +4,11 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type {
-  CommandInteraction,
-  GuildMember,
-  VoiceBasedChannel
-} from 'discord.js';
-import { SpotifyItemType } from '@lavaclient/spotify';
+import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Addable } from '@lavaclient/queue';
+import { SpotifyItemType } from '@lavaclient/spotify';
+import type { MessageChannel } from '../..';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -21,27 +18,20 @@ import type { Addable } from '@lavaclient/queue';
 export class PlayCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     await interaction.deferReply();
-
     const { client } = container;
-    const guildId = interaction.guildId as string;
+    const query = interaction.options.getString('query', true);
 
-    let query = interaction.options.getString('query', true);
-
-    const member = interaction.member as GuildMember;
-
-    const voiceChannel = member.voice.channel as VoiceBasedChannel;
+    // had a precondition make sure the user is infact in a voice channel
+    const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
+      interaction.user.id
+    )?.channel;
 
     let tracks: Addable[] = [];
-    let player = container.client.music.players.get(guildId);
     let displayMessage = '';
+
     if (client.music.spotify.isSpotifyUrl(query)) {
       const item = await client.music.spotify.load(query);
-      if (!item) {
-        return await interaction.followUp(
-          'Something went wrong! Please try again later'
-        );
-      }
-      switch (item.type) {
+      switch (item?.type) {
         case SpotifyItemType.Track:
           const track = await item.resolveYoutubeTrack();
           tracks = [track];
@@ -61,8 +51,8 @@ export class PlayCommand extends Command {
           }**](${query}).`;
           break;
         default:
-          return await interaction.followUp({
-            content: `Couldn't find what you were looking for :(`,
+          return interaction.followUp({
+            content: "Couldn't find what you were looking for :(",
             ephemeral: true
           });
       }
@@ -74,8 +64,8 @@ export class PlayCommand extends Command {
       switch (results.loadType) {
         case 'LOAD_FAILED':
         case 'NO_MATCHES':
-          return await interaction.followUp({
-            content: `Couldn't find what you were looking for :(`,
+          return interaction.followUp({
+            content: "Couldn't find what you were looking for :(`",
             ephemeral: true
           });
         case 'PLAYLIST_LOADED':
@@ -91,25 +81,23 @@ export class PlayCommand extends Command {
       }
     }
 
+    let player = client.music.players.get(interaction.guild!.id);
+
     if (!player?.connected) {
-      player ??= container.client.music.createPlayer(guildId);
-      // @ts-ignore
-      player.queue.channel = interaction.channel;
-      await player.connect(voiceChannel.id, { deafened: true });
+      player ??= client.music.createPlayer(interaction.guild!.id);
+      player.queue.channel = interaction.channel as MessageChannel;
+      await player.connect(voiceChannel!.id);
     }
 
     const started = player.playing || player.paused;
 
-    player.queue.add(tracks, {
-      requester: interaction.user.id
-    });
+    await interaction.followUp(displayMessage);
 
+    player.queue.add(tracks, { requester: interaction.user.id });
     if (!started) {
-      await player.setVolume(50);
       await player.queue.start();
     }
-
-    return await interaction.followUp(displayMessage);
+    return;
   }
 
   public override registerApplicationCommands(
@@ -122,8 +110,8 @@ export class PlayCommand extends Command {
         {
           name: 'query',
           description: 'What song or playlist would you like to listen to?',
-          required: true,
-          type: 'STRING'
+          type: 'STRING',
+          required: true
         }
       ]
     });

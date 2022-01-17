@@ -18,7 +18,7 @@ export class ExtendedClient extends SapphireClient {
 
     this.music = new Node({
       sendGatewayPayload: (id, payload) =>
-        this.guilds.cache.get(id)?.shard.send(payload),
+        this.guilds.cache.get(id)?.shard?.send(payload),
       connection: {
         host: data.lava_host,
         password: data.lava_pass,
@@ -26,12 +26,12 @@ export class ExtendedClient extends SapphireClient {
       }
     });
 
-    this.ws.on('VOICE_SERVER_UPDATE', data =>
-      this.music.handleVoiceUpdate(data)
-    );
-    this.ws.on('VOICE_STATE_UPDATE', data =>
-      this.music.handleVoiceUpdate(data)
-    );
+    this.ws.on('VOICE_SERVER_UPDATE', data => {
+      this.music.handleVoiceUpdate(data);
+    });
+    this.ws.on('VOICE_STATE_UPDATE', data => {
+      this.music.handleVoiceUpdate(data);
+    });
   }
 }
 

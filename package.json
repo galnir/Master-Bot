@@ -25,7 +25,7 @@
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1",
     "iso-639-1": "^2.1.11",
-    "lavaclient": "^4.0.6"
+    "lavaclient": "4.0.7-rc.1"
   },
   "devDependencies": {
     "@sapphire/ts-config": "^3.1.7",
