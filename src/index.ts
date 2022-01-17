@@ -1,14 +1,33 @@
-import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+require('@lavaclient/queue/register');
+import { load } from '@lavaclient/spotify';
+import {
+  ApplicationCommandRegistries,
+  RegisterBehavior
+} from '@sapphire/framework';
 import * as data from './config.json';
+import { ExtendedClient } from './structures/ExtendedClient';
 
-const client = new SapphireClient({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES
-  ]
+load({
+  client: {
+    id: data.spotify_client_id,
+    secret: data.spotify_client_secret
+  },
+  autoResolveYoutubeTracks: true
 });
+
+const client = new ExtendedClient();
+
+client.music.on('connect', () => {
+  console.log('Lavalink is ready!');
+});
+
+client.music.on('trackStart', (queue, song) => {
+  // @ts-ignore
+  queue.channel.send(`Started playing **${song.title}**`);
+});
+
+ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
+  RegisterBehavior.Overwrite
+);
 
 client.login(data.token);

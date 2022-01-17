@@ -20,8 +20,32 @@
 
 "@discordjs/collection@^0.4.0":
   version "0.4.0"
-  resolved "https://registry.npmjs.org/@discordjs/collection/-/collection-0.4.0.tgz"
+  resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-0.4.0.tgz#b6488286a1cc7b41b644d7e6086f25a1c1e6f837"
   integrity sha512-zmjq+l/rV35kE6zRrwe8BHqV78JvIh2ybJeZavBi5NySjWXqN3hmmAKg7kYMMXSeiWtSsMoZ/+MQi0DiQWy2lw==
+
+"@lavaclient/queue@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@lavaclient/queue/-/queue-2.0.6.tgz#ab610bf9878acc3531da1bb44f6e00afb2aafb01"
+  integrity sha512-85yjDKywJBCEUjFNPkhKtY9j0EOkF6YFYI9lMM5ExgdcqiAUF+gzBd6l2JTHwRHFr2xxBjmZ9ooWwBeGFbYjfQ==
+  dependencies:
+    "@lavalink/encoding" "^0.1.2"
+
+"@lavaclient/spotify@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@lavaclient/spotify/-/spotify-3.0.0.tgz#489a57e0938517c218f010836544d1857abf2b68"
+  integrity sha512-NeUGHlw77rKCkbZbBY+GLu5feYzAyQdl5Olr0NZvgnj4w4evygKsrhq3UL8tQa74IfZUxxXKFY4C+HNPCh31dA==
+
+"@lavaclient/types@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@lavaclient/types/-/types-2.0.11.tgz#08c8343c48006e6998cccd806991152a0c483578"
+  integrity sha512-3ZlhEc2aVEFCzS7O835T3b4sAtI5GdDHXam02dLPQHY17/wIekEWyVDYwRCUYSil2D3WheaIQ0uazIXJZ+HCUA==
+
+"@lavalink/encoding@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@lavalink/encoding/-/encoding-0.1.2.tgz#cc6ad2727836ed290bcc2fe74f452e06e7229bf7"
+  integrity sha512-cUhsKYBw91+2H4wPfKCi1i9dyQmXGCcNvsNe3Sgy67ZrjsQ29hNLLEBIotBIxPMPWTFZtQcja5QFL99UNvjv0w==
+  dependencies:
+    base64-js "^1.3.1"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -279,6 +303,11 @@ axios@^0.24.0:
   dependencies:
     follow-redirects "^1.14.4"
 
+base64-js@^1.3.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
 braces@^3.0.1:
   version "3.0.2"
   resolved "https://registry.npmjs.org/braces/-/braces-3.0.2.tgz"
@@ -298,6 +327,11 @@ cacheable-request@^6.0.0:
     lowercase-keys "^2.0.0"
     normalize-url "^4.1.0"
     responselike "^1.0.2"
+
+centra@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/centra/-/centra-2.5.0.tgz#854c30f9a3ff50da49fa69a8cb441aa25aa1e8e8"
+  integrity sha512-CnSF1HD8vOOgNbE4P2fZEhdhfAohvpcF3DSdSvEcSHDAZvr+Xfw73isT8SXJJc3VMBqSwjXhr29/ikHUgFcypg==
 
 clone-response@^1.0.2:
   version "1.0.2"
@@ -609,6 +643,16 @@ keyv@^3.0.0:
   dependencies:
     json-buffer "3.0.0"
 
+lavaclient@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/lavaclient/-/lavaclient-4.0.6.tgz#64ea6c9ec88e599ecdbff35a56f50a2c27cb2c2a"
+  integrity sha512-SRSNs2cYpi4/905lBqoaXfg6nZZWVEtuNyIDE/RJlWVPWp2R7T0qp7oQj+njlSNrlf9IIhXvDTa/PJDKC94fYw==
+  dependencies:
+    "@lavaclient/types" "^2.0.11"
+    centra "^2.5.0"
+    tiny-typed-emitter "^2.1.0"
+    ws "^8.2.3"
+
 lexure@^0.17.0:
   version "0.17.0"
   resolved "https://registry.npmjs.org/lexure/-/lexure-0.17.0.tgz"
@@ -776,6 +820,11 @@ slash@^3.0.0:
   resolved "https://registry.npmjs.org/slash/-/slash-3.0.0.tgz"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
+tiny-typed-emitter@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/tiny-typed-emitter/-/tiny-typed-emitter-2.1.0.tgz#b3b027fdd389ff81a152c8e847ee2f5be9fad7b5"
+  integrity sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==
+
 to-readable-stream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/to-readable-stream/-/to-readable-stream-1.0.0.tgz#ce0aa0c2f3df6adf852efb404a783e77c0475771"
@@ -873,6 +922,11 @@ write-file-atomic@^3.0.0:
     is-typedarray "^1.0.0"
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
+
+ws@^8.2.3:
+  version "8.4.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.4.1.tgz#ce1a17e553d2b794e017fa94887808db5c67f614"
+  integrity sha512-6eqQ4yN2y2xv8b+BgbkUzPPyfo/PDl3VOWb06ZE0jIFYwuHMsMQN6F7o84yxJYCblfCRAxzpU59We4Rr4w0Luw==
 
 ws@^8.4.0:
   version "8.4.0"

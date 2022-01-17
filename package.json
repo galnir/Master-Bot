@@ -14,6 +14,9 @@
     "node": "^16"
   },
   "dependencies": {
+    "@discordjs/collection": "^0.4.0",
+    "@lavaclient/queue": "^2.0.6",
+    "@lavaclient/spotify": "^3.0.0",
     "@sapphire/decorators": "^3.1.5",
     "@sapphire/discord.js-utilities": "^4.2.0",
     "@sapphire/framework": "^2.3.0-pr-293.69c030f.0",
@@ -21,7 +24,8 @@
     "axios": "^0.24.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1",
-    "iso-639-1": "^2.1.11"
+    "iso-639-1": "^2.1.11",
+    "lavaclient": "^4.0.6"
   },
   "devDependencies": {
     "@sapphire/ts-config": "^3.1.7",
