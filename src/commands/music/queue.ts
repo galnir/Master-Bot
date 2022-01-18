@@ -21,7 +21,7 @@ export class QueueCommand extends Command {
 
     const queueLength = player!.queue.tracks.length;
     if (!queueLength) {
-      return interaction.reply('There are no songs in the queue!');
+      return await interaction.reply('There are no songs in the queue!');
     }
 
     const queueItems = [];
@@ -50,7 +50,7 @@ export class QueueCommand extends Command {
       channel: interaction.channel
     };
 
-    interaction.reply('Queue generated');
+    await interaction.reply('Queue generated');
 
     new PaginatedFieldMessageEmbed()
       .setTitleField('Queue item')
