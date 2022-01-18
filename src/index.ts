@@ -31,6 +31,15 @@ declare module '@lavaclient/queue' {
   }
 }
 
+declare module 'lavaclient' {
+  interface Player {
+    nightcore: boolean;
+    vaporwave: boolean;
+    karaoke: boolean;
+    bassboost: boolean;
+  }
+}
+
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
   RegisterBehavior.Overwrite
 );
