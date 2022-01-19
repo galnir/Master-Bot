@@ -1,22 +1,14 @@
 services:
   master-bot:
     build: .
-    depends_on: 
-      mongo:
-        condition: service_started
+    depends_on:
       lavalink:
         condition: service_healthy
     links:
-      - mongo
       - lavalink
-  mongo:
-    image: mongo:4-focal
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: master-bot
-      MONGO_INITDB_ROOT_PASSWORD: admin
   lavalink:
     image: fredboat/lavalink:dev
     volumes:
-      - ./application.yml:/opt/Lavalink/application.yml 
+      - ./application.yml:/opt/Lavalink/application.yml
     healthcheck:
-      test: "echo lavalink"
+      test: 'echo lavalink'
