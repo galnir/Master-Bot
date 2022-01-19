@@ -32,6 +32,16 @@ export class ExtendedClient extends SapphireClient {
     this.ws.on('VOICE_STATE_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
     });
+
+    this.music.on('queueFinish', queue => {
+      queue.channel.send("There are no more songs in queue, I'm out");
+      queue.player.disconnect();
+      queue.player.node.destroyPlayer(queue.player.guildId);
+    });
+
+    this.music.on('trackStart', (queue, song) => {
+      queue.channel.send(`Now playing **${song.title}**`);
+    });
   }
 }
 
