@@ -24,6 +24,7 @@
     "axios": "^0.24.0",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.1",
+    "genius-discord-lyrics": "1.0.5",
     "iso-639-1": "^2.1.11",
     "lavaclient": "4.0.7-rc.1",
     "string-progressbar": "^1.0.4"
