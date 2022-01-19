@@ -86,7 +86,7 @@ export class PlayCommand extends Command {
     if (!player?.connected) {
       player ??= client.music.createPlayer(interaction.guild!.id);
       player.queue.channel = interaction.channel as MessageChannel;
-      await player.connect(voiceChannel!.id);
+      await player.connect(voiceChannel!.id, { deafened: true });
     }
 
     const started = player.playing || player.paused;
