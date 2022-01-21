@@ -20,7 +20,7 @@ Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lav
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
-Create a `config.json` file in the root directory of the project with the following contents:
+Create a `config.json` file inside the 'src' directory with the following tokens:
 
 ### Minimum settings
 
