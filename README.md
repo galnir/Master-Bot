@@ -43,7 +43,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
 
 ### Full settings
 
-For full command support, including lyrics, GIFs, news, Twitch integration, and others, - (which some of them are part of [Features to be added back](https://github.com/galnir/Master-Bot/issues/667)) - All of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
+For full command support, including lyrics, GIFs, news, and others, - (which some of them are part of [Features to be added back](https://github.com/galnir/Master-Bot/issues/667)) - All of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
 
 ```json
 {
@@ -118,8 +118,6 @@ NOTE: When setting `"invite": true`, remember to enable the Public Bot option in
 [Getting a NewsAPI API key](https://newsapi.org/)
 
 [Getting a Genius API key](https://genius.com/api-clients/new)
-
-[Getting a Twitch API key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
 
 [Getting a rawg API key](https://rawg.io/apidocs)
 
