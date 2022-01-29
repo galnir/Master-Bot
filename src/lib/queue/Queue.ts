@@ -8,6 +8,7 @@ import {
 } from 'lavaclient';
 import { mayStartNext, Track } from '@lavaclient/types';
 import { TypedEmitter } from 'tiny-typed-emitter';
+import type { MessageChannel } from '../..';
 
 export enum LoopType {
   None,
@@ -41,6 +42,7 @@ export class Queue extends TypedEmitter<QueueEvents> {
   last: Song | null = null;
   current: Song | null = null;
   data: Record<string, any> = {};
+  channel: MessageChannel = null;
 
   constructor(readonly player: Player) {
     super();

@@ -6,7 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Addable } from '@lavaclient/queue';
+import type { Addable } from '../../lib/queue/Queue';
 import { SpotifyItemType } from '@lavaclient/spotify';
 import type { MessageChannel } from '../..';
 

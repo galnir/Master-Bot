@@ -7,7 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { NowPlayingEmbed } from '../../lib/music/NowPlayingEmbed';
-import type { Song } from '@lavaclient/queue';
+import type { Song } from '../../lib/queue/Song';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',

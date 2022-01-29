@@ -6,7 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Song } from '@lavaclient/queue';
+import type { Song } from '../../lib/queue/Song';
 
 @ApplyOptions<CommandOptions>({
   name: 'shuffle',

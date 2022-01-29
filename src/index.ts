@@ -4,8 +4,9 @@ import {
   RegisterBehavior
 } from '@sapphire/framework';
 import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
+import { Player } from 'lavaclient';
 import * as data from './config.json';
-import type { Queue } from './lib/queue/Queue';
+import { Queue } from './lib/queue/Queue';
 import type { Song } from './lib/queue/Song';
 import { ExtendedClient } from './structures/ExtendedClient';
 
@@ -23,11 +24,16 @@ client.on('ready', () => {
   client.music.connect(client.user!.id);
 });
 
-export type MessageChannel = TextChannel | ThreadChannel | NewsChannel;
+export type MessageChannel = TextChannel | ThreadChannel | NewsChannel | null;
 
 declare module 'lavaclient' {
   interface Player {
     readonly queue: Queue;
+    [_queue]: Queue;
+    nightcore: boolean;
+    vaporwave: boolean;
+    karaoke: boolean;
+    bassboost: boolean;
   }
 
   interface ClusterEvents {
@@ -44,6 +50,13 @@ declare module 'lavaclient' {
     trackEnd: (queue: Queue, song: Song) => void;
   }
 }
+
+const _queue: unique symbol = Symbol.for('Player#queue');
+Reflect.defineProperty(Player.prototype, 'queue', {
+  get(this: Player) {
+    return (this[_queue] ??= new Queue(this));
+  }
+});
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
   RegisterBehavior.Overwrite

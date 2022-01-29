@@ -6,8 +6,8 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Song } from '@lavaclient/queue';
-import { LoopType } from '@lavaclient/queue';
+import type { Song } from '../../lib/queue/Song';
+import { LoopType } from '../../lib/queue/Queue';
 
 @ApplyOptions<CommandOptions>({
   name: 'skip',
@@ -21,7 +21,7 @@ export class SkipCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (player?.queue.loop.type == LoopType.Song) {
-      player.queue.tracks.unshift(player.queue.current as Song);
+      player!.queue.tracks.unshift(player!.queue.current as Song);
     }
     await player?.queue.next();
     return await interaction.reply('Skipped track');

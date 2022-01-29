@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 import progressbar from 'string-progressbar';
-import type { Song } from '@lavaclient/queue';
+import type { Song } from '../../lib/queue/Song';
 
 type PositionType = number | undefined;
 
