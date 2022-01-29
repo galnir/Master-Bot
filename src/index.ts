@@ -1,5 +1,3 @@
-import '@lavaclient/queue/register';
-import '@lavaclient/queue';
 import { load } from '@lavaclient/spotify';
 import {
   ApplicationCommandRegistries,
@@ -7,6 +5,8 @@ import {
 } from '@sapphire/framework';
 import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 import * as data from './config.json';
+import type { Queue } from './lib/queue/Queue';
+import type { Song } from './lib/queue/Song';
 import { ExtendedClient } from './structures/ExtendedClient';
 
 load({
@@ -25,18 +25,23 @@ client.on('ready', () => {
 
 export type MessageChannel = TextChannel | ThreadChannel | NewsChannel;
 
-declare module '@lavaclient/queue' {
-  interface Queue {
-    channel: MessageChannel;
-  }
-}
-
 declare module 'lavaclient' {
   interface Player {
-    nightcore: boolean;
-    vaporwave: boolean;
-    karaoke: boolean;
-    bassboost: boolean;
+    readonly queue: Queue;
+  }
+
+  interface ClusterEvents {
+    nodeQueueCreate: (node: ClusterNode, queue: Queue) => void;
+    nodeQueueFinish: (node: ClusterNode, queue: Queue) => void;
+    nodeTrackStart: (node: ClusterNode, queue: Queue, song: Song) => void;
+    nodeTrackEnd: (node: ClusterNode, queue: Queue, song: Song) => void;
+  }
+
+  interface NodeEvents {
+    queueCreate: (queue: Queue) => void;
+    queueFinish: (queue: Queue) => void;
+    trackStart: (queue: Queue, song: Song) => void;
+    trackEnd: (queue: Queue, song: Song) => void;
   }
 }
 
