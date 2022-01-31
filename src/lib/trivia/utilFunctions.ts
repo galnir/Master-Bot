@@ -46,7 +46,7 @@ export function getLeaderBoard(arr: any): string {
   if (arr.length > 1) {
     for (let i = 1; i < arr.length; i++) {
       leaderBoard =
-        leaderBoard + `\n\n   ${i + 1}: ${arr[i][0]}: ${arr[i][1]}  points`;
+        leaderBoard + `\n\n   ${i + 1}: <@${arr[i][0]}>: ${arr[i][1]}  points`;
     }
   }
   return leaderBoard;
