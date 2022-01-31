@@ -11,7 +11,12 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 @ApplyOptions<CommandOptions>({
   name: 'queue',
   description: 'Display the music queue in the form of an embed',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class QueueCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

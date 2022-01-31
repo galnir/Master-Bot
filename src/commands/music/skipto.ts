@@ -6,12 +6,17 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { LoopType } from '@lavaclient/queue';
+import { LoopType } from '../../lib/queue/Queue';
 
 @ApplyOptions<CommandOptions>({
   name: 'skipto',
   description: 'Skip to a track in queue',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class SkipToCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

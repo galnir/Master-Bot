@@ -11,7 +11,12 @@ import type { Node, Player } from 'lavaclient';
 @ApplyOptions<CommandOptions>({
   name: 'karaoke',
   description: 'Turn the playing track to karaoke',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class KaraokeCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

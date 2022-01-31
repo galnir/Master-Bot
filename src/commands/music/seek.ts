@@ -10,7 +10,12 @@ import { container } from '@sapphire/framework';
 @ApplyOptions<CommandOptions>({
   name: 'seek',
   description: 'Seek to a desired point in a track',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class SeekCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

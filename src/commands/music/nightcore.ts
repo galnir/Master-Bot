@@ -11,7 +11,12 @@ import type { Node, Player } from 'lavaclient';
 @ApplyOptions<CommandOptions>({
   name: 'nightcore',
   description: 'Enable/Disable Nightcore filter',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class NightcoreCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

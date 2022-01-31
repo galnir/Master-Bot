@@ -8,27 +8,33 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
-  name: 'pause',
-  description: 'Pause the music',
-  preconditions: [
-    'inVoiceChannel',
-    'musicTriviaPlaying',
-    'playerIsPlaying',
-    'inPlayerVoiceChannel'
-  ]
+  name: 'stop-trivia',
+  description: 'End a music trivia'
 })
-export class PauseCommand extends Command {
+export class StopTriviaCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
 
-    const player = client.music.players.get(interaction.guild!.id);
+    const player = client.music.players.get(interaction.guildId as string);
 
-    if (player!.paused) {
-      return await interaction.reply('The track is already on pause!');
+    if (!player) {
+      return await interaction.reply(
+        'There is no trivia playing at the moment!'
+      );
     }
 
-    player?.pause();
-    return await interaction.reply('Track paused');
+    if (!player.triviaQueue.current) {
+      return await interaction.reply(
+        'There is no trivia playing at the moment!'
+      );
+    }
+
+    player!.triviaQueue.wasTriviaEndCalled = true;
+
+    player!.triviaQueue.collector?.stop(); // emits the end event
+
+    await interaction.reply('Trivia ended!');
+    return;
   }
 
   public override registerApplicationCommands(

@@ -15,7 +15,8 @@ const genius = new GeniusLyrics(data.geniusLyricsAPI);
 @ApplyOptions<CommandOptions>({
   name: 'lyrics',
   description:
-    'Get the lyrics of any song or the lyrics of the currently playing song!'
+    'Get the lyrics of any song or the lyrics of the currently playing song!',
+  preconditions: ['musicTriviaPlaying']
 })
 export class LyricsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

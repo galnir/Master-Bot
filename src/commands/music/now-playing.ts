@@ -7,12 +7,17 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { NowPlayingEmbed } from '../../lib/music/NowPlayingEmbed';
-import type { Song } from '@lavaclient/queue';
+import type { Song } from '../../lib/queue/Song';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',
   description: 'Display an embed detailing the song playing',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class NowPlayingCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
