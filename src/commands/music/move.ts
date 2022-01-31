@@ -10,7 +10,12 @@ import { container } from '@sapphire/framework';
 @ApplyOptions<CommandOptions>({
   name: 'move',
   description: 'Move a track to a different position in queue',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class MoveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

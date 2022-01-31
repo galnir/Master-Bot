@@ -11,7 +11,12 @@ import type { Node, Player } from 'lavaclient';
 @ApplyOptions<CommandOptions>({
   name: 'vaporwave',
   description: 'Apply vaporwave on the playing track!',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class VaporWaveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

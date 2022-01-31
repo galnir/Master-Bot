@@ -10,7 +10,12 @@ import { container } from '@sapphire/framework';
 @ApplyOptions<CommandOptions>({
   name: 'remove',
   description: 'Remove a track from the queue',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class RemoveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

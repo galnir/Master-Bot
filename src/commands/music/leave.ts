@@ -10,7 +10,12 @@ import { container } from '@sapphire/framework';
 @ApplyOptions<CommandOptions>({
   name: 'leave',
   description: 'Make the bot leave its voice channel and stop playing music',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class LeaveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

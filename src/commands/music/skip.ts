@@ -12,7 +12,12 @@ import { LoopType } from '../../lib/queue/Queue';
 @ApplyOptions<CommandOptions>({
   name: 'skip',
   description: 'Skip the current song playing',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class SkipCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

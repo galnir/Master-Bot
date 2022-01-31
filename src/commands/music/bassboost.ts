@@ -11,7 +11,12 @@ import type { Node, Player } from 'lavaclient';
 @ApplyOptions<CommandOptions>({
   name: 'bassboost',
   description: 'Boost the bass of the playing track',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class BassboostCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

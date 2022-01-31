@@ -11,7 +11,12 @@ import type { Song } from '../../lib/queue/Song';
 @ApplyOptions<CommandOptions>({
   name: 'shuffle',
   description: 'Shuffle the music queue',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class LeaveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

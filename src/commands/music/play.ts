@@ -13,7 +13,11 @@ import type { MessageChannel } from '../..';
 @ApplyOptions<CommandOptions>({
   name: 'play',
   description: 'Play any song or playlist from YouTube and Spotify!',
-  preconditions: ['inVoiceChannel', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class PlayCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

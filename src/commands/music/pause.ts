@@ -10,7 +10,12 @@ import { container } from '@sapphire/framework';
 @ApplyOptions<CommandOptions>({
   name: 'pause',
   description: 'Pause the music',
-  preconditions: ['inVoiceChannel', 'playerIsPlaying', 'inPlayerVoiceChannel']
+  preconditions: [
+    'inVoiceChannel',
+    'musicTriviaPlaying',
+    'playerIsPlaying',
+    'inPlayerVoiceChannel'
+  ]
 })
 export class PauseCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
