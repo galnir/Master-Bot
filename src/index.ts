@@ -8,6 +8,7 @@ import { Player } from 'lavaclient';
 import * as data from './config.json';
 import { Queue } from './lib/queue/Queue';
 import type { Song } from './lib/queue/Song';
+import { TriviaQueue } from './lib/trivia/TriviaQueue';
 import { ExtendedClient } from './structures/ExtendedClient';
 
 load({
@@ -29,7 +30,9 @@ export type MessageChannel = TextChannel | ThreadChannel | NewsChannel | null;
 declare module 'lavaclient' {
   interface Player {
     readonly queue: Queue;
+    readonly triviaQueue: TriviaQueue;
     [_queue]: Queue;
+    [_triviaQueue]: TriviaQueue;
     nightcore: boolean;
     vaporwave: boolean;
     karaoke: boolean;
@@ -52,9 +55,15 @@ declare module 'lavaclient' {
 }
 
 const _queue: unique symbol = Symbol.for('Player#queue');
+const _triviaQueue: unique symbol = Symbol.for('Player#queue');
 Reflect.defineProperty(Player.prototype, 'queue', {
   get(this: Player) {
     return (this[_queue] ??= new Queue(this));
+  }
+});
+Reflect.defineProperty(Player.prototype, 'triviaQueue', {
+  get(this: Player) {
+    return (this[_triviaQueue] ??= new TriviaQueue(this));
   }
 });
 
