@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
 //import { container } from '@sapphire/framework';
 import type { Snowflake } from 'discord-api-types';
-import { MessageEmbed } from 'discord.js';
+import { MessageCollector, MessageEmbed } from 'discord.js';
 import type { TriviaQueue } from '../lib/trivia/TriviaQueue';
 import {
   capitalizeWords,
@@ -32,6 +32,9 @@ export class TriviaTrackStartListener extends Listener {
     const collector = queue.channel?.createMessageCollector({
       time: 30 * 1000
     });
+
+    queue.collector = collector as MessageCollector;
+
     // @ts-ignore
     collector?.on('collect', async msg => {
       if (!queue.score.has(msg.author.id)) return;
@@ -103,10 +106,10 @@ export class TriviaTrackStartListener extends Listener {
     });
 
     collector?.on('end', async () => {
-      //const { client } = container;
-
       if (queue.wasTriviaEndCalled) {
-        // handle
+        queue.player.disconnect();
+        queue.client.music.destroyPlayer(queue.player.guildId);
+        return;
       }
 
       const sortedScoreMap = new Map(

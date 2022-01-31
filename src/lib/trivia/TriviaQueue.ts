@@ -5,6 +5,7 @@ import type { MessageChannel } from '../..';
 import type { Addable } from '../queue/Queue';
 import { Song } from '../queue/Song';
 import { container, SapphireClient } from '@sapphire/framework';
+import type { MessageCollector } from 'discord.js';
 
 export interface TriviaQueueEvents {
   triviaTrackStart: (queue: TriviaQueue) => void;
@@ -30,6 +31,7 @@ export class TriviaQueue extends TypedEmitter<TriviaQueueEvents> {
   channel: MessageChannel = null;
   wasTriviaEndCalled: boolean = false;
   client: SapphireClient = container.client;
+  collector: MessageCollector | null = null;
 
   constructor(readonly player: Player) {
     super();
