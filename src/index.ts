@@ -55,7 +55,7 @@ declare module 'lavaclient' {
 }
 
 const _queue: unique symbol = Symbol.for('Player#queue');
-const _triviaQueue: unique symbol = Symbol.for('Player#queue');
+const _triviaQueue: unique symbol = Symbol.for('Player#triviaQueue');
 Reflect.defineProperty(Player.prototype, 'queue', {
   get(this: Player) {
     return (this[_queue] ??= new Queue(this));
