@@ -1,3 +1,7 @@
+/*
+  Based on @melike2d's work on @lavaclient/queue
+*/
+
 import { Song } from './Song';
 import {
   DiscordResource,
