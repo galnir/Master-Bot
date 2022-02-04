@@ -14,29 +14,29 @@
     "node": "^16"
   },
   "dependencies": {
-    "@discordjs/collection": "^0.4.0",
+    "@discordjs/collection": "^0.5.0",
     "@lavaclient/spotify": "^3.0.0",
     "@lavalink/encoding": "^0.1.2",
-    "@sapphire/decorators": "^3.1.5",
-    "@sapphire/discord.js-utilities": "^4.2.0",
-    "@sapphire/framework": "^2.3.0-pr-293.69c030f.0",
+    "@sapphire/decorators": "^4.2.0",
+    "@sapphire/discord.js-utilities": "^4.6.0",
+    "@sapphire/framework": "^2.3.0",
     "@vitalets/google-translate-api": "^7.0.0",
-    "axios": "^0.24.0",
+    "axios": "^0.25.0",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^13.5.1",
+    "discord.js": "^13.6.0",
     "genius-discord-lyrics": "1.0.5",
-    "iso-639-1": "^2.1.11",
-    "lavaclient": "4.0.7-rc.1",
+    "iso-639-1": "^2.1.12",
+    "lavaclient": "4.0.8-rc.2",
     "string-progressbar": "^1.0.4",
     "tiny-typed-emitter": "^2.1.0"
   },
   "devDependencies": {
     "@lavaclient/types": "^2.0.11",
-    "@sapphire/ts-config": "^3.1.7",
-    "@types/node": "^17.0.8",
-    "@typescript-eslint/eslint-plugin": "^5.9.1",
-    "@typescript-eslint/parser": "^5.9.1",
+    "@sapphire/ts-config": "^3.3.0",
+    "@types/node": "^17.0.14",
+    "@typescript-eslint/eslint-plugin": "^5.10.2",
+    "@typescript-eslint/parser": "^5.10.2",
     "prettier": "^2.5.1",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.5"
   }
 }
