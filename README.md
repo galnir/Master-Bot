@@ -14,13 +14,12 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-<a href="https://replit.com/github/DarrenOfficial/lavalink-replit">
-         <img alt="Qries" src="https://repl.it/badge/github/DarrenOfficial/lavalink-replit"
-         width=100">
-      </a>
+[![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
 
 Click the button above to create your lavalink server then click run.
+                   
 Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<username>.repl.co`
+                   
 Create a `config.json` file inside the 'src' directory with the following tokens:
 
 ### Minimum settings
