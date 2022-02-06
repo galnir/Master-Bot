@@ -14,7 +14,7 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-**Setting up the LavaLionk Server**
+### Setting up the LavaLionk Server
 
 Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
 
@@ -28,7 +28,7 @@ Set the `lava_secure` to `false` in the `config.json`
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
-If running the lavalink server on your own system has audio qualityb issues, you can use the the following instructions:
+If running the lavalink server on your own system has audio quality issues, you can use the the following instructions:
 
 [![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
 
@@ -42,7 +42,7 @@ Set the `lava_password` to `maybeiwasboring` in your `config.json`
 
 Set `lava_secure` to `true` in the `config.json`
 
-**Configuring the bot**
+### Configuring the bot
                    
 Create a `config.json` file inside the 'src' directory with the following tokens:
 
@@ -58,10 +58,10 @@ This is the minimum amount of settings that need to be set for the core part (mu
 {
   "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token",
-  "lava_host": "lavalink-host",
-  "lava_pass": "lavalink-password",
-  "lava_port": lavalink-port,
-  "lava_secure": true-or-false,
+  "lava_host": "127.0.0.1 | lavalink-replit.<username>.repl.co",
+  "lava_pass": "youshallnotpass | maybeiwasboring",
+  "lava_port": 443 | 2333,
+  "lava_secure": true | false,
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
