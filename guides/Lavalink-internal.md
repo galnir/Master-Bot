@@ -33,7 +33,7 @@ Create a `config.json` with the following fields:
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": false,
-  "spotify_client_id": "client-d",
+  "spotify_client_id": "client-id",
   "spotify_client_secret": "client-secret",
   "invite": "true",
   "geniusLyricsAPI": "api-key",
