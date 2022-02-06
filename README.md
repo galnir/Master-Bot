@@ -14,11 +14,30 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
+**Setting up the LavaLionk Server**
+
+Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
+
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+
+Set the port to `2333` in the `config.json`
+
+Set the password to `youshallnotpass` in the `config.json`
+
+**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
+
+If running the lavalink server on your own system has audio qualityb issues, you can use the the following instructions:
+
 [![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
 
 Click the button above to create your lavalink server then click run.
                    
 Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<username>.repl.co`
+
+Set the port to `443` in your `config.json`
+
+Set the password to `maybeiwasboring` in your `config.json`
+**Configuring the bot**
                    
 Create a `config.json` file inside the 'src' directory with the following tokens:
 
@@ -34,8 +53,9 @@ This is the minimum amount of settings that need to be set for the core part (mu
 {
   "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token",
-  "lava_host": "lavalink-replit.<username>.repl.co",
-  "lava_pass": "maybeiwasboring",
+  "lava_host": "lavalink-host",
+  "lava_pass": "lavalink-password",
+  "lava_port": "lavalink-port"
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
