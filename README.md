@@ -37,6 +37,7 @@ Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<usern
 Set the port to `443` in your `config.json`
 
 Set the password to `maybeiwasboring` in your `config.json`
+
 **Configuring the bot**
                    
 Create a `config.json` file inside the 'src' directory with the following tokens:
