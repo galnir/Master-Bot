@@ -12,7 +12,7 @@ import * as data from '../../config.json';
   name: 'anime',
   description: 'Replies with a random anime gif!'
 })
-export class CatCommand extends Command {
+export class AnimeCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
       .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=anime&limit=1`)
