@@ -1,6 +1,6 @@
 # Setup
 
-Create an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
+Create an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project and change the host address to `127.0.0.1`.
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
 
@@ -18,7 +18,7 @@ Create a **config.json** with the following fields:
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": false,
-  "spotify_client_id": "client-d",
+  "spotify_client_id": "client-id",
   "spotify_client_secret": "client-secret"
 }
 ```

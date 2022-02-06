@@ -16,7 +16,7 @@ Create a **config.json** with the following fields:
   "lava_pass": "maybeiwasboring",
   "lava_port": 443,
   "lava_secure": true,
-  "spotify_client_id": "client-d",
+  "spotify_client_id": "client-id",
   "spotify_client_secret": "client-secret"
 }
 ```
