@@ -26,7 +26,7 @@ Set the password to `youshallnotpass` in the `config.json`
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
-If running the lavalink server on your own system has audio qualityb issues, you can use the the following instructions:
+If running the lavalink server on your own system has audio quality issues, you can use the the following instructions:
 
 [![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
 
