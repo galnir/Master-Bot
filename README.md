@@ -20,9 +20,11 @@ Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/L
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
 
-Set the port to `2333` in the `config.json`
+Set the `lava_port` to `2333` in the `config.json`
 
-Set the password to `youshallnotpass` in the `config.json`
+Set the `lava_password` to `youshallnotpass` in the `config.json`
+
+Set the `lava_secure` to `false` in the `config.json`
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
@@ -34,9 +36,12 @@ Click the button above to create your lavalink server then click run.
                    
 Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<username>.repl.co`
 
-Set the port to `443` in your `config.json`
+Set the `lava_port` to `443` in your `config.json`
 
-Set the password to `maybeiwasboring` in your `config.json`
+Set the `lava_password` to `maybeiwasboring` in your `config.json`
+
+Set `lava_secure` to `true` in the `config.json`
+
 **Configuring the bot**
                    
 Create a `config.json` file inside the 'src' directory with the following tokens:
@@ -56,6 +61,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_host": "lavalink-host",
   "lava_pass": "lavalink-password",
   "lava_port": lavalink-port,
+  "lava_secure": true-or-false,
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
