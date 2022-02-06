@@ -4,7 +4,7 @@ Create an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/L
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
 
-**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
+Open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
 Create a **config.json** with the following fields:
 
