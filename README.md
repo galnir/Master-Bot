@@ -14,12 +14,13 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
+<a href="https://replit.com/github/DarrenOfficial/lavalink-replit">
+         <img alt="Qries" src="https://repl.it/badge/github/DarrenOfficial/lavalink-replit"
+         width=100">
+      </a>
 
-Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
-
-**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
-
+Click the button above to create your lavalink server then click run.
+Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<username>.repl.co`
 Create a `config.json` file inside the 'src' directory with the following tokens:
 
 ### Minimum settings
@@ -34,8 +35,8 @@ This is the minimum amount of settings that need to be set for the core part (mu
 {
   "client_id": "the-bots-discord-id",
   "token": "Your-Bot-Token",
-  "lava_host": "0.0.0.0",
-  "lava_pass": "youshallnotpass",
+  "lava_host": "lavalink-replit.<username>.repl.co",
+  "lava_pass": "maybeiwasboring",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
