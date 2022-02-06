@@ -14,7 +14,7 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-**Setting up the LavaLionk Server**
+### Setting up the LavaLionk Server
 
 Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
 
@@ -38,7 +38,7 @@ Set the port to `443` in your `config.json`
 
 Set the password to `maybeiwasboring` in your `config.json`
 
-**Configuring the bot**
+### Configuring the bot
                    
 Create a `config.json` file inside the 'src' directory with the following tokens:
 
