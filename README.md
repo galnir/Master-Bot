@@ -55,7 +55,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "token": "Your-Bot-Token",
   "lava_host": "lavalink-host",
   "lava_pass": "lavalink-password",
-  "lava_port": "lavalink-port"
+  "lava_port": lavalink-port,
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
