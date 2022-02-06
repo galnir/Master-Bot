@@ -14,74 +14,13 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-### Setting up the LavaLionk Server
+### Method 1 - Using an Internal LavaLink Server
 
-Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
+To set up the bot using this method, read these instructuiions: [guides/Lavalink-internal](./guides/Lavalink-internal.md)
 
-Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+### Method 2 - Using a Repl.it LavaLink Server
 
-Set the `lava_port` to `2333` in the `config.json`
-
-Set the `lava_password` to `youshallnotpass` in the `config.json`
-
-Set the `lava_secure` to `false` in the `config.json`
-
-**Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
-
-If running the lavalink server on your own system has audio quality issues, you can use the the following instructions:
-
-[![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
-
-Click the button above to create your lavalink server then click run.
-                   
-Copy the url and remove `https://` from it. **Example**: `lavalink-replit.<username>.repl.co`
-
-Set the `lava_port` to `443` in your `config.json`
-
-Set the `lava_password` to `maybeiwasboring` in your `config.json`
-
-Set `lava_secure` to `true` in the `config.json`
-
-### Configuring the bot
-                   
-Create a `config.json` file inside the 'src' directory with the following tokens:
-
-### Minimum settings
-
-This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
-
-**Generate spotify client id and secret [here](https://developer.spotify.com/dashboard/applications)**
-
-**If you're running the bot using Docker, set lava_host's value to "lavalink" in config.json and in application.yml at line 3**
-
-```json
-{
-  "client_id": "the-bots-discord-id",
-  "token": "Your-Bot-Token",
-  "lava_host": "127.0.0.1 | lavalink-replit.<username>.repl.co",
-  "lava_pass": "youshallnotpass | maybeiwasboring",
-  "lava_port": 443 | 2333,
-  "lava_secure": true | false,
-  "spotify_client_id": "get-it-from-spotify-dev",
-  "spotify_client_secret": "get-it-from-spotify-dev"
-}
-```
-
-### Full settings
-
-For full command support, including lyrics, GIFs, news, and others, - (which some of them are part of [Features to be added back](https://github.com/galnir/Master-Bot/issues/667)) - All of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
-
-```json
-{
-  "invite": "false",
-  "geniusLyricsAPI": "genius-api-key",
-  "tenorAPI": "tenor-API-key",
-  "newsAPI": "news-api-key",
-  "rawgAPI": "rawg-api-key"
-}
-```
-
-NOTE: When setting `"invite": true`, remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/).
+To set up the bot using this method, read these instructuiions: [guides/Lavalink-replit](./guides/Lavalink-replit.md)
 
 ## Commands
 
