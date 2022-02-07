@@ -39,15 +39,15 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": true,
-  "dbdLicense": "dbd-open-source-license",
-  "iconUrl": "website-icon-url",
-  "faviconUrl;": "website-favicon-url",
-  "botInviteUrl": "discord-bot-invite",
-  "dbdDomain": "http://<example.com>",
-  "dashboardUrl": "http://<example.com>:3000":,
-  "discordServerInvite": "https://discord.gg/#INVITE_CODE#"
-  "supportEmail": "support-email",
+  "dashboard_license": "dbd-open-source-license",
+  "icon_url": "website-icon-url",
+  "favicon_url;": "website-favicon-url",
+  "domain_url": "http://<example.com>",
+  "dashboard_url": "http://<example.com>:3000":,
   "redirect_url": "http://<example.com>:3000/discord/callback",
+  "bot_invite": "discord-bot-invite",
+  "server_invite": "https://discord.gg/#INVITE_CODE#"
+  "support_email": "support-email",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
