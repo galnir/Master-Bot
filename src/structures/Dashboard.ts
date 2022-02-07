@@ -13,7 +13,7 @@ const DarkDashboard = require('dbd-dark-dashboard');
 
 (async () => {
   let DBD = require('discord-dashboard');
-  await DBD.useLicense(data.dbdLicense);
+  await DBD.useLicense(data.dashboard_license);
   DBD.Dashboard = DBD.UpdatedClass();
 
   const Dashboard = new DBD.Dashboard({
@@ -23,20 +23,20 @@ const DarkDashboard = require('dbd-dark-dashboard');
       secret: data.client_secret
     },
     redirectUri: data.redirect_url,
-    domain: data.dbdDomain,
+    domain: data.domain_url,
     bot: client,
     theme: DarkDashboard({
       information: {
         createdBy: "iMidnight",
         websiteTitle: "Dashboard",
         websiteName: "Add Bot",
-        websiteUrl: data.botInviteUrl,
-        dashboardUrl: data.dashboardUrl,
+        websiteUrl: data.invite_url,
+        dashboardUrl: data.dashboard_url,
         acceptPrivacyPolicy: true,
-        supporteMail: data.supportEmail,
-        supportServer: data.discordServerInvite,
-        imageFavicon: data.faviconUrl,
-        iconURL: data.iconUrl,
+        supporteMail: data.support_email,
+        supportServer: data.server_invite,
+        imageFavicon: data.favicon_url,
+        iconURL: data.icon_url,
         pageBackGround: "linear-gradient(#2CA8FF, #155b8d)",
         loggedIn: "Successfully signed in.",
         mainColor: "#2CA8FF",
