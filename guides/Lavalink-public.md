@@ -38,7 +38,9 @@ Create a **config.json** with the following fields.
   "rawgAPI": "api-key"
 }
 ```
-**Note: You can swap out the LavaLink info in the config with any of the servers listed on this page: [lavalink.darrennathanael.com](https://lavalink.darrennathanael.com/)**
+**Note: You can swap out the LavaLink info in the config with any of the servers listed on the following page
+
+ * [lavalink.darrennathanael.com](https://lavalink.darrennathanael.com/)**
 
 # API Instructions
 
