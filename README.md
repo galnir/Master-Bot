@@ -29,15 +29,15 @@ $ npm i
 
 ## Setup
 
-### Method 1 - Using an Internal LavaLink Server
+#### Method 1 - Using an Internal LavaLink Server
 
 To set up the bot using this method, follow this guide: [Internal LavaLink - Setup Guide](./guides/Lavalink-internal.md)
 
-### Method 2 - Using a Repl.it LavaLink Server
+#### Method 2 - Using a Repl.it LavaLink Server
 
 To set up the bot using this method, follow this guide: [Repl.it LavaLink - Setup Guide](./guides/Lavalink-replit.md)
 
-### Method 3 - Using a public LavaLink Server
+#### Method 3 - Using a public LavaLink Server
 
 To set up the bot using this method, follow this guide: [Public LavaLink - Setup Guide](./guides/Lavalink-public.md)
 
