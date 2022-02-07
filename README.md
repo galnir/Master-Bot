@@ -43,7 +43,7 @@ To set up the bot using this method, follow this guide: [Public LavaLink - Setup
 
 ### Running the bot
 
-Once you have finished with all of the steps above and are ready to run the bot type the following command(s)
+Once you have finished with all of the steps above you are ready to run the bot
 
 To run the bot in production mode type:
 
