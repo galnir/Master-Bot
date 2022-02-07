@@ -4,7 +4,7 @@
 
 Click the button above to create your **LavaLink** server then click run.
 
-Create a **config.json** with the following fields:
+Create a **config.json** with the following fields
 
 ## Minimal
 
