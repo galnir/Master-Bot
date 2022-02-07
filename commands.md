@@ -1,3 +1,6 @@
+# Commands
+A full list of commands for use with Master Bot
+
 ## Music Commands
 
 | Command               | Description                                                                                                               | Usage                                                             |
