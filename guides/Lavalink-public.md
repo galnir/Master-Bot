@@ -44,4 +44,6 @@ Create a **config.json** with the following fields.
 
 # API Instructions
 
-Read the following page to find out where to get the APIs: [API Instructions](api-instructions.md)
+Read the following page to find out where to get the APIs
+
+ * [API Instructions](api-instructions.md)
