@@ -16,15 +16,15 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ### Method 1 - Using an Internal LavaLink Server
 
-To set up the bot using this method, read these instructuiions: [guides/Lavalink-internal](./guides/Lavalink-internal.md)
+To set up the bot using this method, read these instructuions: [Internal LavaLink - Setup Guide](./guides/Lavalink-internal.md)
 
 ### Method 2 - Using a Repl.it LavaLink Server
 
-To set up the bot using this method, read these instructuiions: [guides/Lavalink-replit](./guides/Lavalink-replit.md)
+To set up the bot using this method, read these instructuions: [Repl.it LavaLink - Setup Guide](./guides/Lavalink-replit.md)
 
 ### Method 3 - Using a public LavaLink Server
 
-To set up the bot using this method, read these instructuiions: [guides/Lavalink-public](./guides/Lavalink-public.md)
+To set up the bot using this method, read these instructuions: [Public LavaLink - Setup Guide](./guides/Lavalink-public.md)
 
 ### Running the bot
 
