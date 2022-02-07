@@ -19,6 +19,12 @@
 
 ## Installation
 
+Type the following command in 'terminal' or 'cmd' to clone the repository:
+
+```
+git clone https://github.com/galnir/Master-Bot.git
+```
+
 After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies.
 
 ## Setup
