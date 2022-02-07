@@ -22,7 +22,8 @@ export class ExtendedClient extends SapphireClient {
       connection: {
         host: data.lava_host,
         password: data.lava_pass,
-        port: 2333
+        port: data.lava_port,
+        secure: data.lava_secure
       }
     });
 
