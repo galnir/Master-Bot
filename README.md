@@ -2,6 +2,7 @@
 
 [![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
+[![image](https://img.shields.io/badge/discordjs-v13-orange)](https://www.npmjs.com/package/discord.js/)
 
 ## System dependencies
 
