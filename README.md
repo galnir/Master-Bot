@@ -41,8 +41,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_secure": true,
   "dashboard_license": "dbd-open-source-license",
   "domain_url": "http://<example.com>",
-  "dashboard_url": "http://<example.com>:3000":,
-  "redirect_url": "http://<example.com>:3000/discord/callback",
+  "dashboard_port": 3000,
   "bot_invite": "discord-bot-invite",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
