@@ -10,6 +10,7 @@ import { Queue } from './lib/queue/Queue';
 import type { Song } from './lib/queue/Song';
 import { TriviaQueue } from './lib/trivia/TriviaQueue';
 import { ExtendedClient } from './structures/ExtendedClient';
+require('./structures/Dashboard')
 
 load({
   client: {
