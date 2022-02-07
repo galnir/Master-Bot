@@ -41,7 +41,7 @@ To set up the bot using this method, follow this guide: [Repl.it LavaLink - Setu
 
 To set up the bot using this method, follow this guide: [Public LavaLink - Setup Guide](./guides/Lavalink-public.md)
 
-### Running the bot
+## Running the bot
 
 Once you have finished with all of the steps above you are ready to run the bot
 
