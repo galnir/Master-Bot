@@ -1,6 +1,4 @@
-## Commands
-
-### Music
+## Music Commands
 
 | Command               | Description                                                                                                               | Usage                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -22,7 +20,7 @@
 | /move                 | Move song to a desired position in queue                                                                                  | /move 8 1                                                         |
 | /queue-history              | Display the queue history                                                                                                 | /queue-history                                                          |
 
-### Other
+## Image Commands
 
 | Command           | Description                                                                                                                                                        | Usage                                                                        |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
@@ -33,17 +31,27 @@
 | /baka              | Get a random baka gif                                                                                                                                             | /baka                                                                         |
 | /cat              | Get a cute cat picture                                                                                                                                             | /cat                                                                         |
 | /dog              | Get a cute dog picture                                                                                                                                             | /dog                                                                         |
+
+## Fun Commands
+
+| Command           | Description                                                                                                                                                        | Usage                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                                                     |
 | /insult           | Generate an evil insult                                                                                                                                            | /insult                                                                      |
 | /chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | /chucknorris                                                                 |
 | /motivation       | Get a random motivational quote                                                                                                                                    | /motivation                                                                  |
-| /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                                                                  |
 | /random           | Generate a random number between two provided numbers                                                                                                              | /random 0 100                                                                |                                                       |                                                    
-| /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう                                                |
-| /about            | Info about me and the repo                                                                                                                                         | /about                                                                       |
 | /8ball            | Get the answer to anything!                                                                                                                                        | /8ball Is this bot awesome?                                                  |
 | /rps              | Rock Paper Scissors                                                                                                                                                | /rps                                                                         |
 | /bored            | Generate a random activity!                                                                                                                                        | /bored                                                                       |
 | /advice           | Get some advice!                                                                                                                                                   | /advice                                                                      |
 | /kanye            | Get a random Kanye quote                                                                                                                                           | /kanye                                                                       |
+
+## Info Commands
+
+| Command           | Description                                                                                                                                                        | Usage                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                                                                  |
+| /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう                                                |
+| /about            | Info about me and the repo                                                                                                                                         | /about                                                                       |
 | /urban dictionary | Get definitions from urban dictionary                                                                                                                              | /urban javascript                                                            |
