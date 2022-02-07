@@ -1,6 +1,6 @@
 # Setup
 
-Alternatively if you don't want to host your own LavaLinbk server you can just use the following config and run off of a free public instance of LavaLionk.
+Alternatively if you don't want to host your own LavaLink server you can just use the following config and run off of a free public instance of LavaLionk.
 
 Create a **config.json** with the following fields *[Note: You can swap out the LavaLink info in the config with any of the servers listed on this page: [lavalink.darrennathanael.com](https://lavalink.darrennathanael.com/)]*:
 
