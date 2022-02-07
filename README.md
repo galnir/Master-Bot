@@ -9,7 +9,7 @@
 - [Java 13](https://www.azul.com/downloads/?package=jdk#download-openjdk) (other versions have some issues with Lavalink)
 
 
-## Installation
+## Resources
 
 [Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
@@ -17,6 +17,7 @@
 
 [Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
 
+## Installation
 
 After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies.
 
