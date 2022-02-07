@@ -19,7 +19,7 @@
 
 ## Installation
 
-Type the following commands in 'terminal' or 'cmd' to clone the repository and install all of the dependencies:
+Type the following commands in terminal or command prompt to clone the repository and install all of the dependencies:
 
 ```sh
 $ git clone https://github.com/galnir/Master-Bot.git
@@ -27,7 +27,6 @@ $ cd Master-Bot
 $ npm i
 ```
 
-After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies
 ## Setup
 
 ### Method 1 - Using an Internal LavaLink Server
