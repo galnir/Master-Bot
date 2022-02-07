@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@discordjs/collection": "^0.5.0",
+    "discord-dashboard": "^2.2.22",
+    "dbd-dark-dashboard": "^1.4.3",
     "@lavaclient/spotify": "^3.0.0",
     "@lavalink/encoding": "^0.1.2",
     "@sapphire/decorators": "^4.2.0",
