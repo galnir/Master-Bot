@@ -8,7 +8,15 @@
 - [Node.js LTS or latest](https://nodejs.org/en/download/)
 - [Java 13](https://www.azul.com/downloads/?package=jdk#download-openjdk) (other versions have some issues with Lavalink)
 
-### Installing the Node.js dependencies
+
+## Installation
+
+[Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+
+[Installing Node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
+
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
+
 
 After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies.
 
