@@ -1,4 +1,4 @@
-* --- CONFIG FILE --- */
+/* --- CONFIG FILE --- */
 
 import * as data from '../config.json'
 
@@ -17,12 +17,12 @@ const DarkDashboard = require('dbd-dark-dashboard');
   DBD.Dashboard = DBD.UpdatedClass();
 
   const Dashboard = new DBD.Dashboard({
-    port: 3000,
+    port: data.dashboard_port,
     client: {
       id: data.client_id,
       secret: data.client_secret
     },
-    redirectUri: data.redirect_url,
+    redirectUri: `${data.domain_url}:${data.dashboard_port}`,
     domain: data.domain_url,
     bot: client,
     theme: DarkDashboard({
@@ -52,13 +52,13 @@ const DarkDashboard = require('dbd-dark-dashboard');
         information: {
           category: "Information",
           title: "Notice",
-          description: "Click 'ADD BOT' in the top left corner of this Dashboard to add the bot to your server.",
+          description: "You can see all of my commands in the Commands page.",
           footer: "Discord Bot Dashbaord"
         },
         feeds: {
           category: "Credits",
           title: "Contributors",
-          description: "Bacon Fixation, ModoSN, Natemo6348, kfirmeg, rafaeldamasceno, navidmafi, Kyoyo, MontejoJorge, malokdev, chimaerra",
+          description: `Bacon Fixation, ModoSN, Natemo6348, kfirmeg, rafaeldamasceno, navidmafi, Kyoyo, MontejoJorge, malokdev, chimaerra`,
           footer: "Discord Bot Dashbaord",
         },
       },
@@ -304,19 +304,15 @@ const DarkDashboard = require('dbd-dark-dashboard');
         categoryId: 'settings',
         categoryName: "Setings",
         categoryDescription: "Guild management"
-        //
-        // This sections is currently under construcion. 
-        // Once complete it will give a use to the Setup button in the Guild Management tab.
-        //
         // categoryOptionsList: [
         //   {
-        //     optionId: 'setup',
-        //     optionName: "Setup",
-        //     optionDescription: "",
+        //     optionId: 'discord',
+        //     optionName: "Discord",
+        //     optionDescription: "Add the bot to your guild!",
         //     optionType: DBD.formTypes.textarea('Queue', 0, 100, false, false),
-        //     getActualSet: async ({}) => {}
+        //     getActualSet: async ({ }) => {
+        //     }
         //   ],
-        //
       },
     ]
   });
