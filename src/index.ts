@@ -23,6 +23,11 @@ const client = new ExtendedClient();
 
 client.on('ready', () => {
   client.music.connect(client.user!.id);
+  client.user?.setActivity('/help' //Activity's name
+  ,{
+    type: 'WATCHING' //LISTENING, WATCHING, STREAMING, COMPETING, PLAYING
+  }); 
+  client.user?.setStatus('idle'); //online, idle, dnd, invisible
 });
 
 export type MessageChannel = TextChannel | ThreadChannel | NewsChannel | null;
