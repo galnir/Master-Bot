@@ -32,7 +32,7 @@ Once you have finished with all of the steps above and are ready to run the bot,
 
 ## Commands
 
-A Full list of commands can be found [here](commands.md)
+A list of commands can be found [here](commands.md).
 
 ## Contributing
 
