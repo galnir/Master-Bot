@@ -2,7 +2,7 @@
 
 [![image](https://repl.it/badge/github/DarrenOfficial/lavalink-replit)](https://replit.com/github/DarrenOfficial/lavalink-replit)
 
-Click the button above to create your lavalink server then click run.
+Click the button above to create your **LavaLink** server then click run.
 
 Create a **config.json** with the following fields:
 
