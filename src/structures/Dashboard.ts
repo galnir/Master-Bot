@@ -17,20 +17,20 @@ const DarkDashboard = require('dbd-dark-dashboard');
   DBD.Dashboard = DBD.UpdatedClass();
 
   const Dashboard = new DBD.Dashboard({
-    port: data.dashboard_port,
+    port: 3000,
     client: {
       id: data.client_id,
       secret: data.client_secret
     },
-    redirectUri: `${data.domain_url}:${data.dashboard_port}`,
-    domain: data.domain_url,
+    redirectUri: data.redirect_url,
+    domain: data.domain,
     bot: client,
     theme: DarkDashboard({
       information: {
         createdBy: "PhantomNimbi",
         websiteTitle: "Dashboard",
         websiteName: "Add Bot",
-        websiteUrl: data.invite_url,
+        websiteUrl: data.bit_invite,
         dashboardUrl: data.dashboard_url,
         acceptPrivacyPolicy: true,
         supporteMail: "support@developer-corner.xyz",
