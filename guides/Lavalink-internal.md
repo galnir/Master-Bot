@@ -1,12 +1,12 @@
 # Setup
 
-Create an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project and change the host address to `127.0.0.1`.
+Create an [application.yml](https://github.com/freyacodes/Lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project and change the host address to **127.0.0.1**
 
-Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+Download the latest **LavaLink** jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml)
 
-Open a separate terminal in the root directory and run `java -jar LavaLink.jar`
+Open a separate terminal in the root directory and run **java -jar LavaLink.jar**
 
-Create a `config.json` with the following fields:
+Create a **config.json** with the following fields
 
 ## Minimal
 
@@ -44,4 +44,6 @@ Create a `config.json` with the following fields:
 ```
 # API Instructions
 
-Read the following page to find out where to get the APIs: [API Instructions](api-instructions.md)
+Read the following page to find out where to get the APIs
+
+ * [API Instructions](api-instructions.md)
