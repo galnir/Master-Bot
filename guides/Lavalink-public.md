@@ -39,3 +39,18 @@ Create a **config.json** with the following fields *[Note: You can swap out the 
 }
 ```
 
+## Resources
+
+[Getting a Tenor API key](https://tenor.com/developer/keyregistration)
+
+[Getting a NewsAPI API key](https://newsapi.org/)
+
+[Getting a Genius API key](https://genius.com/api-clients/new)
+
+[Getting a rawg API key](https://rawg.io/apidocs)
+
+[Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
+
+[Installing Node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
+
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
