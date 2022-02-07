@@ -32,12 +32,22 @@ This is the minimum amount of settings that need to be set for the core part (mu
 
 ```json
 {
-  "client_id": "the-bots-discord-id",
+  "client_id": "the-bots-client-id",
+  "client_secret": "the-bots-client-secret",
   "token": "Your-Bot-Token",
   "lava_host": "127.0.0.1",
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": true,
+  "dbdLicense": "dbd-open-source-license",
+  "iconUrl": "website-icon-url",
+  "faviconUrl;": "website-favicon-url",
+  "botInviteUrl": "discord-bot-invite",
+  "dbdDomain": "http://<example.com>",
+  "dashboardUrl": "http://<example.com>:3000":,
+  "discordServerInvite": "https://discord.gg/#INVITE_CODE#"
+  "supportEmail": "support-email",
+  "redirect_url": "http://<example.com>:3000/discord/callback",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
 }
