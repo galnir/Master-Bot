@@ -52,13 +52,13 @@ const DarkDashboard = require('dbd-dark-dashboard');
         information: {
           category: "Information",
           title: "Notice",
-          description: "You can see all of my commands in the Commands page.",
+          description: "Click 'ADD BOT' in the top left corner of this Dashboard to add the bot to your server.",
           footer: "Discord Bot Dashbaord"
         },
         feeds: {
           category: "Credits",
           title: "Contributors",
-          description: `Bacon Fixation, ModoSN, Natemo6348, kfirmeg, rafaeldamasceno, navidmafi, Kyoyo, MontejoJorge, malokdev, chimaerra`,
+          description: "Bacon Fixation, ModoSN, Natemo6348, kfirmeg, rafaeldamasceno, navidmafi, Kyoyo, MontejoJorge, malokdev, chimaerra",
           footer: "Discord Bot Dashbaord",
         },
       },
