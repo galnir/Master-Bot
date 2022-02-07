@@ -43,7 +43,18 @@ To set up the bot using this method, follow this guide: [Public LavaLink - Setup
 
 ### Running the bot
 
-Once you have finished with all of the steps above and are ready to run the bot, simply type `npm run start` to start the bot.
+Once you have finished with all of the steps above and are ready to run the bot type the following command(s)
+
+To run the bot in production mode type:
+
+```sh
+$ npm run start
+```
+
+To run the bot in debugging mode type:
+```sh
+$ npm run dev
+```
 
 ## Commands
 
