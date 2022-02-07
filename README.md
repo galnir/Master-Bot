@@ -22,9 +22,13 @@ To set up the bot using this method, read these instructuiions: [guides/Lavalink
 
 To set up the bot using this method, read these instructuiions: [guides/Lavalink-replit](./guides/Lavalink-replit.md)
 
+### Method 3 - Using a public LavaLink Server
+
+To set up the bot using this method, read these instructuiions: [guides/Lavalink-public](./guides/Lavalink-public.md)
+
 ### Running the bot
 
-Once you have finished with all of the steps above and are ready to run the bot, simply type `npm run dev` to start the bot.
+Once you have finished with all of the steps above and are ready to run the bot, simply type `npm run start` to start the bot.
 
 ## Commands
 
