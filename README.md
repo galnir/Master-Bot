@@ -38,11 +38,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_host": "127.0.0.1",
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
-  "lava_secure": true,
-  "dbd_license": "license-key",
-  "redirect_url": "http://<example.com>:3000/discord/callback",
-  "dashboard_url": "http://<example.com>:3000",
-  "domain": "http://<example.com>",
+  "lava_secure": false,
   "invite_url": "discord-bot-invite",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
@@ -148,6 +144,8 @@ Anyone is welcome to suggest new features and improve code quality!
 [Bacon Fixation](https://github.com/Bacon-Fixation) - 'connect4', 'tic-tac-toe', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
+
+[PhantomNimbi](https://github.com/PhantomNimbi) - bring back gif commands, lavalink config tweaks
 
 [Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
 
