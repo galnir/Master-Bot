@@ -35,7 +35,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "client_id": "the-bots-client-id",
   "client_secret": "the-bots-client-secret",
   "token": "Your-Bot-Token",
-  "lava_host": "127.0.0.1",
+  "lava_host": "0.0.0.0",
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": false,
