@@ -10,7 +10,7 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'gif',
-  description: 'Replies with a random gif gif!'
+  description: 'Replies with a random gif!'
 })
 export class GifCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
@@ -24,7 +24,7 @@ export class GifCommand extends Command {
       .catch(async error => {
         console.error(error);
         return await interaction.reply(
-          'Something went wrong when trying to fetch a gif gif :('
+          'Something went wrong when trying to fetch a gif :('
         );
       });
   }
