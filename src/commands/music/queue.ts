@@ -47,14 +47,6 @@ export class QueueCommand extends Command {
         iconURL: user.displayAvatarURL()
       });
 
-    const message = {
-      author: {
-        id: interaction.user.id,
-        bot: interaction.user.bot
-      },
-      channel: interaction.channel
-    };
-
     await interaction.reply('Queue generated');
 
     new PaginatedFieldMessageEmbed()
@@ -66,7 +58,7 @@ export class QueueCommand extends Command {
       .setItemsPerPage(5)
       .make()
       // @ts-ignore
-      .run(message);
+      .run(interaction);
   }
 
   public override registerApplicationCommands(
