@@ -86,7 +86,7 @@ A full list of commands for use with Master Bot
 | /move                 | Move song to a desired position in queue                                                                                  | /move 8 1                                                         |
 | /queue-history              | Display the queue history                                                                                                 | /queue-history                                                          |
 
-## Other
+## Gifs 
 
 | Command           | Description                                                                                                                                                        | Usage                                                                        |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
@@ -96,6 +96,16 @@ A full list of commands for use with Master Bot
 | /anime              | Get a random anime gif                                                                                                                                             | /anime                                                                         |
 | /baka              | Get a random baka gif                                                                                                                                             | /baka                                                                         |
 | /cat              | Get a cute cat picture                                                                                                                                             | /cat                                                                         |
+| /hug              | Get a random hug gif                                                                         | /hug                                                                         |
+| /slap              | Get a random slap gif                                                                         | /slap                                                                         |
+| /pat              | Get a random pat gif                                                                         | /pat                                                                         |
+| /triggered              | Get a random triggered gif                                                                         | /triggered                                                                         |
+| /amongus              | Get a random Among Us gif                                                                         | /amongus                                                                         |
+
+## Other
+
+| Command           | Description                                                                                                                                                        | Usage                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | /dog              | Get a cute dog picture                                                                                                                                             | /dog                                                                         |
 | /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                                                     |
 | /insult           | Generate an evil insult                                                                                                                                            | /insult                                                                      |
