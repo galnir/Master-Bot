@@ -1,7 +1,7 @@
 import { mayStartNext } from '@lavaclient/types';
 import type { Player } from 'lavaclient';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import type { MessageChannel } from '../..';
+import type { MessageChannel } from '../../..';
 import type { Addable } from '../queue/Queue';
 import { Song } from '../queue/Song';
 import { container, SapphireClient } from '@sapphire/framework';

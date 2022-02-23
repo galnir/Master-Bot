@@ -12,7 +12,7 @@ import {
 } from 'discord.js';
 import { container } from '@sapphire/framework';
 import fs from 'fs';
-import { getRandom } from '../../lib/trivia/utilFunctions';
+import { getRandom } from '../../lib/utils/trivia/utilFunctions';
 import type { MessageChannel } from '../..';
 
 @ApplyOptions<CommandOptions>({

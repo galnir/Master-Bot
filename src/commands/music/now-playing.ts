@@ -6,8 +6,8 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { NowPlayingEmbed } from '../../lib/music/NowPlayingEmbed';
-import type { Song } from '../../lib/queue/Song';
+import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
+import type { Song } from '../../lib/utils/queue/Song';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',

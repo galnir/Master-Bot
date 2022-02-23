@@ -12,7 +12,7 @@ import {
 } from 'lavaclient';
 import { mayStartNext, Track } from '@lavaclient/types';
 import { TypedEmitter } from 'tiny-typed-emitter';
-import type { MessageChannel } from '../..';
+import type { MessageChannel } from '../../..';
 
 export enum LoopType {
   None,

@@ -6,8 +6,8 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Song } from '../../lib/queue/Song';
-import { LoopType } from '../../lib/queue/Queue';
+import type { Song } from '../../lib/utils/queue/Song';
+import { LoopType } from '../../lib/utils/queue/Queue';
 
 @ApplyOptions<CommandOptions>({
   name: 'skip',
