@@ -6,9 +6,8 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Addable } from '../../lib/utils/queue/Queue';
-import { SpotifyItemType } from '@lavaclient/spotify';
 import type { MessageChannel } from '../..';
+import searchSong from '../../lib/utils/music/searchSong';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -30,59 +29,9 @@ export class PlayCommand extends Command {
       interaction.user.id
     )?.channel;
 
-    let tracks: Addable[] = [];
-    let displayMessage = '';
-
-    if (client.music.spotify.isSpotifyUrl(query)) {
-      const item = await client.music.spotify.load(query);
-      switch (item?.type) {
-        case SpotifyItemType.Track:
-          const track = await item.resolveYoutubeTrack();
-          tracks = [track];
-          displayMessage = `Queued track [**${item.name}**](${query}).`;
-          break;
-        case SpotifyItemType.Artist:
-          tracks = await item.resolveYoutubeTracks();
-          displayMessage = `Queued the **Top ${tracks.length} tracks** for [**${item.name}**](${query}).`;
-          break;
-        case SpotifyItemType.Album:
-        case SpotifyItemType.Playlist:
-          tracks = await item.resolveYoutubeTracks();
-          displayMessage = `Queued **${
-            tracks.length
-          } tracks** from ${SpotifyItemType[item.type].toLowerCase()} [**${
-            item.name
-          }**](${query}).`;
-          break;
-        default:
-          return interaction.followUp({
-            content: "Couldn't find what you were looking for :(",
-            ephemeral: true
-          });
-      }
-    } else {
-      const results = await client.music.rest.loadTracks(
-        /^https?:\/\//.test(query) ? query : `ytsearch:${query}`
-      );
-
-      switch (results.loadType) {
-        case 'LOAD_FAILED':
-        case 'NO_MATCHES':
-          return interaction.followUp({
-            content: "Couldn't find what you were looking for :(`",
-            ephemeral: true
-          });
-        case 'PLAYLIST_LOADED':
-          tracks = results.tracks;
-          displayMessage = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`;
-          break;
-        case 'TRACK_LOADED':
-        case 'SEARCH_RESULT':
-          const [track] = results.tracks;
-          tracks = [track];
-          displayMessage = `Queued [**${track.info.title}**](${track.info.uri})`;
-          break;
-      }
+    const trackTuple = await searchSong(query);
+    if (!trackTuple[1].length) {
+      return await interaction.followUp({ content: trackTuple[0] as string });
     }
 
     let player = client.music.players.get(interaction.guild!.id);
@@ -95,9 +44,9 @@ export class PlayCommand extends Command {
 
     const started = player.playing || player.paused;
 
-    await interaction.followUp(displayMessage);
+    await interaction.followUp({ content: trackTuple[0] as string });
 
-    player.queue.add(tracks, { requester: interaction.user.id });
+    player.queue.add(trackTuple[1], { requester: interaction.user.id });
     if (!started) {
       await player.queue.start();
     }

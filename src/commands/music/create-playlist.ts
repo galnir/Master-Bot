@@ -6,7 +6,6 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-//import { container } from '@sapphire/framework';
 
 export interface SavedPlaylist {
   name: String;
