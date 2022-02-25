@@ -15,7 +15,7 @@ export interface SavedPlaylist {
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
   description: 'Create a custom playlist that you can play anytime',
-  preconditions: ['inVoiceChannel', 'validatePlaylistName']
+  preconditions: ['inVoiceChannel', 'userInDB', 'playlistNotDuplicate']
 })
 export class CreatePlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -24,14 +24,17 @@ export class CreatePlaylistCommand extends Command {
     const interactionMember = interaction.member as GuildMember;
     try {
       const member = await Member.findOne({ memberId: interactionMember.id });
+      const savedPlaylists = member.savedPlaylists;
+
+      savedPlaylists.push({
+        name: playlistName,
+        urls: []
+      });
 
       await Member.updateOne(
         { memberId: interactionMember.id },
         {
-          savedPlaylists: member.savedPlaylists.push({
-            name: playlistName,
-            urls: []
-          })
+          savedPlaylists
         }
       );
 

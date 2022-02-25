@@ -2,7 +2,9 @@ import { container } from '@sapphire/framework';
 import type { Addable } from '../queue/Queue';
 import { SpotifyItemType } from '@lavaclient/spotify';
 
-export default async function searchSong(query: string) {
+export default async function searchSong(
+  query: string
+): Promise<[string, Addable[]]> {
   const { client } = container;
   let tracks: Addable[] = [];
   let displayMessage = '';

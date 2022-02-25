@@ -6,25 +6,17 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import Member from '../lib/models/Member';
-import addMemberToDB from '../lib/utils/db/addMemberToDB';
 
 @ApplyOptions<PreconditionOptions>({
-  name: 'validatePlaylistName'
+  name: 'playlistNotDuplicate'
 })
-export class ValidatePlaylistName extends Precondition {
+export class PlaylistNotDuplicate extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
     const playlistName = interaction.options.getString('playlist-name', true);
 
     const guildMember = interaction.member as GuildMember;
-
-    const exists = await Member.exists({ memberId: guildMember.id });
-
-    if (!exists) {
-      await addMemberToDB(guildMember);
-      return this.ok();
-    }
 
     const member = await Member.findOne({ memberId: guildMember.id });
     let found = false;
@@ -45,6 +37,6 @@ export class ValidatePlaylistName extends Precondition {
 
 declare module '@sapphire/framework' {
   export interface Preconditions {
-    validatePlaylistName: never;
+    playlistNotDuplicate: never;
   }
 }
