@@ -62,7 +62,7 @@ export class SaveToPlaylistCommand extends Command {
       options: [
         {
           name: 'playlist-name',
-          description: 'What is the name of the playlist you want to create?',
+          description: 'What is the name of the playlist you want to save to?',
           type: 'STRING',
           required: true
         },
