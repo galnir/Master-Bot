@@ -9,8 +9,13 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 
 export interface SavedPlaylist {
   name: String;
-  urls: String[];
+  urls: UrlObject[];
 }
+
+export type UrlObject = {
+  title: String;
+  url: String;
+};
 
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
