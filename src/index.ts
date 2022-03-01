@@ -24,7 +24,7 @@ const client = new ExtendedClient();
 
 client.on('ready', async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/test');
+    await mongoose.connect('mongodb://localhost:27017/members');
   } catch (err) {
     console.error('Failed to connect to mongoDB');
   }
