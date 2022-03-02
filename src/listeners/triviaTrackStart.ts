@@ -3,12 +3,12 @@ import { Listener, ListenerOptions } from '@sapphire/framework';
 //import { container } from '@sapphire/framework';
 import type { Snowflake } from 'discord-api-types';
 import { MessageCollector, MessageEmbed } from 'discord.js';
-import type { TriviaQueue } from '../lib/trivia/TriviaQueue';
+import type { TriviaQueue } from '../lib/utils/trivia/TriviaQueue';
 import {
   capitalizeWords,
   getLeaderBoard,
   normalizeValue
-} from '../lib/trivia/utilFunctions';
+} from '../lib/utils/trivia/utilFunctions';
 
 @ApplyOptions<ListenerOptions>({
   event: 'triviaTrackStart'

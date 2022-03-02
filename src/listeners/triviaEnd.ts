@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
 import { MessageEmbed } from 'discord.js';
-import type { TriviaQueue } from '../lib/trivia/TriviaQueue';
-import { getLeaderBoard } from '../lib/trivia/utilFunctions';
+import type { TriviaQueue } from '../lib/utils/trivia/TriviaQueue';
+import { getLeaderBoard } from '../lib/utils/trivia/utilFunctions';
 
 @ApplyOptions<ListenerOptions>({
   event: 'triviaEnd'

@@ -27,6 +27,7 @@
     "genius-discord-lyrics": "1.0.5",
     "iso-639-1": "^2.1.12",
     "lavaclient": "4.0.8-rc.2",
+    "mongoose": "^6.2.3",
     "string-progressbar": "^1.0.4",
     "tiny-typed-emitter": "^2.1.0"
   },
