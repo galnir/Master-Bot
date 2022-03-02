@@ -24,8 +24,10 @@ const client = new ExtendedClient();
 
 client.on('ready', async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/members');
+    await mongoose.connect(encodeURI(data.mongo_URI));
+    console.log('mongo is ready');
   } catch (err) {
+    console.error(err);
     console.error('Failed to connect to mongoDB');
   }
   client.music.connect(client.user!.id);

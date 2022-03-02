@@ -11,7 +11,7 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 @ApplyOptions<CommandOptions>({
   name: 'display-playlist',
   description: 'Display a saved playlist',
-  preconditions: ['inVoiceChannel', 'userInDB', 'playlistExists']
+  preconditions: ['userInDB', 'playlistExists']
 })
 export class DisplayPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

@@ -10,7 +10,7 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 @ApplyOptions<CommandOptions>({
   name: 'remove-from-playlist',
   description: 'Remove a song from a saved playlist',
-  preconditions: ['inVoiceChannel', 'userInDB', 'playlistExists']
+  preconditions: ['userInDB', 'playlistExists']
 })
 export class RemoveFromPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

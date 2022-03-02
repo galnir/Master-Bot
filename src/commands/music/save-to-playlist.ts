@@ -13,7 +13,7 @@ import type { Track } from '@lavaclient/types';
 @ApplyOptions<CommandOptions>({
   name: 'save-to-playlist',
   description: 'Save a song or a playlist to a custom playlist',
-  preconditions: ['inVoiceChannel', 'userInDB', 'playlistExists']
+  preconditions: ['userInDB', 'playlistExists']
 })
 export class SaveToPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

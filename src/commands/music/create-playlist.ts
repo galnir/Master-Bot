@@ -20,7 +20,7 @@ export type UrlObject = {
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
   description: 'Create a custom playlist that you can play anytime',
-  preconditions: ['inVoiceChannel', 'userInDB', 'playlistNotDuplicate']
+  preconditions: ['userInDB', 'playlistNotDuplicate']
 })
 export class CreatePlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
