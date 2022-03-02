@@ -14,9 +14,14 @@ After cloning the repository, navigate to the project's folder and run the comma
 
 ## Setup
 
-Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) in the root directory of the project.
+Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file in the root directory of the project.
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+
+### Mongo
+
+I recommend using Mongo Atlas over hosting MongoDB locally because it's really easy to setup.
+Follow their [getting started](https://docs.atlas.mongodb.com/getting-started/) guide until part 5. After you're done creating the DB, click on 'Connect' and then on 'Connect to your application'. Copy the connection string and paste it to your config.json's 'mongo_URI' value, and make sure to replace <password> with the password you setup for your DB. Additionaly make sure to add the IP of the machine you're running the bot on to the whitelist if you enabled it.
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
@@ -39,6 +44,7 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": false,
+  "mongo_URI": "mongodb uri"
   "invite_url": "discord-bot-invite",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
@@ -85,6 +91,12 @@ A full list of commands for use with Master Bot
 | /now-playing          | Display the current playing song with a playback bar                                                                      | /now-playing                                                      |
 | /move                 | Move song to a desired position in queue                                                                                  | /move 8 1                                                         |
 | /queue-history              | Display the queue history                                                                                                 | /queue-history                                                          |
+| /create-playlist              | Create a custom playlist                                                                                                 | /create-playlist 'playlistname'                                                          |
+| /save-to-playlist              | Add a song or playlist to a custom playlist                                                                                                 | /save-to-playlist 'playlistname' 'yt or spotify url'                                                          |
+| /remove-from-playlist              | Remove a track from a custom playlist                                                                                                 | /remove-from-playlist 'playlistname' 'track location'                                                          |
+| /my-playlists              | Display your custom playlists                                                                                                 | /my-playlists                                                          |
+| /display-playlist              | Display a custom playlist                                                                                                 | /display-playlist 'playlistname'                                                          |
+| /delete-playlist              | remove a custom playlist                                                                                                 | /delete-playlist 'playlistname'                                                          |
 
 ## Other
 
