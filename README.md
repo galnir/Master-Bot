@@ -98,7 +98,7 @@ A full list of commands for use with Master Bot
 | /display-playlist              | Display a custom playlist                                                                                                 | /display-playlist 'playlistname'                                                          |
 | /delete-playlist              | remove a custom playlist                                                                                                 | /delete-playlist 'playlistname'                                                          |
 
-## Other
+## Gifs 
 
 | Command           | Description                                                                                                                                                        | Usage                                                                        |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
@@ -108,7 +108,17 @@ A full list of commands for use with Master Bot
 | /anime              | Get a random anime gif                                                                                                                                             | /anime                                                                         |
 | /baka              | Get a random baka gif                                                                                                                                             | /baka                                                                         |
 | /cat              | Get a cute cat picture                                                                                                                                             | /cat                                                                         |
-| /dog              | Get a cute dog picture                                                                                                                                             | /dog                                                                         |
+| /doggo              | Get a cute dog picture                                                                                                                                             | /doggo                                                                         |
+| /hug              | Get a random hug gif                                                                         | /hug                                                                         |
+| /slap              | Get a random slap gif                                                                         | /slap                                                                         |
+| /pat              | Get a random pat gif                                                                         | /pat                                                                         |
+| /triggered              | Get a random triggered gif                                                                         | /triggered                                                                         |
+| /amongus              | Get a random Among Us gif                                                                         | /amongus                                                                         |
+
+## Other
+
+| Command           | Description                                                                                                                                                        | Usage                                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                                                     |
 | /insult           | Generate an evil insult                                                                                                                                            | /insult                                                                      |
 | /chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | /chucknorris                                                                 |
