@@ -54,16 +54,10 @@ export class LyricsCommand extends Command {
           });
         }
       }
-      const message = {
-        author: {
-          id: interaction.user.id,
-          bot: interaction.user.bot
-        },
-        channel: interaction.channel
-      };
+
       await interaction.followUp('Lyrics generated');
       // @ts-ignore
-      return paginatedLyrics.run(message);
+      return paginatedLyrics.run(interaction);
     } catch (e) {
       console.log(e);
       return interaction.followUp(
