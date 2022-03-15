@@ -4,7 +4,7 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import type { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'about',
