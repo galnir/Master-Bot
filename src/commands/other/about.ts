@@ -4,17 +4,20 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'about',
-  description: 'Display info on the bot and its creator!'
+  description: 'Display info about the bot!'
 })
 export class AboutCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
-    return await interaction.reply(
-      'Made by @hyperzone#1185 with :heart: code is available on GitHub https://github.com/galnir/Master-Bot'
-    );
+    const embed = new MessageEmbed()
+      .setTitle('About')
+      .setDescription('A Discord bot with slash commands, playlist support, Spotify, music quiz, saved playlists, lyrics, gifs and more.\n\n :white_small_square: [Commands](https://github.com/galnir/Master-Bot#commands)\n :white_small_square: [Contributors](https://github.com/galnir/Master-Bot#contributors-%EF%B8%8F)')
+      .setColor('#0x00ae86');
+                   
+    return await interaction.reply({ embeds: [embed] });
   }
 
   public override registerApplicationCommands(
