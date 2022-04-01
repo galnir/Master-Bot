@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -7,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'display-playlist',
@@ -19,12 +19,20 @@ export class DisplayPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    const queryObject = await Member.findOne({
-      memberId: interactionMember.id
-    }).select({ savedPlaylists: { $elemMatch: { name: playlistName } } });
+    const playlist = await prisma.playlist.findFirst({
+      where: {
+        userId: interactionMember.id,
+        name: playlistName
+      },
+      select: {
+        songs: true
+      }
+    });
 
-    if (!queryObject.savedPlaylists[0].urls.length) {
-      return interaction.reply(`**${playlistName}** is empty!`);
+    if (!playlist) {
+      return await interaction.reply(
+        'Something went wrong! Please try again soon'
+      );
     }
 
     const baseEmbed = new MessageEmbed()
@@ -42,8 +50,8 @@ export class DisplayPlaylistCommand extends Command {
       .setTitleField('Custom Playlist')
       // @ts-ignore
       .setTemplate({ baseEmbed })
-      .setItems(queryObject.savedPlaylists[0].urls)
-      .formatItems((item: any) => `[${item.title}](${item.url})`)
+      .setItems(playlist.songs)
+      .formatItems((item: any) => `[${item.name}](${item.url})`)
       .setItemsPerPage(5)
       .make()
       // @ts-ignore
