@@ -24,7 +24,7 @@ model Song {
 model Playlist {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  name      String @unique
+  name      String
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   songs     Song[]
