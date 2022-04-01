@@ -18,7 +18,7 @@ model Song {
   name       String
   url        String
   playlistId Int
-  playlist   Playlist @relation(fields: [playlistId], references: [id])
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
 
 model Playlist {
