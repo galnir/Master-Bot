@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -7,7 +6,7 @@ import {
 } from '@sapphire/framework';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
-import type { SavedPlaylist } from './create-playlist';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'my-playlists',
@@ -18,19 +17,6 @@ export class MyPlaylistsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const interactionMember = interaction.member as GuildMember;
 
-    const response = await Member.findOne(
-      { memberId: interactionMember.id },
-      'savedPlaylists.name'
-    );
-
-    if (!response.savedPlaylists.length) {
-      return await interaction.reply('You have no saved playlists!');
-    }
-
-    const playlistNames = response.savedPlaylists.map(
-      (playlist: SavedPlaylist) => playlist.name
-    );
-
     const baseEmbed = new MessageEmbed()
       .setTitle('Music Queue')
       .setColor('#9096e6')
@@ -39,13 +25,30 @@ export class MyPlaylistsCommand extends Command {
         iconURL: interactionMember.user.displayAvatarURL()
       });
 
+    const playlists = await prisma.playlist.findMany({
+      where: {
+        userId: interactionMember.id
+      },
+      select: {
+        name: true
+      },
+      orderBy: {
+        id: 'asc'
+      }
+    });
+
+    if (!playlists.length) {
+      return await interaction.reply('You have no custom playlists');
+    }
+
     await interaction.reply('Your playlists:');
 
     new PaginatedFieldMessageEmbed()
       .setTitleField('Custom Playlist')
       // @ts-ignore
       .setTemplate({ baseEmbed })
-      .setItems(playlistNames)
+      .setItems(playlists)
+      .formatItems((playlist: any) => playlist.name)
       .setItemsPerPage(5)
       .make()
       // @ts-ignore
