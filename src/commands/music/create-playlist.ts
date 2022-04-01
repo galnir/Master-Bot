@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,16 +5,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-
-export interface SavedPlaylist {
-  name: String;
-  urls: UrlObject[];
-}
-
-export type UrlObject = {
-  title: String;
-  url: String;
-};
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
@@ -27,26 +17,25 @@ export class CreatePlaylistCommand extends Command {
     const playlistName = interaction.options.getString('playlist-name', true);
 
     const interactionMember = interaction.member as GuildMember;
+
+    let playlist;
+
     try {
-      const member = await Member.findOne({ memberId: interactionMember.id });
-      const savedPlaylists = member.savedPlaylists;
-
-      savedPlaylists.push({
-        name: playlistName,
-        urls: []
-      });
-
-      await Member.updateOne(
-        { memberId: interactionMember.id },
-        {
-          savedPlaylists
+      playlist = await prisma.playlist.create({
+        data: {
+          name: playlistName,
+          user: { connect: { id: interactionMember.id } }
         }
-      );
-
-      return interaction.reply(`Created a playlist named **${playlistName}**`);
-    } catch (err) {
-      console.error(err);
+      });
+    } catch (error) {
+      await interaction.reply({
+        content: `You already have a playlist named **${playlistName}**`
+      });
+      return;
     }
+
+    await interaction.reply(`Created a playlist named **${playlist.name}**`);
+    return;
   }
 
   public override registerApplicationCommands(
