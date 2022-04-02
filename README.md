@@ -20,14 +20,15 @@ Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lav
 
 ### PostgreSQL
 #### Windows
-Download from [the official site](https://www.postgresql.org/download/)
+Download from [the official site](https://www.postgresql.org/download/).
 
 #### Linux
-Either from the official site or follow the tutorial for your [distro](https://www.digitalocean.com/community/tutorial_collections/how-to-install-and-use-postgresql)
+Either from the official site or follow the tutorial for your [distro](https://www.digitalocean.com/community/tutorial_collections/how-to-install-and-use-postgresql).
 
 #### MacOS
-Get [brew](https://brew.sh)
-Then enter 'brew install postgresql'
+Get [brew](https://brew.sh), then enter 'brew install postgresql'.
+
+Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
 
 ### Lavalink startup
 
