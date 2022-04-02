@@ -18,10 +18,18 @@ Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/L
 
 Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
 
-### Mongo
+### PostgreSQL
+#### Windows
+Download from [the official site](https://www.postgresql.org/download/)
 
-I recommend using Mongo Atlas over hosting MongoDB locally because it's really easy to setup.
-Follow their [getting started](https://docs.atlas.mongodb.com/getting-started/) guide until part 5. After you're done creating the DB, click on 'Connect' and then on 'Connect to your application'. Copy the connection string and paste it to your config.json's 'mongo_URI' value, and make sure to replace <password> with the password you setup for your DB. Additionaly make sure to add the IP of the machine you're running the bot on to the whitelist if you enabled it.
+#### Linux
+Either from the official site or follow the tutorial for your [distro](https://www.digitalocean.com/community/tutorial_collections/how-to-install-and-use-postgresql)
+
+#### MacOS
+Get [brew](https://brew.sh)
+Then enter 'brew install postgresql'
+
+### Lavalink startup
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
 
