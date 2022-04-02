@@ -30,6 +30,9 @@ Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 
 Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
 
+## Important
+After you're done installing all the dependencies and entering all tokens and env variables, run ```npx prisma generate```
+
 ### Lavalink startup
 
 **Before running ```node index.js```, make sure to open a separate terminal in the root directory and run ```java -jar LavaLink.jar```**
@@ -53,7 +56,6 @@ This is the minimum amount of settings that need to be set for the core part (mu
   "lava_pass": "youshallnotpass",
   "lava_port": 2333,
   "lava_secure": false,
-  "mongo_URI": "mongodb uri"
   "invite_url": "discord-bot-invite",
   "spotify_client_id": "get-it-from-spotify-dev",
   "spotify_client_secret": "get-it-from-spotify-dev"
