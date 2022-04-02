@@ -17,6 +17,7 @@ import prisma from '../../lib/prisma';
 })
 export class SaveToPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
+    await interaction.deferReply();
     const playlistName = interaction.options.getString('playlist-name', true);
     const url = interaction.options.getString('url', true);
 
@@ -34,7 +35,7 @@ export class SaveToPlaylistCommand extends Command {
 
     const songTuple = await searchSong(url);
     if (!songTuple[1].length) {
-      return await interaction.reply(songTuple[0]);
+      return await interaction.followUp(songTuple[0]);
     }
 
     const songArray = songTuple[1] as Addable[];
@@ -54,9 +55,9 @@ export class SaveToPlaylistCommand extends Command {
         data: songsToAdd
       });
 
-      return interaction.reply(`Added tracks to **${playlistName}**`);
+      return await interaction.followUp(`Added tracks to **${playlistName}**`);
     } catch (error) {
-      return interaction.reply('Something went wrong!');
+      return await interaction.followUp('Something went wrong!');
     }
   }
 
