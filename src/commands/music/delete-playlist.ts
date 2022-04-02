@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,6 +5,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'delete-playlist',
@@ -18,18 +18,22 @@ export class DeletePlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    try {
-      await Member.updateOne(
-        {
-          memberId: interactionMember.id
-        },
-        { $pull: { savedPlaylists: { name: playlistName } } }
-      );
+    let deleted;
 
-      return interaction.reply(`Deleted **${playlistName}**`);
+    try {
+      deleted = await prisma.playlist.deleteMany({
+        where: {
+          userId: interactionMember.id,
+          name: playlistName
+        }
+      });
     } catch (error) {
       console.error(error);
       return interaction.reply('Something went wrong! Please try again later');
+    }
+
+    if (deleted) {
+      return await interaction.reply(`Deleted **${playlistName}**`);
     }
   }
 

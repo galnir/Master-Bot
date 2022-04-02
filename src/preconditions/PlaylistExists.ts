@@ -5,8 +5,7 @@ import {
   PreconditionOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-import Member from '../lib/models/Member';
-import type { SavedPlaylist } from '../commands/music/create-playlist';
+import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'playlistExists'
@@ -19,21 +18,18 @@ export class PlaylistExists extends Precondition {
 
     const guildMember = interaction.member as GuildMember;
 
-    const member = await Member.findOne({ memberId: guildMember.id });
-
-    const savedPlaylists = member.savedPlaylists;
-
-    if (
-      savedPlaylists.some(
-        (element: SavedPlaylist) => element.name === playlistName
-      )
-    ) {
-      return this.ok();
-    }
-
-    return this.error({
-      message: `You have no playlist named **${playlistName}**`
+    const playlist = await prisma.playlist.findFirst({
+      where: {
+        name: playlistName,
+        userId: guildMember.id
+      }
     });
+
+    return playlist
+      ? this.ok()
+      : this.error({
+          message: `You have no playlist named **${playlistName}**`
+        });
   }
 }
 

@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -9,6 +8,7 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Addable } from '../../lib/utils/queue/Queue';
 import type { Track } from '@lavaclient/types';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'save-to-playlist',
@@ -22,33 +22,40 @@ export class SaveToPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
+    const playlistId = await prisma.playlist.findFirst({
+      where: {
+        userId: interactionMember.id,
+        name: playlistName
+      },
+      select: {
+        id: true
+      }
+    });
+
     const songTuple = await searchSong(url);
+    if (!songTuple[1].length) {
+      return await interaction.reply(songTuple[0]);
+    }
+
     const songArray = songTuple[1] as Addable[];
     const songsToAdd = [];
 
     for (let i = 0; i < songArray.length; i++) {
       const song = songArray[i] as Track;
       songsToAdd.push({
-        title: song.info.title,
-        url: song.info.uri
+        name: song.info.title,
+        url: song.info.uri,
+        playlistId: +playlistId!.id
       });
     }
+
     try {
-      await Member.updateOne(
-        {
-          memberId: interactionMember.id,
-          'savedPlaylists.name': playlistName
-        },
-        {
-          $push: {
-            'savedPlaylists.$.urls': {
-              $each: songsToAdd
-            }
-          }
-        }
-      );
+      await prisma.song.createMany({
+        data: songsToAdd
+      });
+
       return interaction.reply(`Added tracks to **${playlistName}**`);
-    } catch (err) {
+    } catch (error) {
       return interaction.reply('Something went wrong!');
     }
   }

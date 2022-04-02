@@ -10,7 +10,6 @@ import { Queue } from './lib/utils/queue/Queue';
 import type { Song } from './lib/utils/queue/Song';
 import { TriviaQueue } from './lib/utils/trivia/TriviaQueue';
 import { ExtendedClient } from './structures/ExtendedClient';
-import mongoose from 'mongoose';
 
 load({
   client: {
@@ -23,13 +22,6 @@ load({
 const client = new ExtendedClient();
 
 client.on('ready', async () => {
-  try {
-    await mongoose.connect(encodeURI(data.mongo_URI));
-    console.log('mongo is ready');
-  } catch (err) {
-    console.error(err);
-    console.error('Failed to connect to mongoDB');
-  }
   client.music.connect(client.user!.id);
   client.user?.setActivity('/', {
     type: 'WATCHING'

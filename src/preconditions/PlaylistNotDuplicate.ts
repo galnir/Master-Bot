@@ -5,7 +5,7 @@ import {
   PreconditionOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-import Member from '../lib/models/Member';
+import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'playlistNotDuplicate'
@@ -18,16 +18,21 @@ export class PlaylistNotDuplicate extends Precondition {
 
     const guildMember = interaction.member as GuildMember;
 
-    const member = await Member.findOne({ memberId: guildMember.id });
-    let found = false;
-    if (
-      member.savedPlaylists.filter(function searchForDuplicate(playlist: any) {
-        return playlist.name == playlistName;
-      }).length > 0
-    ) {
-      found = true;
+    let count;
+
+    try {
+      count = await prisma.playlist.count({
+        where: {
+          userId: guildMember.id,
+          name: playlistName
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      return this.error({ message: 'Something went wrong!' });
     }
-    return found
+
+    return count > 0
       ? this.error({
           message: `There is already a playlist named **${playlistName}** in your saved playlists!`
         })

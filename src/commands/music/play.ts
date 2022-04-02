@@ -8,9 +8,8 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { MessageChannel } from '../..';
 import searchSong from '../../lib/utils/music/searchSong';
-import Member from '../../lib/models/Member';
-import type { SavedPlaylist } from './create-playlist';
 import type { Addable } from '../../lib/utils/queue/Queue';
+import prisma from '../../lib/prisma';
 //import Member from '../../lib/models/Member';
 
 @ApplyOptions<CommandOptions>({
@@ -26,14 +25,12 @@ import type { Addable } from '../../lib/utils/queue/Queue';
 export class PlayCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     await interaction.deferReply();
-    //const interactionMember = interaction.member as GuildMember;
     const { client } = container;
     const query = interaction.options.getString('query', true);
     const isCustomPlaylist =
       interaction.options.getString('is-custom-playlist');
 
     const interactionMember = interaction.member as GuildMember;
-
     // had a precondition make sure the user is infact in a voice channel
     const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
       interaction.user.id
@@ -42,30 +39,33 @@ export class PlayCommand extends Command {
     let tracks: Addable[] = [];
     let message: string = '';
     if (isCustomPlaylist == 'Yes') {
-      const member = await Member.findOne({
-        memberId: interactionMember.id
+      const playlist = await prisma.playlist.findFirst({
+        where: {
+          userId: interactionMember.id,
+          name: query
+        },
+        select: {
+          songs: true
+        }
       });
 
-      const savedPlaylists: SavedPlaylist[] = member.savedPlaylists;
-
-      const index = savedPlaylists.findIndex(element => element.name === query);
-      if (index !== -1) {
-        const urls = savedPlaylists[index].urls;
-
-        for (let i = 0; i < urls.length; i++) {
-          const track = await searchSong(urls[i].url as string);
-          if (!track[1].length) continue;
-
-          tracks.push(...track[1]);
-        }
-
-        message = `Added tracks from **${query}** to the queue!`;
-      } else {
-        return await interaction.followUp({
-          content: `You have no custom playlist named **${query}**!`,
-          ephemeral: true
-        });
+      if (!playlist) {
+        return await interaction.followUp(`You have no such playlist!`);
       }
+      if (!playlist.songs.length) {
+        return await interaction.followUp(`**${query}** is empty!`);
+      }
+
+      const songs = playlist.songs;
+
+      for (let i = 0; i < songs.length; i++) {
+        const track = await searchSong(songs[i].url);
+        if (!track[1].length) continue;
+
+        tracks.push(...track[1]);
+      }
+
+      message = `Added tracks from **${query}** to the queue!`;
     } else {
       const trackTuple = await searchSong(query);
       if (!trackTuple[1].length) {

@@ -8,3 +8,4 @@ logs
 application.yml
 .DS_STORE
 dist
+.env

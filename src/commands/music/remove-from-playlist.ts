@@ -1,4 +1,3 @@
-import Member from '../../lib/models/Member';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,6 +5,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-from-playlist',
@@ -19,70 +19,53 @@ export class RemoveFromPlaylistCommand extends Command {
     const location = interaction.options.getInteger('location', true);
 
     const interactionMember = interaction.member as GuildMember;
+
+    let playlist;
     try {
-      const memberData = await Member.findOne({
-        memberId: interactionMember.id,
-        'savedPlaylists.name': playlistName
+      playlist = await prisma.playlist.findFirst({
+        where: {
+          userId: interactionMember.id,
+          name: playlistName
+        },
+        select: {
+          songs: true
+        }
       });
-
-      const savedPlaylistsClone = memberData.savedPlaylists;
-      if (!savedPlaylistsClone.length) {
-        return await interaction.followUp({
-          content: 'You have no custom playlists!',
-          ephemeral: true
-        });
-      }
-
-      let found = false;
-      let index = 0;
-
-      for (let i = 0; i < savedPlaylistsClone.length; i++) {
-        if (savedPlaylistsClone[i].name == playlistName) {
-          found = true;
-          index = i;
-          break;
-        }
-      }
-      if (found) {
-        const urlsArrayClone = savedPlaylistsClone[index].urls;
-        if (!urlsArrayClone.length) {
-          return await interaction.followUp({
-            content: `**${playlistName}** is empty!`
-          });
-        }
-
-        if (location > urlsArrayClone.length) {
-          return await interaction.followUp('Please provide a valid location!');
-        }
-
-        const title = urlsArrayClone[location - 1].title;
-        urlsArrayClone.splice(location - 1, 1);
-        savedPlaylistsClone[index].urls = urlsArrayClone;
-
-        await Member.updateOne(
-          {
-            memberId: interactionMember.id
-          },
-          { savedPlaylists: savedPlaylistsClone }
-        );
-
-        return await interaction.followUp({
-          content: `Removed **${title}**`,
-          ephemeral: true
-        });
-      } else {
-        return await interaction.followUp({
-          content: 'Something went wrong!',
-          ephemeral: true
-        });
-      }
-    } catch (err) {
-      console.error(err);
-      return await interaction.followUp({
-        content: 'Something went wrong!',
-        ephemeral: true
-      });
+    } catch (error) {
+      return await interaction.followUp('Something went wrong!');
     }
+
+    const songs = playlist?.songs;
+
+    if (!songs?.length) {
+      return await interaction.followUp(`**${playlistName}** is empty!`);
+    }
+
+    if (location > songs.length || location < 0) {
+      return await interaction.followUp('Please enter a valid index!');
+    }
+
+    const id = songs[location - 1].id;
+
+    let song;
+    try {
+      song = await prisma.song.delete({
+        where: {
+          id
+        }
+      });
+    } catch (error) {
+      return await interaction.followUp('Something went wrong!');
+    }
+
+    if (!song) {
+      return await interaction.followUp('Something went wrong!');
+    }
+
+    await interaction.followUp(
+      `Deleted **${song.name}** from **${playlistName}**`
+    );
+    return;
   }
 
   public override registerApplicationCommands(
