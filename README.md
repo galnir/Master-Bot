@@ -31,7 +31,7 @@ Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
 
 ## Important
-After you're done installing all the dependencies and entering all tokens and env variables, run ```npx prisma generate```
+After you're done installing all the dependencies and entering all tokens and env variables, run ```npx prisma migrate dev```
 
 ### Lavalink startup
 
