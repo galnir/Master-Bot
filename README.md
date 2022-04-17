@@ -144,6 +144,7 @@ A full list of commands for use with Master Bot
 | /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう                                                |
 | /about            | Info about me and the repo                                                                                                                                         | /about                                                                       |
 | /urban dictionary | Get definitions from urban dictionary                                                                                                                              | /urban javascript                                                            |
+| /activity | Generate an invite link to your voice channel's activity                                                                                                                              | /urban voicechannel Chill                                                            |
 
 ## Resources
 
