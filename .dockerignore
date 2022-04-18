@@ -1,15 +1,15 @@
 # Docker files
-Dockerfile
-.dockerignore
+ Dockerfile
+ docker-compose.yml
+ .dockerignore
 
-# Git files
-.git
-.github
-.gitignore
-LICENSE
-README.md
+ # Git files
+ .git
+ .github
+ .gitignore
+ LICENSE
+ README.md
 
-# Node modules and lint settings
-node_modules
-.eslintrc.json
-.prettierrc
+ # Node modules and lint settings
+ node_modules
+ .prettierrc
