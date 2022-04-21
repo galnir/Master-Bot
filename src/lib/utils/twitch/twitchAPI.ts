@@ -13,7 +13,7 @@ import type {
 // Max Number per call is 100 users
 const chunk_size = 100;
 
-export class TwitchAPI {
+export class TwitchClient {
   _helix: AxiosInstance;
   _auth: AxiosInstance;
 

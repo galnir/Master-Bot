@@ -3,12 +3,12 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
-import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
+import { TwitchClient } from '../lib/utils/twitch/twitchAPI';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
   twitch: ClientTwitchExtension = {
-    api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
+    api: new TwitchClient(data.twitchClientID, data.twitchClientSecret),
     auth: {
       access_token: '',
       refresh_token: '',

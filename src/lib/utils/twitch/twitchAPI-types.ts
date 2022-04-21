@@ -1,4 +1,4 @@
-import type { TwitchAPI } from './twitchAPI';
+import type { TwitchClient } from './twitchAPI';
 
 export interface TwitchToken {
   access_token: string;
@@ -9,7 +9,7 @@ export interface TwitchToken {
 }
 
 export interface ClientTwitchExtension {
-  api: TwitchAPI;
+  api: TwitchClient;
   auth: TwitchToken;
   streamerList?: string[]; //@@TODO add later
 }
