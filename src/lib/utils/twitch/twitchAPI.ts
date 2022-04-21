@@ -65,7 +65,6 @@ export class TwitchAPI {
         });
 
         const response: TwitchToken = await this._auth.post(`/token?${query}`);
-        console.log(response);
         resolve(response);
       } catch (error) {
         reject(error);
@@ -191,7 +190,6 @@ export class TwitchAPI {
 
           const query = new URLSearchParams();
           chunk.forEach((user_id: string) => query.append('user_id', user_id));
-          // console.log(query);
           const response: TwitchStreamsResponse = await this._helix.get(
             `/streams?${query}`,
             {
@@ -203,7 +201,6 @@ export class TwitchAPI {
 
           result = [...result, ...response.data];
         }
-        console.log(result);
         resolve(result);
       } catch (error) {
         reject(error);
