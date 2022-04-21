@@ -9,3 +9,4 @@ application.yml
 .DS_STORE
 dist
 .env
+application.yaml
