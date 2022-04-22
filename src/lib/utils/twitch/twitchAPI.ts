@@ -14,13 +14,18 @@ import type {
 const chunk_size = 100;
 
 export class TwitchClient {
-  _helix: AxiosInstance;
-  _auth: AxiosInstance;
+  _helix: AxiosInstance | false;
+  _auth: AxiosInstance | false;
 
-  private client_id: string;
-  private client_secret: string;
+  private client_id?: string;
+  private client_secret?: string;
 
-  constructor(client_id: string, client_secret: string) {
+  constructor(client_id?: string, client_secret?: string) {
+    if (!client_id || !client_secret) {
+      this._auth = false;
+      this._helix = false;
+      return;
+    }
     this.client_id = client_id;
     this.client_secret = client_secret;
 
@@ -56,6 +61,8 @@ export class TwitchClient {
 
   getAccessToken = (scopes: string): Promise<TwitchToken> => {
     return new Promise(async (resolve, reject) => {
+      if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
+        return;
       try {
         const query = new URLSearchParams({
           client_id: this.client_id,
@@ -63,7 +70,7 @@ export class TwitchClient {
           scope: scopes,
           grant_type: 'client_credentials'
         });
-
+        if (!this._auth || !this._helix) return;
         const response: TwitchToken = await this._auth.post(`/token?${query}`);
         resolve(response);
       } catch (error) {
@@ -82,9 +89,13 @@ export class TwitchClient {
     token: string;
   }): Promise<TwitchUser[]> => {
     return new Promise(async (resolve, reject) => {
-      if (ids.length && logins.length === 0) resolve([]);
+      if (ids.length && logins.length === 0)
+        reject(new Error(`Empty array in the "ids" or "logins" property`));
 
       let result: TwitchUser[] = [];
+      if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
+        return;
+
       try {
         if (ids)
           for (let i = 0; i < ids.length; i += chunk_size) {
@@ -125,7 +136,9 @@ export class TwitchClient {
   }): Promise<TwitchUser> => {
     return new Promise(async (resolve, reject) => {
       if (!id && !login)
-        new Error(`Function requires property "id" or "login"`);
+        new Error(`Empty sting in the "id" or "login" property`);
+      if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
+        return;
       try {
         const response: TwitchUsersResponse = await this._helix.get(
           `/users?${login ? 'login=' + login : 'id=' + id}`,
@@ -152,6 +165,13 @@ export class TwitchClient {
     return new Promise(async (resolve, reject) => {
       try {
         const query = new URLSearchParams({ id });
+        if (
+          !this.client_id ||
+          !this.client_secret ||
+          !this._auth ||
+          !this._helix
+        )
+          return;
 
         const response: TwitchGamesResponse = await this._helix.get(
           `/games?${query}`,
@@ -179,17 +199,28 @@ export class TwitchClient {
     token: string;
   }): Promise<TwitchStream[]> => {
     return new Promise(async (resolve, reject) => {
-      if (user_ids.length === 0) resolve([]);
-
+      if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
+        return;
       let result: TwitchStream[] = [];
       try {
-        // 1 chunk is 100 users; each chunk is 1 call
-
-        for (let i = 0; i < user_ids.length; i += chunk_size) {
-          const chunk = user_ids.slice(i, i + chunk_size);
+        for (
+          let i = 0;
+          i < user_ids.length + user_logins.length;
+          i += chunk_size
+        ) {
+          const chunkIds = user_ids.slice(i, i + chunk_size);
+          const chunkLogins = user_logins.slice(
+            i,
+            i + (chunk_size - chunkIds.length)
+          );
 
           const query = new URLSearchParams();
-          chunk.forEach((user_id: string) => query.append('user_id', user_id));
+          chunkIds.forEach((user_id: string) =>
+            query.append('user_id', user_id)
+          );
+          chunkLogins.forEach((user_login: string) =>
+            query.append('user_login', user_login)
+          );
           const response: TwitchStreamsResponse = await this._helix.get(
             `/streams?${query}`,
             {

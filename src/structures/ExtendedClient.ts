@@ -2,13 +2,17 @@ import type { ClientTwitchExtension } from './../lib/utils/twitch/twitchAPI-type
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
-import * as data from '../config.json';
+import _config from '../config.json';
 import { TwitchClient } from '../lib/utils/twitch/twitchAPI';
+
+const data = _config as BotConfig;
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
+
   twitch: ClientTwitchExtension = {
     api: new TwitchClient(data.twitchClientID, data.twitchClientSecret),
+
     auth: {
       access_token: '',
       refresh_token: '',
@@ -65,6 +69,8 @@ export class ExtendedClient extends SapphireClient {
             console.log(error);
           });
       }, 4.32e7); // refresh every 12 hours
+    } else {
+      console.log('Twitch-Features are Disabled');
     }
 
     this.ws.on('VOICE_SERVER_UPDATE', data => {

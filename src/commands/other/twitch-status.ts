@@ -6,6 +6,8 @@ import {
   container
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
+import _config from '../../config.json';
+const data = _config as BotConfig;
 
 @ApplyOptions<CommandOptions>({
   name: 'twitch-status',
@@ -85,6 +87,10 @@ export class TwitchStatusCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
+    if (!data.twitchClientID || !data.twitchClientSecret) {
+      return console.log('Twitch-Status-Command - Disabled');
+    }
+    console.log('Twitch-Status-Command - Enabled');
     registery.registerChatInputCommand({
       name: this.name,
       description: this.description,
