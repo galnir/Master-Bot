@@ -68,12 +68,15 @@ export class TwitchStatusCommand extends Command {
       baseEmbed
         .setThumbnail(user.profile_image_url)
         .setTitle(`Looks like ${user.display_name} is Offline.`)
-        .addField('Profile Description', user.description)
+        .addField(
+          'Profile Description',
+          user.description == '' ? 'None' : user.description
+        )
         .addField('Total Viewers', `${user.view_count}`, true)
         .setTimestamp(Date.parse(user.created_at));
     }
     // make sure its last in both
-    user.broadcaster_type
+    user.broadcaster_type != ''
       ? baseEmbed.addField(
           'Rank',
           user.broadcaster_type.charAt(0).toUpperCase() +
