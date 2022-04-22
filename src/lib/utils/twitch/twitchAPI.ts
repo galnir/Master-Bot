@@ -89,34 +89,39 @@ export class TwitchClient {
     token: string;
   }): Promise<TwitchUser[]> => {
     return new Promise(async (resolve, reject) => {
-      if (ids.length && logins.length === 0)
-        reject(new Error(`Empty array in the "ids" or "logins" property`));
-
       let result: TwitchUser[] = [];
       if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
         return;
-
       try {
-        if (ids)
-          for (let i = 0; i < ids.length; i += chunk_size) {
-            const chunk = ids.slice(i, i + chunk_size);
+        if (ids.length && logins.length === 0)
+          throw new Error(`Empty array in the "ids" or "logins" property`);
 
-            const query = new URLSearchParams({
-              first: String(chunk_size)
-            });
-            chunk.forEach((id: string) => query.append('id', id));
+        for (let i = 0; i < ids.length + logins.length; i += chunk_size) {
+          const chunkIds = ids.slice(i, i + chunk_size);
+          const chunkLogins = logins.slice(
+            i,
+            i + (chunk_size - chunkIds.length)
+          );
 
-            const response: TwitchUsersResponse = await this._helix.get(
-              `/users?${query}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`
-                }
+          const query = new URLSearchParams();
+          chunkIds.forEach((user_id: string) =>
+            query.append('user_id', user_id)
+          );
+          chunkLogins.forEach((user_login: string) =>
+            query.append('user_login', user_login)
+          );
+
+          const response: TwitchUsersResponse = await this._helix.get(
+            `/users?${query}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
               }
-            );
+            }
+          );
 
-            result = [...result, ...response.data];
-          }
+          result = [...result, ...response.data];
+        }
 
         resolve(result);
       } catch (error) {
@@ -135,11 +140,11 @@ export class TwitchClient {
     login?: string;
   }): Promise<TwitchUser> => {
     return new Promise(async (resolve, reject) => {
-      if (!id && !login)
-        new Error(`Empty sting in the "id" or "login" property`);
       if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
         return;
       try {
+        if (!id && !login)
+          throw new Error(`Empty sting in the "id" or "login" property`);
         const response: TwitchUsersResponse = await this._helix.get(
           `/users?${login ? 'login=' + login : 'id=' + id}`,
           {
@@ -201,8 +206,13 @@ export class TwitchClient {
     return new Promise(async (resolve, reject) => {
       if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
         return;
+
       let result: TwitchStream[] = [];
       try {
+        if (user_ids.length == 0 && user_logins.length == 0)
+          throw new Error(
+            `Empty array in the "user_ids" or "user_logins" property`
+          );
         for (
           let i = 0;
           i < user_ids.length + user_logins.length;
