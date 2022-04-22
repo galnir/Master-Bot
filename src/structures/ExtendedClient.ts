@@ -3,7 +3,7 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import _config from '../config.json';
-import { TwitchClient } from '../lib/utils/twitch/twitchAPI';
+import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 
 const data = _config as BotConfig;
 
@@ -11,7 +11,7 @@ export class ExtendedClient extends SapphireClient {
   readonly music: Node;
 
   twitch: ClientTwitchExtension = {
-    api: new TwitchClient(data.twitchClientID, data.twitchClientSecret),
+    api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
 
     auth: {
       access_token: '',

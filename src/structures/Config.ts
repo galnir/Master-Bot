@@ -2,12 +2,12 @@ interface BotConfig {
   client_id: string;
   discord_owner_id: string;
   token: string;
-  tenorAPI?: string | undefined;
-  newsAPI?: string | undefined;
+  tenorAPI?: string;
+  newsAPI?: string;
   geniusLyricsAPI: string;
-  twitchClientID?: string | undefined;
+  twitchClientID?: string;
   twitchClientSecret?: string;
-  rawgAPI?: string | undefined;
+  rawgAPI?: string;
   lava_host: string;
   lava_pass: string;
   lava_port: number;

@@ -10,20 +10,18 @@ import type {
   TwitchGamesResponse
 } from './twitchAPI-types';
 
-// Max Number per call is 100 users
+// Max Number per call is 100 entries
 const chunk_size = 100;
 
-export class TwitchClient {
-  _helix: AxiosInstance | false;
-  _auth: AxiosInstance | false;
+export class TwitchAPI {
+  _helix?: AxiosInstance;
+  _auth?: AxiosInstance;
 
   private client_id?: string;
   private client_secret?: string;
 
   constructor(client_id?: string, client_secret?: string) {
     if (!client_id || !client_secret) {
-      this._auth = false;
-      this._helix = false;
       return;
     }
     this.client_id = client_id;
@@ -63,6 +61,7 @@ export class TwitchClient {
     return new Promise(async (resolve, reject) => {
       if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
         return;
+
       try {
         const query = new URLSearchParams({
           client_id: this.client_id,
@@ -70,8 +69,9 @@ export class TwitchClient {
           scope: scopes,
           grant_type: 'client_credentials'
         });
-        if (!this._auth || !this._helix) return;
+
         const response: TwitchToken = await this._auth.post(`/token?${query}`);
+
         resolve(response);
       } catch (error) {
         reject(error);
@@ -96,14 +96,24 @@ export class TwitchClient {
         if (ids.length && logins.length === 0)
           throw new Error(`Empty array in the "ids" or "logins" property`);
 
-        for (let i = 0; i < ids.length + logins.length; i += chunk_size) {
+        const numTotal: number = ids.length + logins.length;
+        let offset: number = 0;
+
+        for (let i = 0; i < numTotal; i += chunk_size) {
           const chunkIds = ids.slice(i, i + chunk_size);
+
+          if (i == 0) offset = chunkIds.length;
+
           const chunkLogins = logins.slice(
-            i,
-            i + (chunk_size - chunkIds.length)
+            i - i == 0 ? 0 : offset,
+            i + (chunk_size - chunkIds.length - i == 0 ? 0 : offset)
           );
 
+          if (chunkIds.length + chunkLogins.length > chunk_size)
+            throw new Error('Query Exceeded the chunk size of 100');
+
           const query = new URLSearchParams();
+
           chunkIds.forEach((user_id: string) =>
             query.append('user_id', user_id)
           );
@@ -144,7 +154,8 @@ export class TwitchClient {
         return;
       try {
         if (!id && !login)
-          throw new Error(`Empty sting in the "id" or "login" property`);
+          throw new Error(`Empty string in the "id" or "login" property`);
+
         const response: TwitchUsersResponse = await this._helix.get(
           `/users?${login ? 'login=' + login : 'id=' + id}`,
           {
@@ -213,24 +224,32 @@ export class TwitchClient {
           throw new Error(
             `Empty array in the "user_ids" or "user_logins" property`
           );
-        for (
-          let i = 0;
-          i < user_ids.length + user_logins.length;
-          i += chunk_size
-        ) {
+
+        const numTotal: number = user_ids.length + user_logins.length;
+        let offset: number = 0;
+
+        for (let i = 0; i < numTotal; i += chunk_size) {
           const chunkIds = user_ids.slice(i, i + chunk_size);
+
+          if (i == 0) offset = chunkIds.length;
+
           const chunkLogins = user_logins.slice(
-            i,
-            i + (chunk_size - chunkIds.length)
+            i - i == 0 ? 0 : offset,
+            i + (chunk_size - chunkIds.length - i == 0 ? 0 : offset)
           );
 
+          if (chunkIds.length + chunkLogins.length > chunk_size)
+            throw new Error('Query Exceeded the chunk size of 100');
+
           const query = new URLSearchParams();
+
           chunkIds.forEach((user_id: string) =>
             query.append('user_id', user_id)
           );
           chunkLogins.forEach((user_login: string) =>
             query.append('user_login', user_login)
           );
+
           const response: TwitchStreamsResponse = await this._helix.get(
             `/streams?${query}`,
             {
