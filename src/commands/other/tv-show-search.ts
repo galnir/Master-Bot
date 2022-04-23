@@ -47,17 +47,9 @@ export class TVShowSearchCommand extends Command {
       );
     }
 
-    const message = {
-      author: {
-        id: interaction.user.id,
-        bot: interaction.user.bot
-      },
-      channel: interaction.channel
-    };
-
     await interaction.reply('Show info');
     // @ts-ignore
-    return PaginatedEmbed.run(message);
+    return PaginatedEmbed.run(interaction);
   }
 
   public override registerApplicationCommands(
@@ -145,6 +137,7 @@ export class TVShowSearchCommand extends Command {
 
   private checkGenres(genres: Genres) {
     if (Array.isArray(genres)) {
+      if (genres.join(' ').trim().length == 0) return 'None Listed';
       return genres.join(' ');
     } else if (!genres.length) {
       return 'None Listed';
