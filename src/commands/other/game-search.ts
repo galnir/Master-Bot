@@ -110,7 +110,7 @@ export class GameSearchCommand extends Command {
     } else {
       retailerArray.push('None Listed');
     }
-    console.log(data);
+
     PaginatedEmbed.addPageEmbed(embed =>
       embed
         .setTitle(`Game info: ${data.name}`)
