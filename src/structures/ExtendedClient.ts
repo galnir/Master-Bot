@@ -12,7 +12,6 @@ export class ExtendedClient extends SapphireClient {
 
   twitch: ClientTwitchExtension = {
     api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
-
     auth: {
       access_token: '',
       refresh_token: '',

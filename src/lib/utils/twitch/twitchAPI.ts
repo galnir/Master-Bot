@@ -96,7 +96,7 @@ export class TwitchAPI {
         if (ids.length && logins.length === 0)
           throw new Error(`Empty array in the "ids" or "logins" property`);
 
-        const numTotal: number = ids.length + logins.length;
+        const numTotal: number = ids.length ?? 0 + logins.length ?? 0;
         let offset: number = 0;
 
         for (let i = 0; i < numTotal; i += chunk_size) {
@@ -165,8 +165,8 @@ export class TwitchAPI {
           }
         );
         resolve(response.data[0]);
-      } catch (err) {
-        reject(err);
+      } catch (error) {
+        reject(error);
       }
     });
   };
@@ -220,12 +220,12 @@ export class TwitchAPI {
 
       let result: TwitchStream[] = [];
       try {
-        if (user_ids.length == 0 && user_logins.length == 0)
+        if (!user_ids.length && !user_logins.length)
           throw new Error(
             `Empty array in the "user_ids" or "user_logins" property`
           );
 
-        const numTotal: number = user_ids.length + user_logins.length;
+        const numTotal: number = user_ids.length ?? 0 + user_logins.length ?? 0;
         let offset: number = 0;
 
         for (let i = 0; i < numTotal; i += chunk_size) {
@@ -246,6 +246,7 @@ export class TwitchAPI {
           chunkIds.forEach((user_id: string) =>
             query.append('user_id', user_id)
           );
+
           chunkLogins.forEach((user_login: string) =>
             query.append('user_login', user_login)
           );
