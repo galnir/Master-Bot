@@ -31,6 +31,7 @@ export class TVShowSearchCommand extends Command {
         embed
           .setTitle(showInfo.name)
           .setURL(showInfo.url)
+          .setColor('#17a589')
           .setThumbnail(showInfo.thumbnail)
           .setDescription(showInfo.summary)
           .addField('Language', showInfo.language, true)
@@ -47,17 +48,9 @@ export class TVShowSearchCommand extends Command {
       );
     }
 
-    const message = {
-      author: {
-        id: interaction.user.id,
-        bot: interaction.user.bot
-      },
-      channel: interaction.channel
-    };
-
     await interaction.reply('Show info');
     // @ts-ignore
-    return PaginatedEmbed.run(message);
+    return PaginatedEmbed.run(interaction);
   }
 
   public override registerApplicationCommands(
@@ -145,6 +138,7 @@ export class TVShowSearchCommand extends Command {
 
   private checkGenres(genres: Genres) {
     if (Array.isArray(genres)) {
+      if (genres.join(' ').trim().length == 0) return 'None Listed';
       return genres.join(' ');
     } else if (!genres.length) {
       return 'None Listed';
