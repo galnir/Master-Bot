@@ -7,7 +7,9 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
-import * as config from '../../config.json';
+import _config from '../../config.json';
+
+const config = _config as BotConfig;
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
