@@ -12,7 +12,19 @@ import type { CommandInteraction } from 'discord.js';
 })
 export class PingCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
-    return await interaction.reply('Pong!');
+    const ping = Date.now() - interaction.createdTimestamp;
+
+    await interaction
+      .reply({
+        content: 'Gathering Data.....',
+        fetchReply: true
+      })
+      .then(async () => {
+        const apiPing = Date.now() - interaction.createdTimestamp;
+        return await interaction.editReply(
+          `Pong! - Bot Latency ${ping}ms - API Latency is ${apiPing}ms`
+        );
+      });
   }
 
   public override registerApplicationCommands(
