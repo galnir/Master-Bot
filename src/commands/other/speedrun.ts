@@ -56,6 +56,15 @@ export class SpeedRunCommand extends Command {
       } else {
         const categories = body.data;
         queryCat = !queryCat ? categories[0].category.data.name : queryCat;
+        for (let i = 0; i <= categories.length; ++i) {
+          if (
+            categories[i]?.category.data.name.toLowerCase() ==
+            queryCat?.toLowerCase()
+          ) {
+            break;
+          } else if (i == categories.length)
+            queryCat = categories[0].category.data.name;
+        }
         await interaction
           .reply({
             embeds: [
@@ -66,11 +75,10 @@ export class SpeedRunCommand extends Command {
             fetchReply: true
           })
           .then(async () => {
-            const test = SpeedRunCommand.embedGenerator(
+            SpeedRunCommand.embedGenerator(
               categories,
-              queryCat ?? categories[0].data.category.name
-            );
-            await test
+              queryCat ?? categories[0].category.data.name
+            )
               .setIdle(30 * 1000)
               .setIndex(0)
               .run(interaction);
