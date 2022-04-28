@@ -1,6 +1,6 @@
 # A Discord Music Bot written in JavaScript using the discord.js v13 library
 
-[![image](https://img.shields.io/badge/language-javascript-yellow)](https://www.javascript.com/)
+[![image](https://img.shields.io/badge/language-typescript-blue)](https://www.typescriptlang.org)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
 
 ## System dependencies
@@ -29,6 +29,19 @@ Either from the official site or follow the tutorial for your [distro](https://w
 Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 
 Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
+
+#### Windows
+Getting Postgres and Prisma to work together on Windows is not worth the hassle. Create an account on [heroku](https://dashboard.heroku.com/apps) and follow these steps:
+1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
+2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
+3. Create a `.env` file in the root directory of the project and create 2 empty variables there:
+``
+DATABASE_URL=""
+SHADOW_DB_URL=""
+``
+4. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL`.
+5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
+6. Done!
 
 ## Important
 
