@@ -22,7 +22,7 @@ export class PingCommand extends Command {
       .then(async () => {
         const apiPing = Date.now() - interaction.createdTimestamp;
         return await interaction.editReply(
-          `Pong! - Bot Latency ${ping}ms - API Latency is ${apiPing}ms`
+          `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms`
         );
       });
   }
