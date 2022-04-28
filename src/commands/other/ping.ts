@@ -19,10 +19,12 @@ export class PingCommand extends Command {
         content: 'Gathering Data.....',
         fetchReply: true
       })
-      .then(async () => {
-        const apiPing = Date.now() - interaction.createdTimestamp;
-        return await interaction.editReply(
-          `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms`
+      .then((messageData: any) => {
+        const apiPing = Date.now() - messageData.createdTimestamp;
+        return interaction.editReply(
+          `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms - Round Trip: ${
+            ping + apiPing
+          }ms`
         );
       });
   }
