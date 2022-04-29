@@ -1,3 +1,4 @@
+import type { GuildMember } from 'discord.js';
 /*
   Based on @melike2d's work on @lavaclient/queue
 */
@@ -36,6 +37,7 @@ export interface Loop {
 
 export interface AddOptions {
   requester?: Snowflake | DiscordResource;
+  userInfo?: GuildMember;
   next?: boolean;
 }
 
@@ -149,8 +151,9 @@ export class Queue extends TypedEmitter<QueueEvents> {
   add(songs: Addable | Array<Addable>, options: AddOptions = {}): number {
     songs = Array.isArray(songs) ? songs : [songs];
     const requesterId = options.requester && getId(options.requester),
+      user = options.userInfo,
       toAdd = songs.map(song =>
-        song instanceof Song ? song : new Song(song, requesterId)
+        song instanceof Song ? song : new Song(song, requesterId, user)
       );
 
     this.tracks[options.next ? 'unshift' : 'push'](...toAdd);

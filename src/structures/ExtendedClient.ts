@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
@@ -40,8 +41,17 @@ export class ExtendedClient extends SapphireClient {
       queue.player.node.destroyPlayer(queue.player.guildId);
     });
 
-    this.music.on('trackStart', (queue, song) => {
-      queue.channel!.send(`Now playing **${song.title}**`);
+    this.music.on('trackStart', async (queue, song) => {
+      const NowPlaying = new NowPlayingEmbed(
+        song,
+        undefined,
+        queue.current!.length as number,
+        queue.player.volume,
+        queue.tracks!
+      );
+      return await queue.channel!.send({
+        embeds: [NowPlaying.NowPlayingEmbed()]
+      });
     });
   }
 }

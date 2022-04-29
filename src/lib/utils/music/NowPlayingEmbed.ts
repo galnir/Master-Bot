@@ -8,26 +8,50 @@ export class NowPlayingEmbed {
   track: Song;
   position: PositionType;
   length: number;
+  volume: number;
+  queue?: Song[];
 
-  public constructor(track: Song, position: PositionType, length: number) {
+  public constructor(
+    track: Song,
+    position: PositionType,
+    length: number,
+    volume: number,
+    queue?: Song[]
+  ) {
     this.track = track;
     this.position = position;
     this.length = length;
+    this.volume = volume;
+    this.queue = queue;
   }
 
   public NowPlayingEmbed(): MessageEmbed {
     let trackLength = this.timeString(
       this.millisecondsToTimeObject(this.length)
     );
-
     if (!this.track.isSeekable) {
       trackLength = 'Live Stream';
       this.position = undefined;
     }
+    const userAvatar = `https://cdn.discordapp.com/avatars/${this.track.userInfo?.user.id}/${this.track.userInfo?.user.avatar}.png`;
 
     let baseEmbed = new MessageEmbed()
-      .setTitle(this.track.title)
-      .addField('Duration', ':stopwatch: ' + trackLength, true);
+      .setTitle(`:musical_note: ${this.track.title}`)
+      .setURL(this.track.uri)
+      .setThumbnail(this.track.thumbnail)
+      .setColor('#FF0000')
+      .addField('Volume', ':loud_sound: ' + this.volume, true)
+      .addField('Duration', ':stopwatch: ' + trackLength, true)
+      .setTimestamp()
+      .setFooter({
+        text: `Requested By ${this.track.userInfo?.nickname}`,
+        iconURL: userAvatar
+      });
+    if (this.queue?.length) {
+      baseEmbed
+        .addField('Queue', ':notes: ' + this.queue.length, true)
+        .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
+    }
 
     // song just started embed
     if (this.position == undefined) {

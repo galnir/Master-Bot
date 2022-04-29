@@ -24,11 +24,13 @@ export class NowPlayingCommand extends Command {
     const { client } = container;
 
     const player = client.music.players.get(interaction.guild!.id);
+    console.log(player);
 
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current as Song,
       player?.accuratePosition,
-      player?.queue.current!.length as number
+      player?.queue.current!.length as number,
+      player?.volume as number
     );
 
     return await interaction.reply({ embeds: [NowPlaying.NowPlayingEmbed()] });

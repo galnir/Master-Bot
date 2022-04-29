@@ -1,3 +1,4 @@
+import type { GuildMember } from 'discord.js';
 import { decode } from '@lavalink/encoding';
 
 import type { Track, TrackInfo } from '@lavaclient/types';
@@ -5,7 +6,7 @@ import type { Track, TrackInfo } from '@lavaclient/types';
 export class Song implements TrackInfo {
   readonly track: string;
   readonly requester?: string;
-
+  userInfo?: GuildMember;
   length: number;
   identifier: string;
   author: string;
@@ -15,10 +16,16 @@ export class Song implements TrackInfo {
   uri: string;
   isSeekable: boolean;
   sourceName: string;
+  thumbnail: string;
 
-  constructor(track: string | Track, requester?: string) {
+  constructor(
+    track: string | Track,
+    requester?: string,
+    userInfo?: GuildMember
+  ) {
     this.track = typeof track === 'string' ? track : track.track;
     this.requester = requester;
+    this.userInfo = userInfo;
 
     // TODO: make this less shitty
     if (typeof track !== 'string') {
@@ -31,6 +38,7 @@ export class Song implements TrackInfo {
       this.uri = track.info.uri;
       this.isSeekable = track.info.isSeekable;
       this.sourceName = track.info.sourceName;
+      this.thumbnail = `https://img.youtube.com/vi/${track.info.identifier}/hqdefault.jpg`;
     } else {
       const decoded = decode(this.track);
       this.length = Number(decoded.length);
@@ -42,6 +50,7 @@ export class Song implements TrackInfo {
       this.uri = decoded.uri!;
       this.isSeekable = !decoded.isStream;
       this.sourceName = decoded.source!;
+      this.thumbnail = `https://img.youtube.com/vi/${decoded.identifier}/hqdefault.jpg`;
     }
   }
 }

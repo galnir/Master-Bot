@@ -31,6 +31,7 @@ export class PlayCommand extends Command {
       interaction.options.getString('is-custom-playlist');
 
     const interactionMember = interaction.member as GuildMember;
+
     // had a precondition make sure the user is infact in a voice channel
     const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
       interaction.user.id
@@ -38,6 +39,22 @@ export class PlayCommand extends Command {
 
     let tracks: Addable[] = [];
     let message: string = '';
+
+    let volumeSetting: any;
+    try {
+      if (interaction.guild)
+        volumeSetting = await prisma.guild.findUnique({
+          where: {
+            id: interaction.guild!.id || interaction.guildId!
+          },
+          select: {
+            volume: true
+          }
+        });
+    } catch (error) {
+      console.log(error);
+      volumeSetting = null;
+    }
     if (isCustomPlaylist == 'Yes') {
       const playlist = await prisma.playlist.findFirst({
         where: {
@@ -84,9 +101,12 @@ export class PlayCommand extends Command {
     }
 
     const started = player.playing || player.paused;
-
+    volumeSetting ? player.setVolume(volumeSetting.volume) : null;
     await interaction.followUp({ content: message });
-    player.queue.add(tracks, { requester: interaction.user.id });
+    player.queue.add(tracks, {
+      requester: interaction.user.id,
+      userInfo: interactionMember
+    });
     if (!started) {
       await player.queue.start();
     }
