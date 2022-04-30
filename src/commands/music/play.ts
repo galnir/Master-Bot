@@ -40,21 +40,6 @@ export class PlayCommand extends Command {
     let tracks: Addable[] = [];
     let message: string = '';
 
-    let volumeSetting: any;
-    try {
-      if (interaction.guild)
-        volumeSetting = await prisma.guild.findUnique({
-          where: {
-            id: interaction.guild!.id || interaction.guildId!
-          },
-          select: {
-            volume: true
-          }
-        });
-    } catch (error) {
-      console.log(error);
-      volumeSetting = null;
-    }
     if (isCustomPlaylist == 'Yes') {
       const playlist = await prisma.playlist.findFirst({
         where: {
@@ -67,10 +52,10 @@ export class PlayCommand extends Command {
       });
 
       if (!playlist) {
-        return await interaction.followUp(`You have no such playlist!`);
+        return await interaction.followUp(`:x: You have no such playlist!`);
       }
       if (!playlist.songs.length) {
-        return await interaction.followUp(`**${query}** is empty!`);
+        return await interaction.followUp(`:x: **${query}** is empty!`);
       }
 
       const songs = playlist.songs;
@@ -95,13 +80,31 @@ export class PlayCommand extends Command {
     let player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.connected) {
+      let volumeDB: any; //@@TODO Find a better way only
+
+      try {
+        if (interaction.guild)
+          volumeDB = await prisma.guild.findUnique({
+            where: {
+              id: interaction.guild!.id || interaction.guildId!
+            },
+            select: {
+              volume: true
+            }
+          });
+      } catch (error) {
+        console.log(error);
+        volumeDB = null;
+      }
+
       player ??= client.music.createPlayer(interaction.guild!.id);
       player.queue.channel = interaction.channel as MessageChannel;
+      volumeDB ? player.setVolume(volumeDB.volume) : null;
       await player.connect(voiceChannel!.id, { deafened: true });
     }
 
     const started = player.playing || player.paused;
-    volumeSetting ? player.setVolume(volumeSetting.volume) : null;
+
     await interaction.followUp({ content: message });
     player.queue.add(tracks, {
       requester: interaction.user.id,
@@ -110,6 +113,7 @@ export class PlayCommand extends Command {
     if (!started) {
       await player.queue.start();
     }
+
     return;
   }
 
