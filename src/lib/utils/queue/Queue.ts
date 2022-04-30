@@ -38,6 +38,8 @@ export interface Loop {
 export interface AddOptions {
   requester?: Snowflake | DiscordResource;
   userInfo?: GuildMember;
+  spotify?: boolean;
+  added?: number;
   next?: boolean;
 }
 
@@ -152,8 +154,12 @@ export class Queue extends TypedEmitter<QueueEvents> {
     songs = Array.isArray(songs) ? songs : [songs];
     const requesterId = options.requester && getId(options.requester),
       user = options.userInfo,
+      spotify = options.spotify,
+      added = Date.now(),
       toAdd = songs.map(song =>
-        song instanceof Song ? song : new Song(song, requesterId, user)
+        song instanceof Song
+          ? song
+          : new Song(song, spotify ?? false, added, requesterId, user)
       );
 
     this.tracks[options.next ? 'unshift' : 'push'](...toAdd);

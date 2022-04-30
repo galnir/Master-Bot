@@ -17,15 +17,21 @@ export class Song implements TrackInfo {
   isSeekable: boolean;
   sourceName: string;
   thumbnail: string;
+  spotify: boolean;
+  added: number;
 
   constructor(
     track: string | Track,
+    spotify?: boolean,
+    added?: number,
     requester?: string,
     userInfo?: GuildMember
   ) {
     this.track = typeof track === 'string' ? track : track.track;
     this.requester = requester;
     this.userInfo = userInfo;
+    this.spotify = spotify ?? false;
+    this.added = added ?? Date.now();
 
     // TODO: make this less shitty
     if (typeof track !== 'string') {

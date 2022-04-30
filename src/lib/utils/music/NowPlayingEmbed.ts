@@ -33,20 +33,40 @@ export class NowPlayingEmbed {
       trackLength = 'Live Stream';
       this.position = undefined;
     }
-    const userAvatar = `https://cdn.discordapp.com/avatars/${this.track.userInfo?.user.id}/${this.track.userInfo?.user.avatar}.png`;
+    const durationText = this.track.isSeekable
+      ? `:stopwatch: ${trackLength}`
+      : `:red_circle: ${trackLength}`;
+    const userAvatar = this.track.userInfo?.user.avatar
+      ? `https://cdn.discordapp.com/avatars/${this.track.userInfo?.user.id}/${this.track.userInfo?.user.avatar}.png`
+      : this.track.userInfo?.user.defaultAvatarURL ??
+        'https://cdn.discordapp.com/embed/avatars/1.png'; // default Discord Avatar
+    const vol = this.volume;
+    let volumeIcon: string = ':speaker: ';
+    if (vol > 50) volumeIcon = ':loud_sound: ';
+    if (vol <= 50 && vol > 20) volumeIcon = ':sound: ';
+
+    const sourceName = this.track.spotify ? 'Spotify' : 'YouTube';
+    const sourceIcon = this.track.spotify
+      ? 'https://www.scdn.co/i/_global/favicon.png'
+      : 'https://www.youtube.com/s/desktop/acce624e/img/favicon_32x32.png';
 
     let baseEmbed = new MessageEmbed()
       .setTitle(`:musical_note: ${this.track.title}`)
+      .setAuthor({
+        name: sourceName,
+        iconURL: sourceIcon
+      })
       .setURL(this.track.uri)
       .setThumbnail(this.track.thumbnail)
       .setColor('#FF0000')
-      .addField('Volume', ':loud_sound: ' + this.volume, true)
-      .addField('Duration', ':stopwatch: ' + trackLength, true)
-      .setTimestamp()
+      .addField('Volume', volumeIcon + this.volume, true)
+      .addField('Duration', durationText, true)
+      .setTimestamp(this.track.added ?? Date.now())
       .setFooter({
         text: `Requested By ${this.track.userInfo?.nickname}`,
         iconURL: userAvatar
       });
+
     if (this.queue?.length) {
       baseEmbed
         .addField('Queue', ':notes: ' + this.queue.length, true)

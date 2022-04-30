@@ -27,8 +27,7 @@ export class PlayCommand extends Command {
     await interaction.deferReply();
     const { client } = container;
     const query = interaction.options.getString('query', true);
-    const isCustomPlaylist =
-      interaction.options.getString('is-custom-playlist');
+    const isCustomPlaylist = interaction.options.getString('is-playlist');
 
     const interactionMember = interaction.member as GuildMember;
 
@@ -108,7 +107,9 @@ export class PlayCommand extends Command {
     await interaction.followUp({ content: message });
     player.queue.add(tracks, {
       requester: interaction.user.id,
-      userInfo: interactionMember
+      userInfo: interactionMember,
+      spotify: client.music.spotify.isSpotifyUrl(query),
+      added: Date.now()
     });
     if (!started) {
       await player.queue.start();
@@ -131,8 +132,8 @@ export class PlayCommand extends Command {
           required: true
         },
         {
-          name: 'is-custom-playlist',
-          description: 'Is it a custom playlist?',
+          name: 'is-playlist',
+          description: 'Is this a playlist?',
           type: 'STRING',
           choices: [
             {
