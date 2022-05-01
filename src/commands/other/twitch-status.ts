@@ -6,9 +6,7 @@ import {
   container
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
-import _config from '../../config.json';
-
-const data = _config as BotConfig;
+import data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'twitch-status',

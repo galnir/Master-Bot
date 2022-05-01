@@ -2,10 +2,8 @@ import type { ClientTwitchExtension } from './../lib/utils/twitch/twitchAPI-type
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
-import _config from '../config.json';
+import data from '../config.json';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
-
-const data = _config as BotConfig;
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
