@@ -7,9 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
-import _config from '../../config.json';
-
-const config = _config as BotConfig;
+import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
@@ -17,7 +15,7 @@ const config = _config as BotConfig;
 })
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
-    if (!config.rawgAPI)
+    if (!data.rawgAPI)
       return interaction.reply(':x: Command is Disabled - Missing API Key');
     const title = interaction.options.getString('game', true);
     const filteredTitle = this.filterTitle(title);
@@ -151,7 +149,7 @@ export class GameSearchCommand extends Command {
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    if (!config.rawgAPI) {
+    if (!data.rawgAPI) {
       return console.log('Game-Search-Command - Disabled');
     } else console.log('Game-Search-Command - Enabled');
     registery.registerChatInputCommand({
@@ -174,7 +172,7 @@ export class GameSearchCommand extends Command {
 
   private getGameDetails(query: string): Promise<any> {
     return new Promise(async function (resolve, reject) {
-      const url = `https://api.rawg.io/api/games/${query}?key=${config.rawgAPI}`;
+      const url = `https://api.rawg.io/api/games/${query}?key=${data.rawgAPI}`;
       try {
         const response = await axios.get(url);
         if (response.status === 429) {
