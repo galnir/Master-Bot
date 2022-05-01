@@ -1,12 +1,9 @@
-import type { GuildMember } from 'discord.js';
 import { decode } from '@lavalink/encoding';
-
 import type { Track, TrackInfo } from '@lavaclient/types';
 
 export class Song implements TrackInfo {
   readonly track: string;
-  readonly requester?: string;
-  userInfo?: GuildMember;
+  readonly requester?: RequesterInfo;
   length: number;
   identifier: string;
   author: string;
@@ -17,20 +14,15 @@ export class Song implements TrackInfo {
   isSeekable: boolean;
   sourceName: string;
   thumbnail: string;
-  spotify: boolean;
   added: number;
 
   constructor(
     track: string | Track,
-    spotify?: boolean,
     added?: number,
-    requester?: string,
-    userInfo?: GuildMember
+    requester?: RequesterInfo
   ) {
     this.track = typeof track === 'string' ? track : track.track;
     this.requester = requester;
-    this.userInfo = userInfo;
-    this.spotify = spotify ?? false;
     this.added = added ?? Date.now();
 
     // TODO: make this less shitty
@@ -59,4 +51,10 @@ export class Song implements TrackInfo {
       this.thumbnail = `https://img.youtube.com/vi/${decoded.identifier}/hqdefault.jpg`;
     }
   }
+}
+interface RequesterInfo {
+  avatar?: string | null;
+  defaultAvatarURL?: string;
+  id?: string;
+  name?: string;
 }

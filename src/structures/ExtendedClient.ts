@@ -6,7 +6,9 @@ import * as data from '../config.json';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
-  timeOut: any = {}; // @@TODO find a better way
+  timeOut: { [key: string]: NodeJS.Timer | null } = {
+    imInitializedNowLinter: null // lul temporary
+  }; // @@TODO find a better way .... again
 
   public constructor() {
     super({
@@ -38,8 +40,7 @@ export class ExtendedClient extends SapphireClient {
 
     this.music.on('queueFinish', queue => {
       queue.player.stop();
-
-      this.timeOut[queue.player.guildId] = setTimeout(() => {
+      this.timeOut[queue.player.guildId as string] = setTimeout(() => {
         queue.channel!.send(':zzz: Leaving due to inactivity');
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
@@ -48,19 +49,35 @@ export class ExtendedClient extends SapphireClient {
 
     this.music.on('trackStart', async (queue, song) => {
       if (this.timeOut[queue.player.guildId]) {
-        clearTimeout(this.timeOut[queue.player.guildId]);
+        clearTimeout(this.timeOut[queue.player.guildId]!);
         this.timeOut[queue.player.guildId] = null;
       }
+
       const NowPlaying = new NowPlayingEmbed(
         song,
         undefined,
         queue.current!.length as number,
         queue.player.volume,
-        queue.tracks!
+        queue.tracks!,
+        queue.last!
       );
-      return await queue.channel!.send({
-        embeds: [NowPlaying.NowPlayingEmbed()]
-      });
+
+      return await queue
+        .channel!.send({
+          embeds: [NowPlaying.NowPlayingEmbed()]
+        })
+        .then(async message => {
+          const maxLimit: number = 1.8e6; // 30 minutes
+          let timeLimit: number =
+            queue.current!.length > maxLimit ? maxLimit : queue.current!.length;
+          queue.current?.isStream == true ? (timeLimit = maxLimit) : null;
+
+          setTimeout(async () => {
+            await message.delete().catch(error => {
+              console.log(error);
+            });
+          }, timeLimit);
+        });
     });
   }
 }

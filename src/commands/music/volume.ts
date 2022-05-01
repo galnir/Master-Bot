@@ -63,7 +63,7 @@ export class VolumeCommand extends Command {
       options: [
         {
           name: 'setting',
-          description: 'What Volume? (0 to 100)',
+          description: 'What Volume? (0 to 200)',
           type: 'NUMBER',
           required: true
         }

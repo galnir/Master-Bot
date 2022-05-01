@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { ColorResolvable, MessageEmbed } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
 
@@ -10,19 +10,22 @@ export class NowPlayingEmbed {
   length: number;
   volume: number;
   queue?: Song[];
+  last?: Song;
 
   public constructor(
     track: Song,
     position: PositionType,
     length: number,
     volume: number,
-    queue?: Song[]
+    queue?: Song[],
+    last?: Song
   ) {
     this.track = track;
     this.position = position;
     this.length = length;
     this.volume = volume;
     this.queue = queue;
+    this.last = last;
   }
 
   public NowPlayingEmbed(): MessageEmbed {
@@ -36,43 +39,81 @@ export class NowPlayingEmbed {
     const durationText = this.track.isSeekable
       ? `:stopwatch: ${trackLength}`
       : `:red_circle: ${trackLength}`;
-    const userAvatar = this.track.userInfo?.user.avatar
-      ? `https://cdn.discordapp.com/avatars/${this.track.userInfo?.user.id}/${this.track.userInfo?.user.avatar}.png`
-      : this.track.userInfo?.user.defaultAvatarURL ??
+    const userAvatar = this.track.requester?.avatar
+      ? `https://cdn.discordapp.com/avatars/${this.track.requester?.id}/${this.track.requester?.avatar}.png`
+      : this.track.requester?.defaultAvatarURL ??
         'https://cdn.discordapp.com/embed/avatars/1.png'; // default Discord Avatar
+
+    let embedColor: ColorResolvable;
+    let sourceTxt: string;
+    let sourceIcon: string;
+
+    switch (this.track.sourceName) {
+      case 'soundcloud': {
+        sourceTxt = 'SoundCloud';
+        sourceIcon =
+          'https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png';
+        embedColor = '#F26F23';
+        break;
+      }
+      case 'twitch': {
+        sourceTxt = 'Twitch';
+        sourceIcon =
+          'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
+        embedColor = '#9146FF';
+        break;
+      }
+      case 'youtube': {
+        sourceTxt = 'YouTube';
+        sourceIcon =
+          'https://www.youtube.com/s/desktop/acce624e/img/favicon_32x32.png';
+        embedColor = '#FF000';
+        break;
+      }
+
+      default: {
+        sourceTxt = 'Somewhere';
+        sourceIcon = 'https://cdn.discordapp.com/embed/avatars/1.png';
+        embedColor = 'DARK_RED';
+        break;
+      }
+    }
     const vol = this.volume;
     let volumeIcon: string = ':speaker: ';
     if (vol > 50) volumeIcon = ':loud_sound: ';
     if (vol <= 50 && vol > 20) volumeIcon = ':sound: ';
 
-    const sourceName = this.track.spotify ? 'Spotify' : 'YouTube';
-    const sourceIcon = this.track.spotify
-      ? 'https://www.scdn.co/i/_global/favicon.png'
-      : 'https://www.youtube.com/s/desktop/acce624e/img/favicon_32x32.png';
-
     let baseEmbed = new MessageEmbed()
-      .setTitle(`:musical_note: ${this.track.title}`)
+      .setTitle(`:arrow_forward: ${this.track.title}`)
       .setAuthor({
-        name: sourceName,
+        name: sourceTxt,
         iconURL: sourceIcon
       })
       .setURL(this.track.uri)
       .setThumbnail(this.track.thumbnail)
-      .setColor('#FF0000')
-      .addField('Volume', volumeIcon + this.volume, true)
+      .setColor(embedColor)
+      .addField('Volume', `${volumeIcon} ${this.volume}%`, true)
       .addField('Duration', durationText, true)
       .setTimestamp(this.track.added ?? Date.now())
       .setFooter({
-        text: `Requested By ${this.track.userInfo?.nickname}`,
+        text: `Requested By ${this.track.requester?.name}`,
         iconURL: userAvatar
       });
 
     if (this.queue?.length) {
       baseEmbed
-        .addField('Queue', ':notes: ' + this.queue.length, true)
+        .addField(
+          'Queue',
+          `:notes:  ${this.queue.length} ${
+            this.queue.length == 1 ? 'Song' : 'Songs'
+          }`,
+          true
+        )
         .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
     }
-
+    if (this.last) {
+      baseEmbed.addField('Previous', `[${this.last.title}](${this.last.uri})`);
+    }
     // song just started embed
     if (this.position == undefined) {
       return baseEmbed;
