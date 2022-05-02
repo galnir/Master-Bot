@@ -10,4 +10,3 @@ application.yml
 dist
 .env
 application.yaml
-*.bat
