@@ -14,7 +14,7 @@ export class PingCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const ping = Date.now() - interaction.createdTimestamp;
     const apiPing = Math.round(interaction.client.ws.ping);
-    return interaction.reply(
+    return await interaction.reply(
       `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms - Round Trip: ${
         ping + apiPing
       }ms`
