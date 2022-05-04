@@ -29,7 +29,6 @@ export class TwitchStatusCommand extends Command {
         token: client.twitch.auth.access_token,
         user_ids: [user.id]
       });
-      console.log(stream);
       let baseEmbed = new MessageEmbed({
         author: {
           name: `Status Check: ${
