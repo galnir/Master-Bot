@@ -19,7 +19,7 @@ export class ShowAnnouncerListCommand extends Command {
     const { client } = container;
     const interactionGuild = interaction.guild as Guild;
 
-    const guildDB = await prisma.guild.findFirst({
+    const guildDB = await prisma.guildTwitch.findFirst({
       where: {
         id: interactionGuild.id
       },

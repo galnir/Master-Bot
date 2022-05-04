@@ -54,8 +54,8 @@ export async function notify(query: string[]) {
             client.twitch.notifyList[entry].messageSent = true;
             await prisma.twitchNotify.update({
               where: { twitchId: entry },
-              select: { live: true },
-              data: { live: true }
+              select: { live: true, sent: true },
+              data: { live: true, sent: true }
             });
 
             if (
@@ -65,8 +65,8 @@ export async function notify(query: string[]) {
               client.twitch.notifyList[entry].messageSent = false;
               await prisma.twitchNotify.update({
                 where: { twitchId: entry },
-                select: { live: true },
-                data: { live: false }
+                select: { live: true, sent: true },
+                data: { live: false, sent: false }
               });
             }
           }

@@ -32,11 +32,15 @@ model Playlist {
 }
 
 model Guild {
-  id         String   @id
-  added      DateTime @default(now())
-  volume     Int?
-  notifyList String[]
+  id     String   @id
+  added  DateTime @default(now())
+  volume Int?
 
+}
+
+model GuildTwitch {
+  id         String   @id
+  notifyList String[]
 }
 
 model TwitchNotify {
@@ -44,5 +48,6 @@ model TwitchNotify {
   logo       String
   live       Boolean  @default(false)
   channelIds String[]
+  sent       Boolean
 
 }
