@@ -31,14 +31,13 @@ Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
 
 #### Windows
+
 Getting Postgres and Prisma to work together on Windows is not worth the hassle. Create an account on [heroku](https://dashboard.heroku.com/apps) and follow these steps:
+
 1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
 2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
 3. Create a `.env` file in the root directory of the project and create 2 empty variables there:
-``
-DATABASE_URL=""
-SHADOW_DB_URL=""
-``
+   `DATABASE_URL="" SHADOW_DB_URL=""`
 4. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL`.
 5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
 6. Done!
@@ -156,6 +155,7 @@ A full list of commands for use with Master Bot
 | /rps              | Rock Paper Scissors                                                                                                                                                | /rps                                    |
 | /bored            | Generate a random activity!                                                                                                                                        | /bored                                  |
 | /advice           | Get some advice!                                                                                                                                                   | /advice                                 |
+| /game-search      | Search for game information.                                                                                                                                       | /game-search super-metroid              |
 | /kanye            | Get a random Kanye quote                                                                                                                                           | /kanye                                  |
 | /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                             |
 | /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう           |
