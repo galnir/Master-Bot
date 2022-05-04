@@ -1,4 +1,9 @@
-import { ColorResolvable, MessageEmbed } from 'discord.js';
+import {
+  ColorResolvable,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed
+} from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
 
@@ -11,6 +16,7 @@ export class NowPlayingEmbed {
   volume: number;
   queue?: Song[];
   last?: Song;
+  paused?: Boolean;
 
   public constructor(
     track: Song,
@@ -18,7 +24,8 @@ export class NowPlayingEmbed {
     length: number,
     volume: number,
     queue?: Song[],
-    last?: Song
+    last?: Song,
+    paused?: Boolean
   ) {
     this.track = track;
     this.position = position;
@@ -26,6 +33,7 @@ export class NowPlayingEmbed {
     this.volume = volume;
     this.queue = queue;
     this.last = last;
+    this.paused = paused;
   }
 
   public NowPlayingEmbed(): MessageEmbed {
@@ -67,7 +75,7 @@ export class NowPlayingEmbed {
         sourceTxt = 'YouTube';
         sourceIcon =
           'https://www.youtube.com/s/desktop/acce624e/img/favicon_32x32.png';
-        embedColor = '#FF000';
+        embedColor = '#ff0000';
         break;
       }
 
@@ -78,13 +86,18 @@ export class NowPlayingEmbed {
         break;
       }
     }
+
     const vol = this.volume;
     let volumeIcon: string = ':speaker: ';
     if (vol > 50) volumeIcon = ':loud_sound: ';
     if (vol <= 50 && vol > 20) volumeIcon = ':sound: ';
 
     let baseEmbed = new MessageEmbed()
-      .setTitle(`:arrow_forward: ${this.track.title}`)
+      .setTitle(
+        `${this.paused ? ':pause_button: ' : ':arrow_forward: '} ${
+          this.track.title
+        }`
+      )
       .setAuthor({
         name: sourceTxt,
         iconURL: sourceIcon
@@ -147,5 +160,27 @@ export class NowPlayingEmbed {
       minutes: Math.floor((milliseconds / (1000 * 60)) % 60),
       hours: Math.floor((milliseconds / (1000 * 60 * 60)) % 24)
     };
+  }
+}
+export class PlayerButtons {
+  public constructor() {
+    new MessageActionRow().addComponents(
+      new MessageButton()
+        .setCustomId('play')
+        .setLabel('play')
+        .setStyle('PRIMARY'),
+      new MessageButton()
+        .setCustomId('pause')
+        .setLabel('Pause')
+        .setStyle('PRIMARY'),
+      new MessageButton()
+        .setCustomId('stop')
+        .setLabel('Stop')
+        .setStyle('DANGER'),
+      new MessageButton()
+        .setCustomId('next')
+        .setLabel('Next')
+        .setStyle('PRIMARY')
+    );
   }
 }

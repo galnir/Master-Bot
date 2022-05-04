@@ -1,14 +1,12 @@
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+import { Intents, MessageActionRow, MessageButton } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
-  timeOut: { [key: string]: NodeJS.Timer | null } = {
-    imInitializedNowLinter: null // lul temporary
-  }; // @@TODO find a better way .... again
+  leaveTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
     super({
@@ -38,9 +36,10 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
+    this.leaveTimers = {};
     this.music.on('queueFinish', queue => {
       queue.player.stop();
-      this.timeOut[queue.player.guildId as string] = setTimeout(() => {
+      this.leaveTimers[queue.player.guildId as string] = setTimeout(() => {
         queue.channel!.send(':zzz: Leaving due to inactivity');
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
@@ -48,9 +47,8 @@ export class ExtendedClient extends SapphireClient {
     });
 
     this.music.on('trackStart', async (queue, song) => {
-      if (this.timeOut[queue.player.guildId]) {
-        clearTimeout(this.timeOut[queue.player.guildId]!);
-        this.timeOut[queue.player.guildId] = null;
+      if (this.leaveTimers[queue.player.guildId]) {
+        clearTimeout(this.leaveTimers[queue.player.guildId]!);
       }
 
       const NowPlaying = new NowPlayingEmbed(
@@ -59,24 +57,126 @@ export class ExtendedClient extends SapphireClient {
         queue.current!.length as number,
         queue.player.volume,
         queue.tracks!,
-        queue.last!
+        queue.last!,
+        false
       );
 
+      const row = new MessageActionRow().addComponents(
+        new MessageButton()
+          .setCustomId('playPause')
+          .setLabel('Play/Pause')
+          .setStyle('PRIMARY'),
+        new MessageButton()
+          .setCustomId('stop')
+          .setLabel('Stop')
+          .setStyle('DANGER'),
+        new MessageButton()
+          .setCustomId('next')
+          .setLabel('Next')
+          .setStyle('PRIMARY'),
+        new MessageButton()
+          .setCustomId('volumeUp')
+          .setLabel('Vol+')
+          .setStyle('PRIMARY'),
+        new MessageButton()
+          .setCustomId('volumeDown')
+          .setLabel('Vol-')
+          .setStyle('PRIMARY')
+      );
       return await queue
         .channel!.send({
-          embeds: [NowPlaying.NowPlayingEmbed()]
+          embeds: [NowPlaying.NowPlayingEmbed()],
+          components: [row]
         })
         .then(async message => {
           const maxLimit: number = 1.8e6; // 30 minutes
           let timeLimit: number =
             queue.current!.length > maxLimit ? maxLimit : queue.current!.length;
           queue.current?.isStream == true ? (timeLimit = maxLimit) : null;
-
-          setTimeout(async () => {
+          const filter = (i: any) =>
+            i.member.voice.channel?.id === queue.player.channelId; // only available to members in the same voice channel
+          const collector = message.channel.createMessageComponentCollector({
+            filter,
+            time: timeLimit
+          });
+          const timer: NodeJS.Timer = setTimeout(async () => {
             await message.delete().catch(error => {
               console.log(error);
             });
           }, timeLimit);
+          collector.on('collect', async i => {
+            if (i.customId === 'playPause') {
+              let paused;
+              if (queue.player.paused) {
+                queue.player.resume();
+                paused = false;
+              } else {
+                queue.player.pause();
+                paused = true;
+              }
+              const NowPlaying = new NowPlayingEmbed(
+                song,
+                undefined,
+                queue.current!.length as number,
+                queue.player.volume,
+                queue.tracks!,
+                queue.last!,
+                paused
+              );
+              collector.empty();
+              await i.update({
+                embeds: [NowPlaying.NowPlayingEmbed()]
+              });
+            }
+            if (i.customId === 'stop') {
+              await i.update('Leaving');
+              queue.player.stop();
+              queue.player.disconnect();
+              clearTimeout(timer);
+              collector.stop();
+              await message.delete();
+            }
+            if (i.customId === 'next') {
+              await i.update('Skipping');
+              queue.next();
+              clearTimeout(timer);
+              collector.stop();
+              await message.delete();
+            }
+            if (i.customId === 'volumeUp') {
+              const volume = queue.player.volume;
+              await queue.player.setVolume(
+                volume + 10 > 200 ? 200 : volume + 10
+              );
+              const NowPlaying = new NowPlayingEmbed(
+                song,
+                undefined,
+                queue.current!.length as number,
+                volume,
+                queue.tracks!,
+                queue.last!,
+                queue.player.paused
+              );
+              await i.update({
+                embeds: [NowPlaying.NowPlayingEmbed()]
+              });
+            }
+            if (i.customId === 'volumeDown') {
+              const volume = queue.player.volume;
+              await queue.player.setVolume(volume - 10 < 0 ? 0 : volume - 10);
+              const NowPlaying = new NowPlayingEmbed(
+                song,
+                undefined,
+                queue.current!.length as number,
+                volume,
+                queue.tracks!,
+                queue.last!,
+                queue.player.paused
+              );
+              await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
+            }
+          });
+          timer;
         });
     });
   }

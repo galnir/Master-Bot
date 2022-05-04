@@ -80,33 +80,20 @@ export class PlayCommand extends Command {
     let player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.connected) {
-      let channelDB: { [key: string]: number | undefined } | null | void = {
-        volume: undefined
-      };
-      channelDB = await prisma.guild
-        .findUnique({
-          where: {
-            id: interaction.guild!.id || interaction.guildId!
-          },
-          select: {
-            volume: true
-          }
-        })
-        .catch(async error => {
-          console.log(error);
-          await prisma.guild.upsert({
-            where: { id: interaction.guild!.id || interaction.guildId! },
-            update: { volume: 100 },
-            create: {
-              id: interaction.guild!.id || interaction.guildId!,
-              volume: 100
-            }
-          });
-        });
+      const channelDB = await prisma.guild.findFirst({
+        where: {
+          id: interaction.guild!.id
+        },
+        select: {
+          volume: true
+        }
+      });
 
       player ??= client.music.createPlayer(interaction.guild!.id);
       player.queue.channel = interaction.channel as MessageChannel;
-      channelDB?.volume ? player.setVolume(channelDB.volume as number) : null;
+      if (channelDB?.volume) {
+        player.setVolume(channelDB.volume as number);
+      }
       await player.connect(voiceChannel!.id, { deafened: true });
     }
 

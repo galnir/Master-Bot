@@ -42,7 +42,6 @@ export class VolumeCommand extends Command {
         update: { volume: query },
         create: {
           id: interaction.guild!.id || interaction.guildId!,
-          name: interaction.guild.name,
           volume: query
         }
       });

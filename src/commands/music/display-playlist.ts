@@ -35,26 +35,18 @@ export class DisplayPlaylistCommand extends Command {
       );
     }
 
-    const baseEmbed = new MessageEmbed()
-
-      .setTitle('Music Queue')
-      .setColor('#9096e6')
-      .setAuthor({
-        name: interactionMember.user.username,
-        iconURL: interactionMember.user.displayAvatarURL()
-      });
-
-    await interaction.reply(`**${playlistName}**:`);
+    const baseEmbed = new MessageEmbed().setColor('#9096e6').setAuthor({
+      name: interactionMember.user.username,
+      iconURL: interactionMember.user.displayAvatarURL()
+    });
 
     new PaginatedFieldMessageEmbed()
-      .setTitleField('Custom Playlist')
-      // @ts-ignore
-      .setTemplate({ baseEmbed })
+      .setTitleField(`${playlistName} - Songs`)
+      .setTemplate(baseEmbed)
       .setItems(playlist.songs)
       .formatItems((item: any) => `[${item.name}](${item.url})`)
       .setItemsPerPage(5)
       .make()
-      // @ts-ignore
       .run(interaction);
   }
 
