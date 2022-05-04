@@ -16,7 +16,8 @@ export class ExtendedClient extends SapphireClient {
       expires_in: 0,
       token_type: '',
       scope: ['']
-    }
+    },
+    notifyList: {}
   };
 
   public constructor() {

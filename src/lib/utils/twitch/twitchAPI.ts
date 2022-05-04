@@ -93,7 +93,7 @@ export class TwitchAPI {
       if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
         return;
       try {
-        if (ids.length && logins.length === 0)
+        if (!ids.length && !logins.length)
           throw new Error(`Empty array in the "ids" or "logins" property`);
 
         const numTotal: number = ids.length ?? 0 + logins.length ?? 0;
@@ -114,11 +114,9 @@ export class TwitchAPI {
 
           const query = new URLSearchParams();
 
-          chunkIds.forEach((user_id: string) =>
-            query.append('user_id', user_id)
-          );
+          chunkIds.forEach((user_id: string) => query.append('id', user_id));
           chunkLogins.forEach((user_login: string) =>
-            query.append('user_login', user_login)
+            query.append('login', user_login)
           );
 
           const response: TwitchUsersResponse = await this._helix.get(

@@ -11,7 +11,14 @@ export interface TwitchToken {
 export interface ClientTwitchExtension {
   api: TwitchAPI;
   auth: TwitchToken;
-  streamerList?: string[]; //@@TODO add later
+  notifyList: {
+    [key: string]: {
+      sendTo: string[];
+      logo: string;
+      live: boolean;
+      messageSent: boolean;
+    };
+  };
 }
 
 export interface TwitchUser {

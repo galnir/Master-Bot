@@ -29,7 +29,7 @@ export class TwitchStatusCommand extends Command {
         token: client.twitch.auth.access_token,
         user_ids: [user.id]
       });
-
+      console.log(stream);
       let baseEmbed = new MessageEmbed({
         author: {
           name: `Status Check: ${
@@ -40,7 +40,7 @@ export class TwitchStatusCommand extends Command {
           icon_url: user.profile_image_url,
           url: `https://twitch.tv/${user.display_name}`
         },
-        color: '#6441a5',
+        color: '#6441A5',
         url: `https://twitch.tv/${user.display_name}`,
         footer: {
           text: stream[0]?.type ? `Stream Started` : 'Joined Twitch',

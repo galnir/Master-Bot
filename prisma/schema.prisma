@@ -3,15 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DB_URL")
 }
 
 model User {
   id        String     @id
   playlists Playlist[]
-  username String
+  username  String
 }
 
 model Song {
@@ -29,4 +29,20 @@ model Playlist {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   songs     Song[]
+}
+
+model Guild {
+  id         String   @id
+  added      DateTime @default(now())
+  volume     Int?
+  notifyList String[]
+
+}
+
+model TwitchNotify {
+  twitchId   String   @id
+  logo       String
+  live       Boolean  @default(false)
+  channelIds String[]
+
 }
