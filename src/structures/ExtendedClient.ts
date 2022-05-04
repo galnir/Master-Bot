@@ -130,8 +130,9 @@ export class ExtendedClient extends SapphireClient {
             }
             if (i.customId === 'stop') {
               await i.update('Leaving');
-              queue.player.stop();
-              queue.player.disconnect();
+              const player = this.music.players.get(message.guild!.id);
+              player?.disconnect();
+              this.music.destroyPlayer(player!.guildId);
               clearTimeout(timer);
               collector.stop();
               await message.delete();
