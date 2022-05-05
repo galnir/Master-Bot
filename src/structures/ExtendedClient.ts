@@ -95,7 +95,7 @@ export class ExtendedClient extends SapphireClient {
           queue.current?.isStream == true ? (timeLimit = maxLimit) : null;
           const filter = (i: any) =>
             i.member.voice.channel?.id === queue.player.channelId; // only available to members in the same voice channel
-          const collector = message.channel.createMessageComponentCollector({
+          const collector = message.createMessageComponentCollector({
             filter,
             time: timeLimit
           });
@@ -157,6 +157,7 @@ export class ExtendedClient extends SapphireClient {
                 queue.last!,
                 queue.player.paused
               );
+
               await i.update({
                 embeds: [NowPlaying.NowPlayingEmbed()]
               });
