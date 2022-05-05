@@ -162,25 +162,3 @@ export class NowPlayingEmbed {
     };
   }
 }
-export class PlayerButtons {
-  public constructor() {
-    new MessageActionRow().addComponents(
-      new MessageButton()
-        .setCustomId('play')
-        .setLabel('play')
-        .setStyle('PRIMARY'),
-      new MessageButton()
-        .setCustomId('pause')
-        .setLabel('Pause')
-        .setStyle('PRIMARY'),
-      new MessageButton()
-        .setCustomId('stop')
-        .setLabel('Stop')
-        .setStyle('DANGER'),
-      new MessageButton()
-        .setCustomId('next')
-        .setLabel('Next')
-        .setStyle('PRIMARY')
-    );
-  }
-}
