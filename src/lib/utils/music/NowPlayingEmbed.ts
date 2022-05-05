@@ -1,9 +1,4 @@
-import {
-  ColorResolvable,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed
-} from 'discord.js';
+import { ColorResolvable, MessageEmbed } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
 
