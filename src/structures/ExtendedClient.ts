@@ -145,10 +145,9 @@ export class ExtendedClient extends SapphireClient {
               await message.delete();
             }
             if (i.customId === 'volumeUp') {
-              const volume = queue.player.volume;
-              await queue.player.setVolume(
-                volume + 10 > 200 ? 200 : volume + 10
-              );
+              const volume =
+                queue.player.volume + 10 > 200 ? 200 : queue.player.volume + 10;
+              await queue.player.setVolume(volume);
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 undefined,
@@ -163,8 +162,9 @@ export class ExtendedClient extends SapphireClient {
               });
             }
             if (i.customId === 'volumeDown') {
-              const volume = queue.player.volume;
-              await queue.player.setVolume(volume - 10 < 0 ? 0 : volume - 10);
+              const volume =
+                queue.player.volume - 10 < 0 ? 0 : queue.player.volume - 10;
+              await queue.player.setVolume(volume);
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 undefined,
