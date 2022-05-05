@@ -3,6 +3,7 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents, MessageActionRow, MessageButton } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
+import prisma from '../lib/prisma';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
@@ -39,6 +40,7 @@ export class ExtendedClient extends SapphireClient {
     this.leaveTimers = {};
     this.music.on('queueFinish', queue => {
       queue.player.stop();
+
       this.leaveTimers[queue.player.guildId as string] = setTimeout(() => {
         queue.channel!.send(':zzz: Leaving due to inactivity');
         queue.player.disconnect();
@@ -104,80 +106,104 @@ export class ExtendedClient extends SapphireClient {
               console.log(error);
             });
           }, timeLimit);
-          collector.on('collect', async i => {
-            if (i.customId === 'playPause') {
-              let paused;
-              if (queue.player.paused) {
-                queue.player.resume();
-                paused = false;
-              } else {
-                queue.player.pause();
-                paused = true;
-              }
-              const NowPlaying = new NowPlayingEmbed(
-                song,
-                undefined,
-                queue.current!.length as number,
-                queue.player.volume,
-                queue.tracks!,
-                queue.last!,
-                paused
-              );
-              collector.empty();
-              await i.update({
-                embeds: [NowPlaying.NowPlayingEmbed()]
-              });
-            }
-            if (i.customId === 'stop') {
-              await i.update('Leaving');
-              const player = this.music.players.get(message.guild!.id);
-              player?.disconnect();
-              this.music.destroyPlayer(player!.guildId);
-              clearTimeout(timer);
-              collector.stop();
-              await message.delete();
-            }
-            if (i.customId === 'next') {
-              await i.update('Skipping');
-              queue.next();
-              clearTimeout(timer);
-              collector.stop();
-              await message.delete();
-            }
-            if (i.customId === 'volumeUp') {
-              const volume =
-                queue.player.volume + 10 > 200 ? 200 : queue.player.volume + 10;
-              await queue.player.setVolume(volume);
-              const NowPlaying = new NowPlayingEmbed(
-                song,
-                undefined,
-                queue.current!.length as number,
-                volume,
-                queue.tracks!,
-                queue.last!,
-                queue.player.paused
-              );
 
-              await i.update({
-                embeds: [NowPlaying.NowPlayingEmbed()]
-              });
-            }
-            if (i.customId === 'volumeDown') {
-              const volume =
-                queue.player.volume - 10 < 0 ? 0 : queue.player.volume - 10;
-              await queue.player.setVolume(volume);
-              const NowPlaying = new NowPlayingEmbed(
-                song,
-                undefined,
-                queue.current!.length as number,
-                volume,
-                queue.tracks!,
-                queue.last!,
-                queue.player.paused
-              );
-              await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
-            }
-          });
+          try {
+            collector.on('collect', async i => {
+              if (i.customId === 'playPause') {
+                let paused;
+                if (queue.player.paused) {
+                  queue.player.resume();
+                  paused = false;
+                } else {
+                  queue.player.pause();
+                  paused = true;
+                }
+                const NowPlaying = new NowPlayingEmbed(
+                  song,
+                  queue.player.accuratePosition,
+                  queue.current!.length as number,
+                  queue.player.volume,
+                  queue.tracks!,
+                  queue.last!,
+                  paused
+                );
+                collector.empty();
+                await i.update({
+                  embeds: [NowPlaying.NowPlayingEmbed()]
+                });
+              }
+              if (i.customId === 'stop') {
+                await i.update('Leaving');
+                const player = this.music.players.get(message.guild!.id);
+                player?.disconnect();
+                this.music.destroyPlayer(player!.guildId);
+                clearTimeout(timer);
+                collector.stop();
+                await message.delete();
+              }
+              if (i.customId === 'next') {
+                await i.update('Skipping');
+                queue.next();
+                clearTimeout(timer);
+                collector.stop();
+                await message.delete();
+              }
+              if (i.customId === 'volumeUp') {
+                const volume =
+                  queue.player.volume + 10 > 200
+                    ? 200
+                    : queue.player.volume + 10;
+                await queue.player.setVolume(volume);
+                const NowPlaying = new NowPlayingEmbed(
+                  song,
+                  queue.player.accuratePosition,
+                  queue.current!.length as number,
+                  volume,
+                  queue.tracks!,
+                  queue.last!,
+                  queue.player.paused
+                );
+                collector.empty();
+                await prisma.guild.upsert({
+                  where: { id: message.guild!.id },
+                  create: {
+                    id: message.guild!.id,
+                    volume: volume
+                  },
+                  update: { volume: volume }
+                });
+                await i.update({
+                  embeds: [NowPlaying.NowPlayingEmbed()]
+                });
+              }
+              if (i.customId === 'volumeDown') {
+                const volume =
+                  queue.player.volume - 10 < 0 ? 0 : queue.player.volume - 10;
+                await queue.player.setVolume(volume);
+                const NowPlaying = new NowPlayingEmbed(
+                  song,
+                  queue.player.accuratePosition,
+                  queue.current!.length as number,
+                  volume,
+                  queue.tracks!,
+                  queue.last!,
+                  queue.player.paused
+                );
+                collector.empty();
+                await prisma.guild.upsert({
+                  where: { id: message.guild!.id },
+                  create: {
+                    id: message.guild!.id,
+                    volume: volume
+                  },
+                  update: { volume: volume }
+                });
+                await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
+              }
+            });
+          } catch (e) {
+            console.log(e);
+          }
           timer;
         });
     });
