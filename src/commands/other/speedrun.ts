@@ -229,6 +229,8 @@ export class SpeedRunCommand extends Command {
         }
       });
       PaginatedEmbed.setIdle(30 * 1000).setIndex(0);
+      if (PaginatedEmbed.actions.size > 0)
+        PaginatedEmbed.actions.delete('@sapphire/paginated-messages.goToPage');
 
       SpeedRunCommand.myButtons(PaginatedEmbed, categories, queryCat);
 
