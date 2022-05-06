@@ -101,7 +101,7 @@ export class ExtendedClient extends SapphireClient {
             filter,
             time: timeLimit
           });
-          const timer: NodeJS.Timer = setTimeout(async () => {
+          let timer: NodeJS.Timer = setTimeout(async () => {
             await message.delete().catch(error => {
               console.log(error);
             });
@@ -111,11 +111,43 @@ export class ExtendedClient extends SapphireClient {
             try {
               collector.on('collect', async i => {
                 if (i.customId === 'playPause') {
+                  clearTimeout(timer);
+                  timeLimit =
+                    queue.current!.length > maxLimit
+                      ? maxLimit
+                      : queue.current!.length - queue.player.accuratePosition!;
+                  queue.current!.isStream == true
+                    ? (timeLimit = maxLimit)
+                    : null;
                   let paused;
                   if (queue.player.paused) {
                     queue.player.resume();
                     paused = false;
+                    clearTimeout(
+                      this.leaveTimers[queue.player.guildId as string]!
+                    );
+
+                    timer = setTimeout(async () => {
+                      await message.delete().catch(error => {
+                        console.log(error);
+                      });
+                    }, timeLimit);
+                    collector.resetTimer({ time: timeLimit });
                   } else {
+                    this.leaveTimers[queue.player.guildId as string] =
+                      setTimeout(() => {
+                        queue.channel!.send(':zzz: Leaving due to inactivity');
+                        queue.player.disconnect();
+                        queue.player.node.destroyPlayer(queue.player.guildId);
+                      }, maxLimit);
+
+                    timer = setTimeout(async () => {
+                      await message.delete().catch(error => {
+                        console.log(error);
+                      });
+                    }, maxLimit);
+
+                    collector.resetTimer({ time: maxLimit });
                     queue.player.pause();
                     paused = true;
                   }
@@ -128,6 +160,7 @@ export class ExtendedClient extends SapphireClient {
                     queue.last!,
                     paused
                   );
+                  timer;
                   collector.empty();
                   await i.update({
                     embeds: [NowPlaying.NowPlayingEmbed()]
