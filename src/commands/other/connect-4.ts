@@ -12,7 +12,8 @@ import {
   MessageAttachment,
   MessageEmbed,
   GuildMember,
-  MessageReaction
+  MessageReaction,
+  Message
   //   Message,
 } from 'discord.js';
 
@@ -101,7 +102,7 @@ export class Connect4Command extends Command {
 
       .then(async (message: any) => {
         try {
-          await message?.response?.react('1️⃣');
+          await message.response?.react('1️⃣');
           await message.response?.react('2️⃣');
           await message.response?.react('3️⃣');
           await message.response?.react('4️⃣');
@@ -185,11 +186,19 @@ export class Connect4Command extends Command {
         );
 
         collector.on('end', () => {
-          message.response.reactions
-            .removeAll()
-            .catch((error: string) =>
-              console.error('Failed to clear reactions:', error)
-            );
+          if (currentPlayer !== 'Game Over') {
+            message.response
+              .delete()
+              .catch((error: string) =>
+                console.error('Failed Removing Reactions', error)
+              );
+          } else {
+            message.response.reactions
+              .removeAll()
+              .catch((error: string) =>
+                console.error('Failed Removing Message', error)
+              );
+          }
         });
       });
 
@@ -327,13 +336,13 @@ export class Connect4Command extends Command {
             )
           ]
         })
-        .then(async (result: any) => {
+        .then(async (result: Message) => {
           boardImageURL = await result.attachments.entries().next().value[1]
             .url;
 
           result.delete();
         })
-        .catch((err: any) => {
+        .catch((err: string) => {
           if (err) {
             console.log(err);
           }
@@ -345,9 +354,17 @@ export class Connect4Command extends Command {
       user: GuildMember,
       instance: MessageEmbed
     ) {
-      if (row[index].length === 0 || currentPlayer === 'Game Over') {
+      if (currentPlayer === 'Game Over') {
         return interaction.followUp({
-          content: `:x: Game is over, 👑 ${checkWinner(gameBoard)} Won`,
+          content: `:x: Game is over, 👑 Player ${checkWinner(gameBoard)} Won`,
+          ephemeral: true,
+          fetchReply: true,
+          target: user
+        });
+      }
+      if (row[index].length === 0) {
+        interaction.followUp({
+          content: `:x: Column: ${index} is full, Please try again.`,
           ephemeral: true,
           fetchReply: true,
           target: user
@@ -499,7 +516,7 @@ export class Connect4Command extends Command {
           type: 'USER',
           required: true,
           name: 'user',
-          description: `Which user's avatar do you want to look at?`
+          description: `Who would you like to play against?`
         }
       ]
     });
