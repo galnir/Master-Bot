@@ -11,3 +11,4 @@ dist
 .env
 application.yaml
 *.bat
+
