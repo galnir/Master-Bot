@@ -11,7 +11,7 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'display-playlist',
   description: 'Display a saved playlist',
-  preconditions: ['userInDB', 'playlistExists']
+  preconditions: ['GuildOnly', 'userInDB', 'playlistExists']
 })
 export class DisplayPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

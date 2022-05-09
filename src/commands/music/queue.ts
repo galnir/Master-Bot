@@ -12,6 +12,7 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
   name: 'queue',
   description: 'Display the music queue in the form of an embed',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

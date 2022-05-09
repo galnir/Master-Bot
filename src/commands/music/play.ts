@@ -16,6 +16,7 @@ import prisma from '../../lib/prisma';
   name: 'play',
   description: 'Play any song or playlist from YouTube and Spotify!',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'inPlayerVoiceChannel',

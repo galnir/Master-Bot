@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'pause',
   description: 'Pause the music',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

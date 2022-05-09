@@ -9,7 +9,8 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'stop-trivia',
-  description: 'End a music trivia'
+  description: 'End a music trivia',
+  preconditions: ['GuildOnly']
 })
 export class StopTriviaCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

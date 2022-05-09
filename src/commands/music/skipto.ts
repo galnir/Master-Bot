@@ -12,6 +12,7 @@ import { LoopType } from '../../lib/utils/queue/Queue';
   name: 'skipto',
   description: 'Skip to a track in queue',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

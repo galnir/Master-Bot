@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'seek',
   description: 'Seek to a desired point in a track',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

@@ -13,6 +13,7 @@ import type { Song } from '../../lib/utils/queue/Song';
   name: 'now-playing',
   description: 'Display an embed detailing the song playing',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

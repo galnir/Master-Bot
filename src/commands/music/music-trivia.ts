@@ -18,7 +18,7 @@ import type { MessageChannel } from '../..';
 @ApplyOptions<CommandOptions>({
   name: 'music-trivia',
   description: 'Play a fun music trivia with your friends or by yourself!',
-  preconditions: ['inVoiceChannel', 'musicTriviaPlaying']
+  preconditions: ['GuildOnly', 'inVoiceChannel', 'musicTriviaPlaying']
 })
 export class MusicTriviaCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

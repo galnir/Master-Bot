@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'move',
   description: 'Move a track to a different position in queue',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

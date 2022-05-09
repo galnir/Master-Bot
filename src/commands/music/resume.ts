@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'resume',
   description: 'Resume the music',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

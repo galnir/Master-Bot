@@ -13,6 +13,7 @@ import { LoopType } from '../../lib/utils/queue/Queue';
   name: 'skip',
   description: 'Skip the current song playing',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',
