@@ -10,7 +10,6 @@ import type { MessageChannel } from '../..';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Addable } from '../../lib/utils/queue/Queue';
 import prisma from '../../lib/prisma';
-//import Member from '../../lib/models/Member';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -92,7 +91,7 @@ export class PlayCommand extends Command {
       player ??= client.music.createPlayer(interaction.guild!.id);
       player.queue.channel = interaction.channel as MessageChannel;
       if (channelDB?.volume) {
-        player.setVolume(channelDB.volume as number);
+        player.setVolume(channelDB.volume);
       }
       await player.connect(voiceChannel!.id, { deafened: true });
     }
