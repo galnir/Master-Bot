@@ -1,9 +1,9 @@
-import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { SapphireClient } from '@sapphire/framework';
-import { Intents, MessageActionRow, MessageButton } from 'discord.js';
+import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
-import prisma from '../lib/prisma';
+import { embedButtons } from '../lib/utils/music/ButtonHandler';
+import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
@@ -52,10 +52,9 @@ export class ExtendedClient extends SapphireClient {
       if (this.leaveTimers[queue.player.guildId]) {
         clearTimeout(this.leaveTimers[queue.player.guildId]!);
       }
-
       const NowPlaying = new NowPlayingEmbed(
         song,
-        undefined,
+        queue.player.accuratePosition,
         queue.current!.length as number,
         queue.player.volume,
         queue.tracks!,
@@ -63,185 +62,7 @@ export class ExtendedClient extends SapphireClient {
         false
       );
 
-      const row = new MessageActionRow().addComponents(
-        new MessageButton()
-          .setCustomId('playPause')
-          .setLabel('Play/Pause')
-          .setStyle('PRIMARY'),
-        new MessageButton()
-          .setCustomId('stop')
-          .setLabel('Stop')
-          .setStyle('DANGER'),
-        new MessageButton()
-          .setCustomId('next')
-          .setLabel('Next')
-          .setStyle('PRIMARY'),
-        new MessageButton()
-          .setCustomId('volumeUp')
-          .setLabel('Vol+')
-          .setStyle('PRIMARY'),
-        new MessageButton()
-          .setCustomId('volumeDown')
-          .setLabel('Vol-')
-          .setStyle('PRIMARY')
-      );
-      return await queue
-        .channel!.send({
-          embeds: [NowPlaying.NowPlayingEmbed()],
-          components: [row]
-        })
-        .then(async message => {
-          const maxLimit: number = 1.8e6; // 30 minutes
-          let timeLimit: number =
-            queue.current!.length > maxLimit ? maxLimit : queue.current!.length;
-          queue.current?.isStream == true ? (timeLimit = maxLimit) : null;
-          const filter = (i: any) =>
-            i.member.voice.channel?.id === queue.player.channelId; // only available to members in the same voice channel
-          const collector = message.createMessageComponentCollector({
-            filter,
-            time: timeLimit
-          });
-          let timer: NodeJS.Timer = setTimeout(async () => {
-            await message.delete().catch(error => {
-              console.log(error);
-            });
-          }, timeLimit);
-          const player = this.music.players.get(message.guild!.id);
-          if (player) {
-            try {
-              collector.on('collect', async i => {
-                if (i.customId === 'playPause') {
-                  clearTimeout(timer);
-                  timeLimit =
-                    queue.current!.length > maxLimit
-                      ? maxLimit
-                      : queue.current!.length - queue.player.accuratePosition!;
-                  queue.current!.isStream == true
-                    ? (timeLimit = maxLimit)
-                    : null;
-                  let paused;
-                  if (queue.player.paused) {
-                    queue.player.resume();
-                    paused = false;
-                    clearTimeout(
-                      this.leaveTimers[queue.player.guildId as string]!
-                    );
-
-                    timer = setTimeout(async () => {
-                      await message.delete().catch(error => {
-                        console.log(error);
-                      });
-                    }, timeLimit);
-                    collector.resetTimer({ time: timeLimit });
-                  } else {
-                    this.leaveTimers[queue.player.guildId as string] =
-                      setTimeout(() => {
-                        queue.channel!.send(':zzz: Leaving due to inactivity');
-                        queue.player.disconnect();
-                        queue.player.node.destroyPlayer(queue.player.guildId);
-                      }, maxLimit);
-
-                    timer = setTimeout(async () => {
-                      await message.delete().catch(error => {
-                        console.log(error);
-                      });
-                    }, maxLimit);
-
-                    collector.resetTimer({ time: maxLimit });
-                    queue.player.pause();
-                    paused = true;
-                  }
-                  const NowPlaying = new NowPlayingEmbed(
-                    song,
-                    queue.player.accuratePosition,
-                    queue.current!.length as number,
-                    queue.player.volume,
-                    queue.tracks!,
-                    queue.last!,
-                    paused
-                  );
-                  timer;
-                  collector.empty();
-                  await i.update({
-                    embeds: [NowPlaying.NowPlayingEmbed()]
-                  });
-                }
-                if (i.customId === 'stop') {
-                  await i.update('Leaving');
-                  player?.disconnect();
-                  this.music.destroyPlayer(player.guildId);
-                  clearTimeout(timer);
-                  collector.stop();
-                  await message.delete();
-                }
-                if (i.customId === 'next') {
-                  await i.update('Skipping');
-                  queue.next();
-                  clearTimeout(timer);
-                  collector.stop();
-                  await message.delete();
-                }
-                if (i.customId === 'volumeUp') {
-                  const volume =
-                    queue.player.volume + 10 > 200
-                      ? 200
-                      : queue.player.volume + 10;
-                  await queue.player.setVolume(volume);
-                  const NowPlaying = new NowPlayingEmbed(
-                    song,
-                    queue.player.accuratePosition,
-                    queue.current!.length as number,
-                    volume,
-                    queue.tracks!,
-                    queue.last!,
-                    queue.player.paused
-                  );
-                  collector.empty();
-                  await prisma.guild.upsert({
-                    where: { id: message.guild!.id },
-                    create: {
-                      id: message.guild!.id,
-                      volume: volume
-                    },
-                    update: { volume: volume }
-                  });
-                  await i.update({
-                    embeds: [NowPlaying.NowPlayingEmbed()]
-                  });
-                }
-                if (i.customId === 'volumeDown') {
-                  const volume =
-                    queue.player.volume - 10 < 0 ? 0 : queue.player.volume - 10;
-                  await queue.player.setVolume(volume);
-                  const NowPlaying = new NowPlayingEmbed(
-                    song,
-                    queue.player.accuratePosition,
-                    queue.current!.length as number,
-                    volume,
-                    queue.tracks!,
-                    queue.last!,
-                    queue.player.paused
-                  );
-                  collector.empty();
-                  await prisma.guild.upsert({
-                    where: { id: message.guild!.id },
-                    create: {
-                      id: message.guild!.id,
-                      volume: volume
-                    },
-                    update: { volume: volume }
-                  });
-                  await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
-                }
-              });
-            } catch (e) {
-              console.log(e);
-            }
-          } else {
-            await message.delete();
-          }
-          timer;
-        });
+      await embedButtons(NowPlaying.NowPlayingEmbed(), queue, song);
     });
   }
 }
@@ -249,5 +70,6 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
+    leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }
