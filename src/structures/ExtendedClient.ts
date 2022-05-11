@@ -8,6 +8,7 @@ import { manageStageChannel } from './../lib/utils/music/channelHandler';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
+  playerEmbeds: { [key: string]: string };
   leaveTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
@@ -38,6 +39,7 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
+    this.playerEmbeds = {};
     this.leaveTimers = {};
     this.music.on('queueFinish', queue => {
       queue.player.stop();
@@ -81,6 +83,7 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
+    playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }

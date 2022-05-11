@@ -43,6 +43,23 @@ export async function embedButtons(
       components: [row]
     })
     .then(async (message: Message) => {
+      if (client.playerEmbeds[message.guild!.id])
+        await message.channel
+          .fetch()
+          .then(
+            async channel =>
+              await channel.messages.fetch(
+                client.playerEmbeds[message.guild!.id]
+              )
+          )
+          .then(async oldMessage => {
+            await oldMessage
+              .delete()
+              .catch(error =>
+                console.log('Failed to Delete Old Message.', error)
+              );
+          });
+      client.playerEmbeds[message.guild!.id] = message.id;
       const player = client.music.players.get(message.guild!.id);
       const maxLimit = 1.8e6; // 30 minutes
 
