@@ -44,7 +44,7 @@ export async function embedButtons(
     })
     .then(async (message: Message) => {
       const player = client.music.players.get(message.guild!.id);
-      const maxLimit: number = 1.8e6; // 30 minutes
+      const maxLimit = 1.8e6; // 30 minutes
 
       let timeLimit: number | undefined =
         player?.queue.current?.length! > maxLimit
@@ -82,7 +82,7 @@ export async function embedButtons(
               if (player.paused) {
                 player.resume();
                 paused = false;
-                clearTimeout(client.leaveTimers[player.guildId as string]!);
+                clearTimeout(client.leaveTimers[player.guildId]!);
 
                 timer = setTimeout(async () => {
                   await message.delete().catch(error => {
@@ -91,16 +91,11 @@ export async function embedButtons(
                 }, timeLimit);
                 collector.resetTimer({ time: timeLimit });
               } else {
-                client.leaveTimers[player.guildId as string] = setTimeout(
-                  () => {
-                    player.queue.channel!.send(
-                      ':zzz: Leaving due to inactivity'
-                    );
-                    player.disconnect();
-                    player.node.destroyPlayer(player.guildId);
-                  },
-                  maxLimit
-                );
+                client.leaveTimers[player.guildId] = setTimeout(() => {
+                  player.queue.channel!.send(':zzz: Leaving due to inactivity');
+                  player.disconnect();
+                  player.node.destroyPlayer(player.guildId);
+                }, maxLimit);
 
                 timer = setTimeout(async () => {
                   await message.delete().catch(error => {
@@ -115,7 +110,7 @@ export async function embedButtons(
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 player.accuratePosition,
-                player.queue.current!.length as number,
+                player.queue.current!.length,
                 player.volume,
                 player.queue.tracks!,
                 player.queue.last!,
@@ -149,7 +144,7 @@ export async function embedButtons(
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 player.accuratePosition,
-                player.queue.current!.length as number,
+                player.queue.current!.length,
                 player.volume,
                 player.queue.tracks!,
                 player.queue.last!,
@@ -174,7 +169,7 @@ export async function embedButtons(
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 player.accuratePosition,
-                player.queue.current!.length as number,
+                player.queue.current!.length,
                 player.volume,
                 player.queue.tracks!,
                 player.queue.last!,
