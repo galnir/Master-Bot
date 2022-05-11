@@ -4,6 +4,7 @@ import { Node } from 'lavaclient';
 import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
+import { manageStageChannel } from './../lib/utils/music/channelHandler';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
@@ -52,9 +53,10 @@ export class ExtendedClient extends SapphireClient {
       if (this.leaveTimers[queue.player.guildId]) {
         clearTimeout(this.leaveTimers[queue.player.guildId]!);
       }
+
       const NowPlaying = new NowPlayingEmbed(
         song,
-        queue.player.accuratePosition,
+        0,
         queue.current!.length as number,
         queue.player.volume,
         queue.tracks!,
@@ -63,6 +65,15 @@ export class ExtendedClient extends SapphireClient {
       );
 
       await embedButtons(NowPlaying.NowPlayingEmbed(), queue, song);
+
+      const voiceChannel = this.voice.client.channels.cache.get(
+        queue.player.channelId!
+      );
+      // Stage Channels
+      if (voiceChannel?.type === 'GUILD_STAGE_VOICE') {
+        const botUser = voiceChannel?.members.get(this.application?.id!);
+        await manageStageChannel(voiceChannel, botUser!, queue);
+      }
     });
   }
 }
