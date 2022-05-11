@@ -6,19 +6,21 @@ export async function manageStageChannel(
   botUser: GuildMember,
   instance: Queue
 ) {
+  // Stage Channel Permissions From Discord.js Doc's
   if (
     !botUser?.permissions.has(
-      ('MODERATE_MEMBERS' && 'MANAGE_CHANNELS' && 'VIEW_CHANNEL') ||
-        'ADMINISTRATOR'
+      ('MANAGE_CHANNELS' && 'MUTE_MEMBERS' && 'MOVE_MEMBERS') || 'ADMINISTRATOR'
     )
   )
     return await instance.channel?.send({
-      content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Moderate Members, View Channels" for Full Stage Channel Features.`
+      content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
     });
+
   if (!voiceChannel.stageInstance) {
     await voiceChannel
       .createStageInstance({
-        topic: '🎶 ' + instance.player.queue.current?.title
+        topic: '🎶 ' + instance.player.queue.current?.title,
+        privacyLevel: 2 // Guild Only
       })
       .catch(error => {
         console.log('Failed to Create a Stage Instance.', error);
