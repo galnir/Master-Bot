@@ -26,7 +26,7 @@ export class VolumeCommand extends Command {
 
     const player = client.music.players.get(
       interaction.guild!.id
-    ) as Player<Node>;
+    ) as Player<Node>; // safe to cast thanks to 'playerIsPlaying' precondition
 
     if (query > 200 || query < 0) {
       return await interaction.reply(
@@ -46,7 +46,7 @@ export class VolumeCommand extends Command {
         }
       });
     } else {
-      return interaction.reply(':x: Error - Failed to gather Guild info');
+      return await interaction.reply(':x: Error - Failed to gather Guild info');
     }
 
     await player.setVolume(query);
