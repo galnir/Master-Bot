@@ -13,6 +13,7 @@ import prisma from '../../lib/prisma';
   name: 'volume',
   description: 'Set the Volume',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',
