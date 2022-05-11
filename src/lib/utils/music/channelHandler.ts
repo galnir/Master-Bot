@@ -16,10 +16,15 @@ export async function manageStageChannel(
       content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
     });
 
+  const title =
+    instance.player.queue.current?.title.length! > 114
+      ? `🎶 ${instance.player.queue.current?.title.slice(0, 114)}...`
+      : `🎶 ${instance.player.queue.current?.title}`;
+
   if (!voiceChannel.stageInstance) {
     await voiceChannel
       .createStageInstance({
-        topic: '🎶 ' + instance.player.queue.current?.title,
+        topic: title,
         privacyLevel: 2 // Guild Only
       })
       .catch(error => {
@@ -32,11 +37,9 @@ export async function manageStageChannel(
       console.log('Failed to Set Suppressed to False.', error);
     });
   if (voiceChannel.stageInstance?.topic.startsWith('🎶')) {
-    await voiceChannel.stageInstance
-      ?.setTopic('🎶 ' + instance.player.queue.current?.title)
-      .catch(error => {
-        console.log('Failed to Set Topic.', error);
-      });
+    await voiceChannel.stageInstance?.setTopic(title).catch(error => {
+      console.log('Failed to Set Topic.', error);
+    });
   }
   return;
 }
