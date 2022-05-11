@@ -12,6 +12,7 @@ import type { Node, Player } from 'lavaclient';
   name: 'nightcore',
   description: 'Enable/Disable Nightcore filter',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

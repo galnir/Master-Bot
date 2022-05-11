@@ -31,7 +31,7 @@ export default async function searchSong(
         }**](${query}).`;
         break;
       default:
-        displayMessage = "Couldn't find what you were looking for :(";
+        displayMessage = ":x: Couldn't find what you were looking for :(";
         return [displayMessage, tracks];
     }
     return [displayMessage, tracks];
@@ -43,7 +43,7 @@ export default async function searchSong(
     switch (results.loadType) {
       case 'LOAD_FAILED':
       case 'NO_MATCHES':
-        displayMessage = "Couldn't find what you were looking for :(`";
+        displayMessage = ":x: Couldn't find what you were looking for :(";
         return [displayMessage, tracks];
       case 'PLAYLIST_LOADED':
         tracks = results.tracks;

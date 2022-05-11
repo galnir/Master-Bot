@@ -8,7 +8,8 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'avatar',
-  description: `Responds with a user's avatar`
+  description: `Responds with a user's avatar`,
+  preconditions: ['GuildOnly']
 })
 export class AvatarCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

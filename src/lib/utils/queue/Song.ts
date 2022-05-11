@@ -1,11 +1,9 @@
 import { decode } from '@lavalink/encoding';
-
 import type { Track, TrackInfo } from '@lavaclient/types';
 
 export class Song implements TrackInfo {
   readonly track: string;
-  readonly requester?: string;
-
+  readonly requester?: RequesterInfo;
   length: number;
   identifier: string;
   author: string;
@@ -15,10 +13,17 @@ export class Song implements TrackInfo {
   uri: string;
   isSeekable: boolean;
   sourceName: string;
+  thumbnail: string;
+  added: number;
 
-  constructor(track: string | Track, requester?: string) {
+  constructor(
+    track: string | Track,
+    added?: number,
+    requester?: RequesterInfo
+  ) {
     this.track = typeof track === 'string' ? track : track.track;
     this.requester = requester;
+    this.added = added ?? Date.now();
 
     // TODO: make this less shitty
     if (typeof track !== 'string') {
@@ -31,6 +36,7 @@ export class Song implements TrackInfo {
       this.uri = track.info.uri;
       this.isSeekable = track.info.isSeekable;
       this.sourceName = track.info.sourceName;
+      this.thumbnail = `https://img.youtube.com/vi/${track.info.identifier}/hqdefault.jpg`;
     } else {
       const decoded = decode(this.track);
       this.length = Number(decoded.length);
@@ -42,6 +48,13 @@ export class Song implements TrackInfo {
       this.uri = decoded.uri!;
       this.isSeekable = !decoded.isStream;
       this.sourceName = decoded.source!;
+      this.thumbnail = `https://img.youtube.com/vi/${decoded.identifier}/hqdefault.jpg`;
     }
   }
+}
+interface RequesterInfo {
+  avatar?: string | null;
+  defaultAvatarURL?: string;
+  id?: string;
+  name?: string;
 }

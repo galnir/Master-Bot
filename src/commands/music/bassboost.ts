@@ -12,6 +12,7 @@ import type { Node, Player } from 'lavaclient';
   name: 'bassboost',
   description: 'Boost the bass of the playing track',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'leave',
   description: 'Make the bot leave its voice channel and stop playing music',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

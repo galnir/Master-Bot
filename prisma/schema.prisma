@@ -34,7 +34,7 @@ model Playlist {
 model Guild {
   id     String   @id
   added  DateTime @default(now())
-  volume Int?
+  volume Int
 
 }
 

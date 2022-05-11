@@ -10,7 +10,7 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
   description: 'Create a custom playlist that you can play anytime',
-  preconditions: ['userInDB', 'playlistNotDuplicate']
+  preconditions: ['GuildOnly', 'userInDB', 'playlistNotDuplicate']
 })
 export class CreatePlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

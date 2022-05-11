@@ -9,7 +9,7 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 @ApplyOptions<CommandOptions>({
   name: 'activity',
   description: "Generate an invite link to your voice channel's activity",
-  preconditions: ['inVoiceChannel']
+  preconditions: ['GuildOnly', 'inVoiceChannel']
 })
 export class ActivityCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

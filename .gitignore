@@ -10,3 +10,4 @@ application.yml
 dist
 .env
 application.yaml
+prisma/migrations/
