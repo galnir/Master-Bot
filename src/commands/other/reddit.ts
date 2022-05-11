@@ -15,7 +15,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'reddit',
-  description: 'Get posts from reddit by specifying a subreddit'
+  description: 'Get posts from reddit by specifying a subreddit',
+  preconditions: ['GuildOnly']
 })
 export class AdviceCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

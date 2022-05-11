@@ -10,7 +10,7 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'remove-from-playlist',
   description: 'Remove a song from a saved playlist',
-  preconditions: ['userInDB', 'playlistExists']
+  preconditions: ['GuildOnly', 'userInDB', 'playlistExists']
 })
 export class RemoveFromPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

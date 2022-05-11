@@ -11,6 +11,7 @@ import { container } from '@sapphire/framework';
   name: 'remove',
   description: 'Remove a track from the queue',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

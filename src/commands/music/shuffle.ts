@@ -12,6 +12,7 @@ import type { Song } from '../../lib/utils/queue/Song';
   name: 'shuffle',
   description: 'Shuffle the music queue',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',

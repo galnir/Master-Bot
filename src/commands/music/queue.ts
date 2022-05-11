@@ -12,6 +12,7 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
   name: 'queue',
   description: 'Display the music queue in the form of an embed',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',
@@ -50,14 +51,13 @@ export class QueueCommand extends Command {
     await interaction.reply('Queue generated');
 
     new PaginatedFieldMessageEmbed()
-      .setTitleField('Queue item')
-      // @ts-ignore
-      .setTemplate({ baseEmbed })
+      .setTitleField('Queue items')
+
+      .setTemplate(baseEmbed)
       .setItems(queueItems)
       .formatItems((item: any) => `${item.title}\n${item.value}`)
       .setItemsPerPage(5)
       .make()
-      // @ts-ignore
       .run(interaction);
   }
 

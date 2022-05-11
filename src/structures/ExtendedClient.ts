@@ -2,9 +2,13 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
+import { embedButtons } from '../lib/utils/music/ButtonHandler';
+import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
+import { manageStageChannel } from './../lib/utils/music/channelHandler';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
+  leaveTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
     super({
@@ -35,14 +39,42 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
+    this.leaveTimers = {};
     this.music.on('queueFinish', queue => {
-      queue.channel!.send("There are no more songs in queue, I'm out");
-      queue.player.disconnect();
-      queue.player.node.destroyPlayer(queue.player.guildId);
+      queue.player.stop();
+
+      this.leaveTimers[queue.player.guildId] = setTimeout(() => {
+        queue.channel!.send(':zzz: Leaving due to inactivity');
+        queue.player.disconnect();
+        queue.player.node.destroyPlayer(queue.player.guildId);
+      }, 30 * 1000);
     });
 
-    this.music.on('trackStart', (queue, song) => {
-      queue.channel!.send(`Now playing **${song.title}**`);
+    this.music.on('trackStart', async (queue, song) => {
+      if (this.leaveTimers[queue.player.guildId]) {
+        clearTimeout(this.leaveTimers[queue.player.guildId]!);
+      }
+
+      const NowPlaying = new NowPlayingEmbed(
+        song,
+        0,
+        queue.current!.length as number,
+        queue.player.volume,
+        queue.tracks!,
+        queue.last!,
+        false
+      );
+
+      await embedButtons(NowPlaying.NowPlayingEmbed(), queue, song);
+
+      const voiceChannel = this.voice.client.channels.cache.get(
+        queue.player.channelId!
+      );
+      // Stage Channels
+      if (voiceChannel?.type === 'GUILD_STAGE_VOICE') {
+        const botUser = voiceChannel?.members.get(this.application?.id!);
+        await manageStageChannel(voiceChannel, botUser!, queue);
+      }
     });
   }
 }
@@ -50,5 +82,6 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
+    leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }

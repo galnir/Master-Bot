@@ -10,7 +10,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'tv-show-search',
-  description: 'Get TV shows information'
+  description: 'Get TV shows information',
+  preconditions: ['GuildOnly']
 })
 export class TVShowSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

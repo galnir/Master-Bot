@@ -12,6 +12,7 @@ import { LoopType } from '../../lib/utils/queue/Queue';
   name: 'loop',
   description: 'Loop the playing song or queue',
   preconditions: [
+    'GuildOnly',
     'inVoiceChannel',
     'musicTriviaPlaying',
     'playerIsPlaying',
