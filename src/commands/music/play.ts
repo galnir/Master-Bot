@@ -10,11 +10,10 @@ import type { MessageChannel } from '../..';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Addable } from '../../lib/utils/queue/Queue';
 import prisma from '../../lib/prisma';
-//import Member from '../../lib/models/Member';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
-  description: 'Play any song or playlist from YouTube and Spotify!',
+  description: 'Play any song or playlist from YouTube, Spotify and more!',
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
@@ -32,6 +31,7 @@ export class PlayCommand extends Command {
       interaction.options.getString('is-custom-playlist');
 
     const interactionMember = interaction.member as GuildMember;
+
     // had a precondition make sure the user is infact in a voice channel
     const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
       interaction.user.id
@@ -39,6 +39,7 @@ export class PlayCommand extends Command {
 
     let tracks: Addable[] = [];
     let message: string = '';
+
     if (isCustomPlaylist == 'Yes') {
       const playlist = await prisma.playlist.findFirst({
         where: {
@@ -51,10 +52,10 @@ export class PlayCommand extends Command {
       });
 
       if (!playlist) {
-        return await interaction.followUp(`You have no such playlist!`);
+        return await interaction.followUp(`:x: You have no such playlist!`);
       }
       if (!playlist.songs.length) {
-        return await interaction.followUp(`**${query}** is empty!`);
+        return await interaction.followUp(`:x: **${query}** is empty!`);
       }
 
       const songs = playlist.songs;
@@ -79,18 +80,35 @@ export class PlayCommand extends Command {
     let player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.connected) {
+      const channelDB = await prisma.guild.findFirst({
+        where: {
+          id: interaction.guild!.id
+        },
+        select: {
+          volume: true
+        }
+      });
+
       player ??= client.music.createPlayer(interaction.guild!.id);
       player.queue.channel = interaction.channel as MessageChannel;
+      if (channelDB?.volume) {
+        player.setVolume(channelDB.volume);
+      }
       await player.connect(voiceChannel!.id, { deafened: true });
     }
 
     const started = player.playing || player.paused;
 
     await interaction.followUp({ content: message });
-    player.queue.add(tracks, { requester: interaction.user.id });
+    player.queue.add(tracks, {
+      requester: interaction.user.id,
+      userInfo: interactionMember,
+      added: Date.now()
+    });
     if (!started) {
       await player.queue.start();
     }
+
     return;
   }
 

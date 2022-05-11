@@ -17,13 +17,10 @@ export class MyPlaylistsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const interactionMember = interaction.member as GuildMember;
 
-    const baseEmbed = new MessageEmbed()
-      .setTitle('Music Queue')
-      .setColor('#9096e6')
-      .setAuthor({
-        name: interactionMember.user.username,
-        iconURL: interactionMember.user.displayAvatarURL()
-      });
+    const baseEmbed = new MessageEmbed().setColor('#9096e6').setAuthor({
+      name: `${interactionMember.user.username}`,
+      iconURL: interactionMember.user.displayAvatarURL()
+    });
 
     const playlists = await prisma.playlist.findMany({
       where: {
@@ -41,17 +38,13 @@ export class MyPlaylistsCommand extends Command {
       return await interaction.reply('You have no custom playlists');
     }
 
-    await interaction.reply('Your playlists:');
-
     new PaginatedFieldMessageEmbed()
-      .setTitleField('Custom Playlist')
-      // @ts-ignore
-      .setTemplate({ baseEmbed })
+      .setTitleField('Custom Playlists')
+      .setTemplate(baseEmbed)
       .setItems(playlists)
       .formatItems((playlist: any) => playlist.name)
       .setItemsPerPage(5)
       .make()
-      // @ts-ignore
       .run(interaction);
   }
 
