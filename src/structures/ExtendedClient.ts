@@ -42,7 +42,7 @@ export class ExtendedClient extends SapphireClient {
     this.music.on('queueFinish', queue => {
       queue.player.stop();
 
-      this.leaveTimers[queue.player.guildId as string] = setTimeout(() => {
+      this.leaveTimers[queue.player.guildId] = setTimeout(() => {
         queue.channel!.send(':zzz: Leaving due to inactivity');
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
