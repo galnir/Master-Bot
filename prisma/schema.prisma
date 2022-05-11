@@ -37,3 +37,17 @@ model Guild {
   volume Int
 
 }
+
+model GuildTwitch {
+  id         String   @id
+  notifyList String[]
+}
+
+model TwitchNotify {
+  twitchId   String   @id
+  logo       String
+  live       Boolean  @default(false)
+  channelIds String[]
+  sent       Boolean
+
+}
