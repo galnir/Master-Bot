@@ -8,7 +8,10 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import type { Song } from '../../lib/utils/queue/Song';
-import { embedButtons } from '../../lib/utils/music/ButtonHandler';
+import {
+  embedButtons,
+  handlePlayerEmbed
+} from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',
@@ -36,19 +39,7 @@ export class NowPlayingCommand extends Command {
       player?.queue.last!,
       player?.paused
     );
-    await interaction
-      .channel!.fetch()
-      .then(
-        async channel =>
-          await channel.messages.fetch(
-            client.playerEmbeds[interaction.guild!.id]
-          )
-      )
-      .then(async oldMessage => {
-        await oldMessage
-          .delete()
-          .catch(error => console.log('Failed to Delete Old Message.', error));
-      });
+    await handlePlayerEmbed(player?.queue!);
     return interaction
       .reply({
         content: 'Getting Player Data...',

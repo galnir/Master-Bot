@@ -29,6 +29,13 @@ export class PauseCommand extends Command {
     }
 
     player?.pause();
+    const maxLimit = 1.8e6; // 30 minutes
+    client.leaveTimers[player?.guildId!] = setTimeout(() => {
+      player?.queue.channel!.send(':zzz: Leaving due to inactivity');
+      player?.disconnect();
+      player?.node.destroyPlayer(player.guildId);
+    }, maxLimit);
+
     return await interaction.reply('Track paused');
   }
 

@@ -29,6 +29,7 @@ export class PauseCommand extends Command {
     }
 
     player?.resume();
+    clearTimeout(client.leaveTimers[player?.guildId!]);
     return await interaction.reply('Track resumed playing');
   }
 

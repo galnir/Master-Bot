@@ -2,7 +2,10 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
-import { embedButtons } from '../lib/utils/music/ButtonHandler';
+import {
+  embedButtons,
+  handlePlayerEmbed
+} from '../lib/utils/music/ButtonHandler';
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { manageStageChannel } from './../lib/utils/music/channelHandler';
 
@@ -49,6 +52,7 @@ export class ExtendedClient extends SapphireClient {
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
       }, 30 * 1000);
+      delete this.playerEmbeds![queue.player.guildId];
     });
 
     this.music.on('trackStart', async (queue, song) => {
@@ -56,6 +60,7 @@ export class ExtendedClient extends SapphireClient {
         clearTimeout(this.leaveTimers[queue.player.guildId]!);
       }
 
+      await handlePlayerEmbed(queue);
       const NowPlaying = new NowPlayingEmbed(
         song,
         0,

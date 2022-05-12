@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import { handlePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'leave',
@@ -21,22 +22,13 @@ import { container } from '@sapphire/framework';
 export class LeaveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
-    await interaction
-      .channel!.fetch()
-      .then(
-        async channel =>
-          await channel.messages.fetch(
-            client.playerEmbeds[interaction.guild!.id]
-          )
-      )
-      .then(async oldMessage => {
-        await oldMessage
-          .delete()
-          .catch(error => console.log('Failed to Delete Old Message.', error));
-      });
+
     const player = client.music.players.get(interaction.guild!.id);
     player?.disconnect();
     client.music.destroyPlayer(player!.guildId);
+
+    await handlePlayerEmbed(player?.queue!);
+    clearTimeout(client.leaveTimers[player?.guildId!]);
     return await interaction.reply('Leaving voice channel');
   }
 

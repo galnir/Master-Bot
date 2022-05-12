@@ -14,6 +14,7 @@ import {
 import { mayStartNext, Track } from '@lavaclient/types';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import type { MessageChannel } from '../../..';
+import { handlePlayerEmbed } from '../music/ButtonHandler';
 
 export enum LoopType {
   None,
@@ -64,9 +65,9 @@ export class Queue extends TypedEmitter<QueueEvents> {
       this.emit('trackStart', this.current);
     });
 
-    player.on('trackEnd', (_, reason) => {
+    player.on('trackEnd', async (_, reason) => {
       if (!mayStartNext[reason]) return;
-
+      await handlePlayerEmbed(player.queue);
       this.last = this.current;
 
       if (this.current) {

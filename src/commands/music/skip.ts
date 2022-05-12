@@ -8,6 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Song } from '../../lib/utils/queue/Song';
 import { LoopType } from '../../lib/utils/queue/Queue';
+import { handlePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'skip',
@@ -30,6 +31,7 @@ export class SkipCommand extends Command {
       player!.queue.tracks.unshift(player!.queue.current as Song);
     }
     await player?.queue.next();
+    if (player) handlePlayerEmbed(player.queue);
     return await interaction.reply('Skipped track');
   }
 

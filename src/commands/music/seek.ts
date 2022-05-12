@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,6 +7,10 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import {
+  embedButtons,
+  handlePlayerEmbed
+} from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'seek',
@@ -31,6 +36,23 @@ export class SeekCommand extends Command {
     }
 
     await player?.seek(milliseconds);
+    await handlePlayerEmbed(player?.queue!);
+    const NowPlaying = new NowPlayingEmbed(
+      player?.queue.current!,
+      player?.accuratePosition,
+      player?.queue.current?.length as number,
+      player?.volume!,
+      player?.queue.tracks!,
+      player?.queue.last!,
+      player?.paused
+    );
+
+    await embedButtons(
+      NowPlaying.NowPlayingEmbed(),
+      player?.queue!,
+      player?.queue.current!
+    );
+
     return await interaction.reply(`Seeked to ${seconds} seconds`);
   }
 

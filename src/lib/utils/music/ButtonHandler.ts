@@ -14,7 +14,8 @@ import prisma from '../../prisma';
 export async function embedButtons(
   embed: MessageEmbed,
   queue: Queue,
-  song: Song
+  song: Song,
+  message?: string
 ) {
   const { client } = container;
   const row = new MessageActionRow().addComponents(
@@ -40,73 +41,41 @@ export async function embedButtons(
   return await queue
     .channel!.send({
       embeds: [embed],
-      components: [row]
+      components: [row],
+      content: message
     })
     .then(async (message: Message) => {
-      if (client.playerEmbeds[message.guild!.id])
-        await message.channel
-          .fetch()
-          .then(
-            async channel =>
-              await channel.messages.fetch(
-                client.playerEmbeds[message.guild!.id]
-              )
-          )
-          .then(async oldMessage => {
-            await oldMessage
-              .delete()
-              .catch(error =>
-                console.log('Failed to Delete Old Message.', error)
-              );
-          });
-      client.playerEmbeds[message.guild!.id] = message.id;
       const player = client.music.players.get(message.guild!.id);
       const maxLimit = 1.8e6; // 30 minutes
+      client.playerEmbeds[message.guildId ?? message.guild!.id] = message.id;
 
-      let timeLimit: number | undefined =
-        player?.queue.current?.length! > maxLimit
-          ? maxLimit
-          : player?.queue.current?.length;
-      player?.queue.current?.isStream == true ? (timeLimit = maxLimit) : null;
       const filter = (message: any) =>
         message.member?.voice.channel?.id === player?.channelId; // only available to members in the same voice channel
 
       const collector = message.createMessageComponentCollector({
-        filter,
-        time: timeLimit
+        filter
       });
 
-      let timer: NodeJS.Timer = setTimeout(async () => {
-        await message.delete().catch(error => {
-          console.log(error);
-        });
-      }, timeLimit);
+      let timer: NodeJS.Timer; // still needed for Pause
+
+      if (queue.tracks?.length)
+        message.components[0].components[2].setDisabled(false);
+      else message.components[0].components[2].setDisabled(true);
 
       if (player) {
         try {
           collector.on('collect', async (i: MessageComponentInteraction) => {
             let paused;
+            if (queue.tracks?.length)
+              message.components[0].components[2].setDisabled(false);
+            else message.components[0].components[2].setDisabled(false);
             if (i.customId === 'playPause') {
               clearTimeout(timer);
-              timeLimit =
-                player.queue.current!.length > maxLimit
-                  ? maxLimit
-                  : player.queue.current!.length - player.accuratePosition!;
-              player.queue.current!.isStream == true
-                ? (timeLimit = maxLimit)
-                : null;
 
               if (player.paused) {
                 player.resume();
                 paused = false;
                 clearTimeout(client.leaveTimers[player.guildId]!);
-
-                timer = setTimeout(async () => {
-                  await message.delete().catch(error => {
-                    console.log(error);
-                  });
-                }, timeLimit);
-                collector.resetTimer({ time: timeLimit });
               } else {
                 client.leaveTimers[player.guildId] = setTimeout(() => {
                   player.queue.channel!.send(':zzz: Leaving due to inactivity');
@@ -115,12 +84,9 @@ export async function embedButtons(
                 }, maxLimit);
 
                 timer = setTimeout(async () => {
-                  await message.delete().catch(error => {
-                    console.log(error);
-                  });
+                  await handlePlayerEmbed(player.queue);
                 }, maxLimit);
 
-                collector.resetTimer({ time: maxLimit });
                 player.pause();
                 paused = true;
               }
@@ -144,15 +110,14 @@ export async function embedButtons(
               player?.disconnect();
               client.music.destroyPlayer(player.guildId);
               clearTimeout(timer);
-              collector.stop();
-              await message.delete();
+              // await handlePlayerEmbed(player.queue);
             }
             if (i.customId === 'next') {
               await i.update('Skipping');
               player.queue.next();
               clearTimeout(timer);
-              collector.stop();
-              await message.delete();
+              // await message.delete();
+              // await handlePlayerEmbed(player.queue);
             }
             if (i.customId === 'volumeUp') {
               const volume =
@@ -204,12 +169,34 @@ export async function embedButtons(
               await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
             }
           });
+          collector.on('end', async () => {
+            clearTimeout(timer);
+          });
         } catch (e) {
           console.log(e);
         }
-      } else {
-        await message.delete();
       }
-      timer;
     });
+}
+export async function handlePlayerEmbed(player: Queue) {
+  const { client } = container;
+  if (client.playerEmbeds[player?.player.guildId]) {
+    await player
+      .channel!.fetch(true)
+      .then(
+        async channel =>
+          await channel.messages.fetch(
+            client.playerEmbeds[player?.player.guildId!]
+          )
+      )
+      .then(async oldMessage => {
+        if (oldMessage)
+          await oldMessage
+            .delete()
+            .catch(error =>
+              console.log('Failed to Delete Old Message.', error)
+            );
+        delete client.playerEmbeds[player?.player.guildId!];
+      });
+  }
 }

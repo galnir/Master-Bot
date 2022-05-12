@@ -1,8 +1,10 @@
+import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
   Command,
-  CommandOptions
+  CommandOptions,
+  RegisterBehavior
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import { container } from '@sapphire/framework';
@@ -10,6 +12,10 @@ import type { MessageChannel } from '../..';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Addable } from '../../lib/utils/queue/Queue';
 import prisma from '../../lib/prisma';
+import {
+  embedButtons,
+  handlePlayerEmbed
+} from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -78,7 +84,7 @@ export class PlayCommand extends Command {
     }
 
     let player = client.music.players.get(interaction.guild!.id);
-
+    await handlePlayerEmbed(player?.queue!);
     if (!player?.connected) {
       const channelDB = await prisma.guild.findFirst({
         where: {
@@ -99,7 +105,9 @@ export class PlayCommand extends Command {
 
     const started = player.playing || player.paused;
 
-    await interaction.followUp({ content: message });
+    await interaction
+      .followUp(message)
+      .then(followUp => (followUp.embeds = []));
     player.queue.add(tracks, {
       requester: interaction.user.id,
       userInfo: interactionMember,
@@ -107,40 +115,61 @@ export class PlayCommand extends Command {
     });
     if (!started) {
       await player.queue.start();
-    }
+    } else {
+      const NowPlaying = new NowPlayingEmbed(
+        player.queue.current!,
+        player.accuratePosition,
+        player.queue.current?.length as number,
+        player.volume,
+        player.queue.tracks!,
+        player.queue.last!,
+        player.paused
+      );
 
+      await embedButtons(
+        NowPlaying.NowPlayingEmbed(),
+        player.queue,
+        player.queue.current!
+      );
+    }
     return;
   }
 
   public override registerApplicationCommands(
     registery: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'query',
-          description: 'What song or playlist would you like to listen to?',
-          type: 'STRING',
-          required: true
-        },
-        {
-          name: 'is-custom-playlist',
-          description: 'Is it a custom playlist?',
-          type: 'STRING',
-          choices: [
-            {
-              name: 'Yes',
-              value: 'Yes'
-            },
-            {
-              name: 'No',
-              value: 'No'
-            }
-          ]
-        }
-      ]
-    });
+    registery.registerChatInputCommand(
+      {
+        name: this.name,
+        description: this.description,
+        options: [
+          {
+            name: 'query',
+            description: 'What song or playlist would you like to listen to?',
+            type: 'STRING',
+            required: true
+          },
+          {
+            name: 'is-custom-playlist',
+            description: 'Is it a custom playlist?',
+            type: 'STRING',
+            choices: [
+              {
+                name: 'Yes',
+                value: 'Yes'
+              },
+              {
+                name: 'No',
+                value: 'No'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        registerCommandIfMissing: false,
+        behaviorWhenNotIdentical: RegisterBehavior.Overwrite
+      }
+    );
   }
 }
