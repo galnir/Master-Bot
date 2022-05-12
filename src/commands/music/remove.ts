@@ -26,7 +26,7 @@ export class RemoveCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (position < 1 || position > player!.queue.tracks.length) {
-      return interaction.reply('Please enter a valid position number!');
+      return interaction.reply(':x: Please enter a valid position number!');
     }
 
     player!.queue.tracks.splice(position - 1, 1);

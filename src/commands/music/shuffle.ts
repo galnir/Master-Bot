@@ -31,7 +31,7 @@ export class LeaveCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.queue.tracks.length) {
-      return await interaction.reply('There are no songs in queue!');
+      return await interaction.reply(':x: There are no songs in queue!');
     }
 
     shuffleQueue(player?.queue.tracks as Song[]);

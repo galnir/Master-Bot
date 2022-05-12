@@ -28,7 +28,7 @@ export class SkipToCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.queue.tracks.length) {
-      return await interaction.reply('There are no tracks in queue!');
+      return await interaction.reply(':x: There are no tracks in queue!');
     }
 
     if (player.queue.loop.type == LoopType.Queue) {

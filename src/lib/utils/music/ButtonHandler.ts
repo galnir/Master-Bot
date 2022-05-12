@@ -107,6 +107,7 @@ export async function embedButtons(
             }
             if (i.customId === 'stop') {
               await i.update('Leaving');
+              await handlePlayerEmbed(player.queue);
               player?.disconnect();
               client.music.destroyPlayer(player.guildId);
               clearTimeout(timer);

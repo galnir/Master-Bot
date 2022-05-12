@@ -72,8 +72,11 @@ export class VolumeCommand extends Command {
       player?.queue!,
       player?.queue.current!
     );
-
-    return await interaction.reply(`Volume is now to ${query}%`);
+    const vol = query;
+    let volumeIcon: string = ':speaker:';
+    if (vol > 50) volumeIcon = ':loud_sound:';
+    if (vol <= 50 && vol > 20) volumeIcon = ':sound:';
+    return await interaction.reply(`Volume is now to ${query}% ${volumeIcon}`);
   }
 
   public override registerApplicationCommands(

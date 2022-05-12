@@ -31,7 +31,7 @@ export class SkipCommand extends Command {
       player!.queue.tracks.unshift(player!.queue.current as Song);
     }
     await player?.queue.next();
-    if (player) handlePlayerEmbed(player.queue);
+    await handlePlayerEmbed(player?.queue!);
     return await interaction.reply('Skipped track');
   }
 

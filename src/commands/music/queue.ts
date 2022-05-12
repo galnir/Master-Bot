@@ -27,7 +27,7 @@ export class QueueCommand extends Command {
 
     const queueLength = player!.queue.tracks.length;
     if (!queueLength) {
-      return await interaction.reply('There are no songs in the queue!');
+      return await interaction.reply(':x: There are no songs in the queue!');
     }
 
     const queueItems = [];

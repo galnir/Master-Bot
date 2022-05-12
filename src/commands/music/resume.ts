@@ -30,7 +30,7 @@ export class PauseCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player!.paused) {
-      return await interaction.reply('The track is not paused!');
+      return await interaction.reply(':x: The track is not paused!');
     }
 
     await player?.resume();

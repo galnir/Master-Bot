@@ -14,6 +14,7 @@ import { container } from '@sapphire/framework';
 import fs from 'fs';
 import { getRandom } from '../../lib/utils/trivia/utilFunctions';
 import type { MessageChannel } from '../..';
+import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'music-trivia',
@@ -47,8 +48,19 @@ export class MusicTriviaCommand extends Command {
     await player.connect(voiceChannel.id, { deafened: true });
 
     player.triviaQueue.add(tracks);
-    await player.setVolume(50); // todo from db
-
+    const channelDB = await prisma.guild.findFirst({
+      where: {
+        id: interaction.guild!.id
+      },
+      select: {
+        volume: true
+      }
+    });
+    if (channelDB?.volume) {
+      await player.setVolume(channelDB.volume);
+    } else {
+      await player.setVolume(50);
+    }
     const member = interaction.member as GuildMember;
     const membersInChannel = member!.voice!.channel!.members;
     membersInChannel.each((member: GuildMember) => {

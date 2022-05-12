@@ -32,8 +32,10 @@ export class SeekCommand extends Command {
 
     const milliseconds = seconds * 1000;
     if (milliseconds > player!.queue!.current!.length || milliseconds < 0) {
-      return await interaction.reply('Please enter a valid number!');
+      return await interaction.reply(':x: Please enter a valid number!');
     }
+    if (!player?.queue.current?.isSeekable)
+      return await interaction.reply(":x: Can't use Seek on a Live Stream!");
 
     await player?.seek(milliseconds);
     await handlePlayerEmbed(player?.queue!);

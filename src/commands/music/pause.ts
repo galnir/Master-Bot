@@ -30,7 +30,7 @@ export class PauseCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (player!.paused) {
-      return await interaction.reply('The track is already on pause!');
+      return await interaction.reply(':x: The track is already on pause!');
     }
 
     await player?.pause();
@@ -40,7 +40,9 @@ export class PauseCommand extends Command {
       player?.disconnect();
       player?.node.destroyPlayer(player.guildId);
     }, maxLimit);
+
     await handlePlayerEmbed(player?.queue!);
+
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,
       player?.accuratePosition,
