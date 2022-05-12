@@ -110,14 +110,11 @@ export async function embedButtons(
               player?.disconnect();
               client.music.destroyPlayer(player.guildId);
               clearTimeout(timer);
-              // await handlePlayerEmbed(player.queue);
             }
             if (i.customId === 'next') {
               await i.update('Skipping');
               player.queue.next();
               clearTimeout(timer);
-              // await message.delete();
-              // await handlePlayerEmbed(player.queue);
             }
             if (i.customId === 'volumeUp') {
               const volume =
@@ -169,6 +166,7 @@ export async function embedButtons(
               await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
             }
           });
+
           collector.on('end', async () => {
             clearTimeout(timer);
           });
