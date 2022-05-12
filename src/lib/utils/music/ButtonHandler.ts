@@ -59,17 +59,11 @@ export async function embedButtons(
 
       let timer: NodeJS.Timer; // still needed for Pause
 
-      // if (queue.tracks?.length > 2)
-      //   message.components[0].components[2].setDisabled(false);
-      // else message.components[0].components[2].setDisabled(true);
-
       if (player) {
         try {
           collector.on('collect', async (i: MessageComponentInteraction) => {
             let paused;
-            // if (queue.tracks?.length)
-            //   message.components[0].components[2].setDisabled(false);
-            // else message.components[0].components[2].setDisabled(false);
+
             if (i.customId === 'playPause') {
               clearTimeout(timer);
 
