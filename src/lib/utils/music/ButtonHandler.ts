@@ -27,7 +27,8 @@ export async function embedButtons(
     new MessageButton()
       .setCustomId('next')
       .setLabel('Next')
-      .setStyle('PRIMARY'),
+      .setStyle('PRIMARY')
+      .setDisabled(!queue.tracks?.length ? true : false),
     new MessageButton()
       .setCustomId('volumeUp')
       .setLabel('Vol+')
@@ -58,17 +59,17 @@ export async function embedButtons(
 
       let timer: NodeJS.Timer; // still needed for Pause
 
-      if (queue.tracks?.length)
-        message.components[0].components[2].setDisabled(false);
-      else message.components[0].components[2].setDisabled(true);
+      // if (queue.tracks?.length > 2)
+      //   message.components[0].components[2].setDisabled(false);
+      // else message.components[0].components[2].setDisabled(true);
 
       if (player) {
         try {
           collector.on('collect', async (i: MessageComponentInteraction) => {
             let paused;
-            if (queue.tracks?.length)
-              message.components[0].components[2].setDisabled(false);
-            else message.components[0].components[2].setDisabled(false);
+            // if (queue.tracks?.length)
+            //   message.components[0].components[2].setDisabled(false);
+            // else message.components[0].components[2].setDisabled(false);
             if (i.customId === 'playPause') {
               clearTimeout(timer);
 
