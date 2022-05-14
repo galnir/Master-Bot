@@ -40,7 +40,8 @@ client.on('ready', async () => {
       sendTo: user.channelIds,
       logo: user.logo,
       live: user.live,
-      messageSent: user.sent
+      messageSent: user.sent,
+      messageHandler: {}
     };
   }
   await notify(query).then(() =>

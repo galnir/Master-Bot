@@ -2,7 +2,7 @@ import type { TwitchAPI } from './twitchAPI';
 
 export interface TwitchToken {
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
   expires_in: number;
   scope: string[];
   token_type: string;
@@ -16,7 +16,11 @@ export interface ClientTwitchExtension {
       sendTo: string[];
       logo: string;
       live: boolean;
+      gameName?: string;
+      title?: string;
       messageSent: boolean;
+      messageHandler: { [key: string]: { messageIds: string[] } };
+      boxArt?: string;
     };
   };
 }

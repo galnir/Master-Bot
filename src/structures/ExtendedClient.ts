@@ -44,7 +44,7 @@ export class ExtendedClient extends SapphireClient {
       }
     });
     if (data.twitchClientID && data.twitchClientSecret) {
-      this.twitch.api.getAccessToken('user:read:email').then(response => {
+      this.twitch.api?.getAccessToken('user:read:email').then(response => {
         this.twitch.auth = {
           access_token: response.access_token,
           refresh_token: response.refresh_token,
@@ -55,8 +55,8 @@ export class ExtendedClient extends SapphireClient {
       });
 
       setInterval(() => {
-        this.twitch.api
-          .getAccessToken('user:read:email')
+        this.twitch
+          .api?.getAccessToken('user:read:email')
           .then(response => {
             this.twitch.auth = {
               access_token: response.access_token,

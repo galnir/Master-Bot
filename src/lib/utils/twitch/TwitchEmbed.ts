@@ -5,17 +5,53 @@ export class TwitchEmbed {
   stream: TwitchStream;
   logo: string;
   gameArt: string;
+  ended: boolean;
+  change: boolean;
 
-  public constructor(stream: TwitchStream, logo: string, gameArt: string) {
+  public constructor(
+    stream: TwitchStream,
+    logo: string,
+    gameArt: string,
+    ended: boolean,
+    change: boolean
+  ) {
     this.stream = stream;
     this.logo = logo;
     this.gameArt = gameArt;
+    this.ended = ended;
+    this.change = change;
   }
 
   public async TwitchEmbed(): Promise<MessageEmbed> {
-    let baseEmbed = new MessageEmbed({
+    if (this.ended) {
+      const offlineEmbed = new MessageEmbed({
+        author: {
+          name: `Twitch Notification - Stream Ended`,
+          icon_url: this.logo,
+          url: `https://twitch.tv/${this.stream.user_name}`
+        },
+        color: '#6441A5',
+        url: `https://twitch.tv/${this.stream.user_name}`,
+        footer: {
+          text: `Stream Ended`,
+          iconURL:
+            'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
+        }
+      });
+      offlineEmbed
+        .setThumbnail(this.logo)
+        .setTitle(`Looks like ${this.stream.user_name} has Ended`)
+        .addField('Title', this.stream.title ?? 'N/A')
+        .addField(':video_game: Game', this.stream.game_name ?? 'N/A', true)
+        .addField('Viewers', `${this.stream.viewer_count}`, true)
+        .setTimestamp();
+    }
+
+    const onlineEmbed = new MessageEmbed({
       author: {
-        name: `Twitch Notification`,
+        name: `Twitch Notification - ${
+          this.change ? 'Stream Update' : 'Stream Started'
+        }`,
         icon_url: this.logo,
         url: `https://twitch.tv/${this.stream.user_name}`
       },
@@ -31,7 +67,7 @@ export class TwitchEmbed {
     const min = Math.ceil(100);
     const max = Math.floor(10000000);
 
-    baseEmbed
+    onlineEmbed
       .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
       .setTitle(`**${this.stream.user_name}** just went live!!!`)
       .addField('Title', this.stream.title ?? 'N/A')
@@ -45,6 +81,6 @@ export class TwitchEmbed {
       )
       .setTimestamp(Date.parse(this.stream.started_at));
 
-    return baseEmbed;
+    return onlineEmbed;
   }
 }

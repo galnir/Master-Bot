@@ -74,7 +74,8 @@ export class AddStreamerCommand extends Command {
           sendTo: [channelData.id],
           live: false,
           logo: user.profile_image_url,
-          messageSent: false
+          messageSent: false,
+          messageHandler: {}
         });
     await prisma.twitchNotify.upsert({
       create: {

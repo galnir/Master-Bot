@@ -45,11 +45,19 @@ export class RemoveStreamerCommand extends Command {
     });
     if (!guildDB?.notifyList.includes(user.id))
       return interaction.reply({
-        content: `:x: ${user.display_name} is not in your Notification list`
+        content: `:x: **${user.display_name}** is not in your Notification list`
       });
     if (!notifyDB)
       return interaction.reply({
-        content: `:x: ${user.display_name} was not found in Database`
+        content: `:x: **${user.display_name}** was not found in Database`
+      });
+    let found = false;
+    notifyDB.channelIds.forEach(channel => {
+      if (channel == channelData.id) found = true;
+    });
+    if (found === false)
+      return interaction.reply({
+        content: `:x: **${user.display_name}** is not assigned to **${channelData}**`
       });
 
     const filteredTwitchIds: string[] = guildDB.notifyList.filter(element => {
