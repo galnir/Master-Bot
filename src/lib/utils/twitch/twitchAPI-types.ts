@@ -14,6 +14,7 @@ export interface ClientTwitchExtension {
   notifyList: {
     [key: string]: {
       sendTo: string[];
+      user_name?: string;
       logo: string;
       live: boolean;
       gameName?: string;

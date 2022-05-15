@@ -14,7 +14,8 @@ import { notify } from '../../lib/utils/twitch/notifyChannel';
 @ApplyOptions<CommandOptions>({
   name: 'add-streamer',
   description: 'Add a Stream alert from your favorite Twitch streamer',
-  requiredClientPermissions: 'MODERATE_MEMBERS'
+  requiredClientPermissions: 'MODERATE_MEMBERS',
+  preconditions: ['GuildOnly']
 })
 export class AddStreamerCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -31,7 +32,7 @@ export class AddStreamerCommand extends Command {
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
       return interaction.reply({
-        content: `:x: Cant sent messages to ${channelData.name}`
+        content: `:x: Can't send messages to ${channelData.name}`
       });
     const guildDB = await prisma.guildTwitch.findFirst({
       where: { id: interaction.guild?.id },

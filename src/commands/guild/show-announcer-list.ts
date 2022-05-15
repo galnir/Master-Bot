@@ -12,7 +12,8 @@ import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'show-announcer-list',
-  description: 'Display the Guilds Twitch notification list '
+  description: 'Display the Guilds Twitch notification list',
+  preconditions: ['GuildOnly']
 })
 export class ShowAnnouncerListCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -63,7 +64,7 @@ export class ShowAnnouncerListCommand extends Command {
       .formatItems(
         (index: any) => `**${index.name}** Sending to **#${index.channel}**`
       )
-      .setItemsPerPage(5)
+      .setItemsPerPage(10)
       .make()
       .run(interaction);
   }

@@ -15,7 +15,8 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
   description: 'Add a Stream alert from your favorite Twitch streamer',
-  requiredClientPermissions: 'MODERATE_MEMBERS'
+  requiredClientPermissions: 'MODERATE_MEMBERS',
+  preconditions: ['GuildOnly']
 })
 export class RemoveStreamerCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

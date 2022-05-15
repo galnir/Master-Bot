@@ -203,6 +203,47 @@ export class TwitchAPI {
     });
   };
 
+  getGames = async ({
+    ids,
+    token
+  }: {
+    ids: string[];
+    token: string;
+  }): Promise<TwitchGame[]> => {
+    return new Promise(async (resolve, reject) => {
+      if (!this.client_id || !this.client_secret || !this._auth || !this._helix)
+        return;
+
+      let result: TwitchGame[] = [];
+      try {
+        if (!ids.length) throw new Error(`game "ids" Array cannot be empty `);
+
+        const numTotal: number = ids.length;
+
+        for (let i = 0; i < numTotal; i += chunk_size) {
+          const chunkIds = ids.slice(i, i + chunk_size);
+          const query = new URLSearchParams();
+
+          chunkIds.forEach((id: string) => query.append('id', id));
+
+          const response: TwitchGamesResponse = await this._helix.get(
+            `/games?${query}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+
+          result = [...result, ...response.data];
+        }
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
   getStreamingUsers = async ({
     user_ids = [],
     user_logins = [],
