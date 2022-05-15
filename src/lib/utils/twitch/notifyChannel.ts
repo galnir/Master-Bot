@@ -29,7 +29,6 @@ export async function notify(query: string[]) {
           .then(gameResponse => {
             gameResponse.reduce((obj, game) => gameMap.set(game.id, game), {});
           });
-        console.log(gameIDs, gameMap);
         for (const entry of query) {
           const stream: TwitchStream = await streamMap.get(entry);
           const game: TwitchGame = await gameMap.get(stream?.game_id);
