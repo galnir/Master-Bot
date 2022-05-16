@@ -32,19 +32,9 @@ export async function notify(query: string[]) {
         for (const entry of query) {
           const stream: TwitchStream = await streamMap.get(entry);
           const game: TwitchGame = await gameMap.get(stream?.game_id);
-          client.twitch.notifyList[entry] = {
-            live: stream ? true : false,
-            user_name: client.twitch.notifyList[entry].user_name,
-            messageSent: client.twitch.notifyList[entry].messageSent,
-            logo: client.twitch.notifyList[entry].logo,
-            gameName: client.twitch.notifyList[entry].gameName,
-            title: client.twitch.notifyList[entry].title,
-            sendTo: client.twitch.notifyList[entry].sendTo,
-            messageHandler: client.twitch.notifyList[entry].messageHandler,
-            boxArt: client.twitch.notifyList[entry].boxArt
-          };
+          client.twitch.notifyList[entry].live = stream ? true : false;
 
-          // Stream Started Embed Created
+          // Stream Started
           if (client.twitch.notifyList[entry].live) {
             // Grab stored info before its changed
             const prevGame = client.twitch.notifyList[entry].gameName;
@@ -53,11 +43,11 @@ export async function notify(query: string[]) {
             // change Data
             client.twitch.notifyList[entry].gameName = stream.game_name;
             client.twitch.notifyList[entry].title = stream.title;
-            client.twitch.notifyList[entry].user_name = stream.user_name;
+            client.twitch.notifyList[entry].userName = stream.user_name;
+            client.twitch.notifyList[entry].viewers = stream.viewer_count;
+            client.twitch.notifyList[entry].boxArt = game.box_art_url;
 
             if (client.twitch.notifyList[entry].messageSent == false) {
-              client.twitch.notifyList[entry].boxArt = game.box_art_url;
-
               // Run through ChannelIds List of Entry/Streamer
               for (const channelToMsg of client.twitch.notifyList[entry]
                 .sendTo) {
@@ -68,7 +58,7 @@ export async function notify(query: string[]) {
                 if (channel) {
                   const twitchMsg = new TwitchEmbed(
                     stream,
-                    client.twitch.notifyList[entry].user_name!,
+                    client.twitch.notifyList[entry].userName!,
                     client.twitch.notifyList[entry].logo,
                     game.box_art_url,
                     false, // Offline
@@ -88,11 +78,11 @@ export async function notify(query: string[]) {
                       )
                         client.twitch.notifyList[entry].messageHandler[
                           message.channel.id
-                        ] = { messageIds: [message.id] };
+                        ] = [message.id];
                       else
                         client.twitch.notifyList[entry].messageHandler[
                           message.channel.id
-                        ].messageIds.push(message.id);
+                        ].push(message.id);
                     });
                 }
               }
@@ -107,7 +97,7 @@ export async function notify(query: string[]) {
               });
             }
 
-            // Stream Change Embed Edit
+            // Stream Change
             if (prevGame && prevTitle)
               if (
                 prevTitle !== stream.title ||
@@ -119,7 +109,7 @@ export async function notify(query: string[]) {
                 }
                 const twitchMsg = new TwitchEmbed(
                   stream,
-                  client.twitch.notifyList[entry].user_name!,
+                  client.twitch.notifyList[entry].userName!,
                   client.twitch.notifyList[entry].logo,
                   client.twitch.notifyList[entry].boxArt!,
                   false, // Offline
@@ -127,79 +117,85 @@ export async function notify(query: string[]) {
                 );
 
                 // Run through stored Messages
-                if (client.twitch.notifyList[entry].messageHandler)
-                  for (const channelId in client.twitch.notifyList[entry]
-                    .messageHandler) {
-                    client.channels.fetch(channelId).then(async channel => {
-                      const msgChannel = channel as MessageChannel;
+                for (const channelId in client.twitch.notifyList[entry]
+                  .messageHandler) {
+                  client.channels.fetch(channelId).then(async channel => {
+                    const msgChannel = channel as MessageChannel;
 
-                      for (let messageId in client.twitch.notifyList[entry]
-                        .messageHandler[channelId].messageIds) {
-                        await msgChannel?.messages
-                          .edit(
-                            client.twitch.notifyList[entry].messageHandler[
-                              channelId
-                            ].messageIds[messageId],
-                            {
-                              embeds: [await twitchMsg.TwitchEmbed()]
-                            }
+                    for (let messageId in client.twitch.notifyList[entry]
+                      .messageHandler![channelId]) {
+                      await msgChannel?.messages
+                        .edit(
+                          client.twitch.notifyList[entry].messageHandler[
+                            channelId
+                          ][messageId],
+                          {
+                            embeds: [await twitchMsg.TwitchEmbed()]
+                          }
+                        )
+                        .catch(error =>
+                          console.log(
+                            'Failed to Edit Stream Notification',
+                            error
                           )
-                          .catch(error =>
-                            console.log(
-                              'Failed to Edit Stream Notification',
-                              error
-                            )
-                          );
-                      }
-                    });
-                  }
+                        );
+                    }
+                  });
+                }
               }
           }
-
-          // Offline Embed Edit
+          //Stream Offline
           if (
             client.twitch.notifyList[entry].live == false &&
             client.twitch.notifyList[entry].messageSent == true
           ) {
             const twitchMsg = new TwitchEmbed(
               stream,
-              client.twitch.notifyList[entry].user_name!,
+              client.twitch.notifyList[entry].userName!,
               client.twitch.notifyList[entry].logo,
               client.twitch.notifyList[entry].boxArt!,
               true, // offline
-              false // Stream Update
+              false, // Stream Update
+              client.twitch.notifyList[entry].gameName,
+              client.twitch.notifyList[entry].title,
+              client.twitch.notifyList[entry].viewers
             );
 
             // Run through Stored Messages
-            if (client.twitch.notifyList[entry].messageHandler)
-              for (const channelId in client.twitch.notifyList[entry]
-                .messageHandler) {
-                client.channels.fetch(channelId).then(async channel => {
-                  const msgChannel = channel as MessageChannel;
-
-                  for (const messageId in client.twitch.notifyList[entry]
-                    .messageHandler[channelId].messageIds) {
-                    await msgChannel?.messages
-                      .edit(
-                        client.twitch.notifyList[entry].messageHandler![
-                          channelId
-                        ].messageIds[messageId],
-                        {
-                          embeds: [await twitchMsg.TwitchEmbed()]
-                        }
+            for (const channelId in client.twitch.notifyList[entry]
+              .messageHandler) {
+              client.channels.fetch(channelId).then(async channel => {
+                const msgChannel = channel as MessageChannel;
+                for (const messageId in client.twitch.notifyList[entry]
+                  .messageHandler[channelId]) {
+                  await msgChannel?.messages
+                    .edit(
+                      client.twitch.notifyList[entry].messageHandler[channelId][
+                        messageId
+                      ],
+                      {
+                        embeds: [await twitchMsg.TwitchEmbed()]
+                      }
+                    )
+                    .catch(error =>
+                      console.log(
+                        'Failed to Edit Offline Stream Notification',
+                        error
                       )
-                      .catch(error =>
-                        console.log(
-                          'Failed to Edit Offline Stream Notification',
-                          error
-                        )
-                      );
+                    );
+                  client.twitch.notifyList[entry].messageHandler[
+                    channelId
+                  ].shift();
+                  if (
+                    client.twitch.notifyList[entry].messageHandler[channelId]
+                      .length == 0
+                  ) {
+                    client.twitch.notifyList[entry].messageHandler = {};
                   }
-                });
-              }
+                }
+              });
+            }
 
-            client.twitch.notifyList[entry].messageHandler = {};
-            client.twitch.notifyList[entry].boxArt = undefined;
             client.twitch.notifyList[entry].messageSent = false;
             // Update DataBase
             await prisma.twitchNotify.update({

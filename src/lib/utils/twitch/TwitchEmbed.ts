@@ -2,12 +2,15 @@ import type { TwitchStream } from './twitchAPI-types';
 import { MessageEmbed } from 'discord.js';
 
 export class TwitchEmbed {
-  stream?: TwitchStream;
+  stream: TwitchStream;
   userName: string;
   logo: string;
   gameArt: string;
   ended: boolean;
   change: boolean;
+  gameName?: string;
+  title?: string;
+  viewers?: number;
 
   public constructor(
     stream: TwitchStream,
@@ -15,7 +18,10 @@ export class TwitchEmbed {
     logo: string,
     gameArt: string,
     ended: boolean,
-    change: boolean
+    change: boolean,
+    gameName?: string,
+    title?: string,
+    viewers?: number
   ) {
     this.stream = stream;
     this.userName = userName;
@@ -23,6 +29,9 @@ export class TwitchEmbed {
     this.gameArt = gameArt;
     this.ended = ended;
     this.change = change;
+    this.gameName = gameName;
+    this.title = title;
+    this.viewers = viewers;
   }
 
   public async TwitchEmbed(): Promise<MessageEmbed> {
@@ -41,55 +50,55 @@ export class TwitchEmbed {
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
       });
-      offlineEmbed
+      return offlineEmbed
         .setThumbnail(this.logo)
         .setTitle(`${this.userName}'s stream has Ended`)
-        // .addField('Title', this.stream.title ?? 'N/A')
-        // .addField(':video_game: Game', this.stream.game_name ?? 'N/A', true)
-        // .addField('Viewers', `${this.stream.viewer_count}`, true)
+        .addField('Title', this.title ?? 'N/A')
+        .addField(':video_game: Game', this.gameName ?? 'N/A', true)
+        .addField('Viewers', `${this.viewers}`, true)
         .setTimestamp();
+    } else {
+      const onlineEmbed = new MessageEmbed({
+        author: {
+          name: `Twitch Notification - ${
+            this.change ? 'Stream Update' : 'Stream Started'
+          }`,
+          icon_url: this.logo,
+          url: `https://twitch.tv/${this.userName}`
+        },
+        color: '#6441A5',
+        url: `https://twitch.tv/${this.userName}`,
+        footer: {
+          text: this.change ? 'Stream Update' : 'Stream Started',
+          iconURL:
+            'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
+        }
+      });
+
+      const title = this.change
+        ? `**${this.stream?.user_name}** updated the stream!!!`
+        : `**${this.stream?.user_name}** just went live!!!`;
+
+      const min = Math.ceil(100);
+      const max = Math.floor(10000000);
+
+      onlineEmbed
+        .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
+        .setTitle(title)
+        .addField('Title', this.stream?.title ?? 'N/A')
+        .addField(':video_game: Game', this.stream?.game_name ?? 'N/A', true)
+        .addField('Viewers', `${this.stream?.viewer_count}`, true)
+        .setImage(
+          this.stream.thumbnail_url.replace('{width}x{height}', '1920x1080') +
+            '?' +
+            Math.floor(Math.random() * (max - min + 1)) +
+            min
+        )
+        .setTimestamp(
+          this.change ? Date.now() : Date.parse(this.stream?.started_at!)
+        );
+
+      return onlineEmbed;
     }
-
-    const onlineEmbed = new MessageEmbed({
-      author: {
-        name: `Twitch Notification - ${
-          this.change ? 'Stream Update' : 'Stream Started'
-        }`,
-        icon_url: this.logo,
-        url: `https://twitch.tv/${this.stream?.user_name}`
-      },
-      color: '#6441A5',
-      url: `https://twitch.tv/${this.stream?.user_name}`,
-      footer: {
-        text: this.change ? 'Stream Update' : 'Stream Started',
-        iconURL:
-          'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
-      }
-    });
-
-    const title = this.change
-      ? `**${this.stream?.user_name}** updated the stream!!!`
-      : `**${this.stream?.user_name}** just went live!!!`;
-
-    const min = Math.ceil(100);
-    const max = Math.floor(10000000);
-
-    onlineEmbed
-      .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
-      .setTitle(title)
-      .addField('Title', this.stream?.title ?? 'N/A')
-      .addField(':video_game: Game', this.stream?.game_name ?? 'N/A', true)
-      .addField('Viewers', `${this.stream?.viewer_count}`, true)
-      .setImage(
-        this.stream?.thumbnail_url.replace('{width}x{height}', '1920x1080') +
-          '?' +
-          Math.floor(Math.random() * (max - min + 1)) +
-          min
-      )
-      .setTimestamp(
-        this.change ? Date.now() : Date.parse(this.stream?.started_at!)
-      );
-
-    return onlineEmbed;
   }
 }

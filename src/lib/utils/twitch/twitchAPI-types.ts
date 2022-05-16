@@ -14,14 +14,15 @@ export interface ClientTwitchExtension {
   notifyList: {
     [key: string]: {
       sendTo: string[];
-      user_name?: string;
       logo: string;
       live: boolean;
+      messageSent: boolean;
+      messageHandler: { [key: string]: string[] };
+      userName?: string;
       gameName?: string;
       title?: string;
-      messageSent: boolean;
-      messageHandler: { [key: string]: { messageIds: string[] } };
       boxArt?: string;
+      viewers?: number;
     };
   };
 }

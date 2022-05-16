@@ -216,8 +216,6 @@ export class TwitchAPI {
 
       let result: TwitchGame[] = [];
       try {
-        if (!ids.length) throw new Error(`game "ids" Array cannot be empty `);
-
         const numTotal: number = ids.length;
 
         for (let i = 0; i < numTotal; i += chunk_size) {
