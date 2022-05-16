@@ -35,15 +35,25 @@ export class TwitchEmbed {
   }
 
   public async TwitchEmbed(): Promise<MessageEmbed> {
+    const notGames = [
+      'Software and Game Development',
+      'Just Chatting',
+      'Retro',
+      'Art',
+      'Crypto',
+      'Makers & Crafting'
+    ];
+    let gameOrTopic = ':video_game: Game';
+    if (notGames.includes(this.gameName ?? this.stream.game_name))
+      gameOrTopic = ':film_frames: Topic';
+
     if (this.ended) {
       const offlineEmbed = new MessageEmbed({
         author: {
           name: `Twitch Notification - Stream Ended`,
-          icon_url: this.logo,
-          url: `https://twitch.tv/${this.userName}`
+          icon_url: this.logo
         },
         color: '#6441A5',
-        url: `https://twitch.tv/${this.userName}`,
         footer: {
           text: `Stream Ended`,
           iconURL:
@@ -54,7 +64,7 @@ export class TwitchEmbed {
         .setThumbnail(this.logo)
         .setTitle(`${this.userName}'s stream has Ended`)
         .addField('Title', this.title ?? 'N/A')
-        .addField(':video_game: Game', this.gameName ?? 'N/A', true)
+        .addField(gameOrTopic, this.gameName ?? 'N/A', true)
         .addField('Viewers', `${this.viewers}`, true)
         .setTimestamp();
     } else {
@@ -86,7 +96,7 @@ export class TwitchEmbed {
         .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
         .setTitle(title)
         .addField('Title', this.stream?.title ?? 'N/A')
-        .addField(':video_game: Game', this.stream?.game_name ?? 'N/A', true)
+        .addField(gameOrTopic, this.stream?.game_name ?? 'N/A', true)
         .addField('Viewers', `${this.stream?.viewer_count}`, true)
         .setImage(
           this.stream.thumbnail_url.replace('{width}x{height}', '1920x1080') +
