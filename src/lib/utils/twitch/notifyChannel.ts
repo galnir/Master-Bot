@@ -28,6 +28,21 @@ export async function notify(query: string[]) {
           .getGames({ ids: gameIDs, token: token })
           .then(gameResponse => {
             gameResponse.reduce((obj, game) => gameMap.set(game.id, game), {});
+          })
+          .catch(async error => {
+            console.log('Failed to Get Games, refreshing Access Token', error);
+            await client.twitch.api
+              .getAccessToken('user:read:email')
+              .then(response => {
+                client.twitch.auth = {
+                  access_token: response.access_token,
+                  refresh_token: response.refresh_token,
+                  expires_in: response.expires_in,
+                  token_type: response.token_type,
+                  scope: response.scope
+                };
+                return;
+              });
           });
         for (const entry of query) {
           const stream: TwitchStream = await streamMap.get(entry);
@@ -198,6 +213,25 @@ export async function notify(query: string[]) {
             });
           }
         }
+      })
+      .catch(async error => {
+        console.log(
+          'Failed to Get Streaming Users, refreshing Access Token',
+          error
+        );
+
+        await client.twitch.api
+          .getAccessToken('user:read:email')
+          .then(response => {
+            client.twitch.auth = {
+              access_token: response.access_token,
+              refresh_token: response.refresh_token,
+              expires_in: response.expires_in,
+              token_type: response.token_type,
+              scope: response.scope
+            };
+            return;
+          });
       });
   }
 }
