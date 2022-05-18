@@ -67,7 +67,7 @@ export class MoveCommand extends Command {
         {
           name: 'new-position',
           description: 'What is the position you want to move the song to?',
-          type: 'STRING',
+          type: 'INTEGER',
           required: true
         }
       ]
