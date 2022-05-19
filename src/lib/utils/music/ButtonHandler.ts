@@ -50,18 +50,19 @@ export async function embedButtons(
       const maxLimit = 1.8e6; // 30 minutes
       client.playerEmbeds[message.guildId ?? message.guild!.id] = message.id;
 
-      const filter = (message: any) =>
-        message.member?.voice.channel?.id === player?.channelId; // only available to members in the same voice channel
-
-      const collector = message.createMessageComponentCollector({
-        filter
-      });
+      const collector = message.createMessageComponentCollector();
 
       let timer: NodeJS.Timer; // still needed for Pause
 
       if (player) {
         try {
           collector.on('collect', async (i: MessageComponentInteraction) => {
+            if (message.member?.voice.channel?.members.has(i.user.id) === false)
+              return await i.reply({
+                content:
+                  ':x: only available to members in the same voice channel',
+                ephemeral: true
+              });
             let paused;
 
             if (i.customId === 'playPause') {

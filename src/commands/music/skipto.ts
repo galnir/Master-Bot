@@ -7,7 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { LoopType } from '../../lib/utils/queue/Queue';
-import { handlePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
+// import { handlePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'skipto',
@@ -39,9 +39,8 @@ export class SkipToCommand extends Command {
       player.queue.tracks.splice(0, position - 1);
       player.queue.setLoop(LoopType.None);
     }
-    player.queue.next();
+    await player.queue.next();
 
-    await handlePlayerEmbed(player.queue);
     return await interaction.reply(
       `Skipped to **${player.queue.current!.title}**`
     );
