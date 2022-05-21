@@ -9,10 +9,7 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Node, Player } from 'lavaclient';
 import prisma from '../../lib/prisma';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'volume',
@@ -56,7 +53,7 @@ export class VolumeCommand extends Command {
     }
 
     await player.setVolume(query);
-    await handlePlayerEmbed(player?.queue!);
+
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,
       player?.accuratePosition,
@@ -76,7 +73,9 @@ export class VolumeCommand extends Command {
     let volumeIcon: string = ':speaker:';
     if (vol > 50) volumeIcon = ':loud_sound:';
     if (vol <= 50 && vol > 20) volumeIcon = ':sound:';
-    return await interaction.reply(`Volume is now to ${query}% ${volumeIcon}`);
+    return await interaction.reply(
+      `Volume is now set to ${query}% ${volumeIcon}`
+    );
   }
 
   public override registerApplicationCommands(

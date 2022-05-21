@@ -7,7 +7,6 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { LoopType } from '../../lib/utils/queue/Queue';
-// import { handlePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'skipto',

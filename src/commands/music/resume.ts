@@ -7,10 +7,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'resume',
@@ -36,7 +33,6 @@ export class PauseCommand extends Command {
     await player?.resume();
 
     clearTimeout(client.leaveTimers[player?.guildId!]);
-    await handlePlayerEmbed(player?.queue!);
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,
       player?.accuratePosition,

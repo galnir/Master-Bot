@@ -45,7 +45,7 @@ export class MusicTriviaCommand extends Command {
       interaction.user.id
     )?.channel as VoiceChannel;
 
-    await player.connect(voiceChannel.id, { deafened: true });
+    player.connect(voiceChannel.id, { deafened: true });
 
     player.triviaQueue.add(tracks);
     const channelDB = await prisma.guild.findFirst({

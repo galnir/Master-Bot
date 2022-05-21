@@ -17,6 +17,8 @@ export async function embedButtons(
   song: Song,
   message?: string
 ) {
+  await deletePlayerEmbed(queue);
+
   const { client } = container;
   const row = new MessageActionRow().addComponents(
     new MessageButton()
@@ -63,6 +65,7 @@ export async function embedButtons(
                   ':x: only available to members in the same voice channel',
                 ephemeral: true
               });
+
             let paused;
 
             if (i.customId === 'playPause') {
@@ -80,7 +83,7 @@ export async function embedButtons(
                 }, maxLimit);
 
                 timer = setTimeout(async () => {
-                  await handlePlayerEmbed(player.queue);
+                  await deletePlayerEmbed(player.queue);
                 }, maxLimit);
 
                 player.pause();
@@ -103,7 +106,7 @@ export async function embedButtons(
             }
             if (i.customId === 'stop') {
               await i.update('Leaving');
-              await handlePlayerEmbed(player.queue);
+              await deletePlayerEmbed(player.queue);
               player?.disconnect();
               client.music.destroyPlayer(player.guildId);
               clearTimeout(timer);
@@ -173,7 +176,7 @@ export async function embedButtons(
       }
     });
 }
-export async function handlePlayerEmbed(player: Queue) {
+export async function deletePlayerEmbed(player: Queue) {
   const { client } = container;
   if (client.playerEmbeds[player?.player.guildId]) {
     await player

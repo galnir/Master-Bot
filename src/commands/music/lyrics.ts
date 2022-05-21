@@ -43,7 +43,11 @@ export class LyricsCommand extends Command {
         template: new MessageEmbed()
           .setColor('#ff0000')
           .setTitle(title)
-          .setFooter({ text: 'Provided by genius.com' })
+          .setFooter({
+            text: 'Provided by genius.com',
+            iconURL:
+              'https://assets.genius.com/images/apple-touch-icon.png?1652977688' // Genius Lyrics Icon
+          })
       });
 
       for (let i = 1; i <= lyricsIndex; ++i) {
@@ -56,7 +60,6 @@ export class LyricsCommand extends Command {
       }
 
       await interaction.followUp('Lyrics generated');
-      // @ts-ignore
       return paginatedLyrics.run(interaction);
     } catch (e) {
       console.log(e);

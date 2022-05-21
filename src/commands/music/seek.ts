@@ -7,10 +7,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'seek',
@@ -38,7 +35,7 @@ export class SeekCommand extends Command {
       return await interaction.reply(":x: Can't use Seek on a Live Stream!");
 
     await player?.seek(milliseconds);
-    await handlePlayerEmbed(player?.queue!);
+
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,
       player?.accuratePosition,

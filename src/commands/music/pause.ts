@@ -7,10 +7,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'pause',
@@ -40,8 +37,6 @@ export class PauseCommand extends Command {
       player?.disconnect();
       player?.node.destroyPlayer(player.guildId);
     }, maxLimit);
-
-    await handlePlayerEmbed(player?.queue!);
 
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,

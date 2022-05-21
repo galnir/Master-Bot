@@ -8,10 +8,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Song } from '../../lib/utils/queue/Song';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'shuffle',
@@ -36,7 +33,6 @@ export class LeaveCommand extends Command {
 
     shuffleQueue(player?.queue.tracks as Song[]);
 
-    await handlePlayerEmbed(player?.queue!);
     const NowPlaying = new NowPlayingEmbed(
       player?.queue.current!,
       player?.accuratePosition,

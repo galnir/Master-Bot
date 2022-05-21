@@ -8,10 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import type { Song } from '../../lib/utils/queue/Song';
-import {
-  embedButtons,
-  handlePlayerEmbed
-} from '../../lib/utils/music/ButtonHandler';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'now-playing',
@@ -39,7 +36,6 @@ export class NowPlayingCommand extends Command {
       player?.queue.last!,
       player?.paused
     );
-    await handlePlayerEmbed(player?.queue!);
     return interaction
       .reply({
         content: 'Getting Player Data...',
