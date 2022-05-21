@@ -1,5 +1,6 @@
 import { decode } from '@lavalink/encoding';
 import type { Track, TrackInfo } from '@lavaclient/types';
+import * as MetadataFilter from 'metadata-filter';
 
 export class Song implements TrackInfo {
   readonly track: string;
@@ -32,7 +33,7 @@ export class Song implements TrackInfo {
       this.author = track.info.author;
       this.isStream = track.info.isStream;
       this.position = track.info.position;
-      this.title = track.info.title;
+      this.title = MetadataFilter.youtube(track.info.title);
       this.uri = track.info.uri;
       this.isSeekable = track.info.isSeekable;
       this.sourceName = track.info.sourceName;
@@ -44,7 +45,7 @@ export class Song implements TrackInfo {
       this.author = decoded.author;
       this.isStream = decoded.isStream;
       this.position = Number(decoded.position);
-      this.title = decoded.title;
+      this.title = MetadataFilter.youtube(decoded.title);
       this.uri = decoded.uri!;
       this.isSeekable = !decoded.isStream;
       this.sourceName = decoded.source!;
