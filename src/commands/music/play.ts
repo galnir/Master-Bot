@@ -99,6 +99,7 @@ export class PlayCommand extends Command {
     tracks.forEach(value => {
       //@ts-ignore
       const trackInfo = value['info'] as TrackInfo;
+
       if (
         tracks.length >= optionsFile.maxQueueLength ||
         playerQueue + tracks.length >= optionsFile.maxQueueLength
@@ -133,7 +134,7 @@ export class PlayCommand extends Command {
     if (longerThan1Hour)
       await interaction.followUp(':x: Tracks longer than 1 hour were removed');
     // No more songs after option were applied
-    if (tracks.length == 0) return console.log('this is bad news bears');
+    if (tracks.length == 0) return;
 
     if (shufflePlaylist == 'Yes') shuffleQueue(tracks as Song[]);
 

@@ -25,6 +25,18 @@ export class Song implements TrackInfo {
     this.track = typeof track === 'string' ? track : track.track;
     this.requester = requester;
     this.added = added ?? Date.now();
+    const filterSet = {
+      song: [
+        MetadataFilter.removeVersion,
+        MetadataFilter.removeRemastered,
+        MetadataFilter.fixTrackSuffix,
+        MetadataFilter.removeLive,
+        MetadataFilter.youtube,
+        MetadataFilter.normalizeFeature,
+        MetadataFilter.removeVersion
+      ]
+    };
+    const filter = MetadataFilter.createFilter(filterSet);
 
     // TODO: make this less shitty
     if (typeof track !== 'string') {
@@ -33,7 +45,7 @@ export class Song implements TrackInfo {
       this.author = track.info.author;
       this.isStream = track.info.isStream;
       this.position = track.info.position;
-      this.title = MetadataFilter.youtube(track.info.title);
+      this.title = filter.filterField('song', track.info.title);
       this.uri = track.info.uri;
       this.isSeekable = track.info.isSeekable;
       this.sourceName = track.info.sourceName;
@@ -45,7 +57,7 @@ export class Song implements TrackInfo {
       this.author = decoded.author;
       this.isStream = decoded.isStream;
       this.position = Number(decoded.position);
-      this.title = MetadataFilter.youtube(decoded.title);
+      this.title = filter.filterField('song', decoded.title);
       this.uri = decoded.uri!;
       this.isSeekable = !decoded.isStream;
       this.sourceName = decoded.source!;
