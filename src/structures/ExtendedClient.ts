@@ -50,7 +50,7 @@ export class ExtendedClient extends SapphireClient {
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
       }, inactivityTime());
-      delete this.playerEmbeds![queue.player.guildId];
+      delete this.playerEmbeds[queue.player.guildId];
     });
 
     this.music.on('trackStart', async (queue, song) => {
