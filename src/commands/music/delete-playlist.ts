@@ -29,11 +29,15 @@ export class DeletePlaylistCommand extends Command {
       });
     } catch (error) {
       console.error(error);
-      return interaction.reply('Something went wrong! Please try again later');
+      return await interaction.reply(
+        ':x: Something went wrong! Please try again later'
+      );
     }
 
     if (deleted) {
-      return await interaction.reply(`Deleted **${playlistName}**`);
+      return await interaction.reply(
+        `:wastebasket: Deleted **${playlistName}**`
+      );
     }
   }
 

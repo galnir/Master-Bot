@@ -29,7 +29,7 @@ export class CreatePlaylistCommand extends Command {
       });
     } catch (error) {
       await interaction.reply({
-        content: `You already have a playlist named **${playlistName}**`
+        content: `:x: You already have a playlist named **${playlistName}**`
       });
       return;
     }

@@ -31,7 +31,7 @@ export class DisplayPlaylistCommand extends Command {
 
     if (!playlist) {
       return await interaction.reply(
-        'Something went wrong! Please try again soon'
+        ':x: Something went wrong! Please try again soon'
       );
     }
 

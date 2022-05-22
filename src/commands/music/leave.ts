@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import { deletePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'leave',
@@ -23,8 +24,10 @@ export class LeaveCommand extends Command {
     const { client } = container;
 
     const player = client.music.players.get(interaction.guild!.id);
+    await deletePlayerEmbed(player?.queue!);
     player?.disconnect();
     client.music.destroyPlayer(player!.guildId);
+    clearTimeout(client.leaveTimers[player?.guildId!]);
     return await interaction.reply('Leaving voice channel');
   }
 
