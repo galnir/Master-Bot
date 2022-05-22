@@ -63,7 +63,7 @@ export class Queue extends TypedEmitter<QueueEvents> {
       this.emit('trackStart', this.current);
     });
 
-    player.on('trackEnd', async (_, reason) => {
+    player.on('trackEnd', (_, reason) => {
       if (!mayStartNext[reason]) return;
       this.last = this.current;
 
