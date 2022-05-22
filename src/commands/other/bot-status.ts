@@ -6,7 +6,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
-import os from 'os';
+import * as os from 'os';
 // @ts-ignore
 import pkg from '../../../package.json';
 
