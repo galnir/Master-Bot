@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -8,6 +9,7 @@ import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Node, Player } from 'lavaclient';
 import prisma from '../../lib/prisma';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'volume',
@@ -51,7 +53,29 @@ export class VolumeCommand extends Command {
     }
 
     await player.setVolume(query);
-    return await interaction.reply(`Volume is now to ${query}%`);
+
+    const NowPlaying = new NowPlayingEmbed(
+      player?.queue.current!,
+      player?.accuratePosition,
+      player?.queue.current?.length as number,
+      player?.volume!,
+      player?.queue.tracks!,
+      player?.queue.last!,
+      player?.paused
+    );
+
+    await embedButtons(
+      NowPlaying.NowPlayingEmbed(),
+      player?.queue!,
+      player?.queue.current!
+    );
+    const vol = query;
+    let volumeIcon: string = ':speaker:';
+    if (vol > 50) volumeIcon = ':loud_sound:';
+    if (vol <= 50 && vol > 20) volumeIcon = ':sound:';
+    return await interaction.reply(
+      `Volume is now set to ${query}% ${volumeIcon}`
+    );
   }
 
   public override registerApplicationCommands(

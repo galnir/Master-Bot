@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,6 +7,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'seek',
@@ -27,10 +29,29 @@ export class SeekCommand extends Command {
 
     const milliseconds = seconds * 1000;
     if (milliseconds > player!.queue!.current!.length || milliseconds < 0) {
-      return await interaction.reply('Please enter a valid number!');
+      return await interaction.reply(':x: Please enter a valid number!');
     }
+    if (!player?.queue.current?.isSeekable)
+      return await interaction.reply(":x: Can't use Seek on a Live Stream!");
 
     await player?.seek(milliseconds);
+
+    const NowPlaying = new NowPlayingEmbed(
+      player?.queue.current!,
+      player?.accuratePosition,
+      player?.queue.current?.length as number,
+      player?.volume!,
+      player?.queue.tracks!,
+      player?.queue.last!,
+      player?.paused
+    );
+
+    await embedButtons(
+      NowPlaying.NowPlayingEmbed(),
+      player?.queue!,
+      player?.queue.current!
+    );
+
     return await interaction.reply(`Seeked to ${seconds} seconds`);
   }
 

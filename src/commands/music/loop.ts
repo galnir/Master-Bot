@@ -31,7 +31,7 @@ export class LoopCommand extends Command {
       case LoopType.None: // None (loop not enabled)
         if (option == 'queue') {
           if (!player?.queue.tracks.length) {
-            await interaction.reply('There are no tracks in queue!');
+            await interaction.reply(':x: There are no tracks in queue!');
             break;
           }
           player.queue.setLoop(LoopType.Queue);

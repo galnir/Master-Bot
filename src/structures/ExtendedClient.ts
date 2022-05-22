@@ -5,9 +5,11 @@ import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { manageStageChannel } from './../lib/utils/music/channelHandler';
+import { inactivityTime } from '../lib/utils/music/handleOptions';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
+  playerEmbeds: { [key: string]: string };
   gameData: {
     connect4Players: Map<string, User>;
     tictactoePlayers: Map<string, User>;
@@ -48,6 +50,7 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
+    this.playerEmbeds = {};
     this.leaveTimers = {};
     this.music.on('queueFinish', queue => {
       queue.player.stop();
@@ -56,7 +59,8 @@ export class ExtendedClient extends SapphireClient {
         queue.channel!.send(':zzz: Leaving due to inactivity');
         queue.player.disconnect();
         queue.player.node.destroyPlayer(queue.player.guildId);
-      }, 30 * 1000);
+      }, inactivityTime());
+      delete this.playerEmbeds[queue.player.guildId];
     });
 
     this.music.on('trackStart', async (queue, song) => {
@@ -79,6 +83,7 @@ export class ExtendedClient extends SapphireClient {
       const voiceChannel = this.voice.client.channels.cache.get(
         queue.player.channelId!
       );
+
       // Stage Channels
       if (voiceChannel?.type === 'GUILD_STAGE_VOICE') {
         const botUser = voiceChannel?.members.get(this.application?.id!);
@@ -91,6 +96,7 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
+    playerEmbeds: { [key: string]: string };
     gameData: {
       connect4Players: Map<string, User>;
       tictactoePlayers: Map<string, User>;
