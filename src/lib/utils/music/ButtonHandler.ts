@@ -59,7 +59,7 @@ export async function embedButtons(
       if (player) {
         try {
           collector.on('collect', async (i: MessageComponentInteraction) => {
-            if (message.member?.voice.channel?.members.has(i.user.id) === false)
+            if (!message.member?.voice.channel?.members.has(i.user.id))
               return await i.reply({
                 content:
                   ':x: only available to members in the same voice channel',
@@ -176,15 +176,15 @@ export async function embedButtons(
       }
     });
 }
-export async function deletePlayerEmbed(queue: Queue) {
+export async function deletePlayerEmbed(player: Queue) {
   const { client } = container;
-  if (client.playerEmbeds[queue?.player.guildId]) {
-    await queue
+  if (client.playerEmbeds[player?.player.guildId]) {
+    await player
       .channel!.fetch(true)
       .then(
         async channel =>
           await channel.messages.fetch(
-            client.playerEmbeds[queue?.player.guildId!]
+            client.playerEmbeds[player?.player.guildId!]
           )
       )
       .then(async oldMessage => {
@@ -194,7 +194,7 @@ export async function deletePlayerEmbed(queue: Queue) {
             .catch(error =>
               console.log('Failed to Delete Old Message.', error)
             );
-        delete client.playerEmbeds[queue?.player.guildId!];
+        delete client.playerEmbeds[player?.player.guildId!];
       });
   }
 }
