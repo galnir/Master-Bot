@@ -17,73 +17,88 @@ export class SpeedRunCommand extends Command {
     const query = interaction.options.getString('game', true);
     let queryCat = interaction.options.getString('category', false);
 
-    const initialRaw = await axios.get(
-      `https://www.speedrun.com/api/v1/games?name=${query}`
-    );
+    let initialRaw;
+
+    try {
+      initialRaw = await axios.get(
+        `https://www.speedrun.com/api/v1/games?name=${query}`
+      );
+    } catch {
+      return await interaction.reply(
+        'Something went wrong, please try again later'
+      );
+    }
     const initial = initialRaw.data;
 
-    if (initial.data.length === 0) {
-      await interaction.reply('No game was found.');
-    } else {
-      let gameID: string = initial.data[0].id;
+    if (!initial.data.length) {
+      return await interaction.reply('No game was found.');
+    }
 
-      const response = await axios.get(
+    let gameID: string = initial.data[0].id;
+
+    let response;
+    try {
+      response = await axios.get(
         `https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=10&embed=game,category,players,platforms,regions`
       );
-      const body = response.data;
+    } catch {
+      return await interaction.reply(
+        'Something went wrong, please try again later'
+      );
+    }
+    const body = response.data;
 
-      if (body.data.length === 0) {
-        const gameNameArr: string[] = [];
-        initial.data.slice(0, 6).forEach((id: any) => {
-          gameNameArr.push(id.names.international);
-        });
-        let gameName = new MessageEmbed()
-          .setColor('#3E8657')
-          .setTitle(':mag: Search Results')
-          .setThumbnail(initial.data[0].assets['cover-medium'].uri)
-          .addField(
-            ':x: Try searching again with the following suggestions.',
-            initial.data[0].names.international + ` doesn't have any runs.`
-          )
-          .setTimestamp()
-          .setFooter({ text: 'Powered by www.speedrun.com' });
+    if (!body.data.length) {
+      const gameNameArr: string[] = [];
+      initial.data.slice(0, 6).forEach((id: any) => {
+        gameNameArr.push(id.names.international);
+      });
+      let gameName = new MessageEmbed()
+        .setColor('#3E8657')
+        .setTitle(':mag: Search Results')
+        .setThumbnail(initial.data[0].assets['cover-medium'].uri)
+        .addField(
+          ':x: Try searching again with the following suggestions.',
+          initial.data[0].names.international + ` doesn't have any runs.`
+        )
+        .setTimestamp()
+        .setFooter({ text: 'Powered by www.speedrun.com' });
 
-        gameNameArr.forEach((game, i) => {
-          gameName.addField(`:video_game: Result ${i + 1}`, game);
-        });
+      gameNameArr.forEach((game, i) => {
+        gameName.addField(`:video_game: Result ${i + 1}`, game);
+      });
 
-        interaction.reply({ embeds: [gameName] });
-      } else {
-        const categories = body.data;
-        queryCat = !queryCat ? categories[0].category.data.name : queryCat;
-        for (let i = 0; i <= categories.length; ++i) {
-          if (
-            categories[i]?.category.data.name.toLowerCase() ==
-            queryCat?.toLowerCase()
-          ) {
-            break;
-          } else if (i == categories.length)
-            queryCat = categories[0].category.data.name;
-        }
-        await interaction
-          .reply({
-            embeds: [
-              new MessageEmbed()
-                .setColor('#3E8657')
-                .setDescription('Getting Data')
-            ],
-            fetchReply: true
-          })
-          .then(async () => {
-            SpeedRunCommand.embedGenerator(
-              categories,
-              queryCat ?? categories[0].category.data.name
-            )
-              .setIdle(30 * 1000)
-              .setIndex(0)
-              .run(interaction);
-          });
+      interaction.reply({ embeds: [gameName] });
+    } else {
+      const categories = body.data;
+      queryCat = !queryCat ? categories[0].category.data.name : queryCat;
+      for (let i = 0; i <= categories.length; ++i) {
+        if (
+          categories[i]?.category.data.name.toLowerCase() ==
+          queryCat?.toLowerCase()
+        ) {
+          break;
+        } else if (i == categories.length)
+          queryCat = categories[0].category.data.name;
       }
+      await interaction
+        .reply({
+          embeds: [
+            new MessageEmbed()
+              .setColor('#3E8657')
+              .setDescription('Getting Data')
+          ],
+          fetchReply: true
+        })
+        .then(async () => {
+          SpeedRunCommand.embedGenerator(
+            categories,
+            queryCat ?? categories[0].category.data.name
+          )
+            .setIdle(30 * 1000)
+            .setIndex(0)
+            .run(interaction);
+        });
     }
   }
 
