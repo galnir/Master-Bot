@@ -35,7 +35,7 @@ export class MyPlaylistsCommand extends Command {
     });
 
     if (!playlists.length) {
-      return await interaction.reply('You have no custom playlists');
+      return await interaction.reply(':x: You have no custom playlists');
     }
 
     new PaginatedFieldMessageEmbed()

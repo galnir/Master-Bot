@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -7,6 +8,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Song } from '../../lib/utils/queue/Song';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'shuffle',
@@ -26,10 +28,26 @@ export class LeaveCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.queue.tracks.length) {
-      return await interaction.reply('There are no songs in queue!');
+      return await interaction.reply(':x: There are no songs in queue!');
     }
 
     shuffleQueue(player?.queue.tracks as Song[]);
+
+    const NowPlaying = new NowPlayingEmbed(
+      player?.queue.current!,
+      player?.accuratePosition,
+      player?.queue.current?.length as number,
+      player?.volume!,
+      player?.queue.tracks!,
+      player?.queue.last!,
+      player?.paused
+    );
+
+    await embedButtons(
+      NowPlaying.NowPlayingEmbed(),
+      player?.queue!,
+      player?.queue.current!
+    );
 
     return await interaction.reply('Queue shuffled');
   }

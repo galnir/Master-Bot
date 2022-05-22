@@ -14,7 +14,6 @@ import {
 import { mayStartNext, Track } from '@lavaclient/types';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import type { MessageChannel } from '../../..';
-
 export enum LoopType {
   None,
   Queue,
@@ -66,7 +65,6 @@ export class Queue extends TypedEmitter<QueueEvents> {
 
     player.on('trackEnd', (_, reason) => {
       if (!mayStartNext[reason]) return;
-
       this.last = this.current;
 
       if (this.current) {

@@ -27,7 +27,7 @@ export class QueueCommand extends Command {
 
     const queueLength = player!.queue.tracks.length;
     if (!queueLength) {
-      return await interaction.reply('There are no songs in the queue!');
+      return await interaction.reply(':x: There are no songs in the queue!');
     }
 
     const queueItems = [];
@@ -48,15 +48,12 @@ export class QueueCommand extends Command {
         iconURL: user.displayAvatarURL()
       });
 
-    await interaction.reply('Queue generated');
-
     new PaginatedFieldMessageEmbed()
       .setTitleField('Queue items')
-
       .setTemplate(baseEmbed)
       .setItems(queueItems)
-      .formatItems((item: any) => `${item.title}\n${item.value}`)
-      .setItemsPerPage(5)
+      .formatItems((item: any) => `**${item.title}**: ${item.value}`)
+      .setItemsPerPage(10)
       .make()
       .run(interaction);
   }

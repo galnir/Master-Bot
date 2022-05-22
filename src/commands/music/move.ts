@@ -30,7 +30,7 @@ export class MoveCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player?.queue.tracks.length) {
-      return await interaction.reply('There are no tracks in queue!');
+      return await interaction.reply(':x: There are no tracks in queue!');
     }
 
     if (
@@ -40,7 +40,7 @@ export class MoveCommand extends Command {
       newPosition > player.queue.tracks.length ||
       currentPosition == newPosition
     ) {
-      return interaction.reply('Please enter valid position numbers!');
+      return interaction.reply(':x: Please enter valid position numbers!');
     }
 
     const title = player.queue.tracks[currentPosition - 1].title;
@@ -67,7 +67,7 @@ export class MoveCommand extends Command {
         {
           name: 'new-position',
           description: 'What is the position you want to move the song to?',
-          type: 'STRING',
+          type: 'INTEGER',
           required: true
         }
       ]
