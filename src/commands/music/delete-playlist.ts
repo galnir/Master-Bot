@@ -29,7 +29,7 @@ export class DeletePlaylistCommand extends Command {
       });
     } catch (error) {
       console.error(error);
-      return interaction.reply(
+      return await interaction.reply(
         ':x: Something went wrong! Please try again later'
       );
     }
