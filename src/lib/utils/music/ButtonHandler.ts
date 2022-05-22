@@ -176,15 +176,15 @@ export async function embedButtons(
       }
     });
 }
-export async function deletePlayerEmbed(player: Queue) {
+export async function deletePlayerEmbed(queue: Queue) {
   const { client } = container;
-  if (client.playerEmbeds[player?.player.guildId]) {
-    await player
+  if (client.playerEmbeds[queue?.player.guildId]) {
+    await queue
       .channel!.fetch(true)
       .then(
         async channel =>
           await channel.messages.fetch(
-            client.playerEmbeds[player?.player.guildId!]
+            client.playerEmbeds[queue?.player.guildId!]
           )
       )
       .then(async oldMessage => {
@@ -194,7 +194,7 @@ export async function deletePlayerEmbed(player: Queue) {
             .catch(error =>
               console.log('Failed to Delete Old Message.', error)
             );
-        delete client.playerEmbeds[player?.player.guildId!];
+        delete client.playerEmbeds[queue?.player.guildId!];
       });
   }
 }
