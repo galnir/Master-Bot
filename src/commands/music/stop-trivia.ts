@@ -20,13 +20,13 @@ export class StopTriviaCommand extends Command {
 
     if (!player) {
       return await interaction.reply(
-        'There is no trivia playing at the moment!'
+        ':x: There is no trivia playing at the moment!'
       );
     }
 
     if (!player.triviaQueue.current) {
       return await interaction.reply(
-        'There is no trivia playing at the moment!'
+        ':x: There is no trivia playing at the moment!'
       );
     }
 

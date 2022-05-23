@@ -1,3 +1,4 @@
+import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -6,6 +7,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'resume',
@@ -25,10 +27,28 @@ export class PauseCommand extends Command {
     const player = client.music.players.get(interaction.guild!.id);
 
     if (!player!.paused) {
-      return await interaction.reply('The track is not paused!');
+      return await interaction.reply(':x: The track is not paused!');
     }
 
-    player?.resume();
+    await player?.resume();
+
+    clearTimeout(client.leaveTimers[player?.guildId!]);
+    const NowPlaying = new NowPlayingEmbed(
+      player?.queue.current!,
+      player?.accuratePosition,
+      player?.queue.current?.length as number,
+      player?.volume!,
+      player?.queue.tracks!,
+      player?.queue.last!,
+      player?.paused
+    );
+
+    await embedButtons(
+      NowPlaying.NowPlayingEmbed(),
+      player?.queue!,
+      player?.queue.current!
+    );
+
     return await interaction.reply('Track resumed playing');
   }
 
