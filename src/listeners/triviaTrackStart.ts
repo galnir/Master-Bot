@@ -1,7 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
 //import { container } from '@sapphire/framework';
-import type { Snowflake } from 'discord-api-types';
+import type { Snowflake } from 'discord-api-types/v10';
 import { MessageCollector, MessageEmbed } from 'discord.js';
 import type { TriviaQueue } from '../lib/utils/trivia/TriviaQueue';
 import {

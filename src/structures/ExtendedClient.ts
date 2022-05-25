@@ -1,5 +1,5 @@
 import { SapphireClient } from '@sapphire/framework';
-import { Intents, User } from 'discord.js';
+import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
@@ -10,10 +10,6 @@ import { inactivityTime } from '../lib/utils/music/handleOptions';
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
   playerEmbeds: { [key: string]: string };
-  gameData: {
-    connect4Players: Map<string, User>;
-    tictactoePlayers: Map<string, User>;
-  };
   leaveTimers: { [key: string]: NodeJS.Timer };
 
   public constructor() {
@@ -22,15 +18,9 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_VOICE_STATES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS
+        Intents.FLAGS.GUILD_VOICE_STATES
       ]
     });
-
-    this.gameData = {
-      connect4Players: new Map(),
-      tictactoePlayers: new Map()
-    };
 
     this.music = new Node({
       sendGatewayPayload: (id, payload) =>
@@ -97,10 +87,6 @@ declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: Node;
     playerEmbeds: { [key: string]: string };
-    gameData: {
-      connect4Players: Map<string, User>;
-      tictactoePlayers: Map<string, User>;
-    };
     leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }
