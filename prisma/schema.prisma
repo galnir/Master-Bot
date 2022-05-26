@@ -32,14 +32,9 @@ model Playlist {
 }
 
 model Guild {
-  id     String   @id
-  added  DateTime @default(now())
-  volume Int
-
-}
-
-model GuildTwitch {
   id         String   @id
+  added      DateTime @default(now())
+  volume     Int
   notifyList String[]
 }
 

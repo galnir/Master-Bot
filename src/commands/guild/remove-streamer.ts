@@ -1,4 +1,3 @@
-// import type { MessageChannel } from './../../index';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -9,8 +8,6 @@ import {
 import type { CommandInteraction, GuildChannel } from 'discord.js';
 import { isTextBasedChannel } from '@sapphire/discord.js-utilities';
 import prisma from '../../lib/prisma';
-// import prisma from '../../lib/prisma';
-// import { notify } from '../../lib/utils/twitch/notifyChannel';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
@@ -36,7 +33,7 @@ export class RemoveStreamerCommand extends Command {
         content: `:x: Cant sent messages to ${channelData.name}`
       });
 
-    const guildDB = await prisma.guildTwitch.findFirst({
+    const guildDB = await prisma.guild.findFirst({
       where: { id: interaction.guild?.id },
       select: { notifyList: true }
     });
@@ -44,6 +41,7 @@ export class RemoveStreamerCommand extends Command {
       where: { twitchId: user.id },
       select: { channelIds: true }
     });
+
     if (!guildDB?.notifyList.includes(user.id))
       return interaction.reply({
         content: `:x: **${user.display_name}** is not in your Notification list`
@@ -64,13 +62,11 @@ export class RemoveStreamerCommand extends Command {
     const filteredTwitchIds: string[] = guildDB.notifyList.filter(element => {
       return element !== user.id;
     });
-    if (filteredTwitchIds.length == 0)
-      await prisma.guildTwitch.delete({ where: { id: interaction.guild?.id } });
-    else
-      await prisma.guildTwitch.update({
-        where: { id: interaction.guild?.id },
-        data: { notifyList: filteredTwitchIds }
-      });
+
+    await prisma.guild.update({
+      where: { id: interaction.guild?.id },
+      data: { notifyList: filteredTwitchIds }
+    });
 
     const filteredChannelIds: string[] = notifyDB.channelIds.filter(element => {
       return element !== channelData.id;

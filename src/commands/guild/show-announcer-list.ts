@@ -20,7 +20,7 @@ export class ShowAnnouncerListCommand extends Command {
     const { client } = container;
     const interactionGuild = interaction.guild as Guild;
 
-    const guildDB = await prisma.guildTwitch.findFirst({
+    const guildDB = await prisma.guild.findFirst({
       where: {
         id: interactionGuild.id
       },
@@ -29,7 +29,7 @@ export class ShowAnnouncerListCommand extends Command {
       }
     });
 
-    if (!guildDB) {
+    if (!guildDB || guildDB.notifyList.length === 0) {
       return await interaction.reply(':x: No streamers are in your list');
     }
     const icon = interactionGuild.iconURL({ dynamic: true });

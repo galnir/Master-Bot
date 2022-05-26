@@ -34,7 +34,7 @@ export class AddStreamerCommand extends Command {
       return interaction.reply({
         content: `:x: Can't send messages to ${channelData.name}`
       });
-    const guildDB = await prisma.guildTwitch.findFirst({
+    const guildDB = await prisma.guild.findFirst({
       where: { id: interaction.guild?.id },
       select: { notifyList: true }
     });
@@ -89,10 +89,11 @@ export class AddStreamerCommand extends Command {
       where: { twitchId: user.id }
     });
 
-    await prisma.guildTwitch.upsert({
+    await prisma.guild.upsert({
       create: {
         id: interaction.guild?.id as string,
-        notifyList: [user.id]
+        notifyList: [user.id],
+        volume: 100
       },
       select: { notifyList: true },
       update: {
