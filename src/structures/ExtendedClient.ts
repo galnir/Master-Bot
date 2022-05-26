@@ -1,5 +1,5 @@
 import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+import { Intents, User } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
@@ -11,6 +11,10 @@ export class ExtendedClient extends SapphireClient {
   readonly music: Node;
   playerEmbeds: { [key: string]: string };
   leaveTimers: { [key: string]: NodeJS.Timer };
+  gameData: {
+    connect4Players: Map<string, User>;
+    tictactoePlayers: Map<string, User>;
+  };
 
   public constructor() {
     super({
@@ -32,6 +36,11 @@ export class ExtendedClient extends SapphireClient {
         secure: data.lava_secure
       }
     });
+
+    this.gameData = {
+      connect4Players: new Map(),
+      tictactoePlayers: new Map()
+    };
 
     this.ws.on('VOICE_SERVER_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
@@ -88,5 +97,9 @@ declare module '@sapphire/framework' {
     readonly music: Node;
     playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
+    gameData: {
+      connect4Players: Map<string, User>;
+      tictactoePlayers: Map<string, User>;
+    };
   }
 }
