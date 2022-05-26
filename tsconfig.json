@@ -2,6 +2,7 @@
   "extends": "@sapphire/ts-config",
   "compilerOptions": {
     "rootDir": "src",
+    "incremental": true,
     "outDir": "dist",
     "tsBuildInfoFile": "dist/.tsbuildinfo",
     "resolveJsonModule": true,
