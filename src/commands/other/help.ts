@@ -22,7 +22,7 @@ import {
 export class HelpCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
-    const query = interaction.options.getString('command-name');
+    const query = interaction.options.getString('command-name')?.toLowerCase();
     const array: CommandInfo[] = [];
 
     const app = await client.application?.fetch();
@@ -30,7 +30,7 @@ export class HelpCommand extends Command {
       array.push({
         name: command.name,
         options: command.options,
-        details: command.description.slice(0, 500)
+        details: command.description
       });
     });
 
@@ -103,13 +103,13 @@ export class HelpCommand extends Command {
             } - Details`
           )
           .setColor('#9096e6')
-          .setDescription(`Command Description\n${command.details}`);
+          .setDescription(`**Description**\n${command.details}`);
 
         if (!command.options.length)
           return await interaction.reply({ embeds: [commandDetails] });
 
         DetailedPagination.setTemplate(commandDetails)
-          .setTitleField('Command Options')
+          .setTitleField('Options')
           .setItems(command.options)
           .formatItems(
             (option: any) => `**${option.name}**\n${option.description}`
