@@ -14,7 +14,7 @@ import { notify } from '../../lib/utils/twitch/notifyChannel';
 @ApplyOptions<CommandOptions>({
   name: 'add-streamer',
   description: 'Add a Stream alert from your favorite Twitch streamer',
-  requiredClientPermissions: 'MODERATE_MEMBERS',
+  requiredUserPermissions: 'MODERATE_MEMBERS',
   preconditions: ['GuildOnly']
 })
 export class AddStreamerCommand extends Command {
@@ -22,10 +22,34 @@ export class AddStreamerCommand extends Command {
     const streamerName = interaction.options.getString('streamer-name', true);
     const channelData = interaction.options.getChannel('channel-name', true);
     const { client } = container;
-    const user = await client.twitch.api.getUser({
-      login: streamerName,
-      token: client.twitch.auth.access_token
-    });
+    const user = await client.twitch.api
+      .getUser({
+        login: streamerName,
+        token: client.twitch.auth.access_token
+      })
+      .catch(error => {
+        if (error.status == 400) {
+          return interaction.reply({
+            content: `:x: "${streamerName}" was Invalid, Please try again.`
+          });
+        }
+        if (error.status == 429) {
+          return interaction.reply({
+            content:
+              ':x: Rate Limit exceeded. Please try again in a few minutes.'
+          });
+        }
+        if (error.status == 500) {
+          return interaction.reply({
+            content: `:x: Twitch service's are currently unavailable. Please try again later.`
+          });
+        } else {
+          return interaction.reply({
+            content: `:x: Something went wrong.`
+          });
+        }
+      });
+
     if (!user)
       return interaction.reply({
         content: `:x: ${streamerName} was not Found`
