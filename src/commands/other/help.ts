@@ -11,6 +11,7 @@ import {
 } from '@sapphire/framework';
 import {
   ApplicationCommandOption,
+  AutocompleteInteraction,
   CommandInteraction,
   MessageEmbed
 } from 'discord.js';
@@ -20,12 +21,24 @@ import {
   description: 'Get the Command List or add a command-name to get more info.'
 })
 export class HelpCommand extends Command {
+  public override autocompleteRun(interaction: AutocompleteInteraction) {
+    const commands = interaction.client.application?.commands.cache;
+    const focusedOption = interaction.options.getFocused(true);
+    const result = commands
+      ?.sorted((a, b) => a.name.localeCompare(b.name))
+      .filter(choice => choice.name.startsWith(focusedOption.value.toString()))
+      .map(choice => ({ name: choice.name, value: choice.name }))
+      .slice(0, 10);
+    interaction;
+    return interaction.respond(result!);
+  }
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
+
     const query = interaction.options.getString('command-name')?.toLowerCase();
     const array: CommandInfo[] = [];
 
-    const app = await client.application?.fetch();
+    const app = client.application;
     app?.commands.cache.each(command => {
       array.push({
         name: command.name,
@@ -49,24 +62,26 @@ export class HelpCommand extends Command {
 
     if (!query) {
       let characters = 0;
+      let page = 0;
       let message: string[] = [];
       const PaginatedEmbed = new PaginatedMessage();
       sortedList.forEach((command, index) => {
         characters += command.details.length + command.details.length;
-        message.push(`**/${command.name}** - ${command.details}\n`);
+        message.push(`> **/${command.name}** - ${command.details}\n`);
 
         if (characters > 1500 || index == sortedList.length - 1) {
+          page++;
           characters = 0;
           PaginatedEmbed.addPageEmbed(
             new MessageEmbed()
-              .setTitle(`Command List ${index + 1}/${sortedList.length}`)
+              .setTitle(`Command List - Page ${page}`)
               .setThumbnail(app?.iconURL()!)
               .setColor('#9096e6')
               .setAuthor({
-                name: interaction.user.username,
+                name: interaction.user.username + ' - Help Command',
                 iconURL: interaction.user.displayAvatarURL()
               })
-              .setDescription(message.toString().replaceAll(',**/', '**/'))
+              .setDescription(message.toString().replaceAll(',> **/', '> **/'))
           );
           message = [];
         }
@@ -92,7 +107,7 @@ export class HelpCommand extends Command {
 
         const commandDetails = new MessageEmbed()
           .setAuthor({
-            name: interaction.user.username,
+            name: interaction.user.username + ' - Help Command',
             iconURL: interaction.user.displayAvatarURL()
           })
           .setThumbnail(app?.iconURL()!)
@@ -103,7 +118,7 @@ export class HelpCommand extends Command {
             } - Details`
           )
           .setColor('#9096e6')
-          .setDescription(`**Description**\n${command.details}`);
+          .setDescription(`**Description**\n> ${command.details}`);
 
         if (!command.options.length)
           return await interaction.reply({ embeds: [commandDetails] });
@@ -112,7 +127,7 @@ export class HelpCommand extends Command {
           .setTitleField('Options')
           .setItems(command.options)
           .formatItems(
-            (option: any) => `**${option.name}**\n${option.description}`
+            (option: any) => `**${option.name}**\n> ${option.description}`
           )
           .setItemsPerPage(5)
           .make();
@@ -128,17 +143,19 @@ export class HelpCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
+
       options: [
         {
           type: 'STRING',
           required: false,
           name: 'command-name',
-          description: 'Which command would you like to know about?'
+          description: 'Which command would you like to know about?',
+          autocomplete: true
         }
       ]
     });
