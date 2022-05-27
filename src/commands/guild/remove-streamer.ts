@@ -8,6 +8,7 @@ import {
 import type { CommandInteraction, GuildChannel } from 'discord.js';
 import { isTextBasedChannel } from '@sapphire/discord.js-utilities';
 import prisma from '../../lib/prisma';
+import data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
@@ -47,6 +48,7 @@ export class RemoveStreamerCommand extends Command {
           });
         }
       });
+
     if (!user)
       return interaction.reply({
         content: `:x: ${streamerName} was not Found`
@@ -111,9 +113,12 @@ export class RemoveStreamerCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    if (!data.twitchClientID || !data.twitchClientSecret) {
+      return;
+    }
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
 

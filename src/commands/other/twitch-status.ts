@@ -117,13 +117,13 @@ export class TwitchStatusCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
     if (!data.twitchClientID || !data.twitchClientSecret) {
       return console.log('Twitch-Status-Command - Disabled');
     }
     console.log('Twitch-Status-Command - Enabled');
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

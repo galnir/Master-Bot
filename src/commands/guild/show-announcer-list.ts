@@ -9,6 +9,7 @@ import {
 import { CommandInteraction, Guild, MessageEmbed } from 'discord.js';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import prisma from '../../lib/prisma';
+import data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'show-announcer-list',
@@ -38,13 +39,31 @@ export class ShowAnnouncerListCommand extends Command {
       iconURL: icon!
     });
 
-    const users = await client.twitch.api.getUsers({
-      ids: guildDB.notifyList,
-      token: client.twitch.auth.access_token
-    });
+    const users = await client.twitch.api
+      .getUsers({
+        ids: guildDB.notifyList,
+        token: client.twitch.auth.access_token
+      })
+      .catch(error => {
+        if (error.status == 429) {
+          return interaction.reply({
+            content:
+              ':x: Rate Limit exceeded. Please try again in a few minutes.'
+          });
+        }
+        if (error.status == 500) {
+          return interaction.reply({
+            content: `:x: Twitch service's are currently unavailable. Please try again later.`
+          });
+        } else {
+          return interaction.reply({
+            content: `:x: Something went wrong.`
+          });
+        }
+      });
 
     const myList = [];
-    for (const streamer of users) {
+    for (const streamer of users!) {
       for (const channel in client.twitch.notifyList[streamer.id].sendTo) {
         const guildChannel = client.channels.cache.get(
           client.twitch.notifyList[streamer.id].sendTo[channel]
@@ -70,9 +89,12 @@ export class ShowAnnouncerListCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    if (!data.twitchClientID || !data.twitchClientSecret) {
+      return;
+    }
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description
     });
