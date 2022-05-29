@@ -63,24 +63,27 @@ export class AddStreamerCommand extends Command {
       where: { id: interaction.guild?.id },
       select: { notifyList: true }
     });
+    // check if streamer is already on notify list
     if (guildDB?.notifyList.includes(user.id))
       return interaction.reply({
         content: `:x: ${user.display_name} is already on your Notification list`
       });
 
-    for (let twitchChannel in client.twitch.notifyList) {
+    // make sure channel is not already on notify list
+    for (const twitchChannel in client.twitch.notifyList) {
       for (const channelToMsg of client.twitch.notifyList[twitchChannel]
         .sendTo) {
         const query = client.channels.cache.get(channelToMsg) as MessageChannel;
         if (query)
           if (query.guild.id == interaction.guild?.id) {
             if (twitchChannel == user.id)
-              return interaction.reply({
+              return await interaction.reply({
                 content: `:x: **${user.display_name}** is already has a notification in **#${query.name}**`
               });
           }
       }
     }
+    // make sure no one else is already sending alerts about this streamer
     if (client.twitch.notifyList[user.id]?.sendTo.includes(channelData.id))
       return interaction.reply({
         content: `:x: **${user.display_name}** is already messaging ${channelData.name}`
@@ -94,6 +97,7 @@ export class AddStreamerCommand extends Command {
       ];
     else channelArray = [channelData.id];
 
+    // add notification to twitch object on client
     client.twitch.notifyList[user.id]
       ? (client.twitch.notifyList[user.id].sendTo = channelArray)
       : (client.twitch.notifyList[user.id] = {
@@ -103,6 +107,8 @@ export class AddStreamerCommand extends Command {
           messageSent: false,
           messageHandler: {}
         });
+
+    // add notification to database
     await prisma.twitchNotify.upsert({
       create: {
         twitchId: user.id,
@@ -114,6 +120,7 @@ export class AddStreamerCommand extends Command {
       where: { twitchId: user.id }
     });
 
+    // add notification to guild on database
     await prisma.guild.upsert({
       create: {
         id: interaction.guild?.id as string,
