@@ -26,35 +26,35 @@ export class RemoveStreamerCommand extends Command {
         login: streamerName,
         token: client.twitch.auth.access_token
       })
-      .catch(error => {
+      .catch(async error => {
         if (error.status == 400) {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: "${streamerName}" was Invalid, Please try again.`
           });
         }
         if (error.status == 429) {
-          return interaction.reply({
+          return await interaction.reply({
             content:
               ':x: Rate Limit exceeded. Please try again in a few minutes.'
           });
         }
         if (error.status == 500) {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: Twitch service's are currently unavailable. Please try again later.`
           });
         } else {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: Something went wrong.`
           });
         }
       });
 
     if (!user)
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: ${streamerName} was not Found`
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: Cant sent messages to ${channelData.name}`
       });
 
@@ -68,11 +68,11 @@ export class RemoveStreamerCommand extends Command {
     });
 
     if (!guildDB?.notifyList.includes(user.id))
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: **${user.display_name}** is not in your Notification list`
       });
     if (!notifyDB)
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: **${user.display_name}** was not found in Database`
       });
     let found = false;
@@ -80,7 +80,7 @@ export class RemoveStreamerCommand extends Command {
       if (channel == channelData.id) found = true;
     });
     if (found === false)
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: **${user.display_name}** is not assigned to **${channelData}**`
       });
 
