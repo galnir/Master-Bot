@@ -1,3 +1,4 @@
+import type { ClientTwitchExtension } from './../lib/utils/twitch/twitchAPI-types';
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
@@ -5,12 +6,24 @@ import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { manageStageChannel } from './../lib/utils/music/channelHandler';
+import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { inactivityTime } from '../lib/utils/music/handleOptions';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: Node;
   playerEmbeds: { [key: string]: string };
   leaveTimers: { [key: string]: NodeJS.Timer };
+  twitch: ClientTwitchExtension = {
+    api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
+    auth: {
+      access_token: '',
+      refresh_token: '',
+      expires_in: 0,
+      token_type: '',
+      scope: ['']
+    },
+    notifyList: {}
+  };
 
   public constructor() {
     super({
@@ -32,6 +45,36 @@ export class ExtendedClient extends SapphireClient {
         secure: data.lava_secure
       }
     });
+    if (data.twitchClientID && data.twitchClientSecret) {
+      this.twitch.api?.getAccessToken('user:read:email').then(response => {
+        this.twitch.auth = {
+          access_token: response.access_token,
+          refresh_token: response.refresh_token,
+          expires_in: response.expires_in,
+          token_type: response.token_type,
+          scope: response.scope
+        };
+      });
+
+      setInterval(() => {
+        this.twitch
+          .api?.getAccessToken('user:read:email')
+          .then(response => {
+            this.twitch.auth = {
+              access_token: response.access_token,
+              refresh_token: response.refresh_token,
+              expires_in: response.expires_in,
+              token_type: response.token_type,
+              scope: response.scope
+            };
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }, 4.32e7); // refresh every 12 hours
+    } else {
+      console.log('Twitch-Features are Disabled');
+    }
 
     this.ws.on('VOICE_SERVER_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
@@ -88,5 +131,6 @@ declare module '@sapphire/framework' {
     readonly music: Node;
     playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
+    twitch: ClientTwitchExtension;
   }
 }
