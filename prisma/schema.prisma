@@ -44,5 +44,4 @@ model TwitchNotify {
   live       Boolean  @default(false)
   channelIds String[]
   sent       Boolean
-
 }
