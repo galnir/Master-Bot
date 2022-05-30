@@ -57,8 +57,8 @@ export class ExtendedClient extends SapphireClient {
       });
 
       setInterval(() => {
-        this.twitch
-          .api?.getAccessToken('user:read:email')
+        this.twitch.api
+          ?.getAccessToken('user:read:email')
           .then(response => {
             this.twitch.auth = {
               access_token: response.access_token,
@@ -97,8 +97,19 @@ export class ExtendedClient extends SapphireClient {
     });
 
     this.music.on('trackStart', async (queue, song) => {
+      const channel = this.channels.cache.get(queue.player.channelId!);
+
       if (this.leaveTimers[queue.player.guildId]) {
         clearTimeout(this.leaveTimers[queue.player.guildId]!);
+      }
+      if (channel?.isVoice()) {
+        if (channel.members.size == 1) {
+          queue.channel!.send(':zzz: Leaving empty voice channel');
+          queue.player.disconnect();
+          queue.player.node.destroyPlayer(queue.player.guildId);
+          delete this.playerEmbeds[queue.player.guildId];
+          return;
+        }
       }
 
       const NowPlaying = new NowPlayingEmbed(
