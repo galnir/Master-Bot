@@ -17,6 +17,7 @@
     "@discordjs/collection": "^0.6.0",
     "@lavaclient/spotify": "^3.0.0",
     "@lavalink/encoding": "^0.1.2",
+    "@napi-rs/canvas": "^0.1.21",
     "@prisma/client": "^3.14.0",
     "@sapphire/decorators": "^4.3.4",
     "@sapphire/discord.js-utilities": "^4.11.0",

@@ -1,6 +1,6 @@
 import type { ClientTwitchExtension } from './../lib/utils/twitch/twitchAPI-types';
 import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+import { Intents, User } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
 import { embedButtons } from '../lib/utils/music/ButtonHandler';
@@ -24,6 +24,10 @@ export class ExtendedClient extends SapphireClient {
     },
     notifyList: {}
   };
+  gameData: {
+    connect4Players: Map<string, User>;
+    tictactoePlayers: Map<string, User>;
+  };
 
   public constructor() {
     super({
@@ -31,9 +35,15 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Intents.FLAGS.GUILD_VOICE_STATES
       ]
     });
+
+    this.gameData = {
+      connect4Players: new Map(),
+      tictactoePlayers: new Map()
+    };
 
     this.music = new Node({
       sendGatewayPayload: (id, payload) =>
@@ -57,8 +67,8 @@ export class ExtendedClient extends SapphireClient {
       });
 
       setInterval(() => {
-        this.twitch
-          .api?.getAccessToken('user:read:email')
+        this.twitch.api
+          ?.getAccessToken('user:read:email')
           .then(response => {
             this.twitch.auth = {
               access_token: response.access_token,
@@ -132,5 +142,9 @@ declare module '@sapphire/framework' {
     playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
     twitch: ClientTwitchExtension;
+    gameData: {
+      connect4Players: Map<string, User>;
+      tictactoePlayers: Map<string, User>;
+    };
   }
 }
