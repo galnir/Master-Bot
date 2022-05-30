@@ -552,7 +552,7 @@ export class TicTacToeCommand extends Command {
             let result = false;
             for (let columnIndex = 0; columnIndex < 3; ++columnIndex) {
               for (let rowIndex = 0; rowIndex < 3; ++rowIndex) {
-                if (board[columnIndex][rowIndex] == 0) {
+                if (board[columnIndex][rowIndex] === 0) {
                   result = true;
                 }
               }
@@ -592,9 +592,9 @@ export class TicTacToeCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

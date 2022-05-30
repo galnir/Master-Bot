@@ -112,7 +112,8 @@ export class Connect4Command extends Command {
         content: `Connect 4 - ${player1} vs ${player2}`,
         allowedMentions: { users: [player2.id] },
         embeds: [gameInvite],
-        components: [gameInviteButtons]
+        components: [gameInviteButtons],
+        fetchReply: true
       })
       .then(() => {
         const inviteCollector =
@@ -243,12 +244,12 @@ export class Connect4Command extends Command {
 
               const gameCollector = message.createReactionCollector({
                 filter: filter,
-                idle: 60000
+                idle: 60 * 1000
               });
 
               gameCollector.on(
                 'collect',
-                async (reaction: MessageReaction, user: User) => {
+                async function (reaction: MessageReaction, user: User) {
                   if (user.id !== interaction.applicationId)
                     await reaction.users.remove(user).catch(error => {
                       console.error(
@@ -474,11 +475,12 @@ export class Connect4Command extends Command {
             if (currentPlayer === 'Game Over' || row[index].length === 0) {
               return;
             }
+
             if (currentPlayer === user.id) {
               row[index].pop();
               if (currentPlayer === player1.id) {
-                gameBoard[row[index].length][index] = 1;
                 currentPlayer = player2.id;
+                gameBoard[row[index].length][index] = 1;
                 instance
                   .setThumbnail(player2Avatar!)
                   .setTitle(`Connect 4 - Player 2's Turn`)
@@ -498,16 +500,17 @@ export class Connect4Command extends Command {
             }
 
             if (checkWinner(gameBoard) === 0) {
-              currentPlayer = 'Game Over';
               // No More Possible Moves
               if (!emptySpaces(gameBoard)) {
                 instance
                   .setTitle(`Connect 4 - Game Over`)
                   .setColor('GREY')
                   .setThumbnail('');
+
+                currentPlayer = 'Game Over';
+                client.gameData.connect4Players.delete(player1.id);
+                client.gameData.connect4Players.delete(player2.id);
               }
-              client.gameData.connect4Players.delete(player1.id);
-              client.gameData.connect4Players.delete(player2.id);
               return instance.setImage(boardImageURL!).setTimestamp();
             } else {
               instance
@@ -522,6 +525,7 @@ export class Connect4Command extends Command {
               } else {
                 instance.setThumbnail(player1Avatar).setColor('RED');
               }
+              currentPlayer = 'Game Over';
               client.gameData.connect4Players.delete(player1.id);
               client.gameData.connect4Players.delete(player2.id);
               return;
@@ -533,7 +537,7 @@ export class Connect4Command extends Command {
             let result = false;
             for (let columnIndex = 0; columnIndex < 7; ++columnIndex) {
               for (let rowIndex = 0; rowIndex < 6; ++rowIndex) {
-                if (board[rowIndex][columnIndex] == 0) {
+                if (board[rowIndex][columnIndex] === 0) {
                   result = true;
                 }
               }
@@ -609,9 +613,9 @@ export class Connect4Command extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
