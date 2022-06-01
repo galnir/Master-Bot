@@ -3,7 +3,10 @@ import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { Node } from 'lavaclient';
 import * as data from '../config.json';
-import { embedButtons } from '../lib/utils/music/ButtonHandler';
+import {
+  deletePlayerEmbed,
+  embedButtons
+} from '../lib/utils/music/ButtonHandler';
 import { NowPlayingEmbed } from './../lib/utils/music/NowPlayingEmbed';
 import { manageStageChannel } from './../lib/utils/music/channelHandler';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
@@ -79,8 +82,13 @@ export class ExtendedClient extends SapphireClient {
     this.ws.on('VOICE_SERVER_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
     });
-    this.ws.on('VOICE_STATE_UPDATE', data => {
-      this.music.handleVoiceUpdate(data);
+    this.ws.on('VOICE_STATE_UPDATE', async data => {
+      // handle if a mod right-clicks disconnect on the bot
+      if (!data.channel_id && data.user_id === this.application?.id) {
+        await deletePlayerEmbed(this.music.players.get(data.guild_id)?.queue!);
+        return this.music.destroyPlayer(data.guild_id);
+      }
+      return this.music.handleVoiceUpdate(data);
     });
 
     this.playerEmbeds = {};
