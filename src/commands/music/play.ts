@@ -1,21 +1,23 @@
-import type { TrackInfo } from '@lavaclient/types';
-import type { Song } from './../../lib/utils/queue/Song';
-import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
+// import type { TrackInfo } from '@lavaclient/types';
+// import type { Song } from './../../lib/utils/queue/Song';
+// import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { MessageChannel } from '../..';
+//import type { Addable } from '../../lib/utils/queue/Queue';
 import searchSong from '../../lib/utils/music/searchSong';
-import type { Addable } from '../../lib/utils/queue/Queue';
-import prisma from '../../lib/prisma';
-import { embedButtons } from '../../lib/utils/music/ButtonHandler';
-import * as optionsFile from '../../options.json';
-import { shuffleQueue } from '../../lib/utils/music/handleOptions';
+// import type { MessageChannel } from '../..';
+// import searchSong from '../../lib/utils/music/searchSong';
+// import type { Addable } from '../../lib/utils/queue/Queue';
+// import prisma from '../../lib/prisma';
+// import { embedButtons } from '../../lib/utils/music/ButtonHandler';
+// import * as optionsFile from '../../options.json';
+// import { shuffleQueue } from '../../lib/utils/music/handleOptions';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -23,7 +25,6 @@ import { shuffleQueue } from '../../lib/utils/music/handleOptions';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'inPlayerVoiceChannel',
     'userInDB'
   ]
@@ -34,158 +35,25 @@ export class PlayCommand extends Command {
 
     const { client } = container;
     const query = interaction.options.getString('query', true);
-    const isCustomPlaylist =
-      interaction.options.getString('is-custom-playlist');
-    const shufflePlaylist = interaction.options.getString('shuffle-playlist');
-
-    const interactionMember = interaction.member as GuildMember;
-
-    let player = client.music.players.get(interaction.guild!.id);
-    if (player?.queue.tracks.length! >= optionsFile.maxQueueLength)
-      return await interaction.followUp(
-        `:x: Can't add anymore songs to the queue`
-      );
+    const { music } = client;
 
     // had a precondition make sure the user is infact in a voice channel
     const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
       interaction.user.id
-    )?.channel;
+    )?.channel!;
 
-    let tracks: Addable[] = [];
-    let message: string = '';
+    let queue = music.queues.get(interaction.guildId!);
 
-    if (isCustomPlaylist == 'Yes') {
-      const playlist = await prisma.playlist.findFirst({
-        where: {
-          userId: interactionMember.id,
-          name: query
-        },
-        select: {
-          songs: true
-        }
-      });
-
-      if (!playlist) {
-        return await interaction.followUp(`:x: You have no such playlist!`);
-      }
-      if (!playlist.songs.length) {
-        return await interaction.followUp(`:x: **${query}** is empty!`);
-      }
-
-      const songs = playlist.songs;
-
-      for (let i = 0; i < songs.length; i++) {
-        const track = await searchSong(songs[i].url);
-        if (!track[1].length) continue;
-
-        tracks.push(...track[1]);
-      }
-
-      message = `Added tracks from **${query}** to the queue!`;
-    } else {
-      const trackTuple = await searchSong(query);
-      if (!trackTuple[1].length) {
-        return await interaction.followUp({ content: trackTuple[0] as string }); // error
-      }
-      message = trackTuple[0];
-      tracks.push(...trackTuple[1]);
+    if (!queue.player) {
+      const player = queue.createPlayer();
+      await player.connect(voiceChannel.id, { deafened: true });
     }
 
-    // Apply options
-    let playerQueue: number = player?.queue.tracks.length ?? 0;
-    let liveStreams: boolean = false;
-    let queueLimit: boolean = false;
-    let longerThan1Hour: boolean = false;
-    tracks.forEach(value => {
-      //@ts-ignore
-      const trackInfo = value['info'] as TrackInfo;
+    const trackTuple = await searchSong(query);
+    await queue.add(trackTuple[1]);
+    await queue.start();
 
-      if (
-        tracks.length >= optionsFile.maxQueueLength ||
-        playerQueue + tracks.length >= optionsFile.maxQueueLength
-      ) {
-        if (playerQueue > optionsFile.maxQueueLength) {
-          tracks.pop();
-          queueLimit = true;
-        }
-        playerQueue++;
-      }
-      if (optionsFile.playLiveStreams == false) {
-        if (trackInfo.isStream) {
-          tracks.pop();
-          liveStreams = true;
-        }
-      }
-      if (optionsFile.playVideosLongerThan1Hour == false) {
-        if (trackInfo.length > 3600) {
-          longerThan1Hour = true;
-          tracks.pop();
-        }
-      }
-    });
-    // inform user about changes to the expected queue
-    if (liveStreams)
-      await interaction.followUp(
-        ':x: Live Streams have been disabled, and were removed'
-      );
-    if (queueLimit)
-      message = `:x: Queue Limit reached, Could only add ${tracks.length} songs to the queue`;
-
-    if (longerThan1Hour)
-      await interaction.followUp(':x: Tracks longer than 1 hour were removed');
-    // No more songs after option were applied
-    if (tracks.length == 0) return;
-
-    if (shufflePlaylist == 'Yes') shuffleQueue(tracks as Song[]);
-
-    if (!player?.connected) {
-      const channelDB = await prisma.guild.findFirst({
-        where: {
-          id: interaction.guild!.id
-        },
-        select: {
-          volume: true
-        }
-      });
-
-      player ??= client.music.createPlayer(interaction.guild!.id);
-      player.queue.channel = interaction.channel as MessageChannel;
-      if (channelDB?.volume) {
-        await player.setVolume(channelDB.volume);
-      }
-      await player.connect(voiceChannel!.id, { deafened: true });
-    }
-
-    const started = player.playing || player.paused;
-
-    await interaction
-      .followUp(message)
-      .then(followUp => (followUp.embeds = []));
-    player.queue.add(tracks, {
-      requester: interaction.user.id,
-      userInfo: interactionMember,
-      added: Date.now()
-    });
-    if (!started) {
-      await player.queue.start();
-    } else {
-      const NowPlaying = new NowPlayingEmbed(
-        player.queue.current!,
-        player.accuratePosition,
-        player.queue.current?.length as number,
-        player.volume,
-        player.queue.tracks!,
-        player.queue.last!,
-        player.paused
-      );
-
-      await embedButtons(
-        NowPlaying.NowPlayingEmbed(),
-        player.queue,
-        player.queue.current!
-      );
-    }
-    return;
+    return interaction.followUp('console');
   }
 
   public override registerApplicationCommands(

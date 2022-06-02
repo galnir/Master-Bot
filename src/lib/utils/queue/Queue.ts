@@ -102,12 +102,26 @@ export class Queue {
     return this.player.channelId ?? null;
   }
 
+  public createPlayer(): Player {
+    let player = this.player;
+    if (!player) {
+      player = this.store.client.createPlayer(this.guildID);
+    }
+    return player;
+  }
+
+  public destroyPlayer(): void {
+    if (this.player) {
+      this.store.client.destroyPlayer(this.guildID);
+    }
+  }
+
   // Start the queue
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
     if (!np) return this.next();
 
-    await this.player.play(np.entry.track, { startTime: np.position });
+    await this.player.play(np.song as Song);
 
     this.client.emit(replaying ? 'musicSongReplay' : 'musicSongPlay', this, np);
     return true;

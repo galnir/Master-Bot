@@ -16,7 +16,7 @@ const genius = new GeniusLyrics(data.geniusLyricsAPI);
   name: 'lyrics',
   description:
     'Get the lyrics of any song or the lyrics of the currently playing song!',
-  preconditions: ['GuildOnly', 'musicTriviaPlaying']
+  preconditions: ['GuildOnly']
 })
 export class LyricsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -33,7 +33,8 @@ export class LyricsCommand extends Command {
           'Please provide a valid song name or start playing one and try again!'
         );
       }
-      title = player.queue.current?.title as string;
+      //title = player.queue.current?.title as string;
+      title = 'hi';
     }
 
     try {

@@ -1,5 +1,7 @@
 import Collection from '@discordjs/collection';
-import * as Redis from 'ioredis';
+import { readFileSync } from 'fs';
+import type { Redis, RedisKey } from 'ioredis';
+import { join, resolve } from 'path';
 import { Queue } from './Queue';
 import type { QueueClient } from './QueueClient';
 
@@ -28,14 +30,11 @@ const commands: RedisCommand[] = [
 ];
 
 //@ts-ignore
-export interface ExtendedRedis extends Redis.Redis {
-  lmove: (key: Redis.RedisKey, from: number, to: number) => Promise<'OK'>;
-  lremat: (key: Redis.RedisKey, index: number) => Promise<'OK'>;
-  lshuffle: (key: Redis.RedisKey, seed: number) => Promise<'OK'>;
-  rpopset: (
-    source: Redis.RedisKey,
-    destination: Redis.RedisKey
-  ) => Promise<string | null>;
+export interface ExtendedRedis extends Redis {
+  lmove: (key: RedisKey, from: number, to: number) => Promise<'OK'>;
+  lremat: (key: RedisKey, index: number) => Promise<'OK'>;
+  lshuffle: (key: RedisKey, seed: number) => Promise<'OK'>;
+  rpopset: (source: RedisKey, destination: RedisKey) => Promise<string | null>;
 }
 
 export class QueueStore extends Collection<string, Queue> {
@@ -48,7 +47,14 @@ export class QueueStore extends Collection<string, Queue> {
     for (const command of commands) {
       this.redis.defineCommand(command.name, {
         numberOfKeys: command.keys,
-        lua: 'none'
+        lua: readFileSync(
+          resolve(
+            join(__dirname, '..', '..', '..'),
+            'scripts',
+            'audio',
+            `${command.name}.lua`
+          )
+        ).toString()
       });
     }
   }
