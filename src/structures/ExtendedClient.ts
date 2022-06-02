@@ -13,6 +13,7 @@ export class ExtendedClient extends SapphireClient {
   readonly music: Node;
   playerEmbeds: { [key: string]: string };
   leaveTimers: { [key: string]: NodeJS.Timer };
+  reminderShortTimers: { [key: string]: NodeJS.Timer };
   twitch: ClientTwitchExtension = {
     api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
     auth: {
@@ -57,8 +58,8 @@ export class ExtendedClient extends SapphireClient {
       });
 
       setInterval(() => {
-        this.twitch
-          .api?.getAccessToken('user:read:email')
+        this.twitch.api
+          ?.getAccessToken('user:read:email')
           .then(response => {
             this.twitch.auth = {
               access_token: response.access_token,
@@ -85,6 +86,7 @@ export class ExtendedClient extends SapphireClient {
 
     this.playerEmbeds = {};
     this.leaveTimers = {};
+    this.reminderShortTimers = {};
     this.music.on('queueFinish', queue => {
       queue.player.stop();
 
@@ -131,6 +133,7 @@ declare module '@sapphire/framework' {
     readonly music: Node;
     playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
+    reminderShortTimers: { [key: string]: NodeJS.Timer };
     twitch: ClientTwitchExtension;
   }
 }

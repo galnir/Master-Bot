@@ -12,6 +12,7 @@ model User {
   id        String     @id
   playlists Playlist[]
   username  String
+  reminders Reminder[]
 }
 
 model Song {
@@ -44,4 +45,15 @@ model TwitchNotify {
   live       Boolean  @default(false)
   channelIds String[]
   sent       Boolean
+}
+
+model Reminder {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  event       String
+  description String?
+  dateTime    String
+  userId      String
+  user        User?    @relation(fields: [userId], references: [id])
+
 }
