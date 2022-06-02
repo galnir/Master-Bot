@@ -44,6 +44,8 @@ export class PlayCommand extends Command {
 
     let queue = music.queues.get(interaction.guildId!);
 
+    await queue.setTextChannelID(interaction.channel!.id);
+
     if (!queue.player) {
       const player = queue.createPlayer();
       await player.connect(voiceChannel.id, { deafened: true });

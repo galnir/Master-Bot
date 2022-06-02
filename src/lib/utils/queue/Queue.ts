@@ -63,11 +63,11 @@ export class Queue {
       current: `music.${this.guildID}.current`,
       next: `music.${this.guildID}.next`,
       position: `music.${this.guildID}.position`,
-      skips: `${this.guildID}.skips`,
-      systemPause: `${this.guildID}.systemPause`,
-      replay: `${this.guildID}.replay`,
-      volume: `${this.guildID}.volume`,
-      text: `${this.guildID}.text`
+      skips: `music.${this.guildID}.skips`,
+      systemPause: `music.${this.guildID}.systemPause`,
+      replay: `music.${this.guildID}.replay`,
+      volume: `music.${this.guildID}.volume`,
+      text: `music.${this.guildID}.text`
     };
   }
 
@@ -123,7 +123,11 @@ export class Queue {
 
     await this.player.play(np.song as Song);
 
-    this.client.emit(replaying ? 'musicSongReplay' : 'musicSongPlay', this, np);
+    this.client.emit(
+      replaying ? 'musicSongReplay' : 'musicSongPlay',
+      this,
+      np.song as Song
+    );
     return true;
   }
 
@@ -250,7 +254,6 @@ export class Queue {
   public async getTextChannel(): Promise<TextChannel | null> {
     const id = await this.getTextChannelID();
     if (id === null) return null;
-
     const channel = this.guild.channels.cache.get(id) ?? null;
     if (channel === null) {
       await this.setTextChannelID(null);
