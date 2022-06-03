@@ -53,7 +53,11 @@ export class PlayCommand extends Command {
 
     const trackTuple = await searchSong(query);
     await queue.add(trackTuple[1]);
-    await queue.start();
+
+    const current = await queue.getCurrentTrack();
+    if (!current) {
+      await queue.start();
+    }
 
     return interaction.followUp('console');
   }

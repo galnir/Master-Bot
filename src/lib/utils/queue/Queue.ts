@@ -106,6 +106,9 @@ export class Queue {
     let player = this.player;
     if (!player) {
       player = this.store.client.createPlayer(this.guildID);
+      player.on('trackEnd', () => {
+        this.next();
+      });
     }
     return player;
   }
@@ -254,6 +257,7 @@ export class Queue {
   public async getTextChannel(): Promise<TextChannel | null> {
     const id = await this.getTextChannelID();
     if (id === null) return null;
+
     const channel = this.guild.channels.cache.get(id) ?? null;
     if (channel === null) {
       await this.setTextChannelID(null);
