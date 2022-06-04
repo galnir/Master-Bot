@@ -37,7 +37,7 @@ export interface AddOptions {
 export type Addable = string | Track | Song;
 
 interface NowPlaying {
-  song: Addable;
+  song: Song;
   position: number;
 }
 
@@ -54,6 +54,7 @@ interface QueueKeys {
 
 export class Queue {
   public readonly keys: QueueKeys;
+  private skipped: boolean;
 
   public constructor(
     public readonly store: QueueStore,
@@ -69,6 +70,8 @@ export class Queue {
       volume: `music.${this.guildID}.volume`,
       text: `music.${this.guildID}.text`
     };
+
+    this.skipped = false;
   }
 
   public get client() {
@@ -106,8 +109,11 @@ export class Queue {
     let player = this.player;
     if (!player) {
       player = this.store.client.createPlayer(this.guildID);
-      player.on('trackEnd', () => {
-        this.next();
+      player.on('trackEnd', async () => {
+        if (!this.skipped) {
+          await this.next();
+        }
+        this.skipped = false;
       });
     }
     return player;
@@ -122,6 +128,7 @@ export class Queue {
   // Start the queue
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
+    console.log('nowplaying', np);
     if (!np) return this.next();
 
     await this.player.play(np.song as Song);
@@ -287,7 +294,7 @@ export class Queue {
     return channelID;
   }
 
-  public async getCurrentTrack(): Promise<Addable | null> {
+  public async getCurrentTrack(): Promise<Song | null> {
     const value = await this.store.redis.get(this.keys.current);
     return value ? this.parseSongString(value) : null;
   }
@@ -304,6 +311,7 @@ export class Queue {
   }
 
   public async next({ skipped = false } = {}): Promise<boolean> {
+    if (skipped) this.skipped = true;
     // Sets the current position to 0.
     await this.store.redis.del(this.keys.position);
 
@@ -323,15 +331,11 @@ export class Queue {
       this.keys.next,
       this.keys.current
     );
-
     // If there was an entry to play, refresh the state and start playing.
     if (entry) {
-      if (skipped)
-        this.client.emit('musicSongSkip', this, this.parseSongString(entry));
       await this.refresh();
       return this.start(false);
     }
-
     this.client.emit('musicFinish', this);
     return false;
   }
@@ -408,11 +412,11 @@ export class Queue {
     return [...tracks].map(this.parseSongString);
   }
 
-  public stringifySong(song: Addable): string {
+  public stringifySong(song: Song): string {
     return JSON.stringify(song);
   }
 
-  public parseSongString(song: string): Addable {
+  public parseSongString(song: string): Song {
     return JSON.parse(song);
   }
 }

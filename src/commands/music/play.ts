@@ -1,6 +1,3 @@
-// import type { TrackInfo } from '@lavaclient/types';
-// import type { Song } from './../../lib/utils/queue/Song';
-// import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -9,25 +6,12 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-//import type { Addable } from '../../lib/utils/queue/Queue';
 import searchSong from '../../lib/utils/music/searchSong';
-// import type { MessageChannel } from '../..';
-// import searchSong from '../../lib/utils/music/searchSong';
-// import type { Addable } from '../../lib/utils/queue/Queue';
-// import prisma from '../../lib/prisma';
-// import { embedButtons } from '../../lib/utils/music/ButtonHandler';
-// import * as optionsFile from '../../options.json';
-// import { shuffleQueue } from '../../lib/utils/music/handleOptions';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
   description: 'Play any song or playlist from YouTube, Spotify and more!',
-  preconditions: [
-    'GuildOnly',
-    'inVoiceChannel',
-    'inPlayerVoiceChannel',
-    'userInDB'
-  ]
+  preconditions: ['GuildOnly', 'userInDB']
 })
 export class PlayCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
