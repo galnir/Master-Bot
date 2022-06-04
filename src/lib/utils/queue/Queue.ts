@@ -1,4 +1,10 @@
-import type { Guild, GuildMember, TextChannel, VoiceChannel } from 'discord.js';
+import type {
+  CommandInteraction,
+  Guild,
+  GuildMember,
+  TextChannel,
+  VoiceChannel
+} from 'discord.js';
 import { Song } from './Song';
 import type { Track } from '@lavaclient/types';
 import { DiscordResource, getId, Player, Snowflake } from 'lavaclient';
@@ -179,16 +185,16 @@ export class Queue {
     return songs.length;
   }
 
-  public async pause({ system = false } = {}) {
+  public async pause(interaction: CommandInteraction) {
     await this.player.pause(true);
-    await this.setSystemPaused(system);
-    this.client.emit('musicSongPause', this);
+    await this.setSystemPaused(false);
+    this.client.emit('musicSongPause', interaction);
   }
 
-  public async resume() {
+  public async resume(interaction: CommandInteraction) {
     await this.player.pause(false);
     await this.setSystemPaused(false);
-    this.client.emit('musicSongResume', this);
+    this.client.emit('musicSongResume', interaction);
   }
 
   /*
@@ -202,7 +208,6 @@ export class Queue {
   public async setSystemPaused(value: boolean): Promise<boolean> {
     await this.store.redis.set(this.keys.systemPause, value ? '1' : '0');
     await this.refresh();
-    this.client.emit('musicSongPause', this, value);
     return value;
   }
 
