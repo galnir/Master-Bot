@@ -11,7 +11,12 @@ import searchSong from '../../lib/utils/music/searchSong';
 @ApplyOptions<CommandOptions>({
   name: 'play',
   description: 'Play any song or playlist from YouTube, Spotify and more!',
-  preconditions: ['GuildOnly', 'userInDB']
+  preconditions: [
+    'GuildOnly',
+    'inVoiceChannel',
+    'inPlayerVoiceChannel',
+    'userInDB'
+  ]
 })
 export class PlayCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

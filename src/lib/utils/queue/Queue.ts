@@ -102,6 +102,7 @@ export class Queue {
   }
 
   public get voiceChannelID(): string | null {
+    if (!this.player) return null;
     return this.player.channelId ?? null;
   }
 
