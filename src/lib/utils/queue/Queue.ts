@@ -312,7 +312,6 @@ export class Queue {
   public async removeAt(position: number): Promise<void> {
     await this.store.redis.lremat(this.keys.next, -position - 1);
     await this.refresh();
-    this.client.emit('musicQueueSync', this);
   }
 
   public async next({ skipped = false } = {}): Promise<boolean> {
