@@ -13,6 +13,7 @@ model User {
   playlists Playlist[]
   username  String
   reminders Reminder[]
+  timeZone  Int?
 }
 
 model Song {
@@ -50,6 +51,7 @@ model TwitchNotify {
 model Reminder {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now())
+  repeat      String?
   event       String
   description String?
   dateTime    String

@@ -17,7 +17,7 @@ export class ReminderNotDuplicate extends Precondition {
     let subcommand = interaction.options.getSubcommand(true);
 
     if (subcommand == 'set') {
-      let eventName = interaction.options.getString('event', true);
+      const eventName = interaction.options.getString('event', true);
       const guildMember = interaction.member as GuildMember;
 
       let count;
