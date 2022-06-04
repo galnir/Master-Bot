@@ -129,7 +129,6 @@ export class Queue {
   // Start the queue
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
-    console.log('nowplaying', np);
     if (!np) return this.next();
 
     await this.player.play(np.song as Song);
@@ -259,7 +258,6 @@ export class Queue {
   public async leave(): Promise<void> {
     await this.player.disconnect();
     await this.setTextChannelID(null);
-    this.client.emit('musicLeave', this);
   }
 
   public async getTextChannel(): Promise<TextChannel | null> {
