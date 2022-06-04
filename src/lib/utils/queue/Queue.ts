@@ -257,6 +257,7 @@ export class Queue {
   // leave the voice channel
   public async leave(): Promise<void> {
     await this.player.disconnect();
+    await this.destroyPlayer();
     await this.setTextChannelID(null);
   }
 
