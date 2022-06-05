@@ -6,8 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import searchSong from '../../lib/utils/music/searchSong';
-import type { Addable } from '../../lib/utils/queue/Queue';
-import type { Track } from '@lavaclient/types';
 import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
@@ -38,14 +36,14 @@ export class SaveToPlaylistCommand extends Command {
       return await interaction.followUp(songTuple[0]);
     }
 
-    const songArray = songTuple[1] as Addable[];
+    const songArray = songTuple[1];
     const songsToAdd = [];
 
     for (let i = 0; i < songArray.length; i++) {
-      const song = songArray[i] as Track;
+      const song = songArray[i];
+      delete song['requester'];
       songsToAdd.push({
-        name: song.info.title,
-        url: song.info.uri,
+        ...song,
         playlistId: +playlistId!.id
       });
     }
@@ -57,6 +55,7 @@ export class SaveToPlaylistCommand extends Command {
 
       return await interaction.followUp(`Added tracks to **${playlistName}**`);
     } catch (error) {
+      console.error(error);
       return await interaction.followUp(':x: Something went wrong!');
     }
   }

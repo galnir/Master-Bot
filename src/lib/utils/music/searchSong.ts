@@ -1,12 +1,13 @@
 import { container } from '@sapphire/framework';
-import type { Addable } from '../queue/Queue';
 import { SpotifyItemType } from '@lavaclient/spotify';
+import { Song } from '../queue/Song';
 
 export default async function searchSong(
   query: string
-): Promise<[string, Addable[]]> {
+): Promise<[string, Song[]]> {
   const { client } = container;
-  let tracks: Addable[] = [];
+  let tracks: Song[] = [];
+  let response;
   let displayMessage = '';
 
   if (client.music.spotify.isSpotifyUrl(query)) {
@@ -14,16 +15,18 @@ export default async function searchSong(
     switch (item?.type) {
       case SpotifyItemType.Track:
         const track = await item.resolveYoutubeTrack();
-        tracks = [track];
+        tracks = [new Song(track)];
         displayMessage = `Queued track [**${item.name}**](${query}).`;
         break;
       case SpotifyItemType.Artist:
-        tracks = await item.resolveYoutubeTracks();
+        response = await item.resolveYoutubeTracks();
+        response.forEach(track => tracks.push(new Song(track)));
         displayMessage = `Queued the **Top ${tracks.length} tracks** for [**${item.name}**](${query}).`;
         break;
       case SpotifyItemType.Album:
       case SpotifyItemType.Playlist:
-        tracks = await item.resolveYoutubeTracks();
+        response = await item.resolveYoutubeTracks();
+        response.forEach(track => tracks.push(new Song(track)));
         displayMessage = `Queued **${
           tracks.length
         } tracks** from ${SpotifyItemType[item.type].toLowerCase()} [**${
@@ -46,13 +49,13 @@ export default async function searchSong(
         displayMessage = ":x: Couldn't find what you were looking for :(";
         return [displayMessage, tracks];
       case 'PLAYLIST_LOADED':
-        tracks = results.tracks;
+        results.tracks.forEach(track => tracks.push(new Song(track)));
         displayMessage = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`;
         break;
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':
         const [track] = results.tracks;
-        tracks = [track];
+        tracks = [new Song(track)];
         displayMessage = `Queued [**${track.info.title}**](${track.info.uri})`;
         break;
     }

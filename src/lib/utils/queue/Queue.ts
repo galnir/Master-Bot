@@ -5,9 +5,9 @@ import type {
   TextChannel,
   VoiceChannel
 } from 'discord.js';
-import { Song } from './Song';
+import type { Song } from './Song';
 import type { Track } from '@lavaclient/types';
-import { DiscordResource, getId, Player, Snowflake } from 'lavaclient';
+import type { DiscordResource, Player, Snowflake } from 'lavaclient';
 import { container } from '@sapphire/framework';
 import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
@@ -156,29 +156,15 @@ export class Queue {
 
   // add tracks to queue
   public async add(
-    songs: Addable | Array<Addable>,
+    songs: Song | Array<Song>,
     options: AddOptions = {}
   ): Promise<number> {
     songs = Array.isArray(songs) ? songs : [songs];
     if (!songs.length) return 0;
 
-    const requesterId = options.requester && getId(options.requester);
-    const user = options.userInfo;
-    const added = Date.now();
-    const toAdd = songs.map(song =>
-      song instanceof Song
-        ? song
-        : new Song(song, added, {
-            avatar: user?.user.avatar,
-            defaultAvatarURL: user?.user.defaultAvatarURL,
-            id: requesterId,
-            name: user?.nickname ?? user?.user.username
-          })
-    );
-
     await this.store.redis.lpush(
       this.keys.next,
-      ...toAdd.map(song => this.stringifySong(song))
+      ...songs.map(song => this.stringifySong(song))
     );
     await this.refresh();
     return songs.length;

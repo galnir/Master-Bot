@@ -63,7 +63,7 @@ export class RemoveFromPlaylistCommand extends Command {
     }
 
     await interaction.followUp(
-      `:wastebasket: Deleted **${song.name}** from **${playlistName}**`
+      `:wastebasket: Deleted **${song.title}** from **${playlistName}**`
     );
     return;
   }
