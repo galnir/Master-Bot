@@ -181,7 +181,6 @@ export class Queue {
       ...toAdd.map(song => this.stringifySong(song))
     );
     await this.refresh();
-    this.client.emit('musicQueueSync', this);
     return songs.length;
   }
 
@@ -251,7 +250,6 @@ export class Queue {
 
   public async seek(position: number): Promise<void> {
     await this.player.seek(position);
-    this.client.emit('musicSongSeekUpdate', this, position);
   }
 
   // connect to a voice channel
@@ -351,13 +349,11 @@ export class Queue {
   public async moveTracks(from: number, to: number): Promise<void> {
     await this.store.redis.lmove(this.keys.next, -from - 1, -to - 1); // work from the end of the list, since it's reversed
     await this.refresh();
-    this.client.emit('musicQueueSync', this);
   }
 
   public async shuffleTracks(): Promise<void> {
     await this.store.redis.lshuffle(this.keys.next, Date.now());
     await this.refresh();
-    this.client.emit('musicQueueSync', this);
   }
 
   public async stop(): Promise<void> {
@@ -366,7 +362,6 @@ export class Queue {
 
   public async clearTracks(): Promise<void> {
     await this.store.redis.del(this.keys.next);
-    this.client.emit('musicQueueSync', this);
   }
 
   public async skipTo(position: number): Promise<void> {
