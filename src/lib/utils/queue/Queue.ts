@@ -369,6 +369,11 @@ export class Queue {
     this.client.emit('musicQueueSync', this);
   }
 
+  public async skipTo(position: number): Promise<void> {
+    await this.store.redis.ltrim(this.keys.next, 0, position - 1);
+    await this.next({ skipped: true });
+  }
+
   public refresh() {
     return this.store.redis
       .pipeline()
