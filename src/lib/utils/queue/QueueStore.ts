@@ -50,7 +50,6 @@ export class QueueStore extends Collection<string, Queue> {
         lua: readFileSync(
           resolve(
             join(__dirname, '..', '..', '..'),
-            'scripts',
             'audio',
             `${command.name}.lua`
           )
