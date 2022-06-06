@@ -1,3 +1,4 @@
+// Inspired from skyra's queue(when it had a music feature)
 import type {
   CommandInteraction,
   Guild,
@@ -185,10 +186,6 @@ export class Queue {
       this.client.emit('musicSongResume', interaction);
     }
   }
-
-  /*
-  resetSkipVotes, addSkipVote
-*/
 
   public getSystemPaused(): Promise<boolean> {
     return this.store.redis.get(this.keys.systemPause).then(d => d === '1');
