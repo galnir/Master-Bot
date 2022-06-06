@@ -33,25 +33,27 @@ export async function saveReminder(userId: string, reminder: Reminder) {
     return `:x: You already have an event named **${reminder.event}**`;
   }
 
-  return `Reminder - **${reminder.event}** has been set for <t:${Math.floor(
+  return `:white_check_mark: Reminder - **${
+    reminder.event
+  }** has been set for <t:${Math.floor(
     new Date(reminder.dateTime).valueOf() / 1000
   )}>`;
 }
-export function convertTime(
+
+export function convertInputsToISO(
   timeZoneOffset: number | null,
   timeQuery: string,
   date: string
 ) {
+  let isoStr: string = '';
   const operator = timeZoneOffset! > 0 ? '+' : '-';
-
   let [hour, minute] = timeQuery.split(':');
-  const currentDate = new Date(Date.now());
   timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
-  let isoStr: string = currentDate.toISOString();
-
+  const currentDate = new Date(Date.now());
   const localOffset = currentDate.getTimezoneOffset() * 60000;
   let subtractTime = false;
+
   if (currentDate.getTimezoneOffset() < 0) subtractTime = true;
 
   if (!date)
@@ -62,6 +64,7 @@ export function convertTime(
   isoStr = `${year}-${padTo2Digits(month)}-${padTo2Digits(
     day
   )}T${timeQuery}:00.000Z`;
+
   const timeMS = new Date(isoStr).valueOf();
   const minToMS = timeZoneOffset! * 60000;
   const totalOffset = localOffset - (subtractTime ? -minToMS : +minToMS);
@@ -79,7 +82,7 @@ export async function findTimeZone(
   timeQuery: string,
   date: string
 ) {
-  if (checkInputs(interaction, 'placeholder', timeQuery, date)) {
+  if (await checkInputs(interaction, 'placeholder', timeQuery, date)) {
     const currentDate = new Date(Date.now()); // timezones
     let [hour, minute] = timeQuery.split(':');
 
@@ -132,7 +135,8 @@ export async function checkReminders() {
       userId: true,
       event: true,
       description: true,
-      repeat: true
+      repeat: true,
+      user: true
     },
     orderBy: { dateTime: 'asc' }
   });
@@ -143,7 +147,8 @@ export async function checkReminders() {
       if (difference > 0 && difference < DBReminderInterval) {
         const user = client.users.cache.get(reminder.userId!);
         const remind = new RemindEmbed(
-          reminder.userId,
+          reminder.user?.id!,
+          reminder.user?.timeZone!,
           reminder.event,
           reminder.dateTime,
           reminder.description!,
@@ -157,8 +162,23 @@ export async function checkReminders() {
             } catch (error) {
               return console.log(error);
             }
-            if (!reminder.repeat) {
-              await removeReminder(reminder.userId, reminder.event, false);
+
+            await removeReminder(reminder.userId, reminder.event, false);
+            if (reminder.repeat) {
+              const nextAlarm = nextReminder(
+                reminder.repeat,
+                reminder.dateTime
+              );
+              await saveReminder(reminder.userId, {
+                event: reminder.event,
+                dateTime: convertInputsToISO(
+                  reminder.user?.timeZone!,
+                  nextAlarm.time,
+                  nextAlarm.date
+                ),
+                description: reminder.description!,
+                repeat: reminder.repeat
+              });
             }
 
             clearTimeout(
@@ -171,15 +191,58 @@ export async function checkReminders() {
     }
   });
 }
-checkReminders().then(() =>
-  setInterval(async () => {
-    await checkReminders();
-  }, DBReminderInterval)
-);
 
-export function nextReminder(repeat: string, isoStr: string) {}
+export function nextReminder(repeat: string, isoStr: string) {
+  const localOffset = new Date().getTimezoneOffset();
+  const operator = localOffset > 0 ? '+' : '-';
+  const offset2MS = localOffset * 60000;
+  if (repeat == 'Daily') {
+    isoStr = new Date(
+      new Date(isoStr).valueOf() +
+        86400 * 1000 -
+        (operator == '+' ? +offset2MS : -offset2MS)
+    )
+      .toISOString()
+      .replace('Z', '');
+  }
+  if (repeat == 'Weekly') {
+    isoStr = new Date(
+      new Date(isoStr).valueOf() +
+        604800 * 1000 -
+        (operator == '+' ? +offset2MS : -offset2MS)
+    )
+      .toISOString()
+      .replace('Z', '');
+  }
+  isoStr = isoStr.replace(':00.000', '');
+  const [DBDate, DBTime] = isoStr.split('T');
+  const [DBHour, DBMinute] = DBTime.split(':');
+  const [DBYear, DBMonth, DBDay] = DBDate.split('-');
+  let year = Number.parseInt(DBYear);
+  let month = Number.parseInt(DBMonth);
+  let day = Number.parseInt(DBDay);
+  let hour = Number.parseInt(DBHour);
+  let minute = Number.parseInt(DBMinute);
 
-export function checkInputs(
+  if (repeat == 'Yearly') {
+    year++;
+  }
+
+  if (repeat == 'Monthly') {
+    month + 1 > 12 ? ((month = 1), year++) : month++;
+  }
+
+  return {
+    date: `${padTo2Digits(month.toString())}/${padTo2Digits(
+      day.toString()
+    )}/${year.toString()}`,
+    time: `${padTo2Digits(hour.toString())}:${padTo2Digits(
+      minute.toString()
+    )}:00.000`
+  };
+}
+
+export async function checkInputs(
   interaction: CommandInteraction | ModalSubmitInteraction,
   event: string,
   time?: string,
@@ -194,7 +257,7 @@ export function checkInputs(
   if (time) {
     let [hour, minute] = time.split(':');
 
-    if (!Number.parseInt(hour) || hour.length > 2) {
+    if (!Number.parseInt(hour) || padTo2Digits(hour).length > 2) {
       if (hour != '00') {
         errorCount++;
         errors.push({
@@ -204,7 +267,7 @@ export function checkInputs(
       }
     }
 
-    if (!Number.parseInt(minute) || hour.length > 2) {
+    if (!Number.parseInt(minute) || padTo2Digits(minute).length > 2) {
       if (minute != '00') {
         errorCount++;
         errors.push({
@@ -230,12 +293,7 @@ export function checkInputs(
       Passed = false;
     }
 
-    if (
-      Number.parseInt(month) > 12 ||
-      month.length != 2 ||
-      day.length != 2 ||
-      year.length != 4
-    ) {
+    if (Number.parseInt(month) > 12 || year.length != 4) {
       errorCount++;
       errors.push({
         content: `**${errorCount}**) **Invalid Syntax** - Date is formatted MM/DD/YYYY`
@@ -278,14 +336,15 @@ export function checkInputs(
         iconURL: interaction.user.displayAvatarURL()
       })
       .setDescription('**There was an error processing your request!**');
-    new PaginatedFieldMessageEmbed()
+    const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
       .setTitleField(`:x: Issues`)
       .setTemplate(errorEmbed)
       .setItems(errors)
       .formatItems((item: any) => `> ${item.content}`)
-      .setItemsPerPage(5)
-      .make()
-      .run(interaction as CommandInteraction);
+      .setItemsPerPage(10)
+      .make();
+    const embeds = paginatedFieldTemplate.pages.values().next().value.embeds; // convert to Regular Message Embed For Ephemeral Option
+    await interaction.reply({ embeds: embeds, ephemeral: true });
   }
 
   return Passed;
@@ -331,7 +390,7 @@ export async function askForDateTime(interaction: CommandInteraction) {
   const timeInput = submission.fields.getTextInputValue(
     'time' + interaction.id
   );
-  if (checkInputs(submission, 'placeholder', timeInput, dateInput)) {
+  if (await checkInputs(submission, 'placeholder', timeInput, dateInput)) {
     await findTimeZone(interaction, timeInput, dateInput);
 
     await submission.reply({
@@ -345,10 +404,13 @@ export function padTo2Digits(num: any) {
   return num.toString().padStart(2, '0');
 }
 
+checkReminders();
+setInterval(async () => {
+  await checkReminders();
+}, DBReminderInterval);
 interface Reminder {
   event: string;
   description: string;
   dateTime: string;
-  timeZone: number;
   repeat: string;
 }

@@ -1,8 +1,10 @@
 import { container } from '@sapphire/framework';
 import { MessageEmbed } from 'discord.js';
+import { convertInputsToISO, nextReminder } from './handleReminders';
 
 export class RemindEmbed {
   userId: string;
+  timeZone: number;
   event: string;
   dateTime: string;
   description?: string;
@@ -10,12 +12,14 @@ export class RemindEmbed {
 
   public constructor(
     userId: string,
+    timeZone: number,
     event: string,
     dateTime: string,
     description?: string,
     repeat?: string
   ) {
     this.userId = userId;
+    this.timeZone = timeZone;
     this.event = event;
     this.dateTime = dateTime;
     this.description = description;
@@ -25,7 +29,6 @@ export class RemindEmbed {
     const { client } = container;
     const user = client.users.cache.get(this.userId);
     const baseEmbed = new MessageEmbed()
-
       .setColor('YELLOW')
       .setTitle(
         `:alarm_clock: Reminder - ${
@@ -39,11 +42,25 @@ export class RemindEmbed {
       )
       .setFooter({ text: 'Reminder' })
       .setTimestamp();
-    if (this.repeat)
+
+    if (this.repeat) {
+      const nextAlarm = nextReminder(this.repeat!, this.dateTime);
       baseEmbed.addFields([
         { name: 'Repeated', value: `> ${this.repeat}`, inline: true },
-        { name: 'Next Alarm', value: '' }
+        {
+          name: 'Next Alarm',
+          value: `> <t:${Math.floor(
+            new Date(
+              convertInputsToISO(
+                this.timeZone,
+                nextAlarm.time,
+                nextAlarm.date
+              ).toString()
+            ).valueOf() / 1000
+          )}>`
+        }
       ]);
+    }
     if (this.description)
       if (this.description.length > 0)
         baseEmbed.setDescription(this.description);

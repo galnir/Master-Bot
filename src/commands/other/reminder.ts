@@ -1,9 +1,8 @@
 import {
   askForDateTime,
   checkInputs,
-  convertTime,
+  convertInputsToISO,
   DBReminderInterval
-  //   padTo2Digits
 } from './../../lib/utils/reminder/handleReminders';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -13,7 +12,13 @@ import {
   CommandOptions,
   container
 } from '@sapphire/framework';
-import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
+import {
+  CommandInteraction,
+  GuildMember,
+  MessageActionRow,
+  MessageButton,
+  MessageEmbed
+} from 'discord.js';
 import {
   removeReminder,
   saveReminder
@@ -45,7 +50,9 @@ export class ReminderCommand extends Command {
       let timeQuery = interaction.options.getString('time', true);
       const userDB = await prisma.user.findFirst({
         where: { id: interaction.user.id },
-        select: { timeZone: true }
+        select: {
+          timeZone: true
+        }
       });
 
       if (!userDB?.timeZone) return;
@@ -54,7 +61,7 @@ export class ReminderCommand extends Command {
       const repeat = interaction.options.getString('repeat');
 
       if (
-        checkInputs(
+        await checkInputs(
           interaction,
           newEvent,
           timeQuery,
@@ -63,82 +70,62 @@ export class ReminderCommand extends Command {
           repeat!
         )
       ) {
-        const isoStr = convertTime(userDB.timeZone, timeQuery, date!);
-
+        const isoStr = convertInputsToISO(userDB.timeZone, timeQuery, date!);
+        let stop = false;
         const saveToDB = await saveReminder(interaction.user.id, {
           event: newEvent,
           description: newDescription!,
-          timeZone: userDB.timeZone!,
           repeat: repeat!,
           dateTime: isoStr
         });
-
-        const difference = new Date(isoStr).getTime() - Date.now();
-        if (difference > 0 && difference < DBReminderInterval) {
-          const remind = new RemindEmbed(
-            interaction.user.id,
-            newEvent,
-            isoStr,
-            newDescription!,
-            repeat!
-          );
-          client.reminderShortTimers[`${interaction.user.id}${newEvent}`] =
-            setTimeout(async () => {
-              try {
-                await interaction.user?.send({
-                  embeds: [remind.RemindEmbed()]
-                });
-              } catch (error) {
-                return console.log(error);
-              }
-
+        await interaction
+          .reply({
+            content: 'Checking if you can receive DMs...',
+            fetchReply: true
+          })
+          .then(async () => {
+            try {
+              await interaction.user.send(saveToDB);
+            } catch (error) {
               await removeReminder(interaction.user.id, newEvent, false);
-              clearTimeout(
-                client.reminderShortTimers[`${interaction.user.id}${newEvent}`]
+              stop = true;
+              return await interaction.editReply(
+                ':x: Unable to send you a DM, reminder has been **canceled**.'
               );
-              return;
-            }, difference);
+            }
+            return interaction.deleteReply();
+          });
+        if (!stop) {
+          const difference = new Date(isoStr).getTime() - Date.now();
+          if (difference > 0 && difference < DBReminderInterval) {
+            const remind = new RemindEmbed(
+              interaction.user.id,
+              userDB.timeZone,
+              newEvent,
+              isoStr,
+              newDescription!,
+              repeat!
+            );
+            client.reminderShortTimers[`${interaction.user.id}${newEvent}`] =
+              setTimeout(async () => {
+                try {
+                  await interaction.user?.send({
+                    embeds: [remind.RemindEmbed()]
+                  });
+                } catch (error) {
+                  return console.log(error);
+                }
+
+                await removeReminder(interaction.user.id, newEvent, false);
+                clearTimeout(
+                  client.reminderShortTimers[
+                    `${interaction.user.id}${newEvent}`
+                  ]
+                );
+                return;
+              }, difference);
+          }
         }
-        if (interaction.replied)
-          return await interaction
-            .followUp({
-              content: 'checking if you can receive DMs...',
-              ephemeral: true,
-              fetchReply: true
-            })
-            .then(async message => {
-              interaction.followUp('All set see ya then');
-              try {
-                await interaction.user.send(saveToDB);
-              } catch (error) {
-                await removeReminder(interaction.user.id, newEvent, false);
-                return await interaction.editReply(
-                  ':x: Unable to send you a DM, reminder has been **canceled**.'
-                );
-              }
-              return;
-            });
-        else
-          return await interaction
-            .reply({
-              content: 'checking if you can receive DMs...',
-              ephemeral: true,
-              fetchReply: true
-            })
-            .then(async () => {
-              await interaction.editReply('All set see ya then');
-              try {
-                await interaction.user.send(saveToDB).then(message => {
-                  console.log(message.content);
-                });
-              } catch (error) {
-                await removeReminder(interaction.user.id, newEvent, false);
-                return await interaction.editReply(
-                  ':x: Unable to send you a DM, reminder has been **canceled**!'
-                );
-              }
-              return;
-            });
       }
     }
     // end of Set
@@ -174,7 +161,7 @@ export class ReminderCommand extends Command {
         iconURL: interactionMember.user.displayAvatarURL()
       });
 
-      new PaginatedFieldMessageEmbed()
+      const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
         .setTitleField('Reminders')
         .setTemplate(baseEmbed)
         .setItems(reminders)
@@ -185,8 +172,64 @@ export class ReminderCommand extends Command {
             )}>`
         )
         .setItemsPerPage(5)
-        .make()
-        .run(interaction);
+        .make();
+      let embeds: any[] = [];
+      paginatedFieldTemplate.pages.forEach((value: any) =>
+        embeds.push(value.embeds)
+      ); // convert to Regular Message Embed For Ephemeral Option
+      console.log(paginatedFieldTemplate.pages, embeds);
+      const totalPages = paginatedFieldTemplate.pages.length;
+      if (totalPages > 1) {
+        const rowOne = new MessageActionRow().addComponents(
+          new MessageButton()
+            .setCustomId(`${interaction.id}-previous`)
+            .setEmoji('◀️')
+            .setStyle('PRIMARY'),
+          new MessageButton()
+            .setCustomId(`${interaction.id}-next`)
+            .setEmoji('▶️')
+            .setStyle('PRIMARY'),
+          new MessageButton()
+            .setCustomId(`${interaction.id}-delete`)
+            .setEmoji('⏹️')
+            .setStyle('DANGER')
+        );
+
+        await interaction
+          .reply({
+            embeds: embeds[0],
+            ephemeral: true,
+            fetchReply: true,
+            components: [rowOne]
+          })
+          .then(() => {
+            const collector =
+              interaction.channel?.createMessageComponentCollector();
+            let currentPage = 0;
+            collector?.on('collect', button => {
+              if (interaction.user.id != button.user.id) return;
+
+              if (button.customId == `${interaction.id}-previous`) {
+                currentPage = currentPage - 1 < 0 ? 0 : currentPage - 1;
+                button.update({
+                  embeds: embeds[currentPage]
+                });
+              }
+              if (button.customId == `${interaction.id}-next`) {
+                currentPage =
+                  currentPage + 1 > totalPages ? totalPages : currentPage + 1;
+                button.update({
+                  embeds: embeds[currentPage]
+                });
+              }
+            });
+          });
+      } else {
+        await interaction.reply({
+          embeds: embeds[0],
+          ephemeral: true
+        });
+      }
     }
   }
 
