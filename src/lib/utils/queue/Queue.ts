@@ -255,6 +255,7 @@ export class Queue {
     await this.player.disconnect();
     await this.destroyPlayer();
     await this.setTextChannelID(null);
+    await this.clear();
   }
 
   public async getTextChannel(): Promise<TextChannel | null> {

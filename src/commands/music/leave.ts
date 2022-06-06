@@ -24,7 +24,6 @@ export class LeaveCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
 
     await queue.leave();
-    await queue.clear();
 
     await interaction.reply({ content: 'Left the voice channel.' });
   }
