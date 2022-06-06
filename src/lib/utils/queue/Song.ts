@@ -40,7 +40,6 @@ export class Song implements TrackInfo {
 
     // TODO: make this less shitty
     if (typeof track !== 'string') {
-      console.log('track', track);
       this.length = track.info.length;
       this.identifier = track.info.identifier;
       this.author = track.info.author;

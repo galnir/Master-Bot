@@ -170,16 +170,20 @@ export class Queue {
     return songs.length;
   }
 
-  public async pause(interaction: CommandInteraction) {
+  public async pause(interaction?: CommandInteraction) {
     await this.player.pause(true);
     await this.setSystemPaused(false);
-    this.client.emit('musicSongPause', interaction);
+    if (interaction) {
+      this.client.emit('musicSongPause', interaction);
+    }
   }
 
-  public async resume(interaction: CommandInteraction) {
+  public async resume(interaction?: CommandInteraction) {
     await this.player.pause(false);
     await this.setSystemPaused(false);
-    this.client.emit('musicSongResume', interaction);
+    if (interaction) {
+      this.client.emit('musicSongResume', interaction);
+    }
   }
 
   /*
@@ -288,9 +292,9 @@ export class Queue {
     return value ? this.parseSongString(value) : null;
   }
 
-  public async getAt(index: number): Promise<Addable | null> {
+  public async getAt(index: number): Promise<Song | undefined> {
     const value = await this.store.redis.lindex(this.keys.next, -index - 1);
-    return value ? this.parseSongString(value) : null;
+    return value ? this.parseSongString(value) : undefined;
   }
 
   public async removeAt(position: number): Promise<void> {
@@ -395,7 +399,7 @@ export class Queue {
     };
   }
 
-  public async tracks(start = 0, end = -1): Promise<Addable[]> {
+  public async tracks(start = 0, end = -1): Promise<Song[]> {
     if (end === Infinity) end = -1;
 
     const tracks = await this.store.redis.lrange(this.keys.next, start, end);

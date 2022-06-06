@@ -6,6 +6,8 @@ import Redis from 'ioredis';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
+  playerEmbeds: { [key: string]: string };
+  leaveTimers: { [key: string]: NodeJS.Timer };
   public constructor() {
     super({
       intents: [
@@ -33,6 +35,9 @@ export class ExtendedClient extends SapphireClient {
     this.ws.on('VOICE_STATE_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
     });
+
+    this.playerEmbeds = {};
+    this.leaveTimers = {};
   }
 }
 
