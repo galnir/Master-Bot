@@ -54,7 +54,7 @@ export async function embedButtons(
     .then(async (message: Message) => {
       const queue = client.music.queues.get(message.guild!.id);
       const maxLimit = 1.8e6; // 30 minutes
-      client.playerEmbeds[message.guildId ?? message.guild!.id] = message.id;
+      queue.setEmbed(message.id);
 
       const collector = message.createMessageComponentCollector();
 
@@ -184,15 +184,12 @@ export async function embedButtons(
     });
 }
 export async function deletePlayerEmbed(queue: Queue) {
-  const { client } = container;
-  if (client.playerEmbeds[queue.guildID]) {
+  const embedID = await queue.getEmbed();
+  if (embedID) {
     const channel = await queue.getTextChannel();
     await channel!
       .fetch(true)
-      .then(
-        async channel =>
-          await channel.messages.fetch(client.playerEmbeds[queue.guildID])
-      )
+      .then(async channel => await channel.messages.fetch(embedID))
       .then(async oldMessage => {
         if (oldMessage)
           await oldMessage
@@ -200,7 +197,7 @@ export async function deletePlayerEmbed(queue: Queue) {
             .catch(error =>
               console.log('Failed to Delete Old Message.', error)
             );
-        delete client.playerEmbeds[queue.guildID];
+        queue.deleteEmbed();
       });
   }
 }

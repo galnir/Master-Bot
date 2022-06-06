@@ -13,6 +13,7 @@ import { container } from '@sapphire/framework';
 import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
+import { deletePlayerEmbed } from '../music/ButtonHandler';
 
 export enum LoopType {
   None,
@@ -57,6 +58,7 @@ interface QueueKeys {
   readonly replay: string;
   readonly volume: string;
   readonly text: string;
+  readonly embed: string;
 }
 
 export class Queue {
@@ -75,7 +77,8 @@ export class Queue {
       systemPause: `music.${this.guildID}.systemPause`,
       replay: `music.${this.guildID}.replay`,
       volume: `music.${this.guildID}.volume`,
-      text: `music.${this.guildID}.text`
+      text: `music.${this.guildID}.text`,
+      embed: `music.${this.guildID}.embed`
     };
 
     this.skipped = false;
@@ -246,6 +249,9 @@ export class Queue {
 
   // leave the voice channel
   public async leave(): Promise<void> {
+    if (!this.client.leaveTimers[this.guildID] && (await this.getEmbed())) {
+      deletePlayerEmbed(this);
+    }
     await this.player.disconnect();
     await this.destroyPlayer();
     await this.setTextChannelID(null);
@@ -401,6 +407,18 @@ export class Queue {
 
     const tracks = await this.store.redis.lrange(this.keys.next, start, end);
     return [...tracks].map(this.parseSongString).reverse();
+  }
+
+  public async setEmbed(id: string): Promise<void> {
+    await this.store.redis.set(this.keys.embed, id);
+  }
+
+  public async getEmbed(): Promise<string | null> {
+    return this.store.redis.get(this.keys.embed);
+  }
+
+  public async deleteEmbed(): Promise<void> {
+    await this.store.redis.del(this.keys.embed);
   }
 
   public stringifySong(song: Song): string {

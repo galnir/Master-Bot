@@ -6,7 +6,6 @@ import Redis from 'ioredis';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
-  playerEmbeds: { [key: string]: string };
   leaveTimers: { [key: string]: NodeJS.Timer };
   public constructor() {
     super({
@@ -36,7 +35,6 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
-    this.playerEmbeds = {};
     this.leaveTimers = {};
   }
 }
@@ -44,7 +42,6 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
   interface SapphireClient {
     readonly music: QueueClient;
-    playerEmbeds: { [key: string]: string };
     leaveTimers: { [key: string]: NodeJS.Timer };
   }
 }
