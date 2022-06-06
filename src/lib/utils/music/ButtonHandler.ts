@@ -20,6 +20,7 @@ export async function embedButtons(
   await deletePlayerEmbed(queue);
 
   const { client } = container;
+  const tracks = await queue.tracks();
   const row = new MessageActionRow().addComponents(
     new MessageButton()
       .setCustomId('playPause')
@@ -30,7 +31,7 @@ export async function embedButtons(
       .setCustomId('next')
       .setLabel('Next')
       .setStyle('PRIMARY')
-      .setDisabled(!queue.tracks?.length ? true : false),
+      .setDisabled(!tracks.length ? true : false),
     new MessageButton()
       .setCustomId('volumeUp')
       .setLabel('Vol+')
@@ -91,14 +92,14 @@ export async function embedButtons(
                 queue.pause();
                 paused = true;
               }
-              const track = await queue.getCurrentTrack();
+              const tracks = await queue.tracks();
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 queue.player.accuratePosition,
-                track?.length ?? 0,
+                tracks[0].length ?? 0,
                 await queue.getVolume(),
-                await queue.tracks(),
-                await queue.getAt(await queue.count()),
+                tracks,
+                tracks.at(-1),
                 paused
               );
               timer;
@@ -123,14 +124,14 @@ export async function embedButtons(
               const volume =
                 currentVolume + 10 > 200 ? 200 : currentVolume + 10;
               await queue.setVolume(volume);
-              const track = await queue.getCurrentTrack();
+              const tracks = await queue.tracks();
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 queue.player.accuratePosition,
-                track?.length ?? 0,
+                tracks[0].length ?? 0,
                 await queue.getVolume(),
-                await queue.tracks(),
-                await queue.getAt(await queue.count()),
+                tracks,
+                tracks.at(-1),
                 paused
               );
               collector.empty();
@@ -150,14 +151,14 @@ export async function embedButtons(
               const currentVolume = await queue.getVolume();
               const volume = currentVolume - 10 < 0 ? 0 : currentVolume - 10;
               await queue.setVolume(volume);
-              const track = await queue.getCurrentTrack();
+              const tracks = await queue.tracks();
               const NowPlaying = new NowPlayingEmbed(
                 song,
                 queue.player.accuratePosition,
-                track?.length ?? 0,
+                tracks[0].length ?? 0,
                 await queue.getVolume(),
-                await queue.tracks(),
-                await queue.getAt(await queue.count()),
+                tracks,
+                tracks.at(-1),
                 paused
               );
               collector.empty();

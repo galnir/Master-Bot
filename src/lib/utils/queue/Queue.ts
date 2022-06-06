@@ -403,7 +403,7 @@ export class Queue {
     if (end === Infinity) end = -1;
 
     const tracks = await this.store.redis.lrange(this.keys.next, start, end);
-    return [...tracks].map(this.parseSongString);
+    return [...tracks].map(this.parseSongString).reverse();
   }
 
   public stringifySong(song: Song): string {

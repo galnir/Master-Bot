@@ -31,7 +31,7 @@ export class SaveToPlaylistCommand extends Command {
       }
     });
 
-    const songTuple = await searchSong(url);
+    const songTuple = await searchSong(url, interaction.user);
     if (!songTuple[1].length) {
       return await interaction.followUp(songTuple[0]);
     }

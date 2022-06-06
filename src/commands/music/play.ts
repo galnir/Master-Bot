@@ -74,7 +74,7 @@ export class PlayCommand extends Command {
       tracks.push(...songs);
       message = `Added songs from **${playlist}** to the queue!`;
     } else {
-      const trackTuple = await searchSong(query);
+      const trackTuple = await searchSong(query, interaction.user);
       if (!trackTuple[1].length) {
         return await interaction.followUp({ content: trackTuple[0] as string }); // error
       }
