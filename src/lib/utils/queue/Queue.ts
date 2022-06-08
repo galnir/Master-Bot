@@ -13,7 +13,9 @@ import { container } from '@sapphire/framework';
 import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
-import { deletePlayerEmbed } from '../music/ButtonHandler';
+import { deletePlayerEmbed } from '../music/buttonsCollector';
+import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
+import { embedButtons } from '../music/ButtonHandler';
 
 export enum LoopType {
   None,
@@ -140,8 +142,24 @@ export class Queue {
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
     if (!np) return this.next();
+    const tracks = await this.tracks();
 
     await this.player.play(np.song as Song);
+
+    if (this.skipped) {
+      const NowPlaying = new NowPlayingEmbed(
+        np.song,
+        0,
+        np.song.length ?? 0,
+        await this.getVolume(),
+        tracks,
+        tracks.at(-1),
+        this.paused
+      );
+      await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
+
+      this.skipped = false;
+    }
 
     this.client.emit(
       replaying ? 'musicSongReplay' : 'musicSongPlay',
@@ -374,6 +392,7 @@ export class Queue {
       .pexpire(this.keys.replay, kExpireTime)
       .pexpire(this.keys.volume, kExpireTime)
       .pexpire(this.keys.text, kExpireTime)
+      .pexpire(this.keys.embed, kExpireTime)
       .exec();
   }
 
@@ -386,7 +405,8 @@ export class Queue {
       this.keys.systemPause,
       this.keys.replay,
       this.keys.volume,
-      this.keys.text
+      this.keys.text,
+      this.keys.embed
     );
   }
 
