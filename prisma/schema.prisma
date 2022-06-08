@@ -45,5 +45,13 @@ model Guild {
   id     String   @id
   added  DateTime @default(now())
   volume Int
+  notifyList String[]
+}
 
+model TwitchNotify {
+  twitchId   String   @id
+  logo       String
+  live       Boolean  @default(false)
+  channelIds String[]
+  sent       Boolean
 }
