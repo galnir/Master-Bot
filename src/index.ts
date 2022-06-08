@@ -4,7 +4,6 @@ import {
   RegisterBehavior
 } from '@sapphire/framework';
 import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
-import type { VoiceStateUpdate } from 'lavaclient';
 import * as data from './config.json';
 import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
@@ -35,17 +34,17 @@ client.on('ready', async () => {
     );
 
     // update lavalink manually if the bot is still in voice chat after restart
-    const customVoiceStateUpdate: VoiceStateUpdate = {
-      session_id: voiceState?.sessionId!,
-      channel_id: voiceState?.channel?.id! as `${bigint}`,
-      guild_id: voiceState?.guild.id! as `${bigint}`,
-      user_id: guild.me?.id as `${bigint}`
+    const customVoiceStateUpdate = {
+      session_id: voiceState?.sessionId,
+      channel_id: voiceState?.channel?.id,
+      guild_id: voiceState?.guild.id,
+      user_id: guild.me?.id
     };
-    if (queue)
+    if (queue) {
       if (guild.me?.voice) {
         queue.createPlayer();
-        queue.connect(voiceState?.channel?.id!);
-        await queue.player.handleVoiceUpdate(customVoiceStateUpdate);
+        if (!customVoiceStateUpdate.channel_id) return;
+        queue.connect(customVoiceStateUpdate.channel_id);
         await queue.start();
 
         const song = await queue.getCurrentTrack();
@@ -69,6 +68,7 @@ client.on('ready', async () => {
           }
         }
       }
+    }
   });
 });
 
