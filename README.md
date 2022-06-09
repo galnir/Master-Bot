@@ -31,14 +31,13 @@ Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
 
 #### Windows
+
 Getting Postgres and Prisma to work together on Windows is not worth the hassle. Create an account on [heroku](https://dashboard.heroku.com/apps) and follow these steps:
+
 1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
 2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
 3. Create a `.env` file in the root directory of the project and create 2 empty variables there:
-``
-DATABASE_URL=""
-SHADOW_DB_URL=""
-``
+   `DATABASE_URL="" SHADOW_DB_URL=""`
 4. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL`.
 5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
 6. Done!
@@ -86,7 +85,9 @@ For full command support, including lyrics, GIFs, news, and others, - (which som
   "geniusLyricsAPI": "genius-api-key",
   "tenorAPI": "tenor-API-key",
   "newsAPI": "news-api-key",
-  "rawgAPI": "rawg-api-key"
+  "rawgAPI": "rawg-api-key",
+  "twitchClientID": "twitch-client-id",
+  "twitchClientSecret": "twitch-client-secret"
 }
 ```
 
@@ -143,24 +144,26 @@ A full list of commands for use with Master Bot
 
 ## Other
 
-| Command           | Description                                                                                                                                                        | Usage                         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
-| /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                      |
-| /insult           | Generate an evil insult                                                                                                                                            | /insult                       |
-| /chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | /chucknorris                  |
-| /motivation       | Get a random motivational quote                                                                                                                                    | /motivation                   |
-| /random           | Generate a random number between two provided numbers                                                                                                              | /random 0 100                 |
-| /8ball            | Get the answer to anything!                                                                                                                                        | /8ball Is this bot awesome?   |
-| /rps              | Rock Paper Scissors                                                                                                                                                | /rps                          |
-| /bored            | Generate a random activity!                                                                                                                                        | /bored                        |
-| /advice           | Get some advice!                                                                                                                                                   | /advice                       |
-| /game-search      | Search for game information.                                                                                                                                       | /game-search super-metroid    |
-| /kanye            | Get a random Kanye quote                                                                                                                                           | /kanye                        |
-| /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                   |
-| /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう |
-| /about            | Info about me and the repo                                                                                                                                         | /about                        |
-| /urban dictionary | Get definitions from urban dictionary                                                                                                                              | /urban javascript             |
-| /activity         | Generate an invite link to your voice channel's activity                                                                                                           | /activity voicechannel Chill  |
+
+| Command           | Description                                                                                                                                                        | Usage                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                |
+| /insult           | Generate an evil insult                                                                                                                                            | /insult                                 |
+| /chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | /chucknorris                            |
+| /motivation       | Get a random motivational quote                                                                                                                                    | /motivation                             |
+| /random           | Generate a random number between two provided numbers                                                                                                              | /random 0 100                           |
+| /8ball            | Get the answer to anything!                                                                                                                                        | /8ball Is this bot awesome?             |
+| /rps              | Rock Paper Scissors                                                                                                                                                | /rps                                    |
+| /bored            | Generate a random activity!                                                                                                                                        | /bored                                  |
+| /advice           | Get some advice!                                                                                                                                                   | /advice                                 |
+| /game-search      | Search for game information.                                                                                                                                       | /game-search super-metroid              |
+| /kanye            | Get a random Kanye quote                                                                                                                                           | /kanye                                  |
+| /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                             |
+| /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう           |
+| /about            | Info about me and the repo                                                                                                                                         | /about                                  |
+| /urban dictionary | Get definitions from urban dictionary                                                                                                                              | /urban javascript                       |
+| /activity         | Generate an invite link to your voice channel's activity                                                                                                           | /activity voicechannel Chill            |
+| /twitch-status    | Check the status of a Twitch steamer                                                                                                                               | /twitch-status streamer: bacon_fixation |
 
 ## Resources
 
@@ -171,6 +174,8 @@ A full list of commands for use with Master Bot
 [Getting a Genius API key](https://genius.com/api-clients/new)
 
 [Getting a rawg API key](https://rawg.io/apidocs)
+
+[Getting a Twitch API key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
 
 [Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
