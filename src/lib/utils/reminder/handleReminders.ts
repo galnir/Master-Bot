@@ -33,40 +33,43 @@ export async function saveReminder(userId: string, reminder: Reminder) {
     return `:x: You already have an event named **${reminder.event}**`;
   }
 
-  return `:white_check_mark: Reminder - **${
-    reminder.event
-  }** has been set for <t:${Math.floor(
+  return `✅ Reminder - **${reminder.event}** has been set for <t:${Math.floor(
     new Date(reminder.dateTime).valueOf() / 1000
-  )}>`;
+  )}> ${reminder.repeat ? ', Repeating ' + reminder.repeat : ''}`;
 }
 
 export function convertInputsToISO(
-  timeZoneOffset: number | null,
+  userOffset: number,
   timeQuery: string,
   date: string
 ) {
   let isoStr: string = '';
-  const operator = timeZoneOffset! > 0 ? '+' : '-';
+  const operator = userOffset! > 0 ? '+' : '-';
   let [hour, minute] = timeQuery.split(':');
   timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
-  const currentDate = new Date(Date.now());
+  const currentDate = new Date();
   const localOffset = currentDate.getTimezoneOffset() * 60000;
   let subtractTime = false;
 
   if (currentDate.getTimezoneOffset() < 0) subtractTime = true;
-
-  if (!date)
+  const DateEntry = date ? true : false;
+  if (!date) {
     date = `${
       currentDate.getMonth() + 1
     }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+  }
   const [month, day, year] = date.split('/') || date.split('-');
   isoStr = `${year}-${padTo2Digits(month)}-${padTo2Digits(
     day
   )}T${timeQuery}:00.000Z`;
 
+  if (isPast(isoStr.replace('Z', '')) && !DateEntry) {
+    isoStr = new Date(new Date(isoStr).getTime() + 86400000).toISOString();
+  }
+
   const timeMS = new Date(isoStr).valueOf();
-  const minToMS = timeZoneOffset! * 60000;
+  const minToMS = userOffset! * 60000;
   const totalOffset = localOffset - (subtractTime ? -minToMS : +minToMS);
 
   isoStr = new Date(
@@ -75,6 +78,11 @@ export function convertInputsToISO(
     .toISOString()
     .replace('Z', '');
   return isoStr;
+}
+
+export function isPast(dateTime: string) {
+  const now = Date.now();
+  return new Date(dateTime).getTime() - now < 0 ? true : false;
 }
 
 export async function findTimeZone(
@@ -353,7 +361,7 @@ export async function checkInputs(
 export async function askForDateTime(interaction: CommandInteraction) {
   const modal = new Modal()
     .setCustomId('Reminder-TimeZone' + interaction.id)
-    .setTitle('Reminder - New User Setup');
+    .setTitle('Reminder - Save Time Zone');
   const time = new TextInputComponent()
     .setCustomId('time' + interaction.id)
     .setLabel(`Enter your Current Time Ex. "14:30"`)

@@ -2,7 +2,8 @@ import {
   askForDateTime,
   checkInputs,
   convertInputsToISO,
-  DBReminderInterval
+  DBReminderInterval,
+  isPast
 } from './../../lib/utils/reminder/handleReminders';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
@@ -29,12 +30,7 @@ import { RemindEmbed } from '../../lib/utils/reminder/reminderEmbed';
 @ApplyOptions<CommandOptions>({
   name: 'reminder',
   description: 'Set or View Personal Reminders',
-  preconditions: [
-    'GuildOnly',
-    'userInDB',
-    'reminderNotDuplicate',
-    'timeZoneExists'
-  ]
+  preconditions: ['userInDB', 'reminderNotDuplicate', 'timeZoneExists']
 })
 export class ReminderCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -71,6 +67,12 @@ export class ReminderCommand extends Command {
         )
       ) {
         const isoStr = convertInputsToISO(userDB.timeZone, timeQuery, date!);
+        if (isPast(isoStr)) {
+          return await interaction.reply({
+            content: `:x: I can't go back in time`,
+            ephemeral: true
+          });
+        }
         let stop = false;
         const saveToDB = await saveReminder(interaction.user.id, {
           event: newEvent,

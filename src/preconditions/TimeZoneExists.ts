@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { CommandInteraction, User } from 'discord.js';
 import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
@@ -17,11 +17,11 @@ export class TimeZoneExists extends Precondition {
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'set') {
-      const guildMember = interaction.member as GuildMember;
+      const userInter = interaction.user as User;
 
       const user = await prisma.user.findFirst({
         where: {
-          id: guildMember.id
+          id: userInter.id
         },
         select: { timeZone: true }
       });

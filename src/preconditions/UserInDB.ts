@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { CommandInteraction, User } from 'discord.js';
 import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
@@ -14,17 +14,17 @@ export class UserInDB extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
-    const guildMember = interaction.member as GuildMember;
+    const user = interaction.user as User;
 
     try {
       await prisma.user.upsert({
         where: {
-          id: guildMember.id
+          id: user.id
         },
         update: {},
         create: {
-          id: guildMember.id,
-          username: guildMember.user.username
+          id: user.id,
+          username: user.username
         }
       });
     } catch (error) {

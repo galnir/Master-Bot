@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { CommandInteraction, User } from 'discord.js';
 import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
@@ -18,25 +18,25 @@ export class ReminderNotDuplicate extends Precondition {
 
     if (subcommand == 'set') {
       const eventName = interaction.options.getString('event', true);
-      const guildMember = interaction.member as GuildMember;
+      const user = interaction.user as User;
 
       let count;
 
       try {
         count = await prisma.reminder.count({
           where: {
-            userId: guildMember.id,
+            userId: user.id,
             event: eventName
           }
         });
       } catch (error) {
         console.error(error);
-        return this.error({ message: 'Something went wrong!' });
+        return this.error({ message: ':x: Something went wrong!' });
       }
 
       return count > 0
         ? this.error({
-            message: `There is already a reminder named **${eventName}** saved!`
+            message: `:x: There is already a reminder named **${eventName}** saved!`
           })
         : this.ok();
     } else return this.ok();
