@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id         String   @id
+  added      DateTime @default(now())
+  volume     Int
+  notifyList String[]
+}
+
+model Playlist {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  userId    String?
+  User      User?    @relation(fields: [userId], references: [id])
+  Song      Song[]
+}
+
+model Song {
+  id         Int      @id @default(autoincrement())
+  playlistId Int
+  added      Int
+  author     String
+  identifier String
+  isSeekable Boolean
+  isStream   Boolean
+  length     Int
+  position   Int
+  sourceName String
+  thumbnail  String
+  title      String
+  track      String
+  uri        String
+  Playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+}
+
+model TwitchNotify {
+  twitchId   String   @id
+  logo       String
+  live       Boolean  @default(false)
+  channelIds String[]
+  sent       Boolean
+}
+
+model User {
+  id       String     @id
+  username String
+  Playlist Playlist[]
+}
