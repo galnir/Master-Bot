@@ -144,7 +144,12 @@ export class Queue {
     if (!np) return this.next();
     const tracks = await this.tracks();
 
-    await this.player.play(np.song as Song);
+    try {
+      await this.player.play(np.song as Song);
+    } catch (err) {
+      console.error(err);
+      await this.leave();
+    }
 
     if (this.skipped) {
       const NowPlaying = new NowPlayingEmbed(
