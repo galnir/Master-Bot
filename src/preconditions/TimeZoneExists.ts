@@ -17,15 +17,15 @@ export class TimeZoneExists extends Precondition {
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'set') {
-      const userInter = interaction.user as User;
+      const user = interaction.user as User;
 
-      const user = await prisma.user.findFirst({
+      const userDB = await prisma.user.findFirst({
         where: {
-          id: userInter.id
+          id: user.id
         },
         select: { timeZone: true }
       });
-      if (user?.timeZone) return this.ok();
+      if (userDB?.timeZone) return this.ok();
       else {
         return this.error({
           message:
