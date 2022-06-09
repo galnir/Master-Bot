@@ -71,8 +71,8 @@ client.on('ready', async () => {
     };
     if (queue) {
       if (guild.me?.voice) {
-        queue.createPlayer();
         if (!customVoiceStateUpdate.channel_id) return;
+        queue.createPlayer();
         queue.connect(customVoiceStateUpdate.channel_id);
         await queue.start();
 

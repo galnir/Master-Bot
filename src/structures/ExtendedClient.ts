@@ -42,7 +42,12 @@ export class ExtendedClient extends SapphireClient {
         secure: data.lava_secure
       }
     });
-    this.ws.on('VOICE_SERVER_UPDATE', data => {
+    this.ws.on('VOICE_SERVER_UPDATE', async data => {
+      // handle if a mod right-clicks disconnect on the bot
+      if (!data.channel_id && data.user_id === this.application?.id) {
+        const queue = this.music.queues.get(data.guild_id!);
+        await queue.leave();
+      }
       this.music.handleVoiceUpdate(data);
     });
     this.ws.on('VOICE_STATE_UPDATE', data => {
