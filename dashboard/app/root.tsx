@@ -1,9 +1,11 @@
-import { LiveReload, Outlet } from "@remix-run/react";
+import { Links, LiveReload, Meta, Outlet } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 
-import styles from "./tailwind.css";
+import tailwindUrl from "./styles/tailwind.css";
 
-export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: tailwindUrl },
+];
 
 export default function App() {
   return (
@@ -11,6 +13,8 @@ export default function App() {
       <head>
         <meta charSet="utf-8" />
         <title>Master Bot Dashboard</title>
+        <Meta />
+        <Links />
       </head>
       <body>
         <Outlet />
