@@ -14,7 +14,6 @@ import type { Node, Player } from 'lavaclient';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]

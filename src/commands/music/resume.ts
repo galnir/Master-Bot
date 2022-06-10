@@ -1,4 +1,3 @@
-import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -7,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'resume',
@@ -15,41 +13,17 @@ import { embedButtons } from '../../lib/utils/music/ButtonHandler';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
 })
-export class PauseCommand extends Command {
+export class ResumeCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
 
-    const player = client.music.players.get(interaction.guild!.id);
+    const queue = client.music.queues.get(interaction.guildId!);
 
-    if (!player!.paused) {
-      return await interaction.reply(':x: The track is not paused!');
-    }
-
-    await player?.resume();
-
-    clearTimeout(client.leaveTimers[player?.guildId!]);
-    const NowPlaying = new NowPlayingEmbed(
-      player?.queue.current!,
-      player?.accuratePosition,
-      player?.queue.current?.length as number,
-      player?.volume!,
-      player?.queue.tracks!,
-      player?.queue.last!,
-      player?.paused
-    );
-
-    await embedButtons(
-      NowPlaying.NowPlayingEmbed(),
-      player?.queue!,
-      player?.queue.current!
-    );
-
-    return await interaction.reply('Track resumed playing');
+    await queue.resume(interaction);
   }
 
   public override registerApplicationCommands(

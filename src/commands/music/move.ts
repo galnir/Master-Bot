@@ -13,7 +13,6 @@ import { container } from '@sapphire/framework';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -27,28 +26,21 @@ export class MoveCommand extends Command {
     );
     const newPosition = interaction.options.getInteger('new-position', true);
 
-    const player = client.music.players.get(interaction.guild!.id);
-
-    if (!player?.queue.tracks.length) {
-      return await interaction.reply(':x: There are no tracks in queue!');
-    }
-
+    const queue = client.music.queues.get(interaction.guildId!);
+    const length = await queue.count();
     if (
       currentPosition < 1 ||
-      currentPosition > player.queue.tracks.length ||
+      currentPosition > length ||
       newPosition < 1 ||
-      newPosition > player.queue.tracks.length ||
+      newPosition > length ||
       currentPosition == newPosition
     ) {
-      return interaction.reply(':x: Please enter valid position numbers!');
+      return await interaction.reply(
+        ':x: Please enter valid position numbers!'
+      );
     }
 
-    const title = player.queue.tracks[currentPosition - 1].title;
-    array_move(player.queue.tracks, currentPosition - 1, newPosition - 1);
-
-    return await interaction.reply(
-      `**${title}** moved to position ${newPosition}`
-    );
+    await queue.moveTracks(currentPosition - 1, newPosition - 1);
   }
 
   public override registerApplicationCommands(
@@ -73,22 +65,4 @@ export class MoveCommand extends Command {
       ]
     });
   }
-}
-
-// https://stackoverflow.com/a/5306832/9421002
-function array_move(arr: any[], old_index: number, new_index: number) {
-  while (old_index < 0) {
-    old_index += arr.length;
-  }
-  while (new_index < 0) {
-    new_index += arr.length;
-  }
-  if (new_index >= arr.length) {
-    var k = new_index - arr.length + 1;
-    while (k--) {
-      arr.push(undefined);
-    }
-  }
-  arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-  return arr;
 }

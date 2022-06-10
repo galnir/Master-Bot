@@ -16,8 +16,18 @@ model User {
 
 model Song {
   id         Int      @id @default(autoincrement())
-  name       String
-  url        String
+  length     Int
+  track      String
+  identifier String
+  author     String
+  isStream   Boolean
+  position   Int
+  title      String
+  uri        String
+  isSeekable Boolean
+  sourceName String
+  thumbnail  String
+  added      Int
   playlistId Int
   playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 }
@@ -32,9 +42,9 @@ model Playlist {
 }
 
 model Guild {
-  id         String   @id
-  added      DateTime @default(now())
-  volume     Int
+  id     String   @id
+  added  DateTime @default(now())
+  volume Int
   notifyList String[]
 }
 

@@ -6,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { LoopType } from '../../lib/utils/queue/Queue';
 
 @ApplyOptions<CommandOptions>({
   name: 'skipto',
@@ -14,7 +13,6 @@ import { LoopType } from '../../lib/utils/queue/Queue';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -24,24 +22,18 @@ export class SkipToCommand extends Command {
     const { client } = container;
     const position = interaction.options.getInteger('position', true);
 
-    const player = client.music.players.get(interaction.guild!.id);
-
-    if (!player?.queue.tracks.length) {
-      return await interaction.reply(':x: There are no tracks in queue!');
+    const queue = client.music.queues.get(interaction.guildId!);
+    const length = await queue.count();
+    if (position > length || position < 1) {
+      return await interaction.reply(
+        ':x: Please enter a valid track position.'
+      );
     }
 
-    if (player.queue.loop.type == LoopType.Queue) {
-      const slicedBefore = player.queue.tracks.slice(0, position - 1);
-      const slicedAfter = player.queue.tracks.slice(position - 1);
-      player.queue.tracks = slicedAfter.concat(slicedBefore);
-    } else {
-      player.queue.tracks.splice(0, position - 1);
-      player.queue.setLoop(LoopType.None);
-    }
-    await player.queue.next();
+    await queue.skipTo(position);
 
-    return await interaction.reply(
-      `Skipped to **${player.queue.current!.title}**`
+    await interaction.reply(
+      `:white_check_mark: Skipped to track number ${position}!`
     );
   }
 

@@ -6,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { deletePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'leave',
@@ -14,7 +13,6 @@ import { deletePlayerEmbed } from '../../lib/utils/music/ButtonHandler';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -23,12 +21,11 @@ export class LeaveCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
 
-    const player = client.music.players.get(interaction.guild!.id);
-    await deletePlayerEmbed(player?.queue!);
-    player?.disconnect();
-    client.music.destroyPlayer(player!.guildId);
-    clearTimeout(client.leaveTimers[player?.guildId!]);
-    return await interaction.reply('Leaving voice channel');
+    const queue = client.music.queues.get(interaction.guildId!);
+
+    await queue.leave();
+
+    await interaction.reply({ content: 'Left the voice channel.' });
   }
 
   public override registerApplicationCommands(

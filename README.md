@@ -42,6 +42,17 @@ Getting Postgres and Prisma to work together on Windows is not worth the hassle.
 5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
 6. Done!
 
+### Redis
+
+#### MacOS
+`brew install redis`.
+
+#### Windows
+Download from [here](https://redis.io/download/).
+
+#### Linux
+Follow the instructions [here](https://redis.io/docs/getting-started/installation/install-redis-on-linux/).
+
 ## Important
 
 After you're done installing all the dependencies and entering all tokens and env variables, run `npx prisma migrate dev`

@@ -119,9 +119,7 @@ export class NowPlayingEmbed {
         )
         .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
     }
-    if (this.last) {
-      baseEmbed.addField('Previous', `[${this.last.title}](${this.last.uri})`);
-    }
+
     // song just started embed
     if (this.position == undefined) {
       return baseEmbed;

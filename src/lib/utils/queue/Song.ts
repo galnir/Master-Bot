@@ -4,7 +4,7 @@ import * as MetadataFilter from 'metadata-filter';
 
 export class Song implements TrackInfo {
   readonly track: string;
-  readonly requester?: RequesterInfo;
+  requester?: RequesterInfo;
   length: number;
   identifier: string;
   author: string;

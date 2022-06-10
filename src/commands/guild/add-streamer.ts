@@ -10,7 +10,7 @@ import type { CommandInteraction, GuildChannel } from 'discord.js';
 import { isTextBasedChannel } from '@sapphire/discord.js-utilities';
 import prisma from '../../lib/prisma';
 import { notify } from '../../lib/utils/twitch/notifyChannel';
-import data from '../../config.json';
+import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'add-streamer',
@@ -23,40 +23,47 @@ export class AddStreamerCommand extends Command {
     const streamerName = interaction.options.getString('streamer-name', true);
     const channelData = interaction.options.getChannel('channel-name', true);
     const { client } = container;
+    let isError = false;
     const user = await client.twitch.api
       .getUser({
         login: streamerName,
         token: client.twitch.auth.access_token
       })
-      .catch(error => {
+      .catch(async error => {
+        isError = true;
         if (error.status == 400) {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: "${streamerName}" was Invalid, Please try again.`
           });
         }
+        if (error.status === 401) {
+          return await interaction.reply({
+            content: `:x: You are not authorized to use this command.`
+          });
+        }
         if (error.status == 429) {
-          return interaction.reply({
+          return await interaction.reply({
             content:
               ':x: Rate Limit exceeded. Please try again in a few minutes.'
           });
         }
         if (error.status == 500) {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: Twitch service's are currently unavailable. Please try again later.`
           });
         } else {
-          return interaction.reply({
+          return await interaction.reply({
             content: `:x: Something went wrong.`
           });
         }
       });
-
+    if (isError) return;
     if (!user)
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: ${streamerName} was not Found`
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: Can't send messages to ${channelData.name}`
       });
     const guildDB = await prisma.guild.findFirst({
@@ -65,7 +72,7 @@ export class AddStreamerCommand extends Command {
     });
     // check if streamer is already on notify list
     if (guildDB?.notifyList.includes(user.id))
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: ${user.display_name} is already on your Notification list`
       });
 
@@ -85,7 +92,7 @@ export class AddStreamerCommand extends Command {
     }
     // make sure no one else is already sending alerts about this streamer
     if (client.twitch.notifyList[user.id]?.sendTo.includes(channelData.id))
-      return interaction.reply({
+      return await interaction.reply({
         content: `:x: **${user.display_name}** is already messaging ${channelData.name}`
       });
 

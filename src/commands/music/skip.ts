@@ -6,8 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import type { Song } from '../../lib/utils/queue/Song';
-import { LoopType } from '../../lib/utils/queue/Queue';
 
 @ApplyOptions<CommandOptions>({
   name: 'skip',
@@ -15,7 +13,6 @@ import { LoopType } from '../../lib/utils/queue/Queue';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -23,14 +20,15 @@ import { LoopType } from '../../lib/utils/queue/Queue';
 export class SkipCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
+    const { music } = client;
+    const queue = music.queues.get(interaction.guildId!);
 
-    const player = client.music.players.get(interaction.guild!.id);
+    const track = await queue.getCurrentTrack();
+    await queue.next({ skipped: true });
 
-    if (player?.queue.loop.type == LoopType.Song) {
-      player!.queue.tracks.unshift(player!.queue.current as Song);
-    }
-    await player?.queue.next();
-    return await interaction.reply('Skipped track');
+    client.emit('musicSongSkipNotify', interaction, track);
+
+    return;
   }
 
   public override registerApplicationCommands(

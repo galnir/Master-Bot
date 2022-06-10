@@ -1,4 +1,3 @@
-import { NowPlayingEmbed } from './../../lib/utils/music/NowPlayingEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -7,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
-import { embedButtons } from '../../lib/utils/music/ButtonHandler';
 
 @ApplyOptions<CommandOptions>({
   name: 'seek',
@@ -15,7 +13,6 @@ import { embedButtons } from '../../lib/utils/music/ButtonHandler';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -24,33 +21,21 @@ export class SeekCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const { client } = container;
     const seconds = interaction.options.getInteger('seconds', true);
-
-    const player = client.music.players.get(interaction.guild!.id);
-
     const milliseconds = seconds * 1000;
-    if (milliseconds > player!.queue!.current!.length || milliseconds < 0) {
+
+    const queue = client.music.queues.get(interaction.guildId!);
+    const track = await queue.getCurrentTrack();
+    if (!track)
+      return await interaction.reply(':x: There is no track playing!'); // should never happen
+    if (!track.isSeekable)
+      return await interaction.reply(':x: This track is not seekable!');
+
+    if (milliseconds > track.length || milliseconds < 0) {
       return await interaction.reply(':x: Please enter a valid number!');
     }
-    if (!player?.queue.current?.isSeekable)
-      return await interaction.reply(":x: Can't use Seek on a Live Stream!");
 
-    await player?.seek(milliseconds);
-
-    const NowPlaying = new NowPlayingEmbed(
-      player?.queue.current!,
-      player?.accuratePosition,
-      player?.queue.current?.length as number,
-      player?.volume!,
-      player?.queue.tracks!,
-      player?.queue.last!,
-      player?.paused
-    );
-
-    await embedButtons(
-      NowPlaying.NowPlayingEmbed(),
-      player?.queue!,
-      player?.queue.current!
-    );
+    const player = queue.player;
+    await player.seek(milliseconds);
 
     return await interaction.reply(`Seeked to ${seconds} seconds`);
   }

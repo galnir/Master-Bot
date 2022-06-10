@@ -13,7 +13,6 @@ import { container } from '@sapphire/framework';
   preconditions: [
     'GuildOnly',
     'inVoiceChannel',
-    'musicTriviaPlaying',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
   ]
@@ -23,16 +22,16 @@ export class RemoveCommand extends Command {
     const { client } = container;
     const position = interaction.options.getInteger('position', true);
 
-    const player = client.music.players.get(interaction.guild!.id);
-
-    if (position < 1 || position > player!.queue.tracks.length) {
+    const queue = client.music.queues.get(interaction.guildId!);
+    const length = await queue.count();
+    if (position < 1 || position > length) {
       return interaction.reply(':x: Please enter a valid position number!');
     }
 
-    player!.queue.tracks.splice(position - 1, 1);
-    return await interaction.reply(
-      `:wastebasket: Removed song number ${position} from queue!`
-    );
+    await queue.removeAt(position - 1);
+    return await interaction.reply({
+      content: `Removed track at position ${position}`
+    });
   }
 
   public override registerApplicationCommands(
