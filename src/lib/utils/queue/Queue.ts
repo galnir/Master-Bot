@@ -145,6 +145,7 @@ export class Queue {
     const tracks = await this.tracks();
 
     try {
+      this.player.setVolume(await this.getVolume());
       await this.player.play(np.song as Song);
     } catch (err) {
       console.error(err);
