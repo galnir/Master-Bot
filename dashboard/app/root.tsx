@@ -1,4 +1,9 @@
-import { LiveReload } from "@remix-run/react";
+import { LiveReload, Outlet } from "@remix-run/react";
+import type { LinksFunction } from "@remix-run/node";
+
+import styles from "./tailwind.css";
+
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export default function App() {
   return (
@@ -8,7 +13,7 @@ export default function App() {
         <title>Master Bot Dashboard</title>
       </head>
       <body>
-        Hello world
+        <Outlet />
         <LiveReload />
       </body>
     </html>
