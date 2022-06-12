@@ -19,7 +19,10 @@ export class DisplayPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    const response = await axios.get('http://localhost:1212/playlist');
+    const response = await axios.get('http://localhost:1212/playlist', {
+      params: { name: playlistName, id: interactionMember.id }
+    });
+    console.log(response.data);
     const { playlist } = response.data;
 
     if (!playlist) {

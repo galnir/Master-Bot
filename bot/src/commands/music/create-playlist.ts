@@ -4,8 +4,8 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
+import axios from 'axios';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
@@ -18,14 +18,9 @@ export class CreatePlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    let playlist;
-
     try {
-      playlist = await prisma.playlist.create({
-        data: {
-          name: playlistName,
-          user: { connect: { id: interactionMember.id } }
-        }
+      await axios.post('http://localhost:1212/playlist', null, {
+        params: { name: playlistName, id: interactionMember.id }
       });
     } catch (error) {
       await interaction.reply({
@@ -34,7 +29,7 @@ export class CreatePlaylistCommand extends Command {
       return;
     }
 
-    await interaction.reply(`Created a playlist named **${playlist.name}**`);
+    await interaction.reply(`Created a playlist named **${playlistName}**`);
     return;
   }
 
