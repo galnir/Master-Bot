@@ -29,7 +29,6 @@ export class PlaylistRoute extends Route {
 
   public async [methods.POST](_request: ApiRequest, response: ApiResponse) {
     const { name, id } = _request.query;
-    console.log(_request.query);
     const playlist = await prisma.playlist.create({
       data: {
         name: name as string,
@@ -44,5 +43,23 @@ export class PlaylistRoute extends Route {
     }
 
     response.json(playlist);
+  }
+
+  public async [methods.DELETE](_request: ApiRequest, response: ApiResponse) {
+    const { name, id } = _request.query;
+    const playlist = await prisma.playlist.deleteMany({
+      where: {
+        userId: id as string,
+        name: name as string
+      }
+    });
+
+    if (!playlist) {
+      return response
+        .status(404)
+        .json({ message: 'An error occured when trying to delete playlist' });
+    }
+
+    response.json(true);
   }
 }

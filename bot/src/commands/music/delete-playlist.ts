@@ -4,8 +4,8 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
+import axios from 'axios';
 import type { CommandInteraction, GuildMember } from 'discord.js';
-import prisma from '../../lib/prisma';
 
 @ApplyOptions<CommandOptions>({
   name: 'delete-playlist',
@@ -18,15 +18,13 @@ export class DeletePlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    let deleted;
+    let deleted: boolean = false;
 
     try {
-      deleted = await prisma.playlist.deleteMany({
-        where: {
-          userId: interactionMember.id,
-          name: playlistName
-        }
+      await axios.delete('http://localhost:1212/playlist', {
+        params: { name: playlistName, userId: interactionMember.id }
       });
+      deleted = true;
     } catch (error) {
       console.error(error);
       return await interaction.reply(
