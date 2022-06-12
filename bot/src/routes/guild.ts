@@ -8,7 +8,7 @@ import {
 } from '@sapphire/plugin-api';
 import prisma from '../lib/prisma';
 
-@ApplyOptions<RouteOptions>({ route: 'playlist' })
+@ApplyOptions<RouteOptions>({ route: 'guild' })
 export class GuildRoute extends Route {
   public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
     const { id } = _request.query;
