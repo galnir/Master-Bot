@@ -6,7 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
-import prisma from '../../lib/prisma';
+import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'display-playlist',
@@ -19,15 +19,8 @@ export class DisplayPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    const playlist = await prisma.playlist.findFirst({
-      where: {
-        userId: interactionMember.id,
-        name: playlistName
-      },
-      select: {
-        songs: true
-      }
-    });
+    const response = await axios.get('http://localhost:1212/playlist');
+    const { playlist } = response.data;
 
     if (!playlist) {
       return await interaction.reply(
@@ -44,7 +37,7 @@ export class DisplayPlaylistCommand extends Command {
       .setTitleField(`${playlistName} - Songs`)
       .setTemplate(baseEmbed)
       .setItems(playlist.songs)
-      .formatItems((item: any) => `[${item.name}](${item.url})`)
+      .formatItems((item: any) => `[${item.title}](${item.uri})`)
       .setItemsPerPage(5)
       .make()
       .run(interaction);
