@@ -3,7 +3,9 @@ module.exports = {
   mode: "jit",
   purge: ["app/**/*.{jsx,tsx}"],
   theme: {
-    extend: {},
+    fontFamily: {
+      sans: ["open-sans", "sans-serif"],
+    },
   },
   plugins: [],
 };
