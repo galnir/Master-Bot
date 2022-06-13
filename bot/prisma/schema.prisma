@@ -46,6 +46,12 @@ model Guild {
   added  DateTime @default(now())
   volume Int
   notifyList String[]
+
+  // Settings
+  disabledCommands String[] @map("disabled_commands")
+  logChannel String? @map("log_channel")
+  welcomeMessageChannel String? @map("welcome_message_channel")
+  welcomeMessage String? @map("welcome_message")
 }
 
 model TwitchNotify {
