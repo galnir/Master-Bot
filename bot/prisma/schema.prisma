@@ -12,6 +12,7 @@ model User {
   id        String     @id
   playlists Playlist[]
   username  String
+  guilds    Guild[]
 }
 
 model Song {
@@ -46,6 +47,8 @@ model Guild {
   added  DateTime @default(now())
   volume Int
   notifyList String[]
+  ownerId String
+  owner   User     @relation(fields: [ownerId], references: [id])
 
   // Settings
   disabledCommands String[] @map("disabled_commands")
