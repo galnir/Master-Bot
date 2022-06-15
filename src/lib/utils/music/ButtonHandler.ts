@@ -8,6 +8,7 @@ import {
   MessageEmbed
 } from 'discord.js';
 import buttonsCollector, { deletePlayerEmbed } from './buttonsCollector';
+import { NowPlayingEmbed } from './NowPlayingEmbed';
 
 export async function embedButtons(
   embed: MessageEmbed,
@@ -51,9 +52,34 @@ export async function embedButtons(
     })
     .then(async (message: Message) => {
       const queue = client.music.queues.get(message.guild!.id);
-      queue.setEmbed(message.id);
+      await queue.setEmbed(message.id);
 
       if (queue.player) {
+        let updateBar: NodeJS.Timer;
+        if (queue.player.trackData?.isSeekable) {
+          updateBar = setInterval(async () => {
+            if (!queue.player) return clearInterval(updateBar);
+            const NowPlaying = new NowPlayingEmbed(
+              song,
+              queue.player.accuratePosition,
+              queue.player.trackData?.length ?? 0,
+              queue.player.volume,
+              tracks,
+              tracks.at(-1),
+              queue.paused
+            );
+            try {
+              await message.edit({
+                embeds: [NowPlaying.NowPlayingEmbed()]
+              });
+            } catch (error) {
+              // console.log(error);
+              clearInterval(updateBar);
+            }
+          }, queue.player.trackData.length / 22 || 30 * 1000);
+          updateBar;
+        }
+
         await buttonsCollector(message, song);
       }
     });

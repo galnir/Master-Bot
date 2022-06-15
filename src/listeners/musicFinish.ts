@@ -1,6 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, ListenerOptions } from '@sapphire/framework';
+import { container, Listener, ListenerOptions } from '@sapphire/framework';
+import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
 import type { Queue } from '../lib/utils/queue/Queue';
+import { inactivityTime } from '../lib/utils/music/handleOptions';
 
 @ApplyOptions<ListenerOptions>({
   name: 'musicFinish'
@@ -8,9 +10,12 @@ import type { Queue } from '../lib/utils/queue/Queue';
 export class MusicFinishListener extends Listener {
   public override async run(queue: Queue): Promise<void> {
     const channel = await queue.getTextChannel();
-    if (channel) queue.client.emit('musicFinishNotify', channel);
-
-    await queue.leave();
-    await queue.clear();
+    const { client } = container;
+    await deletePlayerEmbed(queue);
+    client.leaveTimers[queue.player.guildId] = setTimeout(async () => {
+      if (channel) queue.client.emit('musicFinishNotify', channel);
+      await queue.leave();
+      await queue.clear();
+    }, inactivityTime());
   }
 }

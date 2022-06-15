@@ -16,6 +16,7 @@ import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
 import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
 import { embedButtons } from '../music/ButtonHandler';
+import prisma from '../../prisma';
 
 export enum LoopType {
   None,
@@ -214,8 +215,10 @@ export class Queue {
     }
   }
 
-  public getSystemPaused(): Promise<boolean> {
-    return this.store.redis.get(this.keys.systemPause).then(d => d === '1');
+  public async getSystemPaused(): Promise<boolean> {
+    return await this.store.redis
+      .get(this.keys.systemPause)
+      .then(d => d === '1');
   }
 
   public async setSystemPaused(value: boolean): Promise<boolean> {
@@ -227,8 +230,8 @@ export class Queue {
   /**
    * Retrieves whether or not the system should repeat the current track.
    */
-  public getReplay(): Promise<boolean> {
-    return this.store.redis.get(this.keys.replay).then(d => d === '1');
+  public async getReplay(): Promise<boolean> {
+    return await this.store.redis.get(this.keys.replay).then(d => d === '1');
   }
 
   public async setReplay(value: boolean): Promise<boolean> {
@@ -243,8 +246,21 @@ export class Queue {
    */
 
   public async getVolume(): Promise<number> {
-    const raw = await this.store.redis.get(this.keys.volume);
-    return raw ? Number(raw) : 100;
+    let data = await this.store.redis.get(this.keys.volume);
+
+    if (!data) {
+      const storage = await prisma.guild.findFirst({
+        where: { id: this.guildID },
+        select: { volume: true }
+      });
+
+      if (!storage) {
+        await this.setVolume(this.player.volume);
+      }
+      data = storage?.volume.toString() || this.player.volume.toString();
+    }
+
+    return data ? Number(data) : 100;
   }
 
   // set the volume of the track in the queue
@@ -254,7 +270,14 @@ export class Queue {
     await this.player.setVolume(value);
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
-
+    await prisma.guild.upsert({
+      where: { id: this.guildID },
+      create: {
+        id: this.guildID,
+        volume: this.player.volume
+      },
+      update: { volume: this.player.volume }
+    });
     this.client.emit('musicSongVolumeUpdate', this, value);
     return {
       previous: previous === null ? 100 : Number(previous),
@@ -274,7 +297,15 @@ export class Queue {
   // leave the voice channel
   public async leave(): Promise<void> {
     if (!this.client.leaveTimers[this.guildID] && (await this.getEmbed())) {
-      deletePlayerEmbed(this);
+      await deletePlayerEmbed(this);
+    }
+
+    // if (await this.getEmbed()) {
+    //   await deletePlayerEmbed(this);
+    // }
+    if (this.client.leaveTimers[this.guildID]) {
+      clearTimeout(this.client.leaveTimers[this.player.guildId]);
+      delete this.client.leaveTimers[this.player.guildId];
     }
     await this.player.disconnect();
     await this.destroyPlayer();

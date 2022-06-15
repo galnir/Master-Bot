@@ -7,6 +7,6 @@ import type { TextChannel } from 'discord.js';
 })
 export class MusicFinishNotifyListener extends Listener {
   public override async run(channel: TextChannel): Promise<void> {
-    await channel.send({ content: `No more tracks, I'm out!` });
+    await channel.send({ content: ':zzz: Leaving due to inactivity' });
   }
 }
