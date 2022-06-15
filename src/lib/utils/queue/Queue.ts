@@ -254,9 +254,8 @@ export class Queue {
         select: { volume: true }
       });
 
-      if (!storage) {
-        await this.setVolume(this.player.volume);
-      }
+      await this.setVolume(storage?.volume ?? this.player.volume);
+
       data = storage?.volume.toString() || this.player.volume.toString();
     }
 
@@ -296,13 +295,9 @@ export class Queue {
 
   // leave the voice channel
   public async leave(): Promise<void> {
-    if (!this.client.leaveTimers[this.guildID] && (await this.getEmbed())) {
+    if (await this.getEmbed()) {
       await deletePlayerEmbed(this);
     }
-
-    // if (await this.getEmbed()) {
-    //   await deletePlayerEmbed(this);
-    // }
     if (this.client.leaveTimers[this.guildID]) {
       clearTimeout(this.client.leaveTimers[this.player.guildId]);
       delete this.client.leaveTimers[this.player.guildId];

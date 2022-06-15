@@ -11,7 +11,6 @@ export class MusicSongPlayListener extends Listener {
   public override async run(queue: Queue, track: Song): Promise<void> {
     const channel = await queue.getTextChannel();
     if (channel) {
-      queue.client.emit('musicSongPlayMessage', channel, track);
       const { client } = container;
 
       clearTimeout(client.leaveTimers[queue.player.guildId]);
@@ -21,6 +20,7 @@ export class MusicSongPlayListener extends Listener {
         await queue.leave();
         return;
       }
+      queue.client.emit('musicSongPlayMessage', channel, track);
       await manageStageChannel(
         queue.guild.me?.voice.channel!,
         queue.guild.me!,

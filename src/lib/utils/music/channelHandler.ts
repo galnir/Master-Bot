@@ -14,10 +14,11 @@ export async function manageStageChannel(
     )
   )
     if (botUser.voice.suppress)
-      return await instance.getTextChannel().then(msg =>
-        msg?.send({
-          content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
-        })
+      return await instance.getTextChannel().then(
+        async msg =>
+          await msg?.send({
+            content: `:interrobang: Please make promote me to a Speaker in ${voiceChannel.name}, Missing permissions "Administrator" ***OR*** "Manage Channels, Mute Members, and Move Members" for Full Stage Channel Features.`
+          })
       );
   const tracks = await instance.tracks();
   const title =
