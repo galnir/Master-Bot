@@ -35,20 +35,23 @@ export default function DashboardIndex() {
   }
 
   return (
-    <div>
-      {guilds.map((guild) => {
-        const isBotInGuild = databaseGuilds?.some(
-          (databaseGuild) => databaseGuild.id === guild.id
-        );
-        return (
-          <GuildSelectBox
-            key={guild.id}
-            name={guild.name}
-            isBotIn={isBotInGuild}
-            img={guild.icon ?? "generic-image.png"}
-          />
-        );
-      })}
+    <div className="px-40 py-24 text-white content-center w-full">
+      <h1 className="text-4xl font-semibold">Select a guild to manage</h1>
+      <div className="flex gap-10 grow">
+        {guilds.map((guild) => {
+          const isBotInGuild = databaseGuilds?.some(
+            (databaseGuild) => databaseGuild.id === guild.id
+          );
+          return (
+            <GuildSelectBox
+              key={guild.id}
+              name={guild.name}
+              isBotIn={isBotInGuild}
+              img={guild.icon ?? "generic-image.png"}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
