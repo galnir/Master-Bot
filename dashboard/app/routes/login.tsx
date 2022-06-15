@@ -1,10 +1,9 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { SocialsProvider } from "remix-auth-socials";
 import { authenticator } from "~/server/auth.server";
 
 interface SocialButtonProps {
-  provider: SocialsProvider;
+  provider: string;
   label: string;
 }
 
@@ -23,10 +22,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function Login() {
   return (
     <>
-      <SocialButton
-        provider={SocialsProvider.DISCORD}
-        label="Login with Discord"
-      />
+      <SocialButton provider="discord" label="Login with Discord" />
     </>
   );
 }

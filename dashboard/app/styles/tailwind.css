@@ -568,6 +568,10 @@ video {
   width: max-content;
 }
 
+.max-w-xs {
+  max-width: 20rem;
+}
+
 .justify-between {
   justify-content: space-between;
 }

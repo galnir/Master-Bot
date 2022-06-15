@@ -16,12 +16,12 @@
     "@remix-run/node": "^1.5.1",
     "@remix-run/react": "^1.5.1",
     "@remix-run/serve": "^1.5.1",
+    "discord-api-types": "^0.34.0",
     "discord.js": "^13.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix-auth": "^3.2.2",
-    "remix-auth-discord": "^1.0.0",
-    "remix-auth-socials": "^1.0.2"
+    "remix-auth-oauth2": "^1.2.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.5.1",
