@@ -13,7 +13,13 @@ export class UserRoute extends Route {
   public async [methods.GET](_request: ApiRequest, response: ApiResponse) {
     const { id } = _request.query;
     const user = await prisma.user.findFirst({
-      where: { id: id as string }
+      where: { id: id as string },
+      select: {
+        playlists: true,
+        id: true,
+        guilds: true,
+        username: true
+      }
     });
 
     if (!user) {

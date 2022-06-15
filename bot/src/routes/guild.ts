@@ -28,10 +28,15 @@ export class GuildRoute extends Route {
   }
 
   public async [methods.POST](_request: ApiRequest, response: ApiResponse) {
-    const { id } = _request.query;
-    const guild = await prisma.guild.create({
-      data: {
+    const { id, ownerId } = _request.query;
+    const guild = await prisma.guild.upsert({
+      where: {
+        id: id as string
+      },
+      update: {},
+      create: {
         id: id as string,
+        ownerId: ownerId as string,
         volume: 100
       }
     });

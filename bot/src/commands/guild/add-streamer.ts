@@ -132,7 +132,8 @@ export class AddStreamerCommand extends Command {
       create: {
         id: interaction.guild?.id as string,
         notifyList: [user.id],
-        volume: 100
+        volume: 100,
+        ownerId: interaction.guild?.ownerId as string
       },
       select: { notifyList: true },
       update: {

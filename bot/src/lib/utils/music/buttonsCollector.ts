@@ -92,7 +92,8 @@ export default async function buttonsCollector(message: Message, song: Song) {
         where: { id: message.guild!.id },
         create: {
           id: message.guild!.id,
-          volume: volume
+          volume: volume,
+          ownerId: message.guild!.ownerId
         },
         update: { volume: volume }
       });
@@ -119,7 +120,8 @@ export default async function buttonsCollector(message: Message, song: Song) {
         where: { id: message.guild!.id },
         create: {
           id: message.guild!.id,
-          volume: volume
+          volume: volume,
+          ownerId: message.guild!.ownerId
         },
         update: { volume: volume }
       });
