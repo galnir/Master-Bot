@@ -14,8 +14,8 @@ import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
-import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
-import { embedButtons } from '../music/ButtonHandler';
+// import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
+// import { embedButtons } from '../music/ButtonHandler';
 import prisma from '../../prisma';
 
 export enum LoopType {
@@ -143,7 +143,7 @@ export class Queue {
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
     if (!np) return this.next();
-    const tracks = await this.tracks();
+    // const tracks = await this.tracks();
 
     try {
       this.player.setVolume(await this.getVolume());
@@ -153,20 +153,21 @@ export class Queue {
       await this.leave();
     }
 
-    if (this.skipped) {
-      const NowPlaying = new NowPlayingEmbed(
-        np.song,
-        0,
-        np.song.length ?? 0,
-        await this.getVolume(),
-        tracks,
-        tracks.at(-1),
-        this.paused
-      );
-      await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
+    // Moved Embed to the `musicSongPlayMessage` stops Double Posting
+    // if (this.skipped) {
+    // const NowPlaying = new NowPlayingEmbed(
+    //   np.song,
+    //   0,
+    //   np.song.length ?? 0,
+    //   await this.getVolume(),
+    //   tracks,
+    //   tracks.at(-1),
+    //   this.paused
+    // );
+    // await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
 
-      this.skipped = false;
-    }
+    //   this.skipped = false;
+    // }
 
     this.client.emit(
       replaying ? 'musicSongReplay' : 'musicSongPlay',
@@ -253,8 +254,7 @@ export class Queue {
         where: { id: this.guildID },
         select: { volume: true }
       });
-
-      await this.setVolume(storage?.volume ?? this.player.volume);
+      if (!storage) await this.setVolume(this.player.volume ?? 100); // saves to both
 
       data = storage?.volume.toString() || this.player.volume.toString();
     }
