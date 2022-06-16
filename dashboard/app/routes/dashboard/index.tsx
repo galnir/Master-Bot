@@ -8,6 +8,7 @@ import GuildSelectBox from "~/components/GuildSelectBox";
 type LoaderData = {
   user: DiscordProfile;
   databaseGuilds: any[] | null;
+  invite_url: string;
 };
 
 export let loader: LoaderFunction = async ({ request, params }) => {
@@ -20,11 +21,13 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   );
   const databaseGuilds = await response.json();
 
-  return json({ user, databaseGuilds });
+  const invite_url = process.env.Invite_URL;
+
+  return json({ user, databaseGuilds, invite_url });
 };
 
 export default function DashboardIndex() {
-  const { user, databaseGuilds } = useLoaderData<LoaderData>();
+  const { user, databaseGuilds, invite_url } = useLoaderData<LoaderData>();
   const { guilds } = user;
   if (!guilds || !databaseGuilds) {
     return (
@@ -48,6 +51,8 @@ export default function DashboardIndex() {
               name={guild.name}
               isBotIn={isBotInGuild}
               img={guild.icon ?? "generic-image.png"}
+              id={guild.id}
+              invite_url={invite_url}
             />
           );
         })}
