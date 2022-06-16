@@ -11,7 +11,8 @@ export class GuildCreateListener extends Listener {
     await axios.post('http://localhost:1212/guild', null, {
       params: {
         id: guild.id,
-        ownerId: guild.ownerId
+        ownerId: guild.ownerId,
+        name: guild.name
       }
     });
   }

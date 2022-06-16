@@ -44,6 +44,7 @@ model Playlist {
 
 model Guild {
   id     String   @id
+  name String
   added  DateTime @default(now())
   volume Int
   notifyList String[]
