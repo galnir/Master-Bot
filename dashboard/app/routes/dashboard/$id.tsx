@@ -15,6 +15,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
     failureRedirect: "/login",
   })) as DiscordProfile;
   const response = await fetch(`http://localhost:1212/guild?id=${params.id}`);
+
   const guild = await response.json();
   return json({ guild, user });
 };
