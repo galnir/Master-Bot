@@ -51,7 +51,7 @@ export async function embedButtons(
     })
     .then(async (message: Message) => {
       const queue = client.music.queues.get(message.guild!.id);
-      queue.setEmbed(message.id);
+      await queue.setEmbed(message.id);
 
       if (queue.player) {
         await buttonsCollector(message, song);

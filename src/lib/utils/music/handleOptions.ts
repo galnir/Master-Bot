@@ -1,5 +1,4 @@
 import options from '../../../options.json';
-import type { Song } from '../queue/Song';
 
 export function inactivityTime() {
   let response: number = 30000; // Default 30 seconds
@@ -19,11 +18,4 @@ export function inactivityTime() {
   response == 0 ? (response = 30000) : null;
 
   return response;
-}
-
-export function shuffleQueue(queue: Song[]) {
-  for (let i = queue.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [queue[i], queue[j]] = [queue[j], queue[i]];
-  }
 }
