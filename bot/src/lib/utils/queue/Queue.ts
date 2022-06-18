@@ -14,8 +14,9 @@ import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
-import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
-import { embedButtons } from '../music/ButtonHandler';
+// import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
+// import { embedButtons } from '../music/ButtonHandler';
+import prisma from '../../prisma';
 
 export enum LoopType {
   None,
@@ -142,29 +143,31 @@ export class Queue {
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
     if (!np) return this.next();
-    const tracks = await this.tracks();
+    // const tracks = await this.tracks();
 
     try {
+      this.player.setVolume(await this.getVolume());
       await this.player.play(np.song as Song);
     } catch (err) {
       console.error(err);
       await this.leave();
     }
 
-    if (this.skipped) {
-      const NowPlaying = new NowPlayingEmbed(
-        np.song,
-        0,
-        np.song.length ?? 0,
-        await this.getVolume(),
-        tracks,
-        tracks.at(-1),
-        this.paused
-      );
-      await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
+    // Moved Embed to the `musicSongPlayMessage` stops Double Posting
+    // if (this.skipped) {
+    // const NowPlaying = new NowPlayingEmbed(
+    //   np.song,
+    //   0,
+    //   np.song.length ?? 0,
+    //   await this.getVolume(),
+    //   tracks,
+    //   tracks.at(-1),
+    //   this.paused
+    // );
+    // await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
 
-      this.skipped = false;
-    }
+    //   this.skipped = false;
+    // }
 
     this.client.emit(
       replaying ? 'musicSongReplay' : 'musicSongPlay',
@@ -213,8 +216,10 @@ export class Queue {
     }
   }
 
-  public getSystemPaused(): Promise<boolean> {
-    return this.store.redis.get(this.keys.systemPause).then(d => d === '1');
+  public async getSystemPaused(): Promise<boolean> {
+    return await this.store.redis
+      .get(this.keys.systemPause)
+      .then(d => d === '1');
   }
 
   public async setSystemPaused(value: boolean): Promise<boolean> {
@@ -226,8 +231,8 @@ export class Queue {
   /**
    * Retrieves whether or not the system should repeat the current track.
    */
-  public getReplay(): Promise<boolean> {
-    return this.store.redis.get(this.keys.replay).then(d => d === '1');
+  public async getReplay(): Promise<boolean> {
+    return await this.store.redis.get(this.keys.replay).then(d => d === '1');
   }
 
   public async setReplay(value: boolean): Promise<boolean> {
@@ -242,8 +247,19 @@ export class Queue {
    */
 
   public async getVolume(): Promise<number> {
-    const raw = await this.store.redis.get(this.keys.volume);
-    return raw ? Number(raw) : 100;
+    let data = await this.store.redis.get(this.keys.volume);
+
+    if (!data) {
+      const storage = await prisma.guild.findFirst({
+        where: { id: this.guildID },
+        select: { volume: true }
+      });
+      if (!storage) await this.setVolume(this.player.volume ?? 100); // saves to both
+
+      data = storage?.volume.toString() || this.player.volume.toString();
+    }
+
+    return data ? Number(data) : 100;
   }
 
   // set the volume of the track in the queue
@@ -253,7 +269,16 @@ export class Queue {
     await this.player.setVolume(value);
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
-
+    await prisma.guild.upsert({
+      where: { id: this.guildID },
+      create: {
+        id: this.guildID,
+        name: this.guild.name,
+        ownerId: this.guild.ownerId,
+        volume: this.player.volume
+      },
+      update: { volume: this.player.volume }
+    });
     this.client.emit('musicSongVolumeUpdate', this, value);
     return {
       previous: previous === null ? 100 : Number(previous),
@@ -272,8 +297,12 @@ export class Queue {
 
   // leave the voice channel
   public async leave(): Promise<void> {
-    if (!this.client.leaveTimers[this.guildID] && (await this.getEmbed())) {
-      deletePlayerEmbed(this);
+    if (await this.getEmbed()) {
+      await deletePlayerEmbed(this);
+    }
+    if (this.client.leaveTimers[this.guildID]) {
+      clearTimeout(this.client.leaveTimers[this.player.guildId]);
+      delete this.client.leaveTimers[this.player.guildId];
     }
     await this.player.disconnect();
     await this.destroyPlayer();

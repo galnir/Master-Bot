@@ -1,4 +1,3 @@
-import '@sapphire/plugin-api/register';
 import type { ClientTwitchExtension } from '../lib/utils/twitch/twitchAPI-types';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { SapphireClient } from '@sapphire/framework';
@@ -6,6 +5,7 @@ import { Intents } from 'discord.js';
 import { QueueClient } from '../lib/utils/queue/QueueClient';
 import * as data from '../config.json';
 import Redis from 'ioredis';
+import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
@@ -29,21 +29,7 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_VOICE_STATES
-      ],
-      api: {
-        auth: {
-          id: data.client_id,
-          secret: data.token,
-          cookie: 'MASTERBOT_AUTH',
-          redirect: '',
-          scopes: ['identify']
-        },
-        prefix: '/',
-        origin: '*',
-        listenOptions: {
-          port: 1212
-        }
-      }
+      ]
     });
 
     this.music = new QueueClient({
@@ -57,15 +43,19 @@ export class ExtendedClient extends SapphireClient {
         secure: data.lava_secure
       }
     });
-    this.ws.on('VOICE_SERVER_UPDATE', async data => {
-      // handle if a mod right-clicks disconnect on the bot
-      if (!data.channel_id && data.user_id === this.application?.id) {
-        const queue = this.music.queues.get(data.guild_id!);
-        await queue.leave();
-      }
+
+    this.ws.on('VOICE_SERVER_UPDATE', data => {
       this.music.handleVoiceUpdate(data);
     });
-    this.ws.on('VOICE_STATE_UPDATE', data => {
+
+    this.ws.on('VOICE_STATE_UPDATE', async data => {
+      // handle if a mod right-clicks disconnect on the bot
+      if (!data.channel_id && data.user_id == this.application?.id) {
+        const queue = this.music.queues.get(data.guild_id);
+        await deletePlayerEmbed(queue);
+        await queue.clear();
+        queue.destroyPlayer();
+      }
       this.music.handleVoiceUpdate(data);
     });
 

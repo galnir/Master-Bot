@@ -3,7 +3,6 @@ import { container } from '@sapphire/framework';
 import type { Queue } from '../queue/Queue';
 import { NowPlayingEmbed } from './NowPlayingEmbed';
 import type { Song } from '../queue/Song';
-import prisma from '../../prisma';
 
 export default async function buttonsCollector(message: Message, song: Song) {
   const { client } = container;
@@ -14,13 +13,39 @@ export default async function buttonsCollector(message: Message, song: Song) {
   const collector = message.createMessageComponentCollector();
   if (!channel) return;
 
-  const maxLimit = 1.8e6; // 30 minutesz
+  const maxLimit = 1.8e6; // 30 minutes
   let timer: NodeJS.Timer;
+
+  let updateBar: NodeJS.Timer;
+  if (song.isSeekable) {
+    const tracks = await queue.tracks();
+    updateBar = setInterval(async () => {
+      if (!queue.player) return clearInterval(updateBar);
+      const NowPlaying = new NowPlayingEmbed(
+        song,
+        queue.player.accuratePosition,
+        queue.player.trackData?.length ?? 0,
+        queue.player.volume,
+        tracks,
+        tracks.at(-1),
+        queue.paused
+      );
+      try {
+        await message.edit({
+          embeds: [NowPlaying.NowPlayingEmbed()]
+        });
+      } catch (error) {
+        console.log(error);
+        clearInterval(updateBar);
+      }
+    }, song.length / 22 || 30 * 1000);
+    updateBar;
+  }
 
   collector.on('collect', async (i: MessageComponentInteraction) => {
     if (!message.member?.voice.channel?.members.has(i.user.id))
       return await i.reply({
-        content: ':x: only available to members in the same voice channel',
+        content: `:x: Only available to members in ${message.member?.voice.channel} <-- Click To Join`,
         ephemeral: true
       });
 
@@ -30,7 +55,7 @@ export default async function buttonsCollector(message: Message, song: Song) {
       clearTimeout(timer);
 
       if (queue.paused) {
-        queue.resume();
+        await queue.resume();
         paused = false;
         clearTimeout(client.leaveTimers[queue.guildID]!);
       } else {
@@ -40,10 +65,11 @@ export default async function buttonsCollector(message: Message, song: Song) {
         }, maxLimit);
 
         timer = setTimeout(async () => {
-          await deletePlayerEmbed(queue);
+          await queue.leave();
+          await queue.clear();
         }, maxLimit);
 
-        queue.pause();
+        await queue.pause();
         paused = true;
       }
       const tracks = await queue.tracks();
@@ -64,7 +90,6 @@ export default async function buttonsCollector(message: Message, song: Song) {
     }
     if (i.customId === 'stop') {
       await i.update('Leaving');
-      await deletePlayerEmbed(queue);
       await queue.leave();
       clearTimeout(timer);
     }
@@ -87,17 +112,8 @@ export default async function buttonsCollector(message: Message, song: Song) {
         tracks.at(-1),
         paused
       );
+
       collector.empty();
-      await prisma.guild.upsert({
-        where: { id: message.guild!.id },
-        create: {
-          id: message.guild!.id,
-          volume: volume,
-          ownerId: message.guild!.ownerId,
-          name: message.guild!.name
-        },
-        update: { volume: volume }
-      });
       await i.update({
         embeds: [NowPlaying.NowPlayingEmbed()]
       });
@@ -117,22 +133,13 @@ export default async function buttonsCollector(message: Message, song: Song) {
         paused
       );
       collector.empty();
-      await prisma.guild.upsert({
-        where: { id: message.guild!.id },
-        create: {
-          id: message.guild!.id,
-          volume: volume,
-          ownerId: message.guild!.ownerId,
-          name: message.guild!.name
-        },
-        update: { volume: volume }
-      });
       await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
     }
   });
 
   collector.on('end', async () => {
     clearTimeout(timer);
+    clearInterval(updateBar);
   });
 
   return collector;
@@ -142,12 +149,12 @@ export async function deletePlayerEmbed(queue: Queue) {
   const embedID = await queue.getEmbed();
   if (embedID) {
     const channel = await queue.getTextChannel();
-    channel?.messages.fetch(embedID).then(async oldMessage => {
+    await channel?.messages.fetch(embedID).then(async oldMessage => {
       if (oldMessage)
         await oldMessage
           .delete()
           .catch(error => console.log('Failed to Delete Old Message.', error));
-      queue.deleteEmbed();
+      await queue.deleteEmbed();
     });
   }
 }

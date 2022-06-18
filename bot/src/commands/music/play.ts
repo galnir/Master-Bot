@@ -9,8 +9,6 @@ import { container } from '@sapphire/framework';
 import prisma from '../../lib/prisma';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Song } from '../../lib/utils/queue/Song';
-import { embedButtons } from '../../lib/utils/music/ButtonHandler';
-import { NowPlayingEmbed } from '../../lib/utils/music/NowPlayingEmbed';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -90,21 +88,16 @@ export class PlayCommand extends Command {
     const current = await queue.getCurrentTrack();
     if (!current) {
       await queue.start();
+    } else {
+      client.emit(
+        'musicSongPlayMessage',
+        interaction.channel,
+        await queue.getCurrentTrack()
+      );
     }
+
     const track = await queue.getCurrentTrack();
     if (!track) return;
-    const NowPlaying = new NowPlayingEmbed(
-      track,
-      queue.player.accuratePosition,
-      track.length,
-      await queue.getVolume(),
-      await queue.tracks(),
-      await queue.getAt(await queue.count()),
-      queue.paused
-    );
-
-    await embedButtons(NowPlaying.NowPlayingEmbed(), queue, track);
-
     return await interaction.followUp({ content: message });
   }
 
