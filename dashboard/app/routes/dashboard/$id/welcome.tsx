@@ -54,7 +54,7 @@ export default function WelcomeScreen() {
   const actionData = useActionData();
 
   return (
-    <div className="p-10">
+    <div className="p-10 w-fit">
       <h1 className="text-white text-3xl">Welcome Message Settings</h1>
       <h3 className="my-10">Welcome new users with a custom message:</h3>
       <Form method="post" action=".">
@@ -73,11 +73,15 @@ export default function WelcomeScreen() {
                 name="welcome_message"
                 placeholder={welcome_message ?? ""}
                 defaultValue={actionData?.values.welcome_message}
+                className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
               />
             </label>
           </p>
-          <p>
-            <button type="submit">
+          <p className="relative">
+            <button
+              type="submit"
+              className="bg-blue-600 p-4 rounded-lg text-white absolute top-3 right-2 hover:bg-blue-700"
+            >
               {transition.state === "submitting" ? "Saving..." : "Save"}
             </button>
           </p>
