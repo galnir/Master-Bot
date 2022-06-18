@@ -105,9 +105,7 @@ export class GuildRoute extends Route {
         },
         data
       });
-      console.log('guild is', guild);
     } catch (e) {
-      console.log('error', e);
       return response
         .status(404)
         .json({ message: 'An error occured when trying to update guild data' });
