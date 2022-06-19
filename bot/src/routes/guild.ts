@@ -29,6 +29,7 @@ export class GuildRoute extends Route {
 
   public async [methods.POST](_request: ApiRequest, response: ApiResponse) {
     const { id, ownerId, name } = _request.query;
+    console.log('owner id is', ownerId);
     const guild = await prisma.guild.upsert({
       where: {
         id: id as string
