@@ -1,18 +1,10 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import Logo from "~/components/Logo";
 import type { DiscordProfile } from "~/lib/discord-api-fetcher";
 import { authenticator } from "~/server/auth.server";
-import {
-  Menu,
-  MenuList,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  MenuPopover,
-  MenuLink,
-} from "@reach/menu-button";
+import { Menu } from "@reach/menu-button";
 import React from "react";
 
 type LoaderData = {
