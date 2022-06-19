@@ -1,9 +1,19 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import Logo from "~/components/Logo";
 import type { DiscordProfile } from "~/lib/discord-api-fetcher";
 import { authenticator } from "~/server/auth.server";
+import {
+  Menu,
+  MenuList,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  MenuPopover,
+  MenuLink,
+} from "@reach/menu-button";
+import React from "react";
 
 type LoaderData = {
   guild: any;
@@ -22,8 +32,29 @@ export let loader: LoaderFunction = async ({ request, params }) => {
 
 export default function DashboardScreenIndex() {
   const { guild, user } = useLoaderData<LoaderData>();
+  const [menuOpen, setMenuOpen] = React.useState(false);
+
   return (
-    <main className="flex text-gray-400 w-full h-screen">
+    <main className="flex text-gray-400 w-full h-screen relative">
+      <div className="absolute top-3 right-3 h-10 w-10 hover:cursor-pointer">
+        <img
+          className="rounded-full"
+          src={`https://cdn.discordapp.com/avatars/${user.id}/${user.__json.avatar}.png`}
+          alt="user avatar"
+          onClick={() => setMenuOpen(!menuOpen)}
+        />
+        {menuOpen && (
+          <div className="bg-gray-800 p-2 w-fit absolute top-14 right-1">
+            <Menu>
+              <Form action="/logout" method="post">
+                <button type="submit" className="text-red-500">
+                  Logout
+                </button>
+              </Form>
+            </Menu>
+          </div>
+        )}
+      </div>
       <div className="min-w-[350px] border-r-2 border-gray-500">
         <div className="p-8 overflow-auto">
           <div className="mb-8">
