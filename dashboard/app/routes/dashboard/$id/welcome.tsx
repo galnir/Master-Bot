@@ -6,13 +6,16 @@ import {
 import {
   Form,
   useActionData,
+  useFetcher,
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
+import React from "react";
 import ValidationMessage from "~/components/ValidationMessage";
 
 type LoaderData = {
   welcome_message: string | null;
+  welcome_message_enabled: boolean;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -25,19 +28,33 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const guild = await response.json();
   const welcome_message = guild.welcomeMessage;
+  const welcome_message_enabled = guild.welcomeMessageEnabled;
 
-  return json({ welcome_message });
+  return json({ welcome_message, welcome_message_enabled });
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
   const { id } = params;
   const formData = await request.formData();
 
+  const entry = formData.get("welcome_toggle");
+  if (entry) {
+    // @ts-ignore
+    const entryObject = JSON.parse(entry);
+
+    await fetch("http://localhost:1212/guild?id=" + id, {
+      method: "PATCH",
+      body: JSON.stringify({ welcomeMessageEnabled: entryObject.toggle }),
+    });
+
+    return null;
+  }
+
   const welcomeMessage = formData.get("welcome_message");
 
   const response = await fetch("http://localhost:1212/guild?id=" + id, {
     method: "PATCH",
-    body: JSON.stringify({ welcomeMessage }),
+    body: JSON.stringify({ welcomeMessage, welcomeMessageEnabled: true }),
   });
 
   const values = Object.fromEntries(formData);
@@ -49,44 +66,74 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function WelcomeScreen() {
-  const { welcome_message } = useLoaderData<LoaderData>();
+  const { welcome_message, welcome_message_enabled } =
+    useLoaderData<LoaderData>();
+
+  const [welcomeMessageEdit, setWelcomeMessageEdit] = React.useState(
+    welcome_message_enabled
+  );
+
+  const fetcher = useFetcher();
   const transition = useTransition();
   const actionData = useActionData();
 
   return (
-    <div className="p-10 w-fit">
+    <div className="p-10">
       <h1 className="text-white text-3xl">Welcome Message Settings</h1>
-      <h3 className="my-10">Welcome new users with a custom message:</h3>
-      <Form method="post" action=".">
-        <fieldset disabled={transition.state === "submitting"}>
-          {actionData?.error ? (
-            <ValidationMessage
-              isSubmitting={transition.state === "submitting"}
-              error={actionData?.error}
+      <div className="flex justify-between w-full">
+        <h3 className="my-10">Welcome new users with a custom message</h3>
+        <div className="flex items-center gap-5">
+          <span>{welcome_message_enabled ? "Enabled" : "Disabled"}</span>
+          <fetcher.Form method="post">
+            <input
+              type="hidden"
+              name="welcome_toggle"
+              value={JSON.stringify({ toggle: welcomeMessageEdit })}
             />
-          ) : null}
-          <p>
-            <label>
-              Welcome Message:
-              <br />
-              <textarea
-                name="welcome_message"
-                placeholder={welcome_message ?? ""}
-                defaultValue={actionData?.values.welcome_message}
-                className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
-              />
-            </label>
-          </p>
-          <p className="relative">
             <button
-              type="submit"
-              className="bg-blue-600 p-4 rounded-lg text-white absolute top-3 right-2 hover:bg-blue-700"
-            >
-              {transition.state === "submitting" ? "Saving..." : "Save"}
-            </button>
-          </p>
-        </fieldset>
-      </Form>
+              role="checkbox"
+              onClick={() => setWelcomeMessageEdit(!welcomeMessageEdit)}
+              className="h-7 w-14 outline-none bg-green-400"
+              aria-checked={welcome_message_enabled ? "true" : "false"}
+              aria-label={welcome_message_enabled ? "checked" : "unchecked"}
+            />
+          </fetcher.Form>
+        </div>
+      </div>
+      {welcomeMessageEdit ? (
+        <div className="w-96">
+          <Form method="post" action=".">
+            <fieldset disabled={transition.state === "submitting"}>
+              {actionData?.error ? (
+                <ValidationMessage
+                  isSubmitting={transition.state === "submitting"}
+                  error={actionData?.error}
+                />
+              ) : null}
+              <p>
+                <label>
+                  Welcome Message:
+                  <br />
+                  <textarea
+                    name="welcome_message"
+                    placeholder={welcome_message ?? ""}
+                    defaultValue={actionData?.values.welcome_message}
+                    className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
+                  />
+                </label>
+              </p>
+              <p className="relative">
+                <button
+                  type="submit"
+                  className="bg-blue-600 p-4 rounded-lg text-white absolute top-3 right-2 hover:bg-blue-700"
+                >
+                  {transition.state === "submitting" ? "Saving..." : "Save"}
+                </button>
+              </p>
+            </fieldset>
+          </Form>
+        </div>
+      ) : null}
     </div>
   );
 }
