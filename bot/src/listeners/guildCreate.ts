@@ -8,6 +8,15 @@ import type { Guild } from 'discord.js';
 })
 export class GuildCreateListener extends Listener {
   public override async run(guild: Guild): Promise<void> {
+    const owner = await guild.fetchOwner();
+
+    await axios.post('http://localhost:1212/user', null, {
+      params: {
+        id: owner.id,
+        username: owner.user.username
+      }
+    });
+
     await axios.post('http://localhost:1212/guild', null, {
       params: {
         id: guild.id,
