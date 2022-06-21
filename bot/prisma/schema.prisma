@@ -13,6 +13,8 @@ model User {
   playlists Playlist[]
   username  String
   guilds    Guild[]
+  reminders Reminder[]
+  timeZone  Int?
 }
 
 model Song {
@@ -43,19 +45,19 @@ model Playlist {
 }
 
 model Guild {
-  id     String   @id
-  name String
-  added  DateTime @default(now())
-  volume Int
+  id         String   @id
+  name       String
+  added      DateTime @default(now())
+  volume     Int
   notifyList String[]
-  ownerId String
-  owner   User     @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
 
   // Settings
-  disabledCommands String[] @map("disabled_commands")
-  logChannel String? @map("log_channel")
-  welcomeMessageChannel String? @map("welcome_message_channel")
-  welcomeMessage String? @map("welcome_message")
+  disabledCommands      String[] @map("disabled_commands")
+  logChannel            String?  @map("log_channel")
+  welcomeMessageChannel String?  @map("welcome_message_channel")
+  welcomeMessage        String?  @map("welcome_message")
   welcomeMessageEnabled Boolean? @default(false) @map("welcome_message_enabled")
 }
 
@@ -65,4 +67,15 @@ model TwitchNotify {
   live       Boolean  @default(false)
   channelIds String[]
   sent       Boolean
+}
+
+model Reminder {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  repeat      String?
+  event       String
+  description String?
+  dateTime    String
+  userId      String
+  user        User?    @relation(fields: [userId], references: [id])
 }
