@@ -10,7 +10,8 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'pat',
-  description: 'Replies with a random pat gif!'
+  description: 'Replies with a random pat gif!',
+  preconditions: ['isCommandDisabled']
 })
 export class PatCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

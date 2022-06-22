@@ -13,6 +13,7 @@ import type { Node, Player } from 'lavaclient';
   description: 'Enable/Disable Nightcore filter',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

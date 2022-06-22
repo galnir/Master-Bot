@@ -10,7 +10,7 @@ import axios from 'axios';
 @ApplyOptions<CommandOptions>({
   name: 'urban',
   description: 'Get definitions from urban dictonary',
-  preconditions: ['GuildOnly']
+  preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class UrbanCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

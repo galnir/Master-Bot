@@ -10,7 +10,12 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
   description: 'Create a custom playlist that you can play anytime',
-  preconditions: ['GuildOnly', 'userInDB', 'playlistNotDuplicate']
+  preconditions: [
+    'GuildOnly',
+    'isCommandDisabled',
+    'userInDB',
+    'playlistNotDuplicate'
+  ]
 })
 export class CreatePlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

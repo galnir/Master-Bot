@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Skip the current song playing',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

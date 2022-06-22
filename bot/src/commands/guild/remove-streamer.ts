@@ -14,7 +14,7 @@ import data from '../../config.json';
   name: 'remove-streamer',
   description: 'Add a Stream alert from your favorite Twitch streamer',
   requiredUserPermissions: 'MODERATE_MEMBERS',
-  preconditions: ['GuildOnly']
+  preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RemoveStreamerCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

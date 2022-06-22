@@ -13,6 +13,7 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
   description: 'Get a List of the Music Queue',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

@@ -9,7 +9,8 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'rockpaperscissors',
-  description: 'Play rock paper scissors with me!'
+  description: 'Play rock paper scissors with me!',
+  preconditions: ['isCommandDisabled']
 })
 export class RockPaperScissorsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'motivation',
-  description: 'Replies with a motivational quote!'
+  description: 'Replies with a motivational quote!',
+  preconditions: ['isCommandDisabled']
 })
 export class MotivationCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'fortune',
-  description: 'Replies with a fortune cookie tip!'
+  description: 'Replies with a fortune cookie tip!',
+  preconditions: ['isCommandDisabled']
 })
 export class FortuneCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

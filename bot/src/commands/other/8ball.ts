@@ -9,7 +9,8 @@ import * as fs from 'fs';
 
 @ApplyOptions<CommandOptions>({
   name: '8ball',
-  description: 'Get the answer to anything!'
+  description: 'Get the answer to anything!',
+  preconditions: ['isCommandDisabled']
 })
 export class EightBallCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

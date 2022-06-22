@@ -16,7 +16,7 @@ const genius = new GeniusLyrics(data.geniusLyricsAPI);
   name: 'lyrics',
   description:
     'Get the lyrics of any song or the lyrics of the currently playing song!',
-  preconditions: ['GuildOnly']
+  preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class LyricsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

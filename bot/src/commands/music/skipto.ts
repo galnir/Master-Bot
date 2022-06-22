@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Skip to a track in queue',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

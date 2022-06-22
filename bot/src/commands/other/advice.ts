@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'advice',
-  description: 'Get some advice!'
+  description: 'Get some advice!',
+  preconditions: ['isCommandDisabled']
 })
 export class AdviceCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

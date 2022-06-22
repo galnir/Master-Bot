@@ -11,7 +11,12 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'save-to-playlist',
   description: 'Save a song or a playlist to a custom playlist',
-  preconditions: ['GuildOnly', 'userInDB', 'playlistExists']
+  preconditions: [
+    'GuildOnly',
+    'isCommandDisabled',
+    'userInDB',
+    'playlistExists'
+  ]
 })
 export class SaveToPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

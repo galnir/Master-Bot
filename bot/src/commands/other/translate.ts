@@ -11,7 +11,7 @@ import translate from '@vitalets/google-translate-api';
   name: 'translate',
   description:
     'Translate from any language to any language using Google Translate',
-  preconditions: ['GuildOnly', 'validateLanguageCode']
+  preconditions: ['GuildOnly', 'isCommandDisabled', 'validateLanguageCode']
 })
 export class TranslateCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

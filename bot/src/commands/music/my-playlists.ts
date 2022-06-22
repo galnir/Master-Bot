@@ -11,7 +11,12 @@ import prisma from '../../lib/prisma';
 @ApplyOptions<CommandOptions>({
   name: 'my-playlists',
   description: "Display your custom playlists' names",
-  preconditions: ['GuildOnly', 'inVoiceChannel', 'userInDB']
+  preconditions: [
+    'GuildOnly',
+    'isCommandDisabled',
+    'inVoiceChannel',
+    'userInDB'
+  ]
 })
 export class MyPlaylistsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

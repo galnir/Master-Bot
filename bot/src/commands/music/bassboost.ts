@@ -13,6 +13,7 @@ import type { Node, Player } from 'lavaclient';
   description: 'Boost the bass of the playing track',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

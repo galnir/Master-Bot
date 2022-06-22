@@ -10,7 +10,8 @@ import { CommandInteraction, MessageEmbed, Constants } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'speedrun',
-  description: 'Look for the world record of a game!'
+  description: 'Look for the world record of a game!',
+  preconditions: ['isCommandDisabled']
 })
 export class SpeedRunCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

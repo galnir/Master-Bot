@@ -10,7 +10,8 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'hug',
-  description: 'Replies with a random hug gif!'
+  description: 'Replies with a random hug gif!',
+  preconditions: ['isCommandDisabled']
 })
 export class HugCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

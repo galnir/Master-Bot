@@ -12,7 +12,8 @@ import pkg from '../../../package.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'bot-status',
-  description: `Shows the current system status`
+  description: `Shows the current system status`,
+  preconditions: ['isCommandDisabled']
 })
 export class BotStatusCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

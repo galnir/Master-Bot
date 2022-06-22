@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Resume the music',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

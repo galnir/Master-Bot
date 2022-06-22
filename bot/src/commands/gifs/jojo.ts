@@ -10,12 +10,15 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'jojo',
-  description: 'Replies with a random jojo gif!'
+  description: 'Replies with a random jojo gif!',
+  preconditions: ['isCommandDisabled']
 })
 export class JojoCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=jojo&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=jojo&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url

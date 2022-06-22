@@ -13,6 +13,7 @@ import type { Node, Player } from 'lavaclient';
   description: 'Apply vaporwave on the playing track!',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

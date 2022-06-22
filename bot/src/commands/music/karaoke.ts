@@ -13,6 +13,7 @@ import type { Node, Player } from 'lavaclient';
   description: 'Turn the playing track to karaoke',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

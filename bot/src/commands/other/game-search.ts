@@ -11,12 +11,15 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
-  description: 'Search for video game information'
+  description: 'Search for video game information',
+  preconditions: ['isCommandDisabled']
 })
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     if (!data.rawgAPI)
-      return await interaction.reply(':x: Command is Disabled - Missing API Key');
+      return await interaction.reply(
+        ':x: Command is Disabled - Missing API Key'
+      );
     const title = interaction.options.getString('game', true);
     const filteredTitle = this.filterTitle(title);
 

@@ -10,12 +10,15 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'triggered',
-  description: 'Replies with a random triggered gif!'
+  description: 'Replies with a random triggered gif!',
+  preconditions: ['isCommandDisabled']
 })
 export class TriggeredCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=triggered&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=triggered&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url

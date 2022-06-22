@@ -10,12 +10,15 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'amongus',
-  description: 'Replies with a random Among Us gif!'
+  description: 'Replies with a random Among Us gif!',
+  preconditions: ['isCommandDisabled']
 })
 export class AmongUsCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=amongus&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=amongus&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url

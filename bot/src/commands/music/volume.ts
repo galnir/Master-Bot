@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Set the Volume',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

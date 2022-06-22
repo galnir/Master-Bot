@@ -38,6 +38,6 @@ export class IsCommandDisabled extends Precondition {
 
 declare module '@sapphire/framework' {
   export interface Preconditions {
-    inVoiceChannel: never;
+    isCommandDisabled: never;
   }
 }

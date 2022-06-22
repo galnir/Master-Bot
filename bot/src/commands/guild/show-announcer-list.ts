@@ -14,7 +14,7 @@ import data from '../../config.json';
 @ApplyOptions<CommandOptions>({
   name: 'show-announcer-list',
   description: 'Display the Guilds Twitch notification list',
-  preconditions: ['GuildOnly']
+  preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class ShowAnnouncerListCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

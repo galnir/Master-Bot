@@ -18,7 +18,8 @@ import {
 
 @ApplyOptions<CommandOptions>({
   name: 'help',
-  description: 'Get the Command List or add a command-name to get more info.'
+  description: 'Get the Command List or add a command-name to get more info.',
+  preconditions: ['isCommandDisabled']
 })
 export class HelpCommand extends Command {
   public override autocompleteRun(interaction: AutocompleteInteraction) {

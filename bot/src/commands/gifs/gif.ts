@@ -10,7 +10,8 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'gif',
-  description: 'Replies with a random gif meme!'
+  description: 'Replies with a random gif meme!',
+  preconditions: ['isCommandDisabled']
 })
 export class GifCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

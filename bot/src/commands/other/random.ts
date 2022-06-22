@@ -8,7 +8,8 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'random',
-  description: 'Generate a random number between two inputs!'
+  description: 'Generate a random number between two inputs!',
+  preconditions: ['isCommandDisabled']
 })
 export class RandomCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

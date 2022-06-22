@@ -16,7 +16,7 @@ import * as data from '../../config.json';
   name: 'add-streamer',
   description: 'Add a Stream alert from your favorite Twitch streamer',
   requiredUserPermissions: 'MODERATE_MEMBERS',
-  preconditions: ['GuildOnly']
+  preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class AddStreamerCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

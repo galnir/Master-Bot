@@ -11,7 +11,12 @@ import axios from 'axios';
 @ApplyOptions<CommandOptions>({
   name: 'display-playlist',
   description: 'Display a saved playlist',
-  preconditions: ['GuildOnly', 'userInDB', 'playlistExists']
+  preconditions: [
+    'GuildOnly',
+    'isCommandDisabled',
+    'userInDB',
+    'playlistExists'
+  ]
 })
 export class DisplayPlaylistCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

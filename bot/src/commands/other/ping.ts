@@ -8,7 +8,8 @@ import type { CommandInteraction } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'ping',
-  description: 'Replies with Pong!'
+  description: 'Replies with Pong!',
+  preconditions: ['isCommandDisabled']
 })
 export class PingCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

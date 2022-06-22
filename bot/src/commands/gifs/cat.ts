@@ -10,7 +10,8 @@ import * as data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'cat',
-  description: 'Replies with a cute kitty picture!'
+  description: 'Replies with a cute kitty picture!',
+  preconditions: ['isCommandDisabled']
 })
 export class CatCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

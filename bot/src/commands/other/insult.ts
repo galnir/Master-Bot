@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'insult',
-  description: 'Replies with a mean insult'
+  description: 'Replies with a mean insult',
+  preconditions: ['isCommandDisabled']
 })
 export class InsultCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

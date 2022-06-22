@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'trump',
-  description: 'Replies with a random Trump quote'
+  description: 'Replies with a random Trump quote',
+  preconditions: ['isCommandDisabled']
 })
 export class TrumpCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

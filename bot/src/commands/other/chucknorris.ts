@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'chucknorris',
-  description: 'Get a satirical fact about Chuck Norris!'
+  description: 'Get a satirical fact about Chuck Norris!',
+  preconditions: ['isCommandDisabled']
 })
 export class ChuckNorrisCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

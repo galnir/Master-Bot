@@ -9,7 +9,8 @@ import axios from 'axios';
 
 @ApplyOptions<CommandOptions>({
   name: 'kanye',
-  description: 'Replies with a random Kanye quote'
+  description: 'Replies with a random Kanye quote',
+  preconditions: ['isCommandDisabled']
 })
 export class KanyeCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {

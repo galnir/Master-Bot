@@ -15,6 +15,7 @@ import type { Song } from '../../lib/utils/queue/Song';
   description: 'Play any song or playlist from YouTube, Spotify and more!',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'inPlayerVoiceChannel',
     'userInDB'

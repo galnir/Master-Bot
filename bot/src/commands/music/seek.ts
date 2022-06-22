@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Seek to a desired point in a track',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

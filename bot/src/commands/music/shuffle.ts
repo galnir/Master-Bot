@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Shuffle the music queue',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'

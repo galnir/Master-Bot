@@ -10,7 +10,8 @@ import data from '../../config.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'twitch-status',
-  description: 'Check the status of your favorite streamer'
+  description: 'Check the status of your favorite streamer',
+  preconditions: ['isCommandDisabled']
 })
 export class TwitchStatusCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {

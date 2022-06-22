@@ -12,6 +12,7 @@ import { container } from '@sapphire/framework';
   description: 'Remove a track from the queue',
   preconditions: [
     'GuildOnly',
+    'isCommandDisabled',
     'inVoiceChannel',
     'playerIsPlaying',
     'inPlayerVoiceChannel'
