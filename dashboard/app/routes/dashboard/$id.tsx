@@ -47,8 +47,8 @@ export default function DashboardScreenIndex() {
           </div>
         )}
       </div>
-      <div className="min-w-[350px] border-r-2 border-gray-500">
-        <div className="p-8 overflow-auto">
+      <div className="min-w-[350px]">
+        <div className="p-8 fixed border-r-2 border-gray-500 h-full">
           <div className="mb-8">
             <Logo />
           </div>
