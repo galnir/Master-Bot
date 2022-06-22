@@ -14,7 +14,7 @@ export default async function buttonsCollector(message: Message, song: Song) {
   const collector = message.createMessageComponentCollector();
   if (!channel) return;
 
-  const maxLimit = Time.Minute * 2;
+  const maxLimit = Time.Minute * 30;
   let timer: NodeJS.Timer;
 
   let updateBar: NodeJS.Timer;
