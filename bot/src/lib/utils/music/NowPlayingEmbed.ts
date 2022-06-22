@@ -1,3 +1,4 @@
+import { container } from '@sapphire/framework';
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
@@ -31,17 +32,14 @@ export class NowPlayingEmbed {
     this.paused = paused;
   }
 
-  public NowPlayingEmbed(): MessageEmbed {
+  public async NowPlayingEmbed(): Promise<MessageEmbed> {
     let trackLength = this.timeString(
       this.millisecondsToTimeObject(this.length)
     );
-    if (!this.track.isSeekable) {
-      trackLength = 'Live Stream';
-      this.position = undefined;
-    }
+
     const durationText = this.track.isSeekable
       ? `:stopwatch: ${trackLength}`
-      : `:red_circle: ${trackLength}`;
+      : `:red_circle: Live Stream`;
     const userAvatar = this.track.requester?.avatar
       ? `https://cdn.discordapp.com/avatars/${this.track.requester?.id}/${this.track.requester?.avatar}.png`
       : this.track.requester?.defaultAvatarURL ??
@@ -50,6 +48,7 @@ export class NowPlayingEmbed {
     let embedColor: ColorResolvable;
     let sourceTxt: string;
     let sourceIcon: string;
+    let streamData;
 
     switch (this.track.sourceName) {
       case 'soundcloud': {
@@ -57,15 +56,30 @@ export class NowPlayingEmbed {
         sourceIcon =
           'https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png';
         embedColor = '#F26F23';
+
         break;
       }
+
       case 'twitch': {
         sourceTxt = 'Twitch';
         sourceIcon =
           'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
         embedColor = '#9146FF';
+        const twitch = container.client.twitch;
+        if (twitch.auth.access_token) {
+          try {
+            streamData = await twitch.api.getStream({
+              login: this.track.author.toLowerCase(),
+              token: twitch.auth.access_token
+            });
+          } catch {
+            streamData = undefined;
+          }
+        }
+
         break;
       }
+
       case 'youtube': {
         sourceTxt = 'YouTube';
         sourceIcon =
@@ -87,7 +101,7 @@ export class NowPlayingEmbed {
     if (vol > 50) volumeIcon = ':loud_sound: ';
     if (vol <= 50 && vol > 20) volumeIcon = ':sound: ';
 
-    let baseEmbed = new MessageEmbed()
+    const baseEmbed = new MessageEmbed()
       .setTitle(
         `${this.paused ? ':pause_button: ' : ':arrow_forward: '} ${
           this.track.title
@@ -120,14 +134,30 @@ export class NowPlayingEmbed {
         .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
     }
 
-    // song just started embed
-    if (
-      this.position == undefined ||
-      !this.track.isSeekable ||
-      this.track.isStream
-    ) {
-      return baseEmbed;
+    if (!this.track.isSeekable || this.track.isStream) {
+      if (streamData && this.track.sourceName == 'twitch') {
+        const game = `[${
+          streamData.game_name
+        }](https://www.twitch.tv/directory/game/${encodeURIComponent(
+          streamData.game_name
+        )})`;
+        const upTime = this.timeString(
+          this.millisecondsToTimeObject(
+            Date.now() - new Date(streamData.started_at).getTime()
+          )
+        );
+        return baseEmbed
+          .setDescription(
+            `**Game**: ${game}\n**Viewers**: ${streamData.viewer_count}\n**Uptime**: ${upTime}`
+          )
+          .setImage(
+            streamData.thumbnail_url.replace('{width}x{height}', '852x480')
+          );
+      } else return baseEmbed;
     }
+
+    // song just started embed
+    if (this.position == undefined) this.position = 0;
     const bar = progressbar.splitBar(this.length, this.position, 22)[0];
     baseEmbed.setDescription(
       `${this.timeString(

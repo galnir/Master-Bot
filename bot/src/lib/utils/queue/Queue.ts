@@ -14,8 +14,6 @@ import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
-// import { NowPlayingEmbed } from '../music/NowPlayingEmbed';
-// import { embedButtons } from '../music/ButtonHandler';
 import prisma from '../../prisma';
 
 export enum LoopType {
@@ -143,7 +141,6 @@ export class Queue {
   public async start(replaying = false): Promise<boolean> {
     const np = await this.nowPlaying();
     if (!np) return this.next();
-    // const tracks = await this.tracks();
 
     try {
       this.player.setVolume(await this.getVolume());
@@ -152,22 +149,6 @@ export class Queue {
       console.error(err);
       await this.leave();
     }
-
-    // Moved Embed to the `musicSongPlayMessage` stops Double Posting
-    // if (this.skipped) {
-    // const NowPlaying = new NowPlayingEmbed(
-    //   np.song,
-    //   0,
-    //   np.song.length ?? 0,
-    //   await this.getVolume(),
-    //   tracks,
-    //   tracks.at(-1),
-    //   this.paused
-    // );
-    // await embedButtons(NowPlaying.NowPlayingEmbed(), this, np.song);
-
-    //   this.skipped = false;
-    // }
 
     this.client.emit(
       replaying ? 'musicSongReplay' : 'musicSongPlay',
@@ -269,13 +250,20 @@ export class Queue {
     await this.player.setVolume(value);
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
+
+    const owner = await this.guild.fetchOwner();
     await prisma.guild.upsert({
       where: { id: this.guildID },
       create: {
         id: this.guildID,
         name: this.guild.name,
-        ownerId: this.guild.ownerId,
-        volume: this.player.volume
+        volume: this.player.volume,
+        owner: {
+          connectOrCreate: {
+            where: { id: owner.id },
+            create: { id: owner.id, username: owner.user.username }
+          }
+        }
       },
       update: { volume: this.player.volume }
     });
@@ -368,7 +356,7 @@ export class Queue {
 
     // If not skipped (song ended) and is replaying, replay.
     if (!skipped && replaying) {
-      return this.start(true);
+      return await this.start(true);
     }
 
     // If it was skipped, set replay back to false.

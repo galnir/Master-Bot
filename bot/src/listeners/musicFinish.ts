@@ -1,5 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { container, Listener, ListenerOptions } from '@sapphire/framework';
+import { Listener, ListenerOptions, container } from '@sapphire/framework';
 import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
 import type { Queue } from '../lib/utils/queue/Queue';
 import { inactivityTime } from '../lib/utils/music/handleOptions';
@@ -15,7 +15,6 @@ export class MusicFinishListener extends Listener {
     client.leaveTimers[queue.player.guildId] = setTimeout(async () => {
       if (channel) queue.client.emit('musicFinishNotify', channel);
       await queue.leave();
-      await queue.clear();
     }, inactivityTime());
   }
 }
