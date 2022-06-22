@@ -55,10 +55,15 @@ export default function DashboardScreenIndex() {
           <div className="bg-black text-center text-white font-semibold py-2 mb-12">
             <p>{guild.name}</p>
           </div>
-          <div className="hover:text-slate-300">
-            <div>
+          <div className="flex flex-col gap-8">
+            <div className="hover:text-slate-300">
               <Link to="welcome">
                 <p>Welcome Message</p>
+              </Link>
+            </div>
+            <div className="hover:text-slate-300">
+              <Link to="commands">
+                <p>Commands</p>
               </Link>
             </div>
           </div>

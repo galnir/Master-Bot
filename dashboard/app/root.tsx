@@ -38,7 +38,6 @@ function Document({
         <Links />
       </head>
       <body className="bg-slate-900">
-        {children}
         <Outlet />
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}

@@ -55,7 +55,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData();
 
   const channelID = formData.get("channelID");
-  console.log(channelID);
   if (channelID) {
     await fetch("http://localhost:1212/guild?id=" + id, {
       method: "PATCH",

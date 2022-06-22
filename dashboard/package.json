@@ -12,6 +12,7 @@
     "start": "remix-serve build"
   },
   "dependencies": {
+    "@headlessui/react": "^1.6.5",
     "@prisma/client": "^3.15.0",
     "@reach/menu-button": "^0.17.0",
     "@remix-run/node": "^1.5.1",
