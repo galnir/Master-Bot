@@ -1,3 +1,4 @@
+import { Switch } from "@headlessui/react";
 import {
   type ActionFunction,
   json,
@@ -51,6 +52,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
+  console.log("in action");
   const { id } = params;
   const formData = await request.formData();
 
@@ -65,13 +67,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const entry = formData.get("welcome_toggle");
+  console.log("entry is", entry);
   if (entry) {
-    // @ts-ignore
-    const entryObject = JSON.parse(entry);
-
     await fetch("http://localhost:1212/guild?id=" + id, {
       method: "PATCH",
-      body: JSON.stringify({ welcomeMessageEnabled: entryObject.toggle }),
+      body: JSON.stringify({ welcomeMessageEnabled: entry === "true" }),
     });
 
     return null;
@@ -115,33 +115,31 @@ export default function WelcomeScreen() {
         <h3 className="my-10">Welcome new users with a custom message</h3>
         <div className="flex items-center gap-5">
           <span>{welcome_message_enabled ? "Enabled" : "Disabled"}</span>
-          <fetcher.Form method="post">
-            <input
-              type="hidden"
-              name="welcome_toggle"
-              value={JSON.stringify({ toggle: welcomeMessageEdit })}
+          <Switch
+            checked={welcome_message_enabled}
+            onChange={() => {
+              fetcher.submit(
+                {
+                  welcome_toggle: JSON.stringify(!welcome_message_enabled),
+                },
+                { method: "patch", action: `/dashboard/${guild_id}/welcome` }
+              );
+              setWelcomeMessageEdit(!welcome_message_enabled);
+            }}
+            className={`${
+              welcome_message_enabled ? "bg-blue-600" : "bg-gray-400"
+            } relative inline-flex h-6 w-11 items-center rounded-full`}
+          >
+            <span className="sr-only">
+              ${welcome_message_enabled ? "Enable" : "Disable"} welcome message
+            </span>
+            <span
+              aria-hidden="true"
+              className={`${
+                welcome_message_enabled ? "translate-x-6" : "translate-x-1"
+              } inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out`}
             />
-            <button
-              role="checkbox"
-              onClick={() => setWelcomeMessageEdit(!welcomeMessageEdit)}
-              aria-checked={welcome_message_enabled ? "true" : "false"}
-              aria-label={welcome_message_enabled ? "checked" : "unchecked"}
-            >
-              <label
-                htmlFor="default-toggle"
-                className="inline-flex relative items-center cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  value=""
-                  id="default-toggle"
-                  defaultChecked={welcomeMessageEdit}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              </label>
-            </button>
-          </fetcher.Form>
+          </Switch>
         </div>
       </div>
       {welcomeMessageEdit ? (
