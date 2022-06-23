@@ -56,7 +56,6 @@ export class NowPlayingEmbed {
         sourceIcon =
           'https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png';
         embedColor = '#F26F23';
-
         break;
       }
 
@@ -76,7 +75,6 @@ export class NowPlayingEmbed {
             streamData = undefined;
           }
         }
-
         break;
       }
 
@@ -126,7 +124,7 @@ export class NowPlayingEmbed {
       baseEmbed
         .addField(
           'Queue',
-          `:notes:  ${this.queue.length} ${
+          `:notes: ${this.queue.length} ${
             this.queue.length == 1 ? 'Song' : 'Songs'
           }`,
           true
@@ -148,7 +146,11 @@ export class NowPlayingEmbed {
         );
         return baseEmbed
           .setDescription(
-            `**Game**: ${game}\n**Viewers**: ${streamData.viewer_count}\n**Uptime**: ${upTime}`
+            `**Game**: ${game}\n**Viewers**: ${
+              streamData.viewer_count
+            }\n**Uptime**: ${upTime}\n **Started**: <t:${Math.floor(
+              new Date(streamData.started_at).getTime() / 1000
+            )}:t>`
           )
           .setImage(
             streamData.thumbnail_url.replace('{width}x{height}', '852x480') +

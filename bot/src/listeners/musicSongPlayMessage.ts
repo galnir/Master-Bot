@@ -15,7 +15,7 @@ export class MusicSongPlayMessageListener extends Listener {
     const tracks = await queue.tracks();
     const NowPlaying = new NowPlayingEmbed(
       track,
-      track.position,
+      queue.player.accuratePosition,
       track.length ?? 0,
       queue.player.volume,
       tracks,
