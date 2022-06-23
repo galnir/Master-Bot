@@ -151,7 +151,8 @@ export class NowPlayingEmbed {
             `**Game**: ${game}\n**Viewers**: ${streamData.viewer_count}\n**Uptime**: ${upTime}`
           )
           .setImage(
-            streamData.thumbnail_url.replace('{width}x{height}', '852x480')
+            streamData.thumbnail_url.replace('{width}x{height}', '852x480') +
+              `?${new Date(streamData.started_at).getTime()}`
           );
       } else return baseEmbed;
     }
