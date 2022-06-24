@@ -57,7 +57,7 @@ export class GamesCommand extends Command {
           if (response.customId === `${interaction.id}${player1.id}-Yes`) {
             if (playersInGame.has(response.user.id)) {
               interaction.followUp({
-                content: `:x: You are already playing a game is already playing`,
+                content: `:x: You are already playing a game.`,
                 ephemeral: true
               });
               return;
