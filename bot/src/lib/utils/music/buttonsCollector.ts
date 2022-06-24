@@ -1,3 +1,4 @@
+import { Time } from '@sapphire/time-utilities';
 import type { Message, MessageComponentInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
 import type { Queue } from '../queue/Queue';
@@ -13,34 +14,34 @@ export default async function buttonsCollector(message: Message, song: Song) {
   const collector = message.createMessageComponentCollector();
   if (!channel) return;
 
-  const maxLimit = 1.8e6; // 30 minutes
+  const maxLimit = Time.Minute * 30;
   let timer: NodeJS.Timer;
 
   let updateBar: NodeJS.Timer;
-  if (song.isSeekable) {
-    const tracks = await queue.tracks();
-    updateBar = setInterval(async () => {
-      if (!queue.player) return clearInterval(updateBar);
-      const NowPlaying = new NowPlayingEmbed(
-        song,
-        queue.player.accuratePosition,
-        queue.player.trackData?.length ?? 0,
-        queue.player.volume,
-        tracks,
-        tracks.at(-1),
-        queue.paused
-      );
-      try {
-        await message.edit({
-          embeds: [NowPlaying.NowPlayingEmbed()]
-        });
-      } catch (error) {
-        console.log(error);
-        clearInterval(updateBar);
-      }
-    }, song.length / 22 || 30 * 1000);
-    updateBar;
-  }
+  const updateTick = song.isSeekable
+    ? Math.floor(song.length / 22)
+    : 60 * Time.Second;
+
+  const tracks = await queue.tracks();
+  updateBar = setInterval(async () => {
+    if (!queue.player) return clearInterval(updateBar);
+    const NowPlaying = new NowPlayingEmbed(
+      song,
+      queue.player.accuratePosition,
+      queue.player.trackData?.length ?? 0,
+      queue.player.volume,
+      tracks,
+      tracks.at(-1),
+      queue.paused
+    );
+    try {
+      await message.edit({
+        embeds: [await NowPlaying.NowPlayingEmbed()]
+      });
+    } catch (error) {
+      clearInterval(updateBar);
+    }
+  }, updateTick);
 
   collector.on('collect', async (i: MessageComponentInteraction) => {
     if (!message.member?.voice.channel?.members.has(i.user.id))
@@ -49,54 +50,45 @@ export default async function buttonsCollector(message: Message, song: Song) {
         ephemeral: true
       });
 
-    let paused;
-
     if (i.customId === 'playPause') {
-      clearTimeout(timer);
-
       if (queue.paused) {
         await queue.resume();
-        paused = false;
         clearTimeout(client.leaveTimers[queue.guildID]!);
       } else {
         client.leaveTimers[queue.guildID] = setTimeout(async () => {
-          channel.send(':zzz: Leaving due to inactivity');
+          await channel.send(':zzz: Leaving due to inactivity');
           await queue.leave();
+          clearInterval(updateBar);
         }, maxLimit);
-
-        timer = setTimeout(async () => {
-          await queue.leave();
-          await queue.clear();
-        }, maxLimit);
-
         await queue.pause();
-        paused = true;
       }
+
       const tracks = await queue.tracks();
       const NowPlaying = new NowPlayingEmbed(
         song,
         queue.player.accuratePosition,
         queue.player.trackData?.length ?? 0,
-        await queue.getVolume(),
+        queue.player.volume,
         tracks,
         tracks.at(-1),
-        paused
+        queue.player.paused
       );
-      timer;
       collector.empty();
-      await i.update({
-        embeds: [NowPlaying.NowPlayingEmbed()]
+      return await i.update({
+        embeds: [await NowPlaying.NowPlayingEmbed()]
       });
     }
     if (i.customId === 'stop') {
-      await i.update('Leaving');
-      await queue.leave();
       clearTimeout(timer);
+      clearInterval(updateBar);
+      await queue.leave();
+      return;
     }
     if (i.customId === 'next') {
-      await i.update('Skipping');
-      await queue.next({ skipped: true });
       clearTimeout(timer);
+      clearInterval(updateBar);
+      await queue.next({ skipped: true });
+      return;
     }
     if (i.customId === 'volumeUp') {
       const currentVolume = await queue.getVolume();
@@ -107,16 +99,16 @@ export default async function buttonsCollector(message: Message, song: Song) {
         song,
         queue.player.accuratePosition,
         queue.player.trackData?.length ?? 0,
-        await queue.getVolume(),
+        queue.player.volume,
         tracks,
         tracks.at(-1),
-        paused
+        queue.player.paused
       );
-
       collector.empty();
       await i.update({
-        embeds: [NowPlaying.NowPlayingEmbed()]
+        embeds: [await NowPlaying.NowPlayingEmbed()]
       });
+      return;
     }
     if (i.customId === 'volumeDown') {
       const currentVolume = await queue.getVolume();
@@ -127,13 +119,14 @@ export default async function buttonsCollector(message: Message, song: Song) {
         song,
         queue.player.accuratePosition,
         queue.player.trackData?.length ?? 0,
-        await queue.getVolume(),
+        queue.player.volume,
         tracks,
         tracks.at(-1),
-        paused
+        queue.player.paused
       );
       collector.empty();
-      await i.update({ embeds: [NowPlaying.NowPlayingEmbed()] });
+      await i.update({ embeds: [await NowPlaying.NowPlayingEmbed()] });
+      return;
     }
   });
 

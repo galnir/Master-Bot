@@ -242,6 +242,39 @@ export class TwitchAPI {
     });
   };
 
+  getStream = async ({
+    login,
+    token
+  }: {
+    login: string;
+    token: string;
+  }): Promise<TwitchStream> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        if (
+          !this.client_id ||
+          !this.client_secret ||
+          !this._auth ||
+          !this._helix
+        )
+          return;
+
+        const response: TwitchStreamsResponse = await this._helix.get(
+          `/streams?user_login=${login}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        resolve(response.data[0]);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
   getStreamingUsers = async ({
     user_ids = [],
     user_logins = [],

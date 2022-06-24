@@ -49,7 +49,6 @@ export class Song implements TrackInfo {
       this.uri = track.info.uri;
       this.isSeekable = track.info.isSeekable;
       this.sourceName = track.info.sourceName;
-      this.thumbnail = `https://img.youtube.com/vi/${track.info.identifier}/hqdefault.jpg`;
     } else {
       const decoded = decode(this.track);
       this.length = Number(decoded.length);
@@ -60,11 +59,34 @@ export class Song implements TrackInfo {
       this.title = filter.filterField('song', decoded.title);
       this.uri = decoded.uri!;
       this.isSeekable = !decoded.isStream;
-      this.sourceName = decoded.source!;
-      this.thumbnail = `https://img.youtube.com/vi/${decoded.identifier}/hqdefault.jpg`;
+      this.sourceName = decoded.source;
+    }
+
+    // Thumbnails
+    switch (this.sourceName) {
+      case 'soundcloud': {
+        this.thumbnail =
+          'https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png'; // SoundCloud Logo
+        break;
+      }
+
+      case 'youtube': {
+        this.thumbnail = `https://img.youtube.com/vi/${this.identifier}/hqdefault.jpg`; // Track Thumbnail
+        break;
+      }
+      case 'twitch': {
+        this.thumbnail = 'https://i.imgur.com/nO3f4jq.png'; // large Twitch Logo
+        break;
+      }
+
+      default: {
+        this.thumbnail = 'https://cdn.discordapp.com/embed/avatars/1.png'; // Discord Default Avatar
+        break;
+      }
     }
   }
 }
+
 interface RequesterInfo {
   avatar?: string | null;
   defaultAvatarURL?: string;

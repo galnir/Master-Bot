@@ -12,11 +12,10 @@ export class MusicSongPlayMessageListener extends Listener {
   public override async run(channel: TextChannel, track: Song): Promise<void> {
     const { client } = container;
     const queue = client.music.queues.get(channel.guild.id);
-
     const tracks = await queue.tracks();
     const NowPlaying = new NowPlayingEmbed(
       track,
-      track.position,
+      queue.player.accuratePosition,
       track.length ?? 0,
       queue.player.volume,
       tracks,
@@ -24,11 +23,6 @@ export class MusicSongPlayMessageListener extends Listener {
       queue.paused
     );
 
-    await embedButtons(
-      NowPlaying.NowPlayingEmbed(),
-      queue,
-      track
-      // `Now playing: ${track.title}`
-    );
+    await embedButtons(await NowPlaying.NowPlayingEmbed(), queue, track);
   }
 }
