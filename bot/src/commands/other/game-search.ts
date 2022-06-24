@@ -24,7 +24,7 @@ export class GameSearchCommand extends Command {
     const filteredTitle = this.filterTitle(title);
 
     try {
-      var data = await this.getGameDetails(filteredTitle);
+      var game = await this.getGameDetails(filteredTitle);
     } catch (error: any) {
       return await interaction.reply(error);
     }
@@ -33,81 +33,84 @@ export class GameSearchCommand extends Command {
 
     const firstPageTuple: string[] = []; // releaseDate, esrbRating, userRating
 
-    if (data.tba) {
+    if (game.tba) {
       firstPageTuple.push('TBA');
-    } else if (!data.released) {
+    } else if (!game.released) {
       firstPageTuple.push('None Listed');
     } else {
-      firstPageTuple.push(data.released);
+      firstPageTuple.push(game.released);
     }
 
-    if (!data.esrb_rating) {
+    if (!game.esrb_rating) {
       firstPageTuple.push('None Listed');
     } else {
-      firstPageTuple.push(data.esrb_rating.name);
+      firstPageTuple.push(game.esrb_rating.name);
     }
 
-    if (!data.rating) {
+    if (!game.rating) {
       firstPageTuple.push('None Listed');
     } else {
-      firstPageTuple.push(data.rating + '/5');
+      firstPageTuple.push(game.rating + '/5');
     }
 
     PaginatedEmbed.addPageEmbed(embed =>
       embed
-        .setTitle(`Game info: ${data.name}`)
+        .setTitle(`Game Info: ${game.name}`)
         .setDescription(
-          '**Game Description**\n' + data.description_raw.slice(0, 2000) + '...'
+          '>>> ' +
+            '**Game Description**\n' +
+            game.description_raw.slice(0, 2000) +
+            '...'
         )
-        .setColor('#b5b5b5')
-        .setThumbnail(data.background_image)
-        .addField('Released', firstPageTuple[0], true)
-        .addField('ESRB Rating', firstPageTuple[1], true)
-        .addField('Score', firstPageTuple[2], true)
+        .setColor('#B5B5B5')
+        .setThumbnail(game.background_image)
+        .addField('Released', '> ' + firstPageTuple[0], true)
+        .addField('ESRB Rating', '> ' + firstPageTuple[1], true)
+        .addField('Score', '> ' + firstPageTuple[2], true)
         .setTimestamp()
     );
 
     const developerArray: string[] = [];
-    if (data.developers.length) {
-      for (let i = 0; i < data.developers.length; ++i) {
-        developerArray.push(data.developers[i].name);
+    if (game.developers.length) {
+      for (let i = 0; i < game.developers.length; ++i) {
+        developerArray.push(game.developers[i].name);
       }
     } else {
       developerArray.push('None Listed');
     }
 
     const publisherArray: string[] = [];
-    if (data.publishers.length) {
-      for (let i = 0; i < data.publishers.length; ++i) {
-        publisherArray.push(data.publishers[i].name);
+    if (game.publishers.length) {
+      for (let i = 0; i < game.publishers.length; ++i) {
+        publisherArray.push(game.publishers[i].name);
       }
     } else {
       publisherArray.push('None Listed');
     }
 
     const platformArray: string[] = [];
-    if (data.platforms.length) {
-      for (let i = 0; i < data.platforms.length; ++i) {
-        platformArray.push(data.platforms[i].platform.name);
+    if (game.platforms.length) {
+      for (let i = 0; i < game.platforms.length; ++i) {
+        platformArray.push(game.platforms[i].platform.name);
       }
     } else {
       platformArray.push('None Listed');
     }
 
     const genreArray: string[] = [];
-    if (data.genres.length) {
-      for (let i = 0; i < data.genres.length; ++i) {
-        genreArray.push(data.genres[i].name);
+    if (game.genres.length) {
+      for (let i = 0; i < game.genres.length; ++i) {
+        genreArray.push(game.genres[i].name);
       }
     } else {
       genreArray.push('None Listed');
     }
 
     const retailerArray: string[] = [];
-    if (data.stores.length) {
-      for (let i = 0; i < data.stores.length; ++i) {
+    if (game.stores.length) {
+      for (let i = 0; i < game.stores.length; ++i) {
         retailerArray.push(
-          `[${data.stores[i].store.name}](${data.stores[i].url})`
+          `[${game.stores[i].store.name}](${game.stores[i].url})`
         );
       }
     } else {
@@ -116,36 +119,39 @@ export class GameSearchCommand extends Command {
 
     PaginatedEmbed.addPageEmbed(embed =>
       embed
-        .setTitle(`Game info: ${data.name}`)
+        .setTitle(`Game Info: ${game.name}`)
         .setColor('#b5b5b5')
-        .setThumbnail(data.background_image_additional ?? data.background_image)
+        .setThumbnail(game.background_image_additional ?? game.background_image)
         // Row 1
         .addField(
-          'Developer(s)',
-          developerArray.toString().replace(/,/g, ', '),
+          developerArray.length == 1 ? 'Developer' : 'Developers',
+          '> ' + developerArray.toString().replace(/,/g, ', '),
           true
         )
         .addField(
-          'Publisher(s)',
-          publisherArray.toString().replace(/,/g, ', '),
+          publisherArray.length == 1 ? 'Publisher' : 'Publishers',
+          '> ' + publisherArray.toString().replace(/,/g, ', '),
           true
         )
         .addField(
-          'Platform(s)',
-          platformArray.toString().replace(/,/g, ', '),
+          platformArray.length == 1 ? 'Platform' : 'Platforms',
+          '> ' + platformArray.toString().replace(/,/g, ', '),
           true
         )
         // Row 2
-        .addField('Genre(s)', genreArray.toString().replace(/,/g, ', '), true)
         .addField(
-          'Retailer(s)',
-          retailerArray.toString().replace(/,/g, ', ').replace(/`/g, '')
+          genreArray.length == 1 ? 'Genre' : 'Genres',
+          '> ' + genreArray.toString().replace(/,/g, ', '),
+          true
+        )
+        .addField(
+          retailerArray.length == 1 ? 'Retailer' : 'Retailers',
+          '> ' + retailerArray.toString().replace(/,/g, ', ').replace(/`/g, '')
         )
         .setTimestamp()
     );
-
-    // await interaction.reply('');
-    // @ts-ignore
+    if (PaginatedEmbed.actions.size > 0)
+      PaginatedEmbed.actions.delete('@sapphire/paginated-messages.goToPage');
     return PaginatedEmbed.run(interaction);
   }
 
@@ -175,7 +181,9 @@ export class GameSearchCommand extends Command {
 
   private getGameDetails(query: string): Promise<any> {
     return new Promise(async function (resolve, reject) {
-      const url = `https://api.rawg.io/api/games/${query}?key=${data.rawgAPI}`;
+      const url = `https://api.rawg.io/api/games/${encodeURIComponent(
+        query
+      )}?key=${data.rawgAPI}`;
       try {
         const response = await axios.get(url);
         if (response.status === 429) {
@@ -191,24 +199,24 @@ export class GameSearchCommand extends Command {
         }
         if (response.status !== 200) {
           reject(
-            ':x: There was a problem getting data from the API, make sure you entered a valid game tittle'
+            ':x: There was a problem getting game from the API, make sure you entered a valid game tittle'
           );
         }
 
-        let data = response.data;
-        if (data.redirect) {
+        let body = response.data;
+        if (body.redirect) {
           const redirect = await axios.get(
-            `https://api.rawg.io/api/games/${data.slug}?key=${data.rawgAPI}`
+            `https://api.rawg.io/api/games/${body.slug}?key=${data.rawgAPI}`
           );
-          data = redirect.data;
+          body = redirect.data;
         }
         // 'id' is the only value that must be present to all valid queries
-        if (!data.id) {
+        if (!body.id) {
           reject(
             ':x: There was a problem getting data from the API, make sure you entered a valid game title'
           );
         }
-        resolve(data);
+        resolve(body);
       } catch (e) {
         console.error(e);
         reject(
