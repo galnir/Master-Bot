@@ -292,6 +292,7 @@ export class Queue {
       clearTimeout(this.client.leaveTimers[this.player.guildId]);
       delete this.client.leaveTimers[this.player.guildId];
     }
+    if (!this.player) return;
     await this.player.disconnect();
     await this.destroyPlayer();
     await this.setTextChannelID(null);

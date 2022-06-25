@@ -11,6 +11,7 @@ export class MusicSongSkipNotifyListener extends Listener {
     interaction: CommandInteraction,
     track: Song
   ): Promise<void> {
+    if (!track) return;
     await interaction.reply({ content: `${track.title} has been skipped.` });
   }
 }
