@@ -82,11 +82,13 @@ export class GamesCommand extends Command {
             embeds: [invite.gameInviteEmbed()]
           });
           if (response.customId === `${interaction.id}${player1.id}-Start`) {
-            if (accepted.length > 1) {
-              playerMap.forEach((player: User) =>
-                playersInGame.set(player.id, player)
-              );
-              return inviteCollector.stop('start-game');
+            if (playerMap.has(response.user.id)) {
+              if (accepted.length > 1) {
+                playerMap.forEach((player: User) =>
+                  playersInGame.set(player.id, player)
+                );
+                return inviteCollector.stop('start-game');
+              }
             }
           }
         });
