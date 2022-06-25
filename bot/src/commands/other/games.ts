@@ -51,16 +51,22 @@ export class GamesCommand extends Command {
           });
         inviteCollector?.on('collect', async response => {
           if (response.customId === `${interaction.id}${player1.id}-No`) {
-            playerMap.delete(response.user.id);
+            if (response.user.id !== player1.id) {
+              playerMap.delete(response.user.id);
+            } else {
+              await interaction.followUp({
+                content: ':x: You started the invite.',
+                ephemeral: true
+              });
+            }
           }
 
           if (response.customId === `${interaction.id}${player1.id}-Yes`) {
             if (playersInGame.has(response.user.id)) {
-              interaction.followUp({
+              await interaction.followUp({
                 content: `:x: You are already playing a game.`,
                 ephemeral: true
               });
-              return;
             }
 
             if (!playerMap.has(response.user.id)) {
