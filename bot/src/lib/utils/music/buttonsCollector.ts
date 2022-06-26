@@ -17,32 +17,6 @@ export default async function buttonsCollector(message: Message, song: Song) {
   const maxLimit = Time.Minute * 30;
   let timer: NodeJS.Timer;
 
-  let updateBar: NodeJS.Timer;
-  const updateTick = song.isSeekable
-    ? Math.floor(song.length / 22)
-    : 60 * Time.Second;
-
-  const tracks = await queue.tracks();
-  updateBar = setInterval(async () => {
-    if (!queue.player) return clearInterval(updateBar);
-    const NowPlaying = new NowPlayingEmbed(
-      song,
-      queue.player.accuratePosition,
-      queue.player.trackData?.length ?? 0,
-      queue.player.volume,
-      tracks,
-      tracks.at(-1),
-      queue.paused
-    );
-    try {
-      await message.edit({
-        embeds: [await NowPlaying.NowPlayingEmbed()]
-      });
-    } catch (error) {
-      clearInterval(updateBar);
-    }
-  }, updateTick);
-
   collector.on('collect', async (i: MessageComponentInteraction) => {
     if (!message.member?.voice.channel?.members.has(i.user.id))
       return await i.reply({
@@ -58,7 +32,6 @@ export default async function buttonsCollector(message: Message, song: Song) {
         client.leaveTimers[queue.guildID] = setTimeout(async () => {
           await channel.send(':zzz: Leaving due to inactivity');
           await queue.leave();
-          clearInterval(updateBar);
         }, maxLimit);
         await queue.pause();
       }
@@ -80,13 +53,11 @@ export default async function buttonsCollector(message: Message, song: Song) {
     }
     if (i.customId === 'stop') {
       clearTimeout(timer);
-      clearInterval(updateBar);
       await queue.leave();
       return;
     }
     if (i.customId === 'next') {
       clearTimeout(timer);
-      clearInterval(updateBar);
       await queue.next({ skipped: true });
       return;
     }
@@ -132,7 +103,6 @@ export default async function buttonsCollector(message: Message, song: Song) {
 
   collector.on('end', async () => {
     clearTimeout(timer);
-    clearInterval(updateBar);
   });
 
   return collector;
