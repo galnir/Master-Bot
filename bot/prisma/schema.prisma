@@ -57,6 +57,18 @@ model Guild {
   welcomeMessageChannel String? @map("welcome_message_channel")
   welcomeMessage String? @map("welcome_message")
   welcomeMessageEnabled Boolean? @default(false) @map("welcome_message_enabled")
+
+  // Temp Channels
+  hub String?
+  hubChannel String? @map("hub_channel") // The channel that users enter to get redirected
+  tempChannels TempChannel[]
+}
+
+model TempChannel {
+  id String @id
+  guildId String
+  guild Guild @relation(fields: [guildId], references: [id])
+  ownerId String @unique
 }
 
 model TwitchNotify {
