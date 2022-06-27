@@ -66,6 +66,11 @@ export default function DashboardScreenIndex() {
                 <p>Commands</p>
               </Link>
             </div>
+            <div className="hover:text-slate-300">
+              <Link to="temporary-channels">
+                <p>Temporary Channels</p>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

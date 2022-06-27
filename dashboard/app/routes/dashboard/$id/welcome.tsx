@@ -52,7 +52,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 };
 
 export const action: ActionFunction = async ({ request, params }) => {
-  console.log("in action");
   const { id } = params;
   const formData = await request.formData();
 
@@ -67,7 +66,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const entry = formData.get("welcome_toggle");
-  console.log("entry is", entry);
   if (entry) {
     await fetch("http://localhost:1212/guild?id=" + id, {
       method: "PATCH",
