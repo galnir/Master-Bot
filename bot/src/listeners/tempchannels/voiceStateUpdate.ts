@@ -1,6 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
-import type { VoiceState } from 'discord.js';
+import type { VoiceChannel, VoiceState } from 'discord.js';
 import prisma from '../../lib/prisma';
 
 @ApplyOptions<ListenerOptions>({
@@ -70,19 +70,23 @@ export class VoiceStateUpdateListener extends Listener {
         });
 
         await newState.member.voice.setChannel(channel);
-      }
-    } else if (!newState.channelId) {
-      // user left hub channel, delete his temp channel
+      } else {
+        const tempChannel = await prisma.tempChannel.findFirst({
+          where: {
+            ownerId: newState.member.id
+          }
+        });
+        if (!tempChannel) return;
 
-      const tempChannel = await prisma.tempChannel.findFirst({
-        where: {
-          ownerId: oldState.member?.id
-        }
-      });
+        if (tempChannel.id === newState.channelId) return;
 
-      if (tempChannel) {
+        const channel = (await newState.guild.channels.fetch(
+          tempChannel.id
+        )) as VoiceChannel;
+        if (!channel) return;
+
         Promise.all([
-          oldState.channel?.delete(),
+          channel.delete(),
           prisma.tempChannel.delete({
             where: {
               id: tempChannel.id
@@ -90,6 +94,28 @@ export class VoiceStateUpdateListener extends Listener {
           })
         ]);
       }
+    } else if (!newState.channelId) {
+      // user left hub channel, delete his temp channel
+      deleteChannel(oldState);
     }
+  }
+}
+
+async function deleteChannel(state: VoiceState) {
+  const tempChannel = await prisma.tempChannel.findFirst({
+    where: {
+      ownerId: state.member?.id
+    }
+  });
+
+  if (tempChannel) {
+    Promise.all([
+      state.channel?.delete(),
+      prisma.tempChannel.delete({
+        where: {
+          id: tempChannel.id
+        }
+      })
+    ]);
   }
 }
