@@ -52,7 +52,7 @@ export default function DashboardScreenIndex() {
           <div className="mb-8">
             <Logo />
           </div>
-          <div className="bg-black text-center text-white font-semibold py-2 mb-12">
+          <div className="bg-black text-center text-white font-semibold py-2 mb-12 rounded-xl">
             <p>{guild.name}</p>
           </div>
           <div className="flex flex-col gap-8">
