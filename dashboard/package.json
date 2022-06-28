@@ -20,6 +20,7 @@
     "@remix-run/serve": "^1.5.1",
     "discord-api-types": "^0.34.0",
     "discord.js": "^13.8.0",
+    "framer-motion": "^6.3.16",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "remix-auth": "^3.2.2",

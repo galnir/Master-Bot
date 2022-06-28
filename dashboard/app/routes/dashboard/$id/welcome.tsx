@@ -12,6 +12,7 @@ import {
   useTransition,
 } from "@remix-run/react";
 import type { TextChannel } from "discord.js";
+import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import ValidationMessage from "~/components/ValidationMessage";
 import WelcomeMessageChannelDropDown from "~/components/WelcomeMessageChannelDropDown";
@@ -140,45 +141,52 @@ export default function WelcomeScreen() {
           </Switch>
         </div>
       </div>
-      {welcomeMessageEdit ? (
-        <div className="w-96 relative">
-          <WelcomeMessageChannelDropDown
-            welcome_channel={welcome_message_channel}
-            channels={channels}
-            id={guild_id as string}
-          />
-          <Form method="post" action="." className="mt-6">
-            <fieldset disabled={transition.state === "submitting"}>
-              {actionData?.error ? (
-                <ValidationMessage
-                  isSubmitting={transition.state === "submitting"}
-                  error={actionData?.error}
-                />
-              ) : null}
-              <p>
-                <label>
-                  Welcome Message:
-                  <br />
-                  <textarea
-                    name="welcome_message"
-                    placeholder={welcome_message ?? ""}
-                    defaultValue={actionData?.values.welcome_message}
-                    className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
+      <AnimatePresence>
+        {welcomeMessageEdit ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="w-96 relative"
+          >
+            <WelcomeMessageChannelDropDown
+              welcome_channel={welcome_message_channel}
+              channels={channels}
+              id={guild_id as string}
+            />
+            <Form method="post" action="." className="mt-6">
+              <fieldset disabled={transition.state === "submitting"}>
+                {actionData?.error ? (
+                  <ValidationMessage
+                    isSubmitting={transition.state === "submitting"}
+                    error={actionData?.error}
                   />
-                </label>
-              </p>
-              <p className="relative">
-                <button
-                  type="submit"
-                  className="bg-blue-600 p-4 rounded-lg text-white absolute top-3 right-2 hover:bg-blue-700"
-                >
-                  {transition.state === "submitting" ? "Saving..." : "Save"}
-                </button>
-              </p>
-            </fieldset>
-          </Form>
-        </div>
-      ) : null}
+                ) : null}
+                <p>
+                  <label>
+                    Welcome Message:
+                    <br />
+                    <textarea
+                      name="welcome_message"
+                      placeholder={welcome_message ?? ""}
+                      defaultValue={actionData?.values.welcome_message}
+                      className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
+                    />
+                  </label>
+                </p>
+                <p className="text-right pr-2">
+                  <button
+                    type="submit"
+                    className="bg-blue-600 p-4 rounded-lg text-white hover:bg-blue-700"
+                  >
+                    {transition.state === "submitting" ? "Saving..." : "Save"}
+                  </button>
+                </p>
+              </fieldset>
+            </Form>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
