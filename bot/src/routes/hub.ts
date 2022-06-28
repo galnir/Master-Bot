@@ -45,7 +45,7 @@ export class HubRoute extends Route {
         ]
       });
 
-      await prisma.guild.update({
+      const updatedGuild = await prisma.guild.update({
         where: {
           id: guildID as string
         },
@@ -55,7 +55,7 @@ export class HubRoute extends Route {
         }
       });
 
-      return response.json({ message: 'Hub created' });
+      return response.json({ guild: updatedGuild });
     } catch (err) {
       return response
         .status(400)
