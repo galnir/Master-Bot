@@ -50,7 +50,11 @@ export default function DashboardIndex() {
               key={guild.id}
               name={guild.name}
               isBotIn={isBotInGuild}
-              img={guild.icon ?? "generic-image.png"}
+              img={
+                guild.icon
+                  ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`
+                  : "generic-image.png"
+              }
               id={guild.id}
               invite_url={invite_url}
             />
