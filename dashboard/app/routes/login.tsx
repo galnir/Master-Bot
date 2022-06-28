@@ -14,8 +14,9 @@ const SocialButton: React.FC<SocialButtonProps> = ({ provider, label }) => (
 );
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return await authenticator.isAuthenticated(request, {
+  return await authenticator.authenticate("discord", request, {
     successRedirect: "/dashboard",
+    failureRedirect: "/auth/discord",
   });
 };
 
