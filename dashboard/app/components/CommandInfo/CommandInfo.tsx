@@ -20,9 +20,19 @@ const CommandInfo = ({
   const fetcher = useFetcher();
 
   return (
-    <div className="p-5 flex justify-between items-center bg-black">
+    <div
+      className={`p-5 flex justify-between items-center transition duration-200 ease-in-out ${
+        enabled ? "bg-black" : "bg-gray-700"
+      }`}
+    >
       <div className="flex flex-col gap-2">
-        <h2 className="text-white">{name}</h2>
+        <h2
+          className={`transition duration-200 ease-in-out ${
+            enabled ? "text-white" : "text-slate-400"
+          }`}
+        >
+          {name}
+        </h2>
         <h3>{description}</h3>
       </div>
       <div>
