@@ -14,6 +14,7 @@ import {
 import type { TextChannel } from "discord.js";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
+import DiscordMessage from "~/components/DiscordMessage";
 import ValidationMessage from "~/components/ValidationMessage";
 import WelcomeMessageChannelDropDown from "~/components/WelcomeMessageChannelDropDown";
 
@@ -102,6 +103,8 @@ export default function WelcomeScreen() {
   const [welcomeMessageEdit, setWelcomeMessageEdit] = React.useState(
     welcome_message_enabled
   );
+  const [welcomeMessageText, setWelcomeMessageText] =
+    React.useState(welcome_message);
 
   const fetcher = useFetcher();
   const transition = useTransition();
@@ -169,6 +172,7 @@ export default function WelcomeScreen() {
                     <textarea
                       name="welcome_message"
                       placeholder={welcome_message ?? ""}
+                      onChange={(e) => setWelcomeMessageText(e.target.value)}
                       defaultValue={actionData?.values.welcome_message}
                       className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
                     />
@@ -184,6 +188,12 @@ export default function WelcomeScreen() {
                 </p>
               </fieldset>
             </Form>
+            <div className="mt-5">
+              <DiscordMessage
+                text={welcomeMessageText || ""}
+                avatar="generic-image.png"
+              />
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
