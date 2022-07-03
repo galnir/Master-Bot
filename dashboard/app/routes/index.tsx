@@ -12,8 +12,14 @@ export default function Index() {
           </Link>
         </div>
         <div className="flex justify-between gap-5">
-          <HeaderButton text="Code" linkTo="/" newWindow={true} />
-          <HeaderButton text="Dashboard" linkTo="/dashboard" />
+          <HeaderButton
+            linkTo="https://github.com/galnir/Master-Bot"
+            external={true}
+            newWindow={true}
+          >
+            Code
+          </HeaderButton>
+          <HeaderButton linkTo="/dashboard">Dashboard</HeaderButton>
         </div>
       </header>
     </div>
