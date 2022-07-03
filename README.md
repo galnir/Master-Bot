@@ -1,4 +1,4 @@
-# A Discord Music Bot written in JavaScript using the discord.js v13 library
+# A Discord Music Bot written in TypeScript Sapphire, discord.js, Remix and React
 
 [![image](https://img.shields.io/badge/language-typescript-blue)](https://www.typescriptlang.org)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
@@ -10,13 +10,13 @@
 
 ### Installing the Node.js dependencies
 
-After cloning the repository, navigate to the project's folder and run the command `npm i` to install all Node.js module dependencies.
+Run `npm i` in each folder (bot/ and dashboard/) if you want both the bot and dashboard to be run, or just in bot/ if you only want the bot to be run.
 
-## Setup
+## Setup bot
 
-Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file in the root directory of the project.
+Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file the bot/ folder.
 
-Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the project's root directory (same directory as application.yml).
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the same folder as `application.yml`.
 
 ### PostgreSQL
 
@@ -28,7 +28,7 @@ Either from the official site or follow the tutorial for your [distro](https://w
 
 Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 
-Create a `.env` file in the root directory of the project and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS's user.
+Create a `.env` file in the bot/ folder and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS' user.
 
 #### Windows
 
@@ -36,7 +36,7 @@ Getting Postgres and Prisma to work together on Windows is not worth the hassle.
 
 1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
 2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
-3. Create a `.env` file in the root directory of the project and create 2 empty variables there:
+3. Create a `.env` file in bot/ and create 2 empty variables there:
    `DATABASE_URL="" SHADOW_DB_URL=""`
 4. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL`.
 5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
@@ -55,13 +55,13 @@ Follow the instructions [here](https://redis.io/docs/getting-started/installatio
 
 ## Important
 
-After you're done installing all the dependencies and entering all tokens and env variables, run `npx prisma migrate dev`
+After you're done installing all the dependencies and entering all tokens and env variables, run `npx prisma migrate dev` **in bot/**.
 
 ### Lavalink startup
 
-**Before running `node index.js`, make sure to open a separate terminal in the root directory and run `java -jar LavaLink.jar`**
+**Before running `npm run dev` in bot/ (to start the bot), make sure to open a separate terminal in bot/ and run `java -jar LavaLink.jar`**
 
-Create a `config.json` file inside the 'src' directory with the following tokens:
+Create a `config.json` file inside the 'src' directory in bot/ with the following tokens:
 
 ### Minimum settings
 
@@ -103,6 +103,30 @@ For full command support, including lyrics, GIFs, news, and others, - (which som
 ```
 
 NOTE: When setting `"invite": true`, remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/).
+
+## Setup dashboard
+
+In order to use the dashboard, the bot must be online because the bot exposes the API routes the dashboard uses to communicate with the database.
+
+### Install dependencies
+`npm i` in dashboard/
+
+### OAuth2
+Create a `.env` file in the root on dashboard/ with these 3 lines:
+```
+SESSION_SECRET=""
+DISCORD_CLIENT_ID=""
+DISCORD_CLIENT_SECRET=""
+Invite_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot%20applications.commands"
+```
+Fill SESSION_SECRET with some random string.
+Now go to your bot's panel in the Discord Developoer Portal > OAuth2, copy the Client ID and place it between the quotes as DISCORD_CLIENT_ID's value and do the same for the Client Secret (you have to click on the blue button to generate it, it is the token you placed in the bot/ folder .env). Also update the client ID in Invite_URL.
+
+Paste this URL to the `Redirects` input below:
+`http://localhost:3000/auth/discord/callback` (I will update this in the future when I figure out how to host the dashboard on a VPS).
+
+### Running the dashboard
+Only after the bot is online, hit `npm run dev` in a separate terminal.
 
 # Commands
 
