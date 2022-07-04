@@ -1,0 +1,43 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "run-s build:*",
+    "build:css": "npm run generate:css -- --minify",
+    "build:remix": "remix build",
+    "dev": "run-p dev:*",
+    "dev:css": "npm run generate:css -- --watch",
+    "dev:remix": "remix dev",
+    "generate:css": "npx tailwindcss -i app/styles/input.css -o app/styles/tailwind.css --watch",
+    "start": "remix-serve build"
+  },
+  "dependencies": {
+    "@headlessui/react": "^1.6.5",
+    "@prisma/client": "^3.15.0",
+    "@reach/menu-button": "^0.17.0",
+    "@remix-run/node": "^1.5.1",
+    "@remix-run/react": "^1.5.1",
+    "@remix-run/serve": "^1.5.1",
+    "discord-api-types": "^0.34.0",
+    "discord.js": "^13.8.0",
+    "framer-motion": "^6.3.16",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "remix-auth": "^3.2.2",
+    "remix-auth-oauth2": "^1.2.2"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^1.5.1",
+    "@remix-run/eslint-config": "^1.5.1",
+    "@types/react": "^17.0.45",
+    "@types/react-dom": "^17.0.17",
+    "eslint": "^8.15.0",
+    "npm-run-all": "^4.1.5",
+    "prisma": "^3.15.0",
+    "tailwindcss": "^3.1.2",
+    "typescript": "^4.6.4"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
