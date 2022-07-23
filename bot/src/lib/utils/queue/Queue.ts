@@ -372,9 +372,12 @@ export class Queue {
     if (entry) {
       await this.refresh();
       return this.start(false);
+    } else {
+      // If there was no entry, disconnect from the voice channel.
+      await this.leave();
+      this.client.emit('musicFinish', this, true);
+      return false;
     }
-    this.client.emit('musicFinish', this);
-    return false;
   }
 
   public count(): Promise<number> {
