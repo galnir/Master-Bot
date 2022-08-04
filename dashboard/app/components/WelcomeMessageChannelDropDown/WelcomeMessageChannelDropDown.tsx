@@ -1,6 +1,6 @@
 import { useFetcher } from "@remix-run/react";
 import { Menu, MenuList, MenuItem, MenuButton } from "@reach/menu-button";
-import type { TextChannel } from "discord.js";
+import type { GuildBasedChannel } from "discord.js";
 import React from "react";
 
 const WelcomeMessageChannelDropDown = ({
@@ -9,7 +9,7 @@ const WelcomeMessageChannelDropDown = ({
   welcome_channel,
 }: {
   id: string;
-  channels: TextChannel[];
+  channels: GuildBasedChannel[];
   welcome_channel: string | null;
 }) => {
   const fetcher = useFetcher();

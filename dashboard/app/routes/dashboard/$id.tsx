@@ -1,4 +1,4 @@
-import type { LoaderFunction } from "@remix-run/node";
+import { redirect, type LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, Outlet, useLoaderData } from "@remix-run/react";
 import Logo from "~/components/Logo";
@@ -6,9 +6,10 @@ import type { DiscordProfile } from "~/lib/discord-api-fetcher";
 import { authenticator } from "~/server/auth.server";
 import { Menu } from "@reach/menu-button";
 import React from "react";
+import type { Guild } from "~/api-types";
 
 type LoaderData = {
-  guild: any;
+  guild: Guild;
   user: DiscordProfile;
 };
 
@@ -18,7 +19,8 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   })) as DiscordProfile;
   const response = await fetch(`http://localhost:1212/guild?id=${params.id}`);
 
-  const guild = await response.json();
+  const guild: Guild | null = await response.json();
+  if (!guild) redirect("/dashboard");
   return json({ guild, user });
 };
 

@@ -4,18 +4,13 @@ import {
   type LoaderFunction,
 } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import type { Command, Guild } from "~/api-types";
 import CommandInfo from "~/components/CommandInfo";
 
 type LoaderData = {
   commands: Command[];
   disabledCommands: string[];
   guildID: string;
-};
-
-type Command = {
-  id: string;
-  name: string;
-  description: string;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -28,8 +23,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     return json({ error: "Something went wrong!" });
   }
 
-  const commands = await commandsResponse.json();
-  const guild = await guildResponse.json();
+  const commands: Command[] = await commandsResponse.json();
+  const guild: Guild = await guildResponse.json();
 
   const disabledCommands = guild.disabledCommands;
 

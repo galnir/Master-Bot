@@ -11,19 +11,20 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
-import type { TextChannel } from "discord.js";
+import type { GuildBasedChannel } from "discord.js";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 import DiscordMessage from "~/components/DiscordMessage";
 import ValidationMessage from "~/components/ValidationMessage";
 import WelcomeMessageChannelDropDown from "~/components/WelcomeMessageChannelDropDown";
+import type { Guild } from "~/api-types";
 
 type LoaderData = {
   welcome_message: string | null;
   welcome_message_enabled: boolean;
   welcome_message_channel: string | null;
   guild_id: string | null;
-  channels: TextChannel[];
+  channels: GuildBasedChannel[];
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -37,9 +38,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const channelsResponse = await fetch(
     "http://localhost:1212/channels?guildID=" + id
   );
-  const channels = await channelsResponse.json();
+  const channels: GuildBasedChannel[] = await channelsResponse.json();
 
-  const guild = await response.json();
+  const guild: Guild = await response.json();
   const welcome_message = guild.welcomeMessage;
   const welcome_message_enabled = guild.welcomeMessageEnabled;
   const welcome_message_channel = guild.welcomeMessageChannel;
@@ -154,7 +155,7 @@ export default function WelcomeScreen() {
           >
             <WelcomeMessageChannelDropDown
               welcome_channel={welcome_message_channel}
-              channels={channels}
+              channels={channels as GuildBasedChannel[]}
               id={guild_id as string}
             />
             <Form method="post" action="." className="mt-6">

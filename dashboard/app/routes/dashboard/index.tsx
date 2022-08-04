@@ -1,13 +1,14 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import { authenticator } from "~/server/auth.server";
 import type { DiscordProfile } from "~/lib/discord-api-fetcher";
 import GuildSelectBox from "~/components/GuildSelectBox";
+import type { Guild } from "~/api-types";
 
 type LoaderData = {
   user: DiscordProfile;
-  databaseGuilds: any[] | null;
+  databaseGuilds: Guild[] | null;
   invite_url: string;
 };
 
@@ -19,7 +20,7 @@ export let loader: LoaderFunction = async ({ request, params }) => {
   const response = await fetch(
     `http://localhost:1212/guilds?ownerId=${user.id}`
   );
-  const databaseGuilds = await response.json();
+  const databaseGuilds: Guild[] | null = await response.json();
 
   const invite_url = process.env.Invite_URL;
 

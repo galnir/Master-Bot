@@ -4,8 +4,8 @@ import {
   type LoaderFunction,
 } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import React from "react";
 import TemporaryChannelsForm from "~/components/TemporaryChannelsForm";
+import type { Guild } from "~/api-types";
 
 type LoaderData = {
   hub: string | null;
@@ -41,7 +41,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const response = await fetch("http://localhost:1212/guild?id=" + id);
 
-  const guildDB = await response.json();
+  const guildDB: Guild = await response.json();
 
   const { hub, hubChannel } = guildDB;
 
