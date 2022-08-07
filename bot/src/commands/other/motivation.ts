@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'motivation',
@@ -36,7 +37,7 @@ export class MotivationCommand extends Command {
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           'Something went wrong when fetching a motivational quote :('
         );
@@ -44,9 +45,9 @@ export class MotivationCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description
     });

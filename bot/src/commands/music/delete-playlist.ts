@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import axios from 'axios';
 import type { CommandInteraction, GuildMember } from 'discord.js';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'delete-playlist',
@@ -31,7 +32,7 @@ export class DeletePlaylistCommand extends Command {
       });
       deleted = true;
     } catch (error) {
-      console.error(error);
+      Logger.error(error);
       return await interaction.reply(
         ':x: Something went wrong! Please try again later'
       );
@@ -45,9 +46,9 @@ export class DeletePlaylistCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

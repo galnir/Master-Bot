@@ -7,6 +7,7 @@ import { QueueClient } from '../lib/utils/queue/QueueClient';
 import * as data from '../config.json';
 import Redis from 'ioredis';
 import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
+import Logger from '../lib/utils/logger';
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
@@ -99,11 +100,11 @@ export class ExtendedClient extends SapphireClient {
             };
           })
           .catch(error => {
-            console.log(error);
+            Logger.error(error);
           });
       }, 4.32e7); // refresh every 12 hours
     } else {
-      console.log('Twitch-Features are Disabled');
+      Logger.info('Twitch-Features are Disabled');
     }
 
     this.leaveTimers = {};

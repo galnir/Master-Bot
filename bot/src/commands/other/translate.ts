@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import translate from '@vitalets/google-translate-api';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'translate',
@@ -31,7 +32,7 @@ export class TranslateCommand extends Command {
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           ':x: Something went wrong when trying to translate the text'
         );
@@ -39,9 +40,9 @@ export class TranslateCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

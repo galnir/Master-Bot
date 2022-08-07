@@ -9,6 +9,7 @@ import {
   Message
 } from 'discord.js';
 import { playersInGame } from '../../../commands/other/games';
+import Logger from '../../../lib/utils/logger';
 
 export class Connect4Game {
   public async connect4(
@@ -100,10 +101,7 @@ export class Connect4Game {
             await message.react('7️⃣');
             await message.react('🔄');
           } catch (error) {
-            console.error(
-              'Connect 4 - Failed to Add Reactions to Embed\n',
-              error
-            );
+            Logger.error('Connect 4 - ' + error);
           }
 
           const filter = (reaction: MessageReaction) => {
@@ -129,10 +127,7 @@ export class Connect4Game {
             async function (reaction: MessageReaction, user: User) {
               if (user.id !== interaction.applicationId)
                 await reaction.users.remove(user).catch(error => {
-                  console.error(
-                    `Connect 4 - Failed to reset reactions\n`,
-                    error
-                  );
+                  Logger.error(`Connect 4 - ` + error);
                 });
 
               // Refresh Image
@@ -186,12 +181,7 @@ export class Connect4Game {
             playerMap.forEach(player => playersInGame.delete(player.id));
             return await message.reactions
               .removeAll()
-              .catch((error: string) =>
-                console.error(
-                  'Connect 4 - Failed to Remove All Reactions\n',
-                  error
-                )
-              );
+              .catch((error: string) => Logger.error('Connect 4 - ' + error));
           });
         });
 
@@ -336,7 +326,7 @@ export class Connect4Game {
             result.delete();
           })
           .catch((error: string) => {
-            console.error(
+            Logger.error(
               'Connect 4 - Failed to Delete previous Image\n',
               error
             );

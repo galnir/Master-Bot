@@ -7,6 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'tv-show-search',
@@ -55,9 +56,9 @@ export class TVShowSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
@@ -97,7 +98,7 @@ export class TVShowSearchCommand extends Command {
         }
         resolve(data);
       } catch (e) {
-        console.error(e);
+        Logger.error(e);
         reject(
           'There was a problem getting data from the API, make sure you entered a valid TV show name'
         );

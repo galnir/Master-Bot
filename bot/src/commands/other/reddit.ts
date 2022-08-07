@@ -12,13 +12,14 @@ import {
 } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'reddit',
   description: 'Get posts from reddit by specifying a subreddit',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
-export class AdviceCommand extends Command {
+export class RedditCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     await interaction.deferReply();
     const channel = interaction.channel;
@@ -45,7 +46,7 @@ export class AdviceCommand extends Command {
       });
 
       collector.on('end', () => {
-        if (menu) menu.delete().catch(console.error);
+        if (menu) menu.delete().catch(Logger.error);
       });
 
       collector.on('collect', async i => {
@@ -77,7 +78,7 @@ export class AdviceCommand extends Command {
       return interaction.followUp(error);
     }
 
-    interaction.followUp('Fetching data from reddit');
+    // interaction.followUp('Fetching data from reddit');
 
     const paginatedEmbed = new PaginatedMessage();
     for (let i = 1; i <= data.children.length; i++) {
@@ -88,27 +89,29 @@ export class AdviceCommand extends Command {
         redditPost.data.title = redditPost.data.title.substring(0, 252) + '...'; // max title length is 256
       }
 
-      if (redditPost.data.over_18) color = '#cf00f'; // red - nsfw
+      if (redditPost.data.selftext.length > 1024) {
+        redditPost.data.selftext =
+          redditPost.data.selftext.substring(0, 1024) +
+          `[Read More...](https://www.reddit.com${redditPost.data.permalink})`;
+      }
+
+      if (redditPost.data.over_18) color = '#CF00F'; // red - nsfw
 
       paginatedEmbed.addPageEmbed(embed =>
         embed
           .setColor(color)
           .setTitle(redditPost.data.title)
           .setURL(`https://www.reddit.com${redditPost.data.permalink}`)
-          .setDescription(`Upvotes: ${redditPost.data.score} :thumbsup: `)
+          .setDescription(
+            `${
+              redditPost.data.over_18 ? '' : redditPost.data.selftext + '\n\n'
+            }Upvotes: ${redditPost.data.score} :thumbsup: `
+          )
           .setAuthor({ name: redditPost.data.author })
       );
     }
 
-    const message = {
-      author: {
-        id: interaction.user.id,
-        bot: interaction.user.bot
-      },
-      channel: interaction.channel
-    };
-    // @ts-ignore
-    return paginatedEmbed.run(message);
+    return paginatedEmbed.run(interaction);
   }
 
   private getData(
@@ -133,9 +136,9 @@ export class AdviceCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

@@ -8,6 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
 import * as data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
@@ -156,12 +157,13 @@ export class GameSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
     if (!data.rawgAPI) {
-      return console.log('Game-Search-Command - Disabled');
-    } else console.log('Game-Search-Command - Enabled');
-    registery.registerChatInputCommand({
+      Logger.info('Game-Search-Command - Disabled');
+      return;
+    } else Logger.info('Game-Search-Command - Enabled');
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
@@ -218,7 +220,7 @@ export class GameSearchCommand extends Command {
         }
         resolve(body);
       } catch (e) {
-        console.error(e);
+        Logger.error(e);
         reject(
           'There was a problem getting data from the API, make sure you entered a valid game title'
         );

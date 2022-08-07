@@ -9,6 +9,7 @@ import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
 import { notify } from './lib/utils/twitch/notifyChannel';
 import prisma from './lib/prisma';
+import Logger from './lib/utils/logger';
 
 load({
   client: {
@@ -91,7 +92,7 @@ client.on('ready', async () => {
               try {
                 await buttonsCollector(message, song);
               } catch (e) {
-                console.log(e);
+                Logger.error(e);
               }
             }
           }

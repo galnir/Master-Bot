@@ -7,6 +7,7 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'twitch-status',
@@ -94,7 +95,7 @@ export class TwitchStatusCommand extends Command {
 
       return await interaction.reply({ embeds: [baseEmbed] });
     } catch (error: any) {
-      console.log(error);
+      Logger.error(error);
       if (error.status == 400) {
         return interaction.reply({
           content: `:x: "${query}" was Invalid, Please try again.`
@@ -121,9 +122,10 @@ export class TwitchStatusCommand extends Command {
     registry: ApplicationCommandRegistry
   ): void {
     if (!data.twitchClientID || !data.twitchClientSecret) {
-      return console.log('Twitch-Status-Command - Disabled');
+      Logger.info('Twitch-Status-Command - Disabled');
+      return;
     }
-    console.log('Twitch-Status-Command - Enabled');
+    Logger.info('Twitch-Status-Command - Enabled');
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,

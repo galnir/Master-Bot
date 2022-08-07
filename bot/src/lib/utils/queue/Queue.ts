@@ -15,6 +15,7 @@ import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
 import prisma from '../../prisma';
+import Logger from '../../../lib/utils/logger';
 
 export enum LoopType {
   None,
@@ -146,7 +147,7 @@ export class Queue {
       this.player.setVolume(await this.getVolume());
       await this.player.play(np.song as Song);
     } catch (err) {
-      console.error(err);
+      Logger.error(err);
       await this.leave();
     }
 

@@ -6,10 +6,11 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import axios from 'axios';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'urban',
-  description: 'Get definitions from urban dictonary',
+  description: 'Get definitions from urban dictionary',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class UrbanCommand extends Command {
@@ -35,15 +36,15 @@ export class UrbanCommand extends Command {
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply('Failed to deliver definition :sob:');
       });
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
