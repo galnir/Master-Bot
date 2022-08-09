@@ -45,7 +45,6 @@ export class QueueStore extends Collection<string, Queue> {
     super();
     this.redis = redis as any;
     redis.on('error', err => Logger.error('Redis ' + err));
-    client.on('error', err => Logger.error('QueueClient ' + err));
 
     for (const command of commands) {
       this.redis.defineCommand(command.name, {
