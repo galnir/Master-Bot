@@ -46,7 +46,8 @@ export class ExtendedClient extends SapphireClient {
         listenOptions: {
           port: 1212
         }
-      }
+      },
+      logger: { level: 100 }
     });
 
     this.music = new QueueClient({

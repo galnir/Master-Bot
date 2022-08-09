@@ -10,7 +10,7 @@ import { ExtendedClient } from './structures/ExtendedClient';
 import { notify } from './lib/utils/twitch/notifyChannel';
 import prisma from './lib/prisma';
 import Logger from './lib/utils/logger';
-// import type { PrismaClientInitializationError } from '@prisma/client/runtime';
+import { ErrorListeners } from './listeners/ErrorHandling';
 
 load({
   client: {
@@ -21,12 +21,8 @@ load({
 });
 
 const client = new ExtendedClient();
-client.music.on('error', err => {
-  Logger.error('LavaLink ' + err);
-});
-client.on('error', err => {
-  Logger.error('Client ' + err);
-});
+
+ErrorListeners();
 
 client.on('ready', async () => {
   client.music.connect(client.user!.id);
