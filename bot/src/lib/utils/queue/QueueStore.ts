@@ -2,6 +2,7 @@ import Collection from '@discordjs/collection';
 import { readFileSync } from 'fs';
 import type { Redis, RedisKey } from 'ioredis';
 import { join, resolve } from 'path';
+import Logger from '../logger';
 import { Queue } from './Queue';
 import type { QueueClient } from './QueueClient';
 
@@ -43,6 +44,8 @@ export class QueueStore extends Collection<string, Queue> {
   public constructor(public readonly client: QueueClient, redis: Redis) {
     super();
     this.redis = redis as any;
+    // Redis Errors
+    redis.on('error', err => Logger.error('Redis ' + err));
 
     for (const command of commands) {
       this.redis.defineCommand(command.name, {

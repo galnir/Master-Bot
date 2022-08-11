@@ -9,6 +9,7 @@ import {
   Message
 } from 'discord.js';
 import { playersInGame } from '../../../commands/other/games';
+import Logger from '../../../lib/utils/logger';
 
 export class TicTacToeGame {
   public async ticTacToe(
@@ -90,10 +91,7 @@ export class TicTacToeGame {
             await message.react('🇨');
             await message.react('🔄');
           } catch (error) {
-            console.error(
-              `Tic-Tac-Toe - Failed to Add Reactions to Embed\n`,
-              error
-            );
+            Logger.error(`Tic-Tac-Toe - ` + error);
           }
 
           const filter = (reaction: MessageReaction) => {
@@ -119,10 +117,7 @@ export class TicTacToeGame {
               // Reset the Reactions
               if (user.id !== interaction.applicationId)
                 await reaction.users.remove(user).catch(error => {
-                  console.error(
-                    `Tic-Tac-Toe - Failed to Reset Reactions\n`,
-                    error
-                  );
+                  Logger.error(`Tic-Tac-Toe - ` + error);
                 });
 
               // Refresh Image
@@ -210,12 +205,7 @@ export class TicTacToeGame {
             playerMap.forEach(player => playersInGame.delete(player.id));
             return await message.reactions
               .removeAll()
-              .catch((error: string) =>
-                console.error(
-                  `Tic-Tac-Toe - Failed Removing All Reactions\n`,
-                  error
-                )
-              );
+              .catch((error: string) => Logger.error(`Tic-Tac-Toe - ` + error));
           });
         });
 
@@ -337,10 +327,7 @@ export class TicTacToeGame {
             await result.delete();
           })
           .catch((error: string) => {
-            console.error(
-              `Tic-Tac-Toe - Failed to Delete previous Image.`,
-              error
-            );
+            Logger.error(`Tic-Tac-Toe - ` + error);
           });
       }
       async function playerMove(

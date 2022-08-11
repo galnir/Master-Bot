@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import prisma from '../lib/prisma';
+import Logger from '../lib/utils/logger';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'userInDB'
@@ -28,7 +29,7 @@ export class UserInDB extends Precondition {
         }
       });
     } catch (error) {
-      console.error(error);
+      Logger.error(error);
       return this.error({ message: 'Something went wrong!' });
     }
 

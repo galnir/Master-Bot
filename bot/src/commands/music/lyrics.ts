@@ -9,6 +9,7 @@ import { container } from '@sapphire/framework';
 import { GeniusLyrics } from 'genius-discord-lyrics';
 import * as data from '../../config.json';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
+import Logger from '../../lib/utils/logger';
 
 const genius = new GeniusLyrics(data.geniusLyricsAPI);
 
@@ -63,7 +64,7 @@ export class LyricsCommand extends Command {
       await interaction.followUp('Lyrics generated');
       return paginatedLyrics.run(interaction);
     } catch (e) {
-      console.log(e);
+      Logger.error(e);
       return interaction.followUp(
         'Something when wrong when trying to fetch lyrics :('
       );
@@ -71,9 +72,9 @@ export class LyricsCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

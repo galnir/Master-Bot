@@ -1,5 +1,6 @@
 import type { Queue } from './../queue/Queue';
 import type { AnyChannel, GuildMember } from 'discord.js';
+import Logger from '../../../lib/utils/logger';
 
 export async function manageStageChannel(
   voiceChannel: AnyChannel,
@@ -36,17 +37,17 @@ export async function manageStageChannel(
         privacyLevel: 2 // Guild Only
       })
       .catch(error => {
-        console.log('Failed to Create a Stage Instance.', error);
+        Logger.error('Failed to Create a Stage Instance. ' + error);
       });
   }
 
   if (botUser?.voice.suppress)
     await botUser?.voice.setSuppressed(false).catch((error: string) => {
-      console.log('Failed to Set Suppressed to False.', error);
+      Logger.error('Failed to Set Suppressed to False. ' + error);
     });
   if (voiceChannel.stageInstance?.topic.startsWith('🎶')) {
     await voiceChannel.stageInstance?.setTopic(title).catch(error => {
-      console.log('Failed to Set Topic.', error);
+      Logger.error('Failed to Set Topic. ' + error);
     });
   }
   return;

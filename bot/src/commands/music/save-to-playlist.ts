@@ -7,6 +7,7 @@ import {
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import searchSong from '../../lib/utils/music/searchSong';
 import prisma from '../../lib/prisma';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'save-to-playlist',
@@ -60,15 +61,15 @@ export class SaveToPlaylistCommand extends Command {
 
       return await interaction.followUp(`Added tracks to **${playlistName}**`);
     } catch (error) {
-      console.error(error);
+      Logger.error(error);
       return await interaction.followUp(':x: Something went wrong!');
     }
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [

@@ -7,6 +7,7 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import * as data from '../../config.json';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'baka',
@@ -25,7 +26,7 @@ export class BakaCommand extends Command {
         });
       })
       .catch(async error => {
-        console.error(error);
+        Logger.error(error);
         return await interaction.reply(
           'Something went wrong when trying to fetch a baka gif :('
         );
@@ -33,9 +34,9 @@ export class BakaCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registery: ApplicationCommandRegistry
+    registry: ApplicationCommandRegistry
   ): void {
-    registery.registerChatInputCommand({
+    registry.registerChatInputCommand({
       name: this.name,
       description: this.description
     });

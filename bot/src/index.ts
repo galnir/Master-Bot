@@ -9,6 +9,8 @@ import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
 import { notify } from './lib/utils/twitch/notifyChannel';
 import prisma from './lib/prisma';
+import Logger from './lib/utils/logger';
+import { ErrorListeners } from './listeners/ErrorHandling';
 
 load({
   client: {
@@ -20,6 +22,8 @@ load({
 
 const client = new ExtendedClient();
 
+ErrorListeners();
+
 client.on('ready', async () => {
   client.music.connect(client.user!.id);
   client.user?.setActivity('/', {
@@ -30,29 +34,35 @@ client.on('ready', async () => {
 
   const token = client.twitch.auth.access_token;
   if (!token) return;
-  const notifyDB = await prisma.twitchNotify.findMany();
 
-  const query: string[] = [];
-  for (const user of notifyDB) {
-    query.push(user.twitchId);
-    client.twitch.notifyList[user.twitchId] = {
-      sendTo: user.channelIds,
-      logo: user.logo,
-      live: user.live,
-      messageSent: user.sent,
-      messageHandler: {}
-    };
+  // happens to be the first DB call at start up
+  try {
+    const notifyDB = await prisma.twitchNotify.findMany();
+
+    const query: string[] = [];
+    for (const user of notifyDB) {
+      query.push(user.twitchId);
+      client.twitch.notifyList[user.twitchId] = {
+        sendTo: user.channelIds,
+        logo: user.logo,
+        live: user.live,
+        messageSent: user.sent,
+        messageHandler: {}
+      };
+    }
+    await notify(query).then(() =>
+      setInterval(() => {
+        const newQuery: string[] = [];
+        // pickup newly added entries
+        for (const key in client.twitch.notifyList) {
+          newQuery.push(key);
+        }
+        notify(newQuery);
+      }, 60 * 1000)
+    );
+  } catch (err) {
+    Logger.error('Prisma ' + err);
   }
-  await notify(query).then(() =>
-    setInterval(() => {
-      const newQuery: string[] = [];
-      // pickup newly added entries
-      for (const key in client.twitch.notifyList) {
-        newQuery.push(key);
-      }
-      notify(newQuery);
-    }, 60 * 1000)
-  );
 
   client.guilds.cache.map(async guild => {
     const queue = client.music.queues.get(guild.id);
@@ -91,7 +101,7 @@ client.on('ready', async () => {
               try {
                 await buttonsCollector(message, song);
               } catch (e) {
-                console.log(e);
+                Logger.error(e);
               }
             }
           }
