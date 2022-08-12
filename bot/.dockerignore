@@ -1,6 +1,7 @@
 # Docker files
  Dockerfile
  docker-compose.yml
+ docker-compose.ymal
  .dockerignore
 
  # Git files
@@ -13,3 +14,8 @@
  # Node modules and lint settings
  node_modules
  .prettierrc
+ dist
+ logs
+ Lavalink.jar
+ application.yml
+ application.yaml

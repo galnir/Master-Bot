@@ -1,17 +1,7 @@
-FROM node:16.8.0-alpine3.11
- RUN apk add --no-cache \
- python3 \
- make \
- g++ \
- cairo-dev \
- pango-dev \
- jpeg-dev \
- giflib-dev \
- librsvg-dev
+FROM node:16.16.0-alpine3.16
+    WORKDIR "/Master-Bot"
 
- WORKDIR "/Master-Bot"
- COPY package.json package-lock.json ./
- RUN npm ci --development
-
- COPY ./ ./
- CMD ["npm", "run", "dev"]
+    COPY ./ ./
+    RUN npm ci --development
+    RUN ["npx", "prisma", "generate", "dev"]  
+    CMD ["npm", "run", "dev"]

@@ -1,14 +1,57 @@
 services:
   master-bot:
     build: .
+    command: >
+      sh -c "npx prisma db push && npm run dev"
     depends_on:
       lavalink:
         condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres # password is required
+      DB_NAME: master-bot
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ''
     links:
       - lavalink
+      - db
+      - cache
+    # volumes:
+    #   - ./:/src
   lavalink:
     image: fredboat/lavalink:dev
+    ports:
+      - '2333:2333'
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml
     healthcheck:
       test: 'echo lavalink'
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=master-bot
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - cache:/data
+
+volumes:
+  db:
+    driver: local
+  cache:
+    driver: local
