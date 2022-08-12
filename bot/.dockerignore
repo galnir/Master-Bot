@@ -1,7 +1,7 @@
 # Docker files
  Dockerfile
  docker-compose.yml
- docker-compose.ymal
+ docker-compose.yaml
  .dockerignore
 
  # Git files
@@ -17,5 +17,3 @@
  dist
  logs
  Lavalink.jar
- application.yml
- application.yaml

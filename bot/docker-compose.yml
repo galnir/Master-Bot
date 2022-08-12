@@ -6,11 +6,15 @@ services:
     depends_on:
       lavalinkDocker:
         condition: service_healthy
+      postgresDocker:
+        condition: service_healthy
+      redisDocker:
+        condition: service_healthy
     environment:
       DB_HOST: postgresDocker # Must match service name and 'config.json'
       DB_PORT: 5432
       DB_USER: postgres # Must match '.env' file
-      DB_PASSWORD: postgres # password is required and must match '.env' file
+      DB_PASSWORD: postgres # Password is required and must match '.env' file
       DB_NAME: master-bot # Must match '.env' file
       REDIS_HOST: redisDocker # Must match service name
       REDIS_PORT: 6379
@@ -21,23 +25,33 @@ services:
       - postgresDocker
   lavalinkDocker:
     image: fredboat/lavalink:dev
-    volumes:
-      - ./application.yml:/opt/Lavalink/application.yml
     healthcheck:
       test: 'echo lavalink'
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml
   postgresDocker:
     image: postgres:14.1-alpine
     restart: always
+    healthcheck:
+      test: ['CMD', 'pg_isready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=master-bot
+      - POSTGRES_USER=postgres # Must match '.env' file
+      - POSTGRES_PASSWORD=postgres # Password is required and must match '.env' file
+      - POSTGRES_DB=master-bot # Must match '.env' file
     volumes:
       - postgresDocker:/var/lib/postgresql/data
   redisDocker:
     image: redis:6.2-alpine
     restart: always
     command: redis-server --save 20 1 --loglevel warning
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 1s
+      timeout: 3s
+      retries: 30
     volumes:
       - redisDocker:/data
 
