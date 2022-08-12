@@ -21,8 +21,6 @@ services:
       - postgresDocker
   lavalinkDocker:
     image: fredboat/lavalink:dev
-    ports:
-      - '2333:2333'
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml
     healthcheck:
@@ -34,15 +32,11 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=master-bot
-    ports:
-      - '5432:5432'
     volumes:
       - postgresDocker:/var/lib/postgresql/data
   redisDocker:
     image: redis:6.2-alpine
     restart: always
-    ports:
-      - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
     volumes:
       - redisDocker:/data
