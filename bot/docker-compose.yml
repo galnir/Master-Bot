@@ -4,24 +4,22 @@ services:
     command: >
       sh -c "npx prisma db push && npm run dev"
     depends_on:
-      lavalink:
+      lavalinkDocker:
         condition: service_healthy
     environment:
-      DB_HOST: db
+      DB_HOST: postgresDocker # Must match service name and 'config.json'
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: postgres # password is required
-      DB_NAME: master-bot
-      REDIS_HOST: cache
+      DB_USER: postgres # Must match '.env' file
+      DB_PASSWORD: postgres # password is required and must match '.env' file
+      DB_NAME: master-bot # Must match '.env' file
+      REDIS_HOST: redisDocker # Must match service name
       REDIS_PORT: 6379
       REDIS_PASSWORD: ''
     links:
-      - lavalink
-      - db
-      - cache
-    # volumes:
-    #   - ./:/src
-  lavalink:
+      - lavalinkDocker
+      - redisDocker
+      - postgresDocker
+  lavalinkDocker:
     image: fredboat/lavalink:dev
     ports:
       - '2333:2333'
@@ -29,7 +27,7 @@ services:
       - ./application.yml:/opt/Lavalink/application.yml
     healthcheck:
       test: 'echo lavalink'
-  db:
+  postgresDocker:
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -39,19 +37,18 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - db:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
-  cache:
+      - postgresDocker:/var/lib/postgresql/data
+  redisDocker:
     image: redis:6.2-alpine
     restart: always
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
     volumes:
-      - cache:/data
+      - redisDocker:/data
 
 volumes:
-  db:
+  postgresDocker:
     driver: local
-  cache:
+  redisDocker:
     driver: local
