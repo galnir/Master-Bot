@@ -11,14 +11,15 @@ services:
       redisDocker:
         condition: service_healthy
     environment:
-      DB_HOST: postgresDocker # Must match service name and 'config.json'
-      DB_PORT: 5432
-      DB_USER: postgres # Must match '.env' file
-      DB_PASSWORD: postgres # Password is required and must match '.env' file
-      DB_NAME: master-bot # Must match '.env' file
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Password is required and must match '.env' file
+      POSTGRES_DB_NAME: ${POSTGRES_DB_NAME} # Must match '.env' file
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: postgresDocker # Must match '.env' file
       REDIS_HOST: redisDocker # Must match service name
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ''
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+      # REDIS_DB: ${REDIS_DB}
     links:
       - lavalinkDocker
       - redisDocker
@@ -29,24 +30,27 @@ services:
       test: 'echo lavalink'
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml
+      - ./application.yaml:/opt/Lavalink/application.yaml
   postgresDocker:
     image: postgres:14.1-alpine
     restart: always
     healthcheck:
-      test: ['CMD', 'pg_isready']
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_NAME}']
       interval: 10s
       timeout: 5s
       retries: 5
     environment:
-      - POSTGRES_USER=postgres # Must match '.env' file
-      - POSTGRES_PASSWORD=postgres # Password is required and must match '.env' file
-      - POSTGRES_DB=master-bot # Must match '.env' file
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - POSTGRES_PORT=${POSTGRES_PORT}
     volumes:
       - postgresDocker:/var/lib/postgresql/data
   redisDocker:
     image: redis:6.2-alpine
     restart: always
-    command: redis-server --save 20 1 --loglevel warning
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 1s
@@ -54,7 +58,6 @@ services:
       retries: 30
     volumes:
       - redisDocker:/data
-
 volumes:
   postgresDocker:
     driver: local

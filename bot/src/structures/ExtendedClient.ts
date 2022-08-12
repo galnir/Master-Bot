@@ -55,14 +55,12 @@ export class ExtendedClient extends SapphireClient {
         this.guilds.cache.get(id)?.shard?.send(payload),
       options: {
         redis: new Redis({
-          //@ts-ignore
-          host: data.redis_host || 'localhost',
-          //@ts-ignore
-          port: data.redis_port || 6379,
-          //@ts-ignore
-          password: data.redis_password || '',
-          //@ts-ignore
-          db: data.redis_db || 0
+          host: process.env.REDIS_HOST || 'localhost',
+          port: Number.parseInt(process.env.REDIS_PORT!) || 6379,
+
+          password: process.env.REDIS_PASSWORD || '',
+
+          db: Number.parseInt(process.env.REDIS_DB!) || 0
         })
       },
       connection: {
