@@ -19,7 +19,7 @@ services:
       REDIS_HOST: redisDocker # Must match service name
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
-      # REDIS_DB: ${REDIS_DB}
+      REDIS_DB: ${REDIS_DB}
     links:
       - lavalinkDocker
       - redisDocker
