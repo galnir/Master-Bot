@@ -17,7 +17,6 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_HOST: postgresDocker # Must match '.env' file
       REDIS_HOST: redisDocker # Must match service name
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
       REDIS_PORT: ${REDIS_PORT}
       REDIS_DB: ${REDIS_DB}
     links:
@@ -50,7 +49,11 @@ services:
   redisDocker:
     image: redis:6.2-alpine
     restart: always
-    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=#{REDIS_DB}
+    command: redis-server --save 20 1 --loglevel warning
     healthcheck:
       test: ['CMD', 'redis-cli', 'ping']
       interval: 1s
