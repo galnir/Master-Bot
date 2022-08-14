@@ -218,6 +218,8 @@ A full list of commands for use with Master Bot
 
 [Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
 
+[Running Master-Bot on Docker](https://github.com/Bacon-Fixation/Master-Bot/wiki/Running-Master-Bot-with-Docker)
+
 [Using a Repl.it LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-Up-LavaLink-with-a-Replit-server)
 
 [Using a public LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-Up-LavaLink-with-a-public-LavaLink-Server)
