@@ -1,6 +1,8 @@
 services:
   master-bot:
     build: .
+    ports:
+      - "1212:1212" 
     command: >
       sh -c "npx prisma db push && npm run dev"
     depends_on:
