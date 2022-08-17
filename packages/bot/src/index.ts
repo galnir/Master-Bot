@@ -7,10 +7,11 @@ import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 import * as data from './config.json';
 import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
-import { notify } from './lib/utils/twitch/notifyChannel';
-import prisma from './lib/prisma';
+// import { notify } from './lib/utils/twitch/notifyChannel';
+// import prisma from './lib/prisma';
 import Logger from './lib/utils/logger';
 import { ErrorListeners } from './listeners/ErrorHandling';
+import { trpcNode } from './trpc';
 
 load({
   client: {
@@ -32,37 +33,8 @@ client.on('ready', async () => {
 
   client.user?.setStatus('online');
 
-  const token = client.twitch.auth.access_token;
-  if (!token) return;
-
-  // happens to be the first DB call at start up
-  try {
-    const notifyDB = await prisma.twitchNotify.findMany();
-
-    const query: string[] = [];
-    for (const user of notifyDB) {
-      query.push(user.twitchId);
-      client.twitch.notifyList[user.twitchId] = {
-        sendTo: user.channelIds,
-        logo: user.logo,
-        live: user.live,
-        messageSent: user.sent,
-        messageHandler: {}
-      };
-    }
-    await notify(query).then(() =>
-      setInterval(() => {
-        const newQuery: string[] = [];
-        // pickup newly added entries
-        for (const key in client.twitch.notifyList) {
-          newQuery.push(key);
-        }
-        notify(newQuery);
-      }, 60 * 1000)
-    );
-  } catch (err) {
-    Logger.error('Prisma ' + err);
-  }
+  const data = await trpcNode.query('user.all');
+  console.log('data is', data);
 
   client.guilds.cache.map(async guild => {
     const queue = client.music.queues.get(guild.id);

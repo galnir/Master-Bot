@@ -1,4 +1,4 @@
-import { mayStartNext } from '@lavaclient/types';
+//import { mayStartNext } from '@lavaclient/types/v3';
 import type { Player } from 'lavaclient';
 import { TypedEmitter } from 'tiny-typed-emitter';
 import type { MessageChannel } from '../../..';
@@ -38,7 +38,7 @@ export class TriviaQueue extends TypedEmitter<TriviaQueueEvents> {
 
     player.on('trackEnd', (_, reason) => {
       if (this.current) {
-        if (!mayStartNext[reason]) return;
+        //if (!mayStartNext[reason]) return;
 
         this.emit('triviaTrackEnd', this.current as Song);
       }

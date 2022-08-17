@@ -5,7 +5,7 @@ import {
   PreconditionOptions
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
-import prisma from '../lib/prisma';
+//import prisma from '../lib/prisma';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'isCommandDisabled'
@@ -14,23 +14,23 @@ export class IsCommandDisabled extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
-    const commandID = interaction.commandId;
-    const guildID = interaction.guildId as string;
+    // const commandID = interaction.commandId;
+    // const guildID = interaction.guildId as string;
 
-    const guild = await prisma.guild.findFirst({
-      where: {
-        id: guildID
-      },
-      select: {
-        disabledCommands: true
-      }
-    });
+    // const guild = await prisma.guild.findFirst({
+    //   where: {
+    //     id: guildID
+    //   },
+    //   select: {
+    //     disabledCommands: true
+    //   }
+    // });
 
-    if (guild?.disabledCommands.some(id => id === commandID)) {
-      return this.error({
-        message: 'This command is disabled!'
-      });
-    }
+    // if (guild?.disabledCommands.some(id => id === commandID)) {
+    //   return this.error({
+    //     message: 'This command is disabled!'
+    //   });
+    // }
 
     return this.ok();
   }

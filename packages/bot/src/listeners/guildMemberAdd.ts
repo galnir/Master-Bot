@@ -1,4 +1,4 @@
-import type { Guild } from '@prisma/client';
+//import type { Guild } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
 import axios from 'axios';
@@ -14,7 +14,7 @@ export class GuildMemberListener extends Listener {
         id: member.guild.id
       }
     });
-    const data = response.data as Guild;
+    const data = response.data as any;
     const { welcomeMessage, welcomeMessageEnabled, welcomeMessageChannel } =
       data;
 

@@ -1,5 +1,5 @@
 import { decode } from '@lavalink/encoding';
-import type { Track, TrackInfo } from '@lavaclient/types';
+import type { Track, TrackInfo } from '@lavaclient/types/v3';
 import * as MetadataFilter from 'metadata-filter';
 
 export class Song implements TrackInfo {

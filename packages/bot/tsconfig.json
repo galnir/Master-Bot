@@ -8,7 +8,9 @@
     "resolveJsonModule": true,
     "noUnusedParameters": false,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "importsNotUsedAsValues": "preserve"
   },
-  "include": ["src", "scripts"]
+  "include": ["src", "scripts"],
+  "exclude": ["node_modules"]
 }

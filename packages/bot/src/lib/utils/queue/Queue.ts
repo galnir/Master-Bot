@@ -7,14 +7,13 @@ import type {
   VoiceChannel
 } from 'discord.js';
 import type { Song } from './Song';
-import type { Track } from '@lavaclient/types';
+import type { Track } from '@lavaclient/types/v3';
 import type { DiscordResource, Player, Snowflake } from 'lavaclient';
 import { container } from '@sapphire/framework';
 import type { QueueStore } from './QueueStore';
 import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
-import prisma from '../../prisma';
 import Logger from '../logger';
 
 export enum LoopType {
@@ -231,15 +230,15 @@ export class Queue {
   public async getVolume(): Promise<number> {
     let data = await this.store.redis.get(this.keys.volume);
 
-    if (!data) {
-      const storage = await prisma.guild.findFirst({
-        where: { id: this.guildID },
-        select: { volume: true }
-      });
-      if (!storage) await this.setVolume(this.player.volume ?? 100); // saves to both
+    // if (!data) {
+    //   const storage = await prisma.guild.findFirst({
+    //     where: { id: this.guildID },
+    //     select: { volume: true }
+    //   });
+    //   if (!storage) await this.setVolume(this.player.volume ?? 100); // saves to both
 
-      data = storage?.volume.toString() || this.player.volume.toString();
-    }
+    //   data = storage?.volume.toString() || this.player.volume.toString();
+    // }
 
     return data ? Number(data) : 100;
   }
@@ -252,22 +251,22 @@ export class Queue {
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
 
-    const owner = await this.guild.fetchOwner();
-    await prisma.guild.upsert({
-      where: { id: this.guildID },
-      create: {
-        id: this.guildID,
-        name: this.guild.name,
-        volume: this.player.volume,
-        owner: {
-          connectOrCreate: {
-            where: { id: owner.id },
-            create: { id: owner.id, username: owner.user.username }
-          }
-        }
-      },
-      update: { volume: this.player.volume }
-    });
+    //const owner = await this.guild.fetchOwner();
+    // await prisma.guild.upsert({
+    //   where: { id: this.guildID },
+    //   create: {
+    //     id: this.guildID,
+    //     name: this.guild.name,
+    //     volume: this.player.volume,
+    //     owner: {
+    //       connectOrCreate: {
+    //         where: { id: owner.id },
+    //         create: { id: owner.id, username: owner.user.username }
+    //       }
+    //     }
+    //   },
+    //   update: { volume: this.player.volume }
+    // });
     this.client.emit('musicSongVolumeUpdate', this, value);
     return {
       previous: previous === null ? 100 : Number(previous),

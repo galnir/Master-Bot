@@ -77,7 +77,7 @@ export default async function searchSong(
         displayMessage = ":x: Couldn't find what you were looking for :(";
         return [displayMessage, tracks];
       case 'PLAYLIST_LOADED':
-        results.tracks.forEach(track =>
+        results.tracks.forEach((track: any) =>
           tracks.push(
             new Song(track, Date.now(), {
               avatar,
