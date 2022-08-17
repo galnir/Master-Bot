@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/api" },
+    { "path": "packages/react" },
+    { "path": "packages/bot" },
+    { "path": "packages/dashboard" }
+  ]
+}

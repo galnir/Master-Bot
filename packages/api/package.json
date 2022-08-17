@@ -1,0 +1,13 @@
+{
+  "name": "@master-bot/api",
+  "version": "0.0.1",
+  "author": "Nir Gal",
+  "license": "ISC",
+  "private": true,
+  "files": [
+    "src"
+  ],
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}
