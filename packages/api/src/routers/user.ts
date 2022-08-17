@@ -1,12 +1,24 @@
-/**
- *
- * This is an example router, you can delete this file and then update `../pages/api/trpc/[trpc].tsx`
- */
-
 import { createRouter } from "../createRouter";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createRouter()
+  .query("get-user-by-id", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { id } = input;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          discordId: id,
+        },
+      });
+
+      return { user };
+    },
+  })
   // create
   .mutation("add", {
     input: z.object({
