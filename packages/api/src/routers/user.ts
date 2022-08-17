@@ -1,6 +1,5 @@
 import { createRouter } from "../createRouter";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 
 export const userRouter = createRouter()
   .query("get-user-by-id", {
@@ -20,31 +19,36 @@ export const userRouter = createRouter()
     },
   })
   // create
-  .mutation("add", {
+  .mutation("create", {
     input: z.object({
       id: z.string(),
-      username: z.string(),
+      name: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const todo = await ctx.prisma.user.create({
-        data: input,
-      });
-      return todo;
-    },
-  })
-  // read
-  .query("all", {
-    async resolve({ ctx }) {
-      /**
-       * For pagination you can have a look at this docs site
-       * @link https://trpc.io/docs/useInfiniteQuery
-       */
-
-      return ctx.prisma.user.findMany({
-        select: {
-          id: true,
-          username: true,
+      const { id, name } = input;
+      const user = await ctx.prisma.user.create({
+        data: {
+          discordId: id,
+          name: name,
         },
       });
+      return { user };
+    },
+  })
+  // delete
+  .mutation("delete", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      const { id } = input;
+
+      const user = await ctx.prisma.user.delete({
+        where: {
+          discordId: id,
+        },
+      });
+
+      return { user };
     },
   });
