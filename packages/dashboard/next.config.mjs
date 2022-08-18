@@ -20,9 +20,6 @@ export default withTM(
     swcMinify: true,
     experimental: {
       externalDir: true,
-      eslint: {
-        ignoreDuringBuilds: true,
-      },
     },
   })
 );

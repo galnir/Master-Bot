@@ -11,8 +11,6 @@ import { getServerSession } from "../shared/get-server-session";
 import { trpc } from "../utils/trpc";
 
 const HomeComponent = () => {
-  const { data, isLoading } = trpc.useQuery(["user.all"]);
-
   return (
     <div className="bg-slate-900 h-screen">
       <Head>
@@ -39,17 +37,7 @@ const HomeComponent = () => {
           <HeaderButton linkTo="/dashboard">Dashboard</HeaderButton>
         </div>
       </header>
-      <main>
-        {isLoading ? (
-          <div>loading data</div>
-        ) : (
-          <div className="text-white">
-            {data?.map((user) => (
-              <h1 key={user.id}>{user.username}</h1>
-            ))}
-          </div>
-        )}
-      </main>
+      <main></main>
     </div>
   );
 };
