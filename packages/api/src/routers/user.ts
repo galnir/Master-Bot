@@ -11,7 +11,7 @@ export const userRouter = createRouter()
 
       const user = await ctx.prisma.user.findUnique({
         where: {
-          id,
+          discordId: id,
         },
       });
 
@@ -28,8 +28,8 @@ export const userRouter = createRouter()
       const { id, name } = input;
       const user = await ctx.prisma.user.create({
         data: {
-          id,
-          username: name,
+          discordId: id,
+          name,
         },
       });
       return { user };
@@ -45,7 +45,7 @@ export const userRouter = createRouter()
 
       const user = await ctx.prisma.user.delete({
         where: {
-          id,
+          discordId: id,
         },
       });
 

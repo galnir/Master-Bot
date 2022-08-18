@@ -1,29 +1,24 @@
+// @ts-nocheck
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import DiscordProvider, { DiscordProfile } from "next-auth/providers/discord";
+
+// Prisma adapter for NextAuth
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "@master-bot/api/src/db/client";
 import { env } from "../../../env/server.mjs";
 
 export const authOptions: NextAuthOptions = {
-  jwt: {
-    maxAge: 60 * 60 * 24 * 30,
-  },
-  session: {
-    strategy: "jwt",
-  },
+  // Include user.id on session
   callbacks: {
-    jwt: ({ token, user }) => {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    session: ({ session, token }) => {
-      if (token && session.user) {
-        session.user.id = token.id as string;
+    session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
       }
       return session;
     },
   },
   // Configure one or more authentication providers
+  adapter: PrismaAdapter(prisma),
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,

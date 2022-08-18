@@ -8,7 +8,6 @@ import Link from "next/link";
 import HeaderButton from "../components/HeaderButton";
 import Logo from "../components/Logo";
 import { getServerSession } from "../shared/get-server-session";
-import { trpc } from "../utils/trpc";
 
 const HomeComponent = () => {
   return (

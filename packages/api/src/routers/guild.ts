@@ -1,9 +1,11 @@
+// @ts-nocheck
+
 import { createRouter } from "../createRouter";
 import { z } from "zod";
 import { APIGuild } from "discord-api-types/v10";
 import { TRPCError } from "@trpc/server";
 
-export const playlistRouter = createRouter()
+export const guildRouter = createRouter()
   .query("get-guild", {
     input: z.object({
       id: z.string(),

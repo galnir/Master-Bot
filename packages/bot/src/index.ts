@@ -11,7 +11,7 @@ import { ExtendedClient } from './structures/ExtendedClient';
 // import prisma from './lib/prisma';
 import Logger from './lib/utils/logger';
 import { ErrorListeners } from './listeners/ErrorHandling';
-import { trpcNode } from './trpc';
+//import { trpcNode } from './trpc';
 
 load({
   client: {
@@ -33,8 +33,10 @@ client.on('ready', async () => {
 
   client.user?.setStatus('online');
 
-  const data = await trpcNode.query('user.all');
-  console.log('data is', data);
+  // const data = await trpcNode.query('user.get-user-by-id', {
+  //   id: '183647046564184065'
+  // });
+  // console.log('data is', data);
 
   client.guilds.cache.map(async guild => {
     const queue = client.music.queues.get(guild.id);

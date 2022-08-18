@@ -4,6 +4,8 @@
 import superjson from "superjson";
 import { createRouter } from "../createRouter";
 import { userRouter } from "./user";
+import { guildRouter } from "./guild";
+import { playlistRouter } from "./playlist";
 
 /**
  * Create your application's root router
@@ -22,6 +24,8 @@ export const appRouter = createRouter()
    * @link https://trpc.io/docs/error-formatting
    */
   // .formatError(({ shape, error }) => { })
-  .merge("user.", userRouter);
+  .merge("user.", userRouter)
+  .merge("guild.", guildRouter)
+  .merge("playlist.", playlistRouter);
 
 export type AppRouter = typeof appRouter;
