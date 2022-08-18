@@ -6,6 +6,7 @@ import { createRouter } from "../createRouter";
 import { userRouter } from "./user";
 import { guildRouter } from "./guild";
 import { playlistRouter } from "./playlist";
+import { twitchRouter } from "./twitch";
 
 /**
  * Create your application's root router
@@ -26,6 +27,7 @@ export const appRouter = createRouter()
   // .formatError(({ shape, error }) => { })
   .merge("user.", userRouter)
   .merge("guild.", guildRouter)
-  .merge("playlist.", playlistRouter);
+  .merge("playlist.", playlistRouter)
+  .merge("twitch.", twitchRouter);
 
 export type AppRouter = typeof appRouter;

@@ -1,4 +1,4 @@
-//import { container } from '@sapphire/framework';
+import { container } from '@sapphire/framework';
 import { ColorResolvable, MessageEmbed } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
@@ -48,7 +48,7 @@ export class NowPlayingEmbed {
     let embedColor: ColorResolvable;
     let sourceTxt: string;
     let sourceIcon: string;
-    //let streamData;
+    let streamData;
 
     switch (this.track.sourceName) {
       case 'soundcloud': {
@@ -64,17 +64,17 @@ export class NowPlayingEmbed {
         sourceIcon =
           'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
         embedColor = '#9146FF';
-        //const twitch = container.client.twitch;
-        // if (twitch.auth.access_token) {
-        //   try {
-        //     streamData = await twitch.api.getStream({
-        //       login: this.track.author.toLowerCase(),
-        //       token: twitch.auth.access_token
-        //     });
-        //   } catch {
-        //     streamData = undefined;
-        //   }
-        // }
+        const twitch = container.client.twitch;
+        if (twitch.auth.access_token) {
+          try {
+            streamData = await twitch.api.getStream({
+              login: this.track.author.toLowerCase(),
+              token: twitch.auth.access_token
+            });
+          } catch {
+            streamData = undefined;
+          }
+        }
         break;
       }
 
@@ -132,32 +132,32 @@ export class NowPlayingEmbed {
         .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
     }
 
-    // if (!this.track.isSeekable || this.track.isStream) {
-    //   if (streamData && this.track.sourceName == 'twitch') {
-    //     const game = `[${
-    //       streamData.game_name
-    //     }](https://www.twitch.tv/directory/game/${encodeURIComponent(
-    //       streamData.game_name
-    //     )})`;
-    //     const upTime = this.timeString(
-    //       this.millisecondsToTimeObject(
-    //         Date.now() - new Date(streamData.started_at).getTime()
-    //       )
-    //     );
-    //     return baseEmbed
-    //       .setDescription(
-    //         `**Game**: ${game}\n**Viewers**: ${
-    //           streamData.viewer_count
-    //         }\n**Uptime**: ${upTime}\n **Started**: <t:${Math.floor(
-    //           new Date(streamData.started_at).getTime() / 1000
-    //         )}:t>`
-    //       )
-    //       .setImage(
-    //         streamData.thumbnail_url.replace('{width}x{height}', '852x480') +
-    //           `?${new Date(streamData.started_at).getTime()}`
-    //       );
-    //   } else return baseEmbed;
-    // }
+    if (!this.track.isSeekable || this.track.isStream) {
+      if (streamData && this.track.sourceName == 'twitch') {
+        const game = `[${
+          streamData.game_name
+        }](https://www.twitch.tv/directory/game/${encodeURIComponent(
+          streamData.game_name
+        )})`;
+        const upTime = this.timeString(
+          this.millisecondsToTimeObject(
+            Date.now() - new Date(streamData.started_at).getTime()
+          )
+        );
+        return baseEmbed
+          .setDescription(
+            `**Game**: ${game}\n**Viewers**: ${
+              streamData.viewer_count
+            }\n**Uptime**: ${upTime}\n **Started**: <t:${Math.floor(
+              new Date(streamData.started_at).getTime() / 1000
+            )}:t>`
+          )
+          .setImage(
+            streamData.thumbnail_url.replace('{width}x{height}', '852x480') +
+              `?${new Date(streamData.started_at).getTime()}`
+          );
+      } else return baseEmbed;
+    }
 
     // song just started embed
     if (this.position == undefined) this.position = 0;

@@ -48,6 +48,32 @@ export const guildRouter = createRouter()
       return { guild };
     },
   })
+  .mutation("create-via-twitch-notification", {
+    input: z.object({
+      guildId: z.string(),
+      userId: z.string(),
+      ownerId: z.string(),
+      name: z.string(),
+      notifyList: z.array(z.string()),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, userId, ownerId, name, notifyList } = input;
+      await ctx.prisma.guild.upsert({
+        create: {
+          id: guildId,
+          notifyList: [userId],
+          volume: 100,
+          ownerId: ownerId,
+          name: name,
+        },
+        select: { notifyList: true },
+        update: {
+          notifyList,
+        },
+        where: { id: guildId },
+      });
+    },
+  })
   // delete
   .mutation("delete", {
     input: z.object({
@@ -151,5 +177,19 @@ export const guildRouter = createRouter()
           message: "Something went wrong when trying to fetch guilds",
         });
       }
+    },
+  })
+  .mutation("update-twitch-notifications", {
+    input: z.object({
+      guildId: z.string(),
+      notifyList: z.array(z.string()),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, notifyList } = input;
+
+      await ctx.prisma.guild.update({
+        where: { id: guildId },
+        data: { notifyList },
+      });
     },
   });
