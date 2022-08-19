@@ -90,7 +90,7 @@ model Guild {
   volume                Int           @default(100)
   notifyList            String[]
   ownerId               String
-  owner                 User          @relation(fields: [ownerId], references: [id])
+  owner                 User          @relation(fields: [ownerId], references: [discordId])
   // Settings
   disabledCommands      String[]      @map("disabled_commands")
   logChannel            String?       @map("log_channel")

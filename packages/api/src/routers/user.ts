@@ -26,8 +26,12 @@ export const userRouter = createRouter()
     }),
     async resolve({ ctx, input }) {
       const { id, name } = input;
-      const user = await ctx.prisma.user.create({
-        data: {
+      const user = await ctx.prisma.user.upsert({
+        where: {
+          discordId: id,
+        },
+        update: {},
+        create: {
           discordId: id,
           name,
         },
