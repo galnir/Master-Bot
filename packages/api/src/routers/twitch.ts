@@ -81,4 +81,21 @@ export const twitchRouter = createRouter()
 
       return { notification };
     },
+  })
+  .mutation("update-notification-status", {
+    input: z.object({
+      userId: z.string(),
+      live: z.boolean(),
+      sent: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+      const { live, sent, userId } = input;
+
+      const notification = await ctx.prisma.twitchNotify.update({
+        where: { twitchId: userId },
+        data: { live, sent },
+      });
+
+      return { notification };
+    },
   });

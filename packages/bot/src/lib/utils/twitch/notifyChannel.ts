@@ -2,9 +2,9 @@ import type { TwitchGame, TwitchStream } from './twitchAPI-types';
 import { TwitchEmbed } from './TwitchEmbed';
 import { container } from '@sapphire/framework';
 import type { MessageChannel } from '../../../index';
-import prisma from '../../prisma';
 import type { Message } from 'discord.js';
 import Logger from '../logger';
+import { trpcNode } from '../../../trpc';
 
 // Twitch ids are non changeable, usernames are not good for reference
 export async function notify(query: string[]) {
@@ -108,10 +108,10 @@ export async function notify(query: string[]) {
               client.twitch.notifyList[entry].messageSent = true;
 
               // Update DataBase
-              await prisma.twitchNotify.update({
-                where: { twitchId: entry },
-                select: { live: true, sent: true },
-                data: { live: true, sent: true }
+              await trpcNode.mutation('twitch.update-notification-status', {
+                userId: entry,
+                sent: true,
+                live: true
               });
             } // End of Stream Start
 
@@ -207,10 +207,10 @@ export async function notify(query: string[]) {
             client.twitch.notifyList[entry].messageSent = false;
             client.twitch.notifyList[entry].messageHandler = {};
             // Update DataBase
-            await prisma.twitchNotify.update({
-              where: { twitchId: entry },
-              select: { live: true, sent: true },
-              data: { live: false, sent: false }
+            await trpcNode.mutation('twitch.update-notification-status', {
+              userId: entry,
+              sent: false,
+              live: false
             });
           }
         }
