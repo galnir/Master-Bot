@@ -15,9 +15,34 @@ export const playlistRouter = createRouter()
           userId,
           name,
         },
+        include: {
+          songs: true,
+        },
       });
 
       return { playlist };
+    },
+  })
+  .query("get-all", {
+    input: z.object({
+      userId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { userId } = input;
+
+      const playlists = await ctx.prisma.playlist.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          songs: true,
+        },
+        orderBy: {
+          id: "asc",
+        },
+      });
+
+      return { playlists };
     },
   })
   // create

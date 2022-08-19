@@ -192,4 +192,18 @@ export const guildRouter = createRouter()
         data: { notifyList },
       });
     },
+  })
+  .mutation("update-volume", {
+    input: z.object({
+      guildId: z.string(),
+      volume: z.number(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, volume } = input;
+
+      await ctx.prisma.guild.update({
+        where: { id: guildId },
+        data: { volume },
+      });
+    },
   });

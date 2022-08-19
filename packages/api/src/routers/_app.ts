@@ -6,6 +6,7 @@ import { createRouter } from "../createRouter";
 import { userRouter } from "./user";
 import { guildRouter } from "./guild";
 import { playlistRouter } from "./playlist";
+import { songRouter } from "./song";
 import { twitchRouter } from "./twitch";
 
 /**
@@ -28,6 +29,7 @@ export const appRouter = createRouter()
   .merge("user.", userRouter)
   .merge("guild.", guildRouter)
   .merge("playlist.", playlistRouter)
+  .merge("song.", songRouter)
   .merge("twitch.", twitchRouter);
 
 export type AppRouter = typeof appRouter;

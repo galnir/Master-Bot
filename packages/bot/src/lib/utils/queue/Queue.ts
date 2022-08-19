@@ -15,6 +15,7 @@ import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../music/buttonsCollector';
 import Logger from '../logger';
+import { trpcNode } from '../../../trpc';
 
 export enum LoopType {
   None,
@@ -230,15 +231,21 @@ export class Queue {
   public async getVolume(): Promise<number> {
     let data = await this.store.redis.get(this.keys.volume);
 
-    // if (!data) {
-    //   const storage = await prisma.guild.findFirst({
-    //     where: { id: this.guildID },
-    //     select: { volume: true }
-    //   });
-    //   if (!storage) await this.setVolume(this.player.volume ?? 100); // saves to both
+    if (!data) {
+      await trpcNode.query('guild.get-guild', {
+        id: this.guildID
+      });
+      const guildQuery = await trpcNode.query('guild.get-guild', {
+        id: this.guildID
+      });
 
-    //   data = storage?.volume.toString() || this.player.volume.toString();
-    // }
+      if (!guildQuery || !guildQuery.guild)
+        await this.setVolume(this.player.volume ?? 100); // saves to both
+
+      if (guildQuery.guild)
+        data =
+          guildQuery.guild.volume.toString() || this.player.volume.toString();
+    }
 
     return data ? Number(data) : 100;
   }
@@ -251,22 +258,11 @@ export class Queue {
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
 
-    //const owner = await this.guild.fetchOwner();
-    // await prisma.guild.upsert({
-    //   where: { id: this.guildID },
-    //   create: {
-    //     id: this.guildID,
-    //     name: this.guild.name,
-    //     volume: this.player.volume,
-    //     owner: {
-    //       connectOrCreate: {
-    //         where: { id: owner.id },
-    //         create: { id: owner.id, username: owner.user.username }
-    //       }
-    //     }
-    //   },
-    //   update: { volume: this.player.volume }
-    // });
+    await trpcNode.mutation('guild.update-volume', {
+      guildId: this.guildID,
+      volume: this.player.volume
+    });
+
     this.client.emit('musicSongVolumeUpdate', this, value);
     return {
       previous: previous === null ? 100 : Number(previous),
