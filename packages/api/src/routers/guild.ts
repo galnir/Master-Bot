@@ -136,6 +136,26 @@ export const guildRouter = createRouter()
       return { guild };
     },
   })
+  .mutation("update-welcome-message-channel", {
+    input: z.object({
+      guildId: z.string(),
+      channelId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, channelId } = input;
+
+      const guild = await ctx.prisma.guild.update({
+        where: {
+          id: guildId,
+        },
+        data: {
+          welcomeMessageChannelId: channelId,
+        },
+      });
+
+      return { guild };
+    },
+  })
   .query("get-all-from-local", {
     input: z.object({
       ownerId: z.string(),
