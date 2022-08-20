@@ -4,6 +4,7 @@ import DashboardLayout from "../../../components/DashboardLayout";
 import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
 import { Switch } from "@headlessui/react";
+import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
 
 const GuildIndexPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -61,6 +62,7 @@ const GuildIndexPage: NextPageWithLayout = () => {
               } inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out`}
             />
           </Switch>
+          <WelcomeMessageInput guildId={query as string} />
         </div>
       </div>
     </div>
