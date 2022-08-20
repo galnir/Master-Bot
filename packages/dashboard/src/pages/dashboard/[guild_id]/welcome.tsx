@@ -5,11 +5,11 @@ import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
 import { Switch } from "@headlessui/react";
 import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
+import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
 
 const GuildIndexPage: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query.guild_id;
-  console.log("query is sdadsds", query);
   if (!query || typeof query !== "string") {
     router.push("/");
   }
@@ -40,7 +40,7 @@ const GuildIndexPage: NextPageWithLayout = () => {
   return (
     <div className="p-10 text-white">
       <h1 className="text-3xl">Welcome Message Settings</h1>
-      <div className="flex justify-between w-full">
+      <div>
         <h3 className="my-10">Welcome new users with a custom message</h3>
         <div className="flex items-center gap-5">
           <span>
@@ -62,7 +62,10 @@ const GuildIndexPage: NextPageWithLayout = () => {
               } inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out`}
             />
           </Switch>
-          <WelcomeMessageInput guildId={query as string} />
+        </div>
+        <WelcomeMessageInput guildId={query as string} />
+        <div className="mt-10">
+          <WelcomeMessageChannelPicker guildId={query as string} />
         </div>
       </div>
     </div>
