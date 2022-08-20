@@ -6,20 +6,32 @@ import { transformer } from "../utils/trpc";
 import type { AppType } from "next/dist/shared/lib/utils";
 import type { AppRouter } from "@master-bot/api/src/routers/_app";
 import { SessionProvider } from "next-auth/react";
+import type { NextPage } from "next";
+import type { ReactElement, ReactNode } from "react";
+import type { AppProps } from "next/app";
 
-const MyApp: AppType = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
-    <SessionProvider session={session}>
-      <Component {...pageProps} />;
+    <SessionProvider session={pageProps.session}>
+      <div className="bg-slate-800 h-screen">
+        {getLayout(<Component {...pageProps} />)}
+      </div>
     </SessionProvider>
   );
 };
 
 function getBaseUrl() {
-  if (process.browser) {
+  if (typeof window !== "undefined") {
     return "";
   }
   // // reference for vercel.com

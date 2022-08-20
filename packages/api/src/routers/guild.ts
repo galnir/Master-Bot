@@ -169,9 +169,13 @@ export const guildRouter = createRouter()
         );
 
         const userGuilds: APIGuild[] = await response.json();
+        if (!userGuilds.length && !userGuilds.global) {
+          return { guilds: dbGuilds };
+        }
         const guildsUserOwns = userGuilds.filter((guild) => guild.owner);
         return { apiGuilds: guildsUserOwns, dbGuilds };
-      } catch {
+      } catch (e) {
+        console.error(e);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong when trying to fetch guilds",
