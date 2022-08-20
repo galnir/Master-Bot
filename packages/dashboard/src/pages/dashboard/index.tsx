@@ -16,7 +16,7 @@ const DashboardIndexPage: NextPage = () => {
       </Head>
       <main className="p-10">
         <h1 className="text-3xl mb-4">Choose guild to manage</h1>
-        {isLoading ? (
+        {isLoading || !data?.apiGuilds ? (
           <div>Loading...</div>
         ) : (
           <div className="flex gap-10">
