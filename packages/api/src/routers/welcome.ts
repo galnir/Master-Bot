@@ -60,4 +60,43 @@ export const welcomeRouter = createRouter()
 
       return { guild };
     },
+  })
+  .query("get-status", {
+    input: z.object({
+      guildId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId } = input;
+
+      const guild = await ctx.prisma.guild.findUnique({
+        where: {
+          id: guildId,
+        },
+        select: {
+          welcomeMessageEnabled: true,
+        },
+      });
+
+      return { guild };
+    },
+  })
+  .mutation("toggle", {
+    input: z.object({
+      guildId: z.string(),
+      status: z.boolean(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, status } = input;
+
+      const guild = await ctx.prisma.guild.update({
+        where: {
+          id: guildId,
+        },
+        data: {
+          welcomeMessageEnabled: status,
+        },
+      });
+
+      return { guild };
+    },
   });

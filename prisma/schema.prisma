@@ -96,7 +96,7 @@ model Guild {
   logChannel            String?       @map("log_channel")
   welcomeMessageChannel String?       @map("welcome_message_channel")
   welcomeMessage        String?       @map("welcome_message")
-  welcomeMessageEnabled Boolean?      @default(false) @map("welcome_message_enabled")
+  welcomeMessageEnabled Boolean       @default(false) @map("welcome_message_enabled")
   // Temp Channels
   hub                   String?
   hubChannel            String?       @map("hub_channel") // The channel that users enter to get redirected
