@@ -24,13 +24,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Head>
-        <title>
-          {data?.guild ? data?.guild.name : "Master Bot"} - Dashboard
-        </title>
+        <title>Master Bot Dashboard</title>
       </Head>
-      <main className="flex text-gray-400 w-full h-screen relative">
-        <div className="min-w-[350px] border-r-2 border-gray-500">
-          <div className="p-8 fixed h-full">
+      <main className="flex text-gray-400 w-full h-screen relative overflow-auto">
+        <div className="min-w-[350px]">
+          <div className="min-w-[350px] border-r-2 h-full border-gray-500 p-8 fixed">
             <div className="mb-8">
               <Logo />
             </div>
@@ -46,12 +44,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 </Link>
               </div>
               <div className="hover:text-slate-300">
-                <Link href={`${query}/commands`}>
+                <Link href={`/dashboard/${query}/commands`}>
                   <p>Commands</p>
                 </Link>
               </div>
               <div className="hover:text-slate-300">
-                <Link href={`${query}/tempchannels`}>
+                <Link href={`/dashboard/${query}/tempchannels`}>
                   <p>Temporary Channels</p>
                 </Link>
               </div>

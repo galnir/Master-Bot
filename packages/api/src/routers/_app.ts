@@ -10,6 +10,7 @@ import { songRouter } from "./song";
 import { twitchRouter } from "./twitch";
 import { channelRouter } from "./channel";
 import { welcomeRouter } from "./welcome";
+import { commandRouter } from "./command";
 
 /**
  * Create your application's root router
@@ -34,6 +35,7 @@ export const appRouter = createRouter()
   .merge("song.", songRouter)
   .merge("twitch.", twitchRouter)
   .merge("channel.", channelRouter)
-  .merge("welcome.", welcomeRouter);
+  .merge("welcome.", welcomeRouter)
+  .merge("command.", commandRouter);
 
 export type AppRouter = typeof appRouter;
