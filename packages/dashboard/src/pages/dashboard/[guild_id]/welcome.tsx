@@ -8,7 +8,7 @@ import { Switch } from "@headlessui/react";
 import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
 import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
 
-const GuildIndexPage: NextPageWithLayout = () => {
+const WelcomeDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const query = router.query.guild_id;
@@ -85,8 +85,8 @@ const GuildIndexPage: NextPageWithLayout = () => {
   );
 };
 
-GuildIndexPage.getLayout = function getLayout(page: ReactElement) {
+WelcomeDashboardPage.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;
 };
 
-export default GuildIndexPage;
+export default WelcomeDashboardPage;
