@@ -136,4 +136,58 @@ export const hubRouter = createRouter()
         });
       }
     },
+  })
+  .query("get-temp-channel", {
+    input: z.object({
+      guildId: z.string(),
+      ownerId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, ownerId } = input;
+
+      const tempChannel = await ctx.prisma.tempChannel.findFirst({
+        where: {
+          guildId,
+          ownerId,
+        },
+      });
+
+      return { tempChannel };
+    },
+  })
+  .mutation("create-temp-channel", {
+    input: z.object({
+      guildId: z.string(),
+      ownerId: z.string(),
+      channelId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId, ownerId, channelId } = input;
+
+      const tempChannel = await ctx.prisma.tempChannel.create({
+        data: {
+          guildId,
+          ownerId,
+          id: channelId,
+        },
+      });
+
+      return { tempChannel };
+    },
+  })
+  .mutation("delete-temp-channel", {
+    input: z.object({
+      channelId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { channelId } = input;
+
+      const tempChannel = await ctx.prisma.tempChannel.delete({
+        where: {
+          id: channelId,
+        },
+      });
+
+      return { tempChannel };
+    },
   });
