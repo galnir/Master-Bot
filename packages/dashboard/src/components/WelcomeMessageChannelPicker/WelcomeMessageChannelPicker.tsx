@@ -23,14 +23,14 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
   const { mutate } = trpc.useMutation("welcome.set-channel");
 
   return (
-    <div className="flex flex-col">
-      <label>Welcome Message Channel</label>
+    <div className="flex flex-col gap-2">
+      <label className="text-xl">Welcome Message Channel</label>
       {isLoading && !data && isLoadingChannelData && !channelData ? (
         <div>Loading channels...</div>
       ) : (
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
           <select
-            className="w-56 bg-black text-white"
+            className="w-56 h-7 bg-black text-white"
             value={value ? value : ""}
             onChange={(e) => setValue(e.target.value)}
           >
@@ -41,7 +41,7 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
             ))}
           </select>
           <button
-            className="w-fit"
+            className="w-fit hover:text-gray-400"
             type="submit"
             onClick={() => {
               if (!value) return;

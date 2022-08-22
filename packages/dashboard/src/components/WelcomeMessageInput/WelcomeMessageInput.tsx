@@ -34,7 +34,11 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         onChange={(e) => setMessage(e.target.value)}
         className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
       />
-      <button type="submit" onClick={handleSubmit}>
+      <button
+        className="hover:text-gray-400"
+        type="submit"
+        onClick={handleSubmit}
+      >
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>
     </div>
