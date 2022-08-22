@@ -11,6 +11,7 @@ import { twitchRouter } from "./twitch";
 import { channelRouter } from "./channel";
 import { welcomeRouter } from "./welcome";
 import { commandRouter } from "./command";
+import { hubRouter } from "./hub";
 
 /**
  * Create your application's root router
@@ -36,6 +37,7 @@ export const appRouter = createRouter()
   .merge("twitch.", twitchRouter)
   .merge("channel.", channelRouter)
   .merge("welcome.", welcomeRouter)
-  .merge("command.", commandRouter);
+  .merge("command.", commandRouter)
+  .merge("hub.", hubRouter);
 
 export type AppRouter = typeof appRouter;

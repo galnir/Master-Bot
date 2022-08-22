@@ -49,14 +49,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                 </Link>
               </div>
               <div className="hover:text-slate-300">
-                <Link href={`/dashboard/${query}/tempchannels`}>
+                <Link href={`/dashboard/${query}/temporary_channels`}>
                   <p>Temporary Channels</p>
                 </Link>
               </div>
             </div>
           </div>
         </div>
-        <div className="grow">{children}</div>
+        <div className="grow ml-4">{children}</div>
       </main>
     </>
   );

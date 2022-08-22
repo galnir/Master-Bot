@@ -2,7 +2,7 @@ import { createRouter } from "../createRouter";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-interface CommandType {
+type CommandType = {
   id: string;
   applicationId: string;
   version: string;
@@ -13,7 +13,7 @@ interface CommandType {
   description: string;
   dm_permission: boolean;
   options: any[];
-}
+};
 
 export const commandRouter = createRouter()
   .query("get-disabled-commands", {

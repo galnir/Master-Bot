@@ -7,6 +7,9 @@
     "type": "git",
     "url": "git+https://github.com/galnir/Master-Bot.git"
   },
+  "scripts": {
+    "postinstall": "npx prisma db push"
+  },
   "workspaces": [
     "packages/api",
     "packages/node",
