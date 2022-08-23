@@ -43,12 +43,4 @@ export function ErrorListeners() {
   client.music.on('error', err => {
     Logger.error('LavaLink ' + err);
   });
-
-  // API
-  client.server.server.on('clientError', err => {
-    Logger.error('API ' + err);
-  });
-  client.server.server.on('error', err => {
-    Logger.error('API ' + err);
-  });
 }

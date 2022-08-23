@@ -1,4 +1,3 @@
-import '@sapphire/plugin-api/register';
 import type { ClientTwitchExtension } from '../lib/utils/twitch/twitchAPI-types';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { SapphireClient } from '@sapphire/framework';
@@ -33,20 +32,6 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Intents.FLAGS.GUILD_VOICE_STATES
       ],
-      api: {
-        auth: {
-          id: data.client_id,
-          secret: data.token,
-          cookie: 'MASTERBOT_AUTH',
-          redirect: '',
-          scopes: ['identify']
-        },
-        prefix: '/',
-        origin: '*',
-        listenOptions: {
-          port: 1212
-        }
-      },
       logger: { level: 100 }
     });
 
