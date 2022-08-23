@@ -8,6 +8,9 @@
     "url": "git+https://github.com/galnir/Master-Bot.git"
   },
   "scripts": {
+    "dev": "concurrently \"npm run dev:dashboard\" \"npm run dev:bot\"",
+    "dev:bot": "npm run dev --prefix packages/bot",
+    "dev:dashboard": "npm run dev --prefix packages/dashboard",
     "postinstall": "npx prisma db push"
   },
   "workspaces": [
@@ -28,6 +31,7 @@
     "@trpc/client": "^9.27.0",
     "@trpc/react": "^9.27.0",
     "@trpc/server": "^9.27.0",
+    "concurrently": "^7.3.0",
     "superjson": "^1.9.1",
     "zod": "^3.18.0"
   },
