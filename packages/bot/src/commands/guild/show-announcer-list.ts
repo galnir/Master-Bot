@@ -8,7 +8,6 @@ import {
 } from '@sapphire/framework';
 import { CommandInteraction, Guild, MessageEmbed } from 'discord.js';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
-import data from '../../config.json';
 import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
@@ -86,7 +85,7 @@ export class ShowAnnouncerListCommand extends Command {
   public override registerApplicationCommands(
     registry: ApplicationCommandRegistry
   ): void {
-    if (!data.twitchClientID || !data.twitchClientSecret) {
+    if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
       return;
     }
     registry.registerChatInputCommand({

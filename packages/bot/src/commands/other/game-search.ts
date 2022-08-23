@@ -7,7 +7,6 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
-import * as data from '../../config.json';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -17,7 +16,7 @@ import Logger from '../../lib/utils/logger';
 })
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
-    if (!data.rawgAPI)
+    if (!process.env.RAWG_API)
       return await interaction.reply(
         ':x: Command is Disabled - Missing API Key'
       );
@@ -159,7 +158,7 @@ export class GameSearchCommand extends Command {
   public override registerApplicationCommands(
     registry: ApplicationCommandRegistry
   ): void {
-    if (!data.rawgAPI) {
+    if (!process.env.RAWG_API) {
       Logger.info('Game-Search-Command - Disabled');
       return;
     } else Logger.info('Game-Search-Command - Enabled');
@@ -185,7 +184,7 @@ export class GameSearchCommand extends Command {
     return new Promise(async function (resolve, reject) {
       const url = `https://api.rawg.io/api/games/${encodeURIComponent(
         query
-      )}?key=${data.rawgAPI}`;
+      )}?key=${process.env.RAWG_API}`;
       try {
         const response = await axios.get(url);
         if (response.status === 429) {
@@ -208,7 +207,7 @@ export class GameSearchCommand extends Command {
         let body = response.data;
         if (body.redirect) {
           const redirect = await axios.get(
-            `https://api.rawg.io/api/games/${body.slug}?key=${data.rawgAPI}`
+            `https://api.rawg.io/api/games/${body.slug}?key=${process.env.RAWG_API}`
           );
           body = redirect.data;
         }

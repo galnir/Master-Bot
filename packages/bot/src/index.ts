@@ -4,7 +4,6 @@ import {
   RegisterBehavior
 } from '@sapphire/framework';
 import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
-import * as data from './config.json';
 import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
 import { notify } from './lib/utils/twitch/notifyChannel';
@@ -12,13 +11,15 @@ import Logger from './lib/utils/logger';
 import { ErrorListeners } from './listeners/ErrorHandling';
 import { trpcNode } from './trpc';
 
-load({
-  client: {
-    id: data.spotify_client_id,
-    secret: data.spotify_client_secret
-  },
-  autoResolveYoutubeTracks: true
-});
+if (process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET) {
+  load({
+    client: {
+      id: process.env.SPOTIFY_CLIENT_ID,
+      secret: process.env.SPOTIFY_CLIENT_SECRET
+    },
+    autoResolveYoutubeTracks: true
+  });
+}
 
 const client = new ExtendedClient();
 
@@ -126,4 +127,4 @@ ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
   RegisterBehavior.Overwrite
 );
 
-client.login(data.token);
+client.login(process.env.DISCORD_TOKEN);

@@ -15,6 +15,7 @@ const GuildSelectBox = ({
   id,
   invite_url,
 }: GuildSelectBoxProps) => {
+  console.log("dsadsadasdsadsais", invite_url);
   return (
     <div className="flex flex-col gap-4">
       <div className="max-w-xs">

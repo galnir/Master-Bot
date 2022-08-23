@@ -9,7 +9,6 @@ import {
 import type { CommandInteraction, GuildChannel } from 'discord.js';
 import { isTextBasedChannel } from '@sapphire/discord.js-utilities';
 import { notify } from '../../lib/utils/twitch/notifyChannel';
-import * as data from '../../config.json';
 import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
@@ -158,7 +157,7 @@ export class AddStreamerCommand extends Command {
   public override registerApplicationCommands(
     registry: ApplicationCommandRegistry
   ): void {
-    if (!data.twitchClientID || !data.twitchClientSecret) {
+    if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
       return;
     }
     registry.registerChatInputCommand({

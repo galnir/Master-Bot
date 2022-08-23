@@ -7,7 +7,6 @@ import GuildSelectBox from "../../components/GuildSelectBox";
 
 const DashboardIndexPage: NextPage = () => {
   const { data, isLoading } = trpc.useQuery(["guild.get-all"]);
-
   return (
     <div className="bg-slate-900 h-screen text-gray-100">
       <Head>

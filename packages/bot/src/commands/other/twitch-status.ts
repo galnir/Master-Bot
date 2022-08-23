@@ -6,7 +6,6 @@ import {
   container
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
-import data from '../../config.json';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -121,7 +120,7 @@ export class TwitchStatusCommand extends Command {
   public override registerApplicationCommands(
     registry: ApplicationCommandRegistry
   ): void {
-    if (!data.twitchClientID || !data.twitchClientSecret) {
+    if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
       Logger.info('Twitch-Status-Command - Disabled');
       return;
     }

@@ -3,16 +3,23 @@ import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { SapphireClient } from '@sapphire/framework';
 import { Intents } from 'discord.js';
 import { QueueClient } from '../lib/utils/queue/QueueClient';
-import * as data from '../config.json';
 import Redis from 'ioredis';
 import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
 import Logger from '../lib/utils/logger';
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({
+  path: path.resolve(__dirname, '../../../../.env')
+});
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
   leaveTimers: { [key: string]: NodeJS.Timer };
   twitch: ClientTwitchExtension = {
-    api: new TwitchAPI(data.twitchClientID, data.twitchClientSecret),
+    api: new TwitchAPI(
+      process.env.TWITCH_CLIENT_ID,
+      process.env.TWITCH_CLIENT_SECRET
+    ),
     auth: {
       access_token: '',
       refresh_token: '',
@@ -40,10 +47,10 @@ export class ExtendedClient extends SapphireClient {
         this.guilds.cache.get(id)?.shard?.send(payload),
       options: { redis: new Redis() },
       connection: {
-        host: data.lava_host,
-        password: data.lava_pass,
-        port: data.lava_port,
-        secure: data.lava_secure
+        host: process.env.LAVA_HOST || '',
+        password: process.env.LAVA_PASS || '',
+        port: process.env.LAVA_PORT ? +process.env.LAVA_PORT : 1339,
+        secure: process.env.LAVA_SECURE === 'true' ? true : false
       }
     });
 
@@ -62,7 +69,7 @@ export class ExtendedClient extends SapphireClient {
       this.music.handleVoiceUpdate(data);
     });
 
-    if (data.twitchClientID && data.twitchClientSecret) {
+    if (process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET) {
       this.twitch.api?.getAccessToken('user:read:email').then(response => {
         this.twitch.auth = {
           access_token: response.access_token,

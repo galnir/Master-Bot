@@ -2,3 +2,5 @@
 .DS_Store
 node_modules
 .env
+application.yml
+Lavalink.jar

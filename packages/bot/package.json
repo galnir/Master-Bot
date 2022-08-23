@@ -29,6 +29,7 @@
     "axios": "^0.27.2",
     "discord-api-types": "^0.33.4",
     "discord.js": "^13.8.0",
+    "dotenv": "^16.0.1",
     "genius-discord-lyrics": "1.0.5",
     "ioredis": "^5.0.6",
     "iso-639-1": "^2.1.14",
@@ -40,8 +41,7 @@
     "tiny-typed-emitter": "^2.1.0",
     "undici": "^5.8.2",
     "winston": "^3.7.2",
-    "winston-daily-rotate-file": "^4.7.1",
-    "@master-bot/api": "0.0.1"
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "@lavaclient/types": "^2.1.0",

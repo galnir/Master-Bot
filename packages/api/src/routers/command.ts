@@ -47,7 +47,7 @@ export const commandRouter = createRouter()
       try {
         const token = process.env.DISCORD_TOKEN;
         const response = await fetch(
-          `https://discordapp.com/api/applications/${process.env.BOT_ID}/commands`,
+          `https://discordapp.com/api/applications/${process.env.DISCORD_CLIENT_ID}/commands`,
           {
             headers: {
               Authorization: `Bot ${token}`,

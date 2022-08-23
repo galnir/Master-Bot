@@ -3,12 +3,13 @@ import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { withTRPC } from "@trpc/next";
 import { transformer } from "../utils/trpc";
-import type { AppType } from "next/dist/shared/lib/utils";
 import type { AppRouter } from "@master-bot/api/src/routers/_app";
 import { SessionProvider } from "next-auth/react";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 import type { AppProps } from "next/app";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,6 +25,7 @@ const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
   return (
     <SessionProvider session={pageProps.session}>
       <div className="bg-slate-800 h-screen">
+        <ToastContainer theme={"dark"} toastClassName="p-4" />
         {getLayout(<Component {...pageProps} />)}
       </div>
     </SessionProvider>

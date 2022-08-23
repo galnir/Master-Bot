@@ -6,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
-import * as data from '../../config.json';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -16,8 +15,11 @@ import Logger from '../../lib/utils/logger';
 })
 export class DoggoCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
+    if (!process.env.DOGGO_API) return;
     axios
-      .get(`https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=dog&limit=1`)
+      .get(
+        `https://api.tenor.com/v1/random?key=${process.env.TENOR_API}&q=dog&limit=1`
+      )
       .then(async response => {
         return await interaction.reply({
           content: response.data.results[0].url

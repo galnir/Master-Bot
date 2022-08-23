@@ -4,6 +4,8 @@ import { ReactElement } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
 import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
   const [isToggling, setIsToggling] = React.useState(false);
@@ -22,10 +24,28 @@ const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
         {
           onSuccess: () => {
             setIsToggling(false);
+            toast.success("Temporary channels disabled", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+            });
             utils.invalidateQueries(["guild.get-guild"]);
           },
           onError: () => {
             setIsToggling(false);
+            toast.error("Error!", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+            });
           },
         }
       );
@@ -35,10 +55,28 @@ const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
         {
           onSuccess: () => {
             setIsToggling(false);
+            toast.success("Temporary channels enabled", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+            });
             utils.invalidateQueries(["guild.get-guild"]);
           },
           onError: () => {
             setIsToggling(false);
+            toast.error("Error!", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              draggable: true,
+              progress: undefined,
+            });
           },
         }
       );

@@ -7,11 +7,10 @@ import {
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { GeniusLyrics } from 'genius-discord-lyrics';
-import * as data from '../../config.json';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import Logger from '../../lib/utils/logger';
 
-const genius = new GeniusLyrics(data.geniusLyricsAPI);
+const genius = new GeniusLyrics(process.env.GENIUS_API || '');
 
 @ApplyOptions<CommandOptions>({
   name: 'lyrics',

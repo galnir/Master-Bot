@@ -6,7 +6,6 @@ import {
 } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
-import * as data from '../../config.json';
 import Logger from '../../lib/utils/logger';
 import { trpcNode } from '../../trpc';
 
@@ -17,9 +16,10 @@ import { trpcNode } from '../../trpc';
 })
 export class JojoCommand extends Command {
   public override chatInputRun(interaction: CommandInteraction) {
+    if (!process.env.TENOR_API) return;
     axios
       .get(
-        `https://api.tenor.com/v1/random?key=${data.tenorAPI}&q=jojo&limit=1`
+        `https://api.tenor.com/v1/random?key=${process.env.TENOR_API}&q=jojo&limit=1`
       )
       .then(async response => {
         const data = await trpcNode.query('user.get-user-by-id', {
