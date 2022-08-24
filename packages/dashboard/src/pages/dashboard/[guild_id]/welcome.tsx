@@ -108,15 +108,20 @@ export const getServerSideProps: GetServerSideProps = async (
       id: session.user.id,
     },
     select: {
+      discordId: true,
       guilds: {
         select: {
           id: true,
+          ownerId: true,
         },
       },
     },
   });
 
-  const ids = user?.guilds.filter((guild) => guild.id === ctx.query?.guild_id);
+  const ids = user?.guilds.filter(
+    (guild) =>
+      guild.id === ctx.query?.guild_id && guild.ownerId === user.discordId
+  );
   if (!ctx.query.guild_id || ids?.length! === 0) {
     return {
       redirect: { destination: "../../", permanent: false },
