@@ -44,8 +44,8 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  Playlist      Playlist[]
-  Guild         Guild[]
+  playlists     Playlist[]
+  guilds        Guild[]
 }
 
 model VerificationToken {

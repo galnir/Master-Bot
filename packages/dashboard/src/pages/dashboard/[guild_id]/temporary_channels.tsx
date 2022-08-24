@@ -6,6 +6,9 @@ import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getServerSession } from "../../../shared/get-server-session";
+import { prisma } from "@master-bot/api/src/db/client";
 
 const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
   const [isToggling, setIsToggling] = React.useState(false);
@@ -134,6 +137,45 @@ TemporaryChannelsDashboardPage.getLayout = function getLayout(
   page: ReactElement
 ) {
   return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export const getServerSideProps: GetServerSideProps = async (
+  ctx: GetServerSidePropsContext
+) => {
+  const session = await getServerSession(ctx);
+  if (!session || !session.user || !session.user.id) {
+    return {
+      redirect: { destination: "../../api/auth/signin", permanent: false },
+      props: {},
+    };
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      guilds: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  const ids = user?.guilds.filter((guild) => guild.id === ctx.query?.guild_id);
+  if (!ctx.query.guild_id || ids?.length! === 0) {
+    return {
+      redirect: { destination: "../../", permanent: false },
+      props: {},
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
 };
 
 export default TemporaryChannelsDashboardPage;

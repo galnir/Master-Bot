@@ -6,10 +6,10 @@ import DashboardLayout from "../../../components/DashboardLayout";
 import { getServerSession } from "../../../shared/get-server-session";
 import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
+import { prisma } from "@master-bot/api/src/db/client";
 
 const CommandsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
-
   const query = router.query.guild_id;
   if (!query || typeof query !== "string") {
     router.push("/");
@@ -72,6 +72,28 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {},
     };
   }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+    select: {
+      guilds: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  const ids = user?.guilds.filter((guild) => guild.id === ctx.query?.guild_id);
+  if (!ctx.query.guild_id || ids?.length! === 0) {
+    return {
+      redirect: { destination: "../../", permanent: false },
+      props: {},
+    };
+  }
+
   return {
     props: {
       session,
