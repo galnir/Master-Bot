@@ -6,7 +6,8 @@ import { clientEnv } from "../../env/schema.mjs";
 import GuildSelectBox from "../../components/GuildSelectBox";
 
 const DashboardIndexPage: NextPage = () => {
-  const { data, isLoading } = trpc.useQuery(["guild.get-all"]);
+  const { data } = trpc.useQuery(["guild.get-all"]);
+
   return (
     <div className="bg-slate-900 h-screen text-gray-100">
       <Head>
@@ -15,9 +16,7 @@ const DashboardIndexPage: NextPage = () => {
       </Head>
       <main className="p-10">
         <h1 className="text-3xl mb-4">Choose guild to manage</h1>
-        {isLoading || !data?.apiGuilds ? (
-          <div>Loading...</div>
-        ) : (
+        {data?.apiGuilds ? (
           <div className="flex gap-10">
             {data?.apiGuilds.map((guild) => {
               const isBotInGuild = data.dbGuilds.some(
@@ -39,7 +38,7 @@ const DashboardIndexPage: NextPage = () => {
               );
             })}
           </div>
-        )}
+        ) : null}
       </main>
     </div>
   );
@@ -50,12 +49,6 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const session = await getServerSession(ctx);
 
-  if (!session || !session.user || !session.user.id) {
-    return {
-      redirect: { destination: "../api/auth/signin", permanent: false },
-      props: {},
-    };
-  }
   return {
     props: {
       session,

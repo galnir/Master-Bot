@@ -1,12 +1,11 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { ReactElement } from "react";
+import type { ReactElement } from "react";
 import CommandInfo from "../../../components/CommandInfo";
 import DashboardLayout from "../../../components/DashboardLayout";
 import { getServerSession } from "../../../shared/get-server-session";
 import { trpc } from "../../../utils/trpc";
 import { NextPageWithLayout } from "../../_app";
-import { prisma } from "@master-bot/api/src/db/client";
 
 const CommandsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -15,6 +14,34 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
+  const { data, isLoading } = trpc.useQuery(
+    ["guild.get-all-from-discord-api"],
+    { refetchOnWindowFocus: false }
+  );
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
+
+  if (
+    !data ||
+    isLoading ||
+    !data.guilds ||
+    !Array.isArray(data.guilds) ||
+    data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
+      0
+  ) {
+    return <div>No access</div>;
+  }
+
+  return <CommandsDashboardPageComponent query={query as string} />;
+};
+
+const CommandsDashboardPageComponent = ({
+  query,
+}: {
+  query: string;
+}): ReactElement => {
   const { data, isLoading } = trpc.useQuery([
     "command.get-commands",
     {
@@ -66,38 +93,6 @@ export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
 ) => {
   const session = await getServerSession(ctx);
-  if (!session || !session.user || !session.user.id) {
-    return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
-    };
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      discordId: true,
-      guilds: {
-        select: {
-          id: true,
-          ownerId: true,
-        },
-      },
-    },
-  });
-
-  const ids = user?.guilds.filter(
-    (guild) =>
-      guild.id === ctx.query?.guild_id && guild.ownerId === user.discordId
-  );
-  if (!ctx.query.guild_id || ids?.length! === 0) {
-    return {
-      redirect: { destination: "../../", permanent: false },
-      props: {},
-    };
-  }
 
   return {
     props: {

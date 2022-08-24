@@ -9,7 +9,6 @@ import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
 import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "../../../shared/get-server-session";
-import { prisma } from "@master-bot/api/src/db/client";
 
 const WelcomeDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -18,11 +17,36 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
   if (!query || typeof query !== "string") {
     router.push("/");
   }
+
+  const { data, isLoading } = trpc.useQuery(
+    ["guild.get-all-from-discord-api"],
+    { refetchOnWindowFocus: false }
+  );
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
+
+  if (
+    !data ||
+    isLoading ||
+    !data.guilds ||
+    !Array.isArray(data.guilds) ||
+    data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
+      0
+  ) {
+    return <div>No access</div>;
+  }
+
+  return <WelcomeDashboardPageComponent query={query as string} />;
+};
+
+const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
   const utils = trpc.useContext();
   const { data, isLoading } = trpc.useQuery([
     "guild.get-guild",
     {
-      id: query as string,
+      id: query,
     },
   ]);
 
@@ -30,7 +54,7 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
 
   function toggleWelcomeMessage(status: boolean) {
     mutate(
-      { guildId: query as string, status },
+      { guildId: query, status },
       {
         onSuccess: () => {
           utils.invalidateQueries(["guild.get-guild"]);
@@ -75,9 +99,9 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
           <>
             {data?.guild?.welcomeMessageEnabled ? (
               <>
-                <WelcomeMessageInput guildId={query as string} />
+                <WelcomeMessageInput guildId={query} />
                 <div className="mt-10">
-                  <WelcomeMessageChannelPicker guildId={query as string} />
+                  <WelcomeMessageChannelPicker guildId={query} />
                 </div>
               </>
             ) : null}
@@ -96,38 +120,6 @@ export const getServerSideProps: GetServerSideProps = async (
   ctx: GetServerSidePropsContext
 ) => {
   const session = await getServerSession(ctx);
-  if (!session || !session.user || !session.user.id) {
-    return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
-    };
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      discordId: true,
-      guilds: {
-        select: {
-          id: true,
-          ownerId: true,
-        },
-      },
-    },
-  });
-
-  const ids = user?.guilds.filter(
-    (guild) =>
-      guild.id === ctx.query?.guild_id && guild.ownerId === user.discordId
-  );
-  if (!ctx.query.guild_id || ids?.length! === 0) {
-    return {
-      redirect: { destination: "../../", permanent: false },
-      props: {},
-    };
-  }
 
   return {
     props: {

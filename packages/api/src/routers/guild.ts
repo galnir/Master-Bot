@@ -223,6 +223,41 @@ export const guildRouter = createRouter()
       }
     },
   })
+  .query("get-all-from-discord-api", {
+    async resolve({ ctx }) {
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          userId: ctx.session?.user?.id,
+        },
+        select: {
+          access_token: true,
+          providerAccountId: true,
+          user: {
+            select: {
+              discordId: true,
+            },
+          },
+        },
+      });
+
+      if (!account || !account.access_token) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Account not found",
+        });
+      }
+
+      const response = await fetch(`https://discord.com/api/users/@me/guilds`, {
+        headers: {
+          Authorization: `Bearer ${account.access_token}`,
+        },
+      });
+
+      const userGuilds: APIGuild[] = await response.json();
+
+      return { guilds: userGuilds, discordId: account.user.discordId };
+    },
+  })
   .mutation("update-twitch-notifications", {
     input: z.object({
       guildId: z.string(),
