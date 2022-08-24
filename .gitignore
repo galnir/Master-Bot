@@ -1,6 +1,54 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Personal
+*.pem
+.env
+.env*.local
+
+# Testing
+/coverage
+
+# Database
+*/migrations/*
+
+# Production
+build
+dist
+
+# next.js
+.next
+out
+
+# Vercel
+.vercel
+
+# Lavalink
+Lavalink.jar
+application.yml
+application.yaml
+
+# Typescript
+*.tsbuildinfo
+
+# Dev utils and Dependencies 
+node_modules
 *.vscode
 .DS_Store
-node_modules
-.env
-application.yml
-Lavalink.jar
+*.bat
+
+# Debug
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Legacy
+db.sqlite
+db.sqlite-journal
+*/.pnp
+.pnp.js
+logs
+config.json 
+test.js
+json.sqlite

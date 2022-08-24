@@ -63,9 +63,11 @@ export class TwitchEmbed {
       return offlineEmbed
         .setThumbnail(this.logo)
         .setTitle(`${this.userName}'s stream has Ended`)
-        .addField('Title', this.title ?? 'N/A')
-        .addField(gameOrTopic, this.gameName ?? 'N/A', true)
-        .addField('Viewers', `${this.viewers}`, true)
+        .addFields(
+          { name: 'Title', value: this.title ?? 'N/A' },
+          { name: gameOrTopic, value: this.gameName ?? 'N/A', inline: true },
+          { name: 'Viewers', value: `${this.viewers}`, inline: true }
+        )
         .setTimestamp();
     } else {
       const onlineEmbed = new MessageEmbed({
@@ -95,9 +97,20 @@ export class TwitchEmbed {
       onlineEmbed
         .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
         .setTitle(title)
-        .addField('Title', this.stream?.title ?? 'N/A')
-        .addField(gameOrTopic, this.stream?.game_name ?? 'N/A', true)
-        .addField('Viewers', `${this.stream?.viewer_count}`, true)
+        .addFields(
+          { name: 'Title', value: this.stream?.title ?? 'N/A' },
+
+          {
+            name: gameOrTopic,
+            value: this.stream?.game_name ?? 'N/A',
+            inline: true
+          },
+          {
+            name: 'Viewers',
+            value: `${this.stream?.viewer_count}`,
+            inline: true
+          }
+        )
         .setImage(
           this.stream.thumbnail_url.replace('{width}x{height}', '1920x1080') +
             '?' +

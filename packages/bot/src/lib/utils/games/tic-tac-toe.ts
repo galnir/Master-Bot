@@ -72,8 +72,10 @@ export class TicTacToeGame {
         You have 1 minute per turn or it's an automatic forfeit.
         Incase of invisible board click 🔄.`
         )
-        .addField('Column', 'None', true)
-        .addField('Row', 'None', true)
+        .addFields(
+          { name: 'Column', value: 'None', inline: true },
+          { name: 'Row', value: 'None', inline: true }
+        )
         .setImage(boardImageURL!)
         .setFooter({ text: 'Incase of invisible board click 🔄' })
         .setTimestamp();

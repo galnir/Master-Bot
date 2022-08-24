@@ -20,7 +20,7 @@
     "packages/bot",
     "packages/dashboard"
   ],
-  "author": "",
+  "author": "Nir Gal",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/galnir/Master-Bot/issues"
@@ -28,9 +28,9 @@
   "homepage": "https://github.com/galnir/Master-Bot#readme",
   "dependencies": {
     "@prisma/client": "^4.2.1",
-    "@trpc/client": "^9.27.0",
-    "@trpc/react": "^9.27.0",
-    "@trpc/server": "^9.27.0",
+    "@trpc/client": "^9.27.1",
+    "@trpc/react": "^9.27.1",
+    "@trpc/server": "^9.27.1",
     "concurrently": "^7.3.0",
     "superjson": "^1.9.1",
     "zod": "^3.18.0"

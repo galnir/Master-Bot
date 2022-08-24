@@ -60,9 +60,19 @@ export class TwitchStatusCommand extends Command {
         baseEmbed
           .setThumbnail(game.box_art_url.replace('-{width}x{height}', ''))
           .setTitle(`Looks like ${user.display_name} is Online!!!`)
-          .addField('Title', stream[0].title ?? 'N/A')
-          .addField(':video_game: Game', stream[0].game_name ?? 'N/A', true)
-          .addField('Viewers', `${stream[0].viewer_count}`, true)
+          .addFields(
+            { name: 'Title', value: stream[0].title ?? 'N/A' },
+            {
+              name: ':video_game: Game',
+              value: stream[0].game_name ?? 'N/A',
+              inline: true
+            },
+            {
+              name: 'Viewers',
+              value: `${stream[0].viewer_count}`,
+              inline: true
+            }
+          )
           .setImage(
             stream[0].thumbnail_url.replace('{width}x{height}', '1920x1080') +
               '?' +
@@ -74,23 +84,26 @@ export class TwitchStatusCommand extends Command {
         baseEmbed
           .setThumbnail(user.profile_image_url)
           .setTitle(`Looks like ${user.display_name} is Offline.`)
-          .addField(
-            'Profile Description',
-            user.description == '' ? 'None' : user.description
+          .addFields(
+            {
+              name: 'Profile Description',
+              value: user.description == '' ? 'None' : user.description
+            },
+            { name: 'Total Viewers', value: `${user.view_count}`, inline: true }
           )
-          .addField('Total Viewers', `${user.view_count}`, true)
           .setTimestamp(Date.parse(user.created_at));
       }
 
       // make sure it's last in both
-      baseEmbed.addField(
-        'Rank',
-        user.broadcaster_type != ''
-          ? user.broadcaster_type.charAt(0).toUpperCase() +
+      baseEmbed.addFields({
+        name: 'Rank',
+        value:
+          user.broadcaster_type != ''
+            ? user.broadcaster_type.charAt(0).toUpperCase() +
               user.broadcaster_type.slice(1)
-          : 'Base',
-        true
-      );
+            : 'Base',
+        inline: true
+      });
 
       return await interaction.reply({ embeds: [baseEmbed] });
     } catch (error: any) {
@@ -110,6 +123,7 @@ export class TwitchStatusCommand extends Command {
           content: `:x: Twitch service's are currently unavailable. Please try again later.`
         });
       } else {
+        Logger.http(`${this.name} Command - ${JSON.stringify(error)}`);
         return interaction.reply({
           content: `:x: Something went wrong.`
         });

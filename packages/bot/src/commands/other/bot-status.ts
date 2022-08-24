@@ -17,7 +17,7 @@ import pkg from '../../../package.json';
 })
 export class BotStatusCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
-    const ping = Date.now() - interaction.createdTimestamp;
+    const ping = interaction.createdTimestamp - Date.now();
     const apiPing = Math.round(interaction.client.ws.ping);
 
     const admin = await interaction.guild?.fetchOwner();
@@ -134,19 +134,23 @@ export class BotStatusCommand extends Command {
       .setTitle(`${interaction.client.user?.username} - Status`)
       .setColor('GREY');
 
-    StatusEmbed.addField(
-      'Ping',
-      `Interaction: ${ping}ms.
+    StatusEmbed.addFields(
+      {
+        name: 'Ping',
+        value: `Interaction: ${ping}ms.
       Heartbeat: ${apiPing}ms.
       Round-trip: ${ping + apiPing}ms.`
+      },
+      { name: `Uptime`, value: `${upTime}` },
+      {
+        name: 'Available Commands',
+        value: `${commandTotal} Commands Available`
+      },
+      {
+        name: 'Servers, Users',
+        value: `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
+      }
     )
-      .addField(`Uptime`, `${upTime}`)
-      .addField('Available Commands', `${commandTotal} Commands Available`)
-      .addField(
-        'Servers, Users',
-        `On ${interaction.client.guilds.cache.size} servers, with a total of ${memberCount} users.`
-      )
-
       .setFooter({ text: 'Created', iconURL: interaction.user.avatarURL()! })
       .setTimestamp(interaction.client.application?.createdTimestamp);
 
@@ -158,12 +162,17 @@ export class BotStatusCommand extends Command {
         .setThumbnail(interaction.client.user?.avatarURL()!)
         .setTitle(`Status of ${interaction.client.user?.username} - Info`)
         .setColor('DARKER_GREY')
-        .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
-        .addField(`Platform`, `${platform} ${archInfo}`, true)
-        .addField(
-          'Dependency List',
-          `node: ${process.version.replace(/v/, '')}
-        ${libList}`
+        .addFields(
+          {
+            name: `Memory Usage`,
+            value: `${Math.round(used * 100) / 100}MB`,
+            inline: true
+          },
+          { name: `Platform`, value: `${platform} ${archInfo}`, inline: true },
+          {
+            name: 'Dependency List',
+            value: `node: ${process.version.replace(/v/, '')}\n${libList}`
+          }
         )
         .setFooter({ text: 'Created', iconURL: interaction.user.avatarURL()! })
         .setTimestamp(interaction.client.application?.createdTimestamp);
@@ -177,14 +186,23 @@ export class BotStatusCommand extends Command {
         .setThumbnail(interaction.client.user?.avatarURL()!)
         .setTitle(`${interaction.client.user?.username} - Info`)
         .setColor('DARKER_GREY')
-        .addField('CPU Load', (await getCPULoadAVG()) + '%', true)
-        .addField(`Memory Usage`, `${Math.round(used * 100) / 100}MB`, true)
-        .addField(`Platform`, `${platform} ${archInfo}`, true)
-        .addField(
-          'Dependency List',
-          `node: ${process.version.replace(/v/, '')}
-        ${libList}`
-        )
+        .addFields([
+          {
+            name: 'CPU Load',
+            value: (await getCPULoadAVG()) + '%',
+            inline: true
+          },
+          {
+            name: `Memory Usage`,
+            value: `${Math.round(used * 100) / 100}MB`,
+            inline: true
+          },
+          { name: `Platform`, value: `${platform} ${archInfo}`, inline: true },
+          {
+            name: 'Dependency List',
+            value: `node: ${process.version.replace(/v/, '')}\n ${libList}`
+          }
+        ])
         .setFooter({
           text: 'Created',
           iconURL: interaction.user.avatarURL()!

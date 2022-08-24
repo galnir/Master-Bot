@@ -98,7 +98,31 @@ export class NowPlayingEmbed {
     let volumeIcon: string = ':speaker: ';
     if (vol > 50) volumeIcon = ':loud_sound: ';
     if (vol <= 50 && vol > 20) volumeIcon = ':sound: ';
+    const embedFieldData = [
+      {
+        name: 'Volume',
+        value: `${volumeIcon} ${this.volume}%`,
+        inline: true
+      },
+      { name: 'Duration', value: durationText, inline: true }
+    ];
 
+    if (this.queue?.length) {
+      embedFieldData.push(
+        {
+          name: 'Queue',
+          value: `:notes: ${this.queue.length} ${
+            this.queue.length == 1 ? 'Song' : 'Songs'
+          }`,
+          inline: true
+        },
+        {
+          name: 'Next',
+          value: `[${this.queue[0].title}](${this.queue[0].uri})`,
+          inline: false
+        }
+      );
+    }
     const baseEmbed = new MessageEmbed()
       .setTitle(
         `${this.paused ? ':pause_button: ' : ':arrow_forward: '} ${
@@ -112,25 +136,12 @@ export class NowPlayingEmbed {
       .setURL(this.track.uri)
       .setThumbnail(this.track.thumbnail)
       .setColor(embedColor)
-      .addField('Volume', `${volumeIcon} ${this.volume}%`, true)
-      .addField('Duration', durationText, true)
+      .addFields(embedFieldData)
       .setTimestamp(this.track.added ?? Date.now())
       .setFooter({
         text: `Requested By ${this.track.requester?.name}`,
         iconURL: userAvatar
       });
-
-    if (this.queue?.length) {
-      baseEmbed
-        .addField(
-          'Queue',
-          `:notes: ${this.queue.length} ${
-            this.queue.length == 1 ? 'Song' : 'Songs'
-          }`,
-          true
-        )
-        .addField('Next', `[${this.queue[0].title}](${this.queue[0].uri})`);
-    }
 
     if (!this.track.isSeekable || this.track.isStream) {
       if (streamData && this.track.sourceName == 'twitch') {
