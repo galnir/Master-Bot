@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DB_URL")
+}
+
+// Necessary for Next auth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? // @db.Text
+  access_token      String? // @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? // @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  discordId     String     @unique
+  email         String?    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  playlists     Playlist[]
+  guilds        Guild[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Song {
+  id         Int      @id @default(autoincrement())
+  length     Int
+  track      String
+  identifier String
+  author     String
+  isStream   Boolean
+  position   Int
+  title      String
+  uri        String
+  isSeekable Boolean
+  sourceName String
+  thumbnail  String
+  added      Int
+  playlistId Int
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  songs     Song[]
+}
+
+model Guild {
+  id                    String        @id
+  name                  String
+  added                 DateTime      @default(now())
+  volume                Int           @default(100)
+  notifyList            String[]
+  ownerId               String
+  owner                 User          @relation(fields: [ownerId], references: [discordId])
+  // Settings
+  disabledCommands      String[]      @map("disabled_commands")
+  logChannel            String?       @map("log_channel")
+  welcomeMessageChannel String?       @map("welcome_message_channel")
+  welcomeMessage        String?       @map("welcome_message")
+  welcomeMessageEnabled Boolean       @default(false) @map("welcome_message_enabled")
+  // Temp Channels
+  hub                   String?
+  hubChannel            String?       @map("hub_channel") // The channel that users enter to get redirected
+  tempChannels          TempChannel[]
+}
+
+model TempChannel {
+  id      String @id
+  guildId String
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  ownerId String @unique
+}
+
+model TwitchNotify {
+  twitchId   String   @id
+  logo       String
+  live       Boolean  @default(false)
+  channelIds String[]
+  sent       Boolean
+}

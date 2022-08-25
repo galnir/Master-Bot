@@ -1,0 +1,43 @@
+{
+  "name": "master-bot-mono",
+  "version": "1.0.0",
+  "private": true,
+  "description": "[![image](https://img.shields.io/badge/language-typescript-blue)](https://www.typescriptlang.org) [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/galnir/Master-Bot.git"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev:dashboard\" \"npm run dev:bot\"",
+    "dev:bot": "npm run dev --prefix packages/bot",
+    "dev:dashboard": "npm run dev --prefix packages/dashboard",
+    "postinstall": "npx prisma db push"
+  },
+  "workspaces": [
+    "packages/api",
+    "packages/node",
+    "packages/react",
+    "packages/bot",
+    "packages/dashboard"
+  ],
+  "author": "Nir Gal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/galnir/Master-Bot/issues"
+  },
+  "homepage": "https://github.com/galnir/Master-Bot#readme",
+  "dependencies": {
+    "@prisma/client": "^4.2.1",
+    "@trpc/client": "^9.27.1",
+    "@trpc/react": "^9.27.1",
+    "@trpc/server": "^9.27.1",
+    "concurrently": "^7.3.0",
+    "superjson": "^1.9.1",
+    "zod": "^3.18.0"
+  },
+  "devDependencies": {
+    "lerna": "^5.4.3",
+    "prisma": "^4.2.1",
+    "typescript": "^4.7.4"
+  }
+}

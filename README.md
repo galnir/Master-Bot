@@ -8,15 +8,11 @@
 - [Node.js LTS or latest](https://nodejs.org/en/download/)
 - [Java 13](https://www.azul.com/downloads/?package=jdk#download-openjdk) (other versions have some issues with Lavalink)
 
-### Installing the Node.js dependencies
-
-Run `npm i` in each folder (bot/ and dashboard/) if you want both the bot and dashboard to be run, or just in bot/ if you only want the bot to be run.
-
 ## Setup bot
 
-Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file the bot/ folder.
+Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file root folder.
 
-Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and place it in the same folder as `application.yml`.
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and also place it in the root folder.
 
 ### PostgreSQL
 
@@ -28,19 +24,14 @@ Either from the official site or follow the tutorial for your [distro](https://w
 
 Get [brew](https://brew.sh), then enter 'brew install postgresql'.
 
-Create a `.env` file in the bot/ folder and copy the contents of `.env.example` to it. Change 'john' and 'doe' to the name of your OS' user.
-
 #### Windows
 
 Getting Postgres and Prisma to work together on Windows is not worth the hassle. Create an account on [heroku](https://dashboard.heroku.com/apps) and follow these steps:
 
 1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
 2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
-3. Create a `.env` file in bot/ and create 2 empty variables there:
-   `DATABASE_URL="" SHADOW_DB_URL=""`
-4. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL`.
-5. In your terminal, run `npx prisma db push` and then run `npx prisma migrate dev`.
-6. Done!
+3. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL` in the .env file you will be creating in the settings section.
+4. Done!
 
 ### Redis
 
@@ -53,80 +44,77 @@ Download from [here](https://redis.io/download/).
 #### Linux
 Follow the instructions [here](https://redis.io/docs/getting-started/installation/install-redis-on-linux/).
 
-## Important
+### Settings (env)
 
-After you're done installing all the dependencies and entering all tokens and env variables, run `npx prisma migrate dev` **in bot/**.
+Create a `.env` file in the root directory and copy the contents of .env.example to it.
+Note: if you are not hosting postgres on Heroku you do not need the SHADOW_DB_URL variable.
 
-### Lavalink startup
+```env
+# DB URL
+DATABASE_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
+SHADOW_DB_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
 
-**Before running `npm run dev` in bot/ (to start the bot), make sure to open a separate terminal in bot/ and run `java -jar LavaLink.jar`**
+# Bot Token
+DISCORD_TOKEN=""
 
-Create a `config.json` file inside the 'src' directory in bot/ with the following tokens:
+# Next Auth
 
-### Minimum settings
+NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
+NEXTAUTH_URL=http://localhost:3000
+NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
 
-This is the minimum amount of settings that need to be set for the core part (music) of the bot to work.
-
-**Generate spotify client id and secret [here](https://developer.spotify.com/dashboard/applications)**
-
-**If you're running the bot using Docker, set lava_host's value to "lavalink" in config.json and in application.yml at line 3**
-
-```json
-{
-  "client_id": "the-bots-client-id",
-  "client_secret": "the-bots-client-secret",
-  "token": "Your-Bot-Token",
-  "lava_host": "0.0.0.0",
-  "lava_pass": "youshallnotpass",
-  "lava_port": 2333,
-  "lava_secure": false,
-  "invite_url": "discord-bot-invite",
-  "spotify_client_id": "get-it-from-spotify-dev",
-  "spotify_client_secret": "get-it-from-spotify-dev"
-}
-```
-
-### Full settings
-
-For full command support, including lyrics, GIFs, news, and others, - (which some of them are part of [Features to be added back](https://github.com/galnir/Master-Bot/issues/667)) - All of the following settings need to be added. You can also choose to add only the ones for the functionalities you want.
-
-```json
-{
-  "invite": "false",
-  "geniusLyricsAPI": "genius-api-key",
-  "tenorAPI": "tenor-API-key",
-  "newsAPI": "news-api-key",
-  "rawgAPI": "rawg-api-key",
-  "twitchClientID": "twitch-client-id",
-  "twitchClientSecret": "twitch-client-secret"
-}
-```
-
-NOTE: When setting `"invite": true`, remember to enable the Public Bot option in the [Discord Developer Portal](https://discordapp.com/developers/applications/).
-
-## Setup dashboard
-
-In order to use the dashboard, the bot must be online because the bot exposes the API routes the dashboard uses to communicate with the database.
-
-### Install dependencies
-`npm i` in dashboard/
-
-### OAuth2
-Create a `.env` file in the root on dashboard/ with these 3 lines:
-```
-SESSION_SECRET=""
+# Next Auth Discord Provider
 DISCORD_CLIENT_ID=""
 DISCORD_CLIENT_SECRET=""
-Invite_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot%20applications.commands"
+
+# Lavalink
+LAVA_HOST="0.0.0.0"
+LAVA_PASS="youshallnotpass"
+LAVA_PORT=2333
+LAVA_SECURE=false
+
+# Spotify
+SPOTIFY_CLIENT_ID=""
+SPOTIFY_CLIENT_SECRET=""
+
+# Twitch
+TWITCH_CLIENT_ID=""
+TWITCH_CLIENT_SECRET=""
+
+# Other APIs
+TENOR_API=""
+NEWS_API=""
+GENIUS_API=""
+RAWG_API=""
+
 ```
-Fill SESSION_SECRET with some random string.
-Now go to your bot's panel in the Discord Developoer Portal > OAuth2, copy the Client ID and place it between the quotes as DISCORD_CLIENT_ID's value and do the same for the Client Secret (you have to click on the blue button to generate it, it is the token you placed in the bot/ folder .env). Also update the client ID in Invite_URL.
+#### Gif features
+If you have no use in the gif commands, leave everything under 'Other APIs' empty. Same applies for Twitch, everything else is needed.
 
-Paste this URL to the `Redirects` input below:
-`http://localhost:3000/auth/discord/callback` (I will update this in the future when I figure out how to host the dashboard on a VPS).
+#### DB URL
+Change 'john' to your pc username and 'doe' to some password, or set the name and password you created when you installed Postgres.
 
-### Running the dashboard
-Only after the bot is online, hit `npm run dev` in a separate terminal.
+#### Bot Token
+Generate a token in your Discord developer portal.
+
+#### Next Auth
+You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id.
+
+#### Next Auth Discord Provider
+Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set this as the URL under 'Redirects': http://localhost:3000/api/auth/callback/discord.
+
+#### Lavalink
+You can leave this as long as the values match your application.yml.
+
+#### Spotify and Twitch
+Create an application in each platform's developer portal and paste the relevant values.
+
+# Running the bot
+1. If you followed everything right, hit `npm i` in the root folder. When it finishes make sure prisma didn't error.
+2. Open a separate terminal in the root folder and run 'java -jar Lavalink.jar'.
+3. Wait a few seconds and hit `npm run dev`.
+4. If everything works, your bot should be running and the dashboard should be on localhost:3000.
+5. Enjoy!
 
 # Commands
 
@@ -231,7 +219,9 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - music controls (buttons), 'connect4', 'tic-tac-toe', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+
+**⭐ [Bacon Fixation](https://github.com/Bacon-Fixation) ⭐ - Countless contributions**
+
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
