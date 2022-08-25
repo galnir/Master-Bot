@@ -36,13 +36,28 @@ export class TVShowSearchCommand extends Command {
           .setColor('#17a589')
           .setThumbnail(showInfo.thumbnail)
           .setDescription(showInfo.summary)
-          .addField('Language', showInfo.language, true)
-          .addField('Genre(s)', showInfo.genres, true)
-          .addField('Show Type', showInfo.type, true)
-          .addField('Premiered', showInfo.premiered, true)
-          .addField('Network', showInfo.network, true)
-          .addField('Runtime', showInfo.runtime, true)
-          .addField('Average Rating', showInfo.rating)
+          .addFields(
+            { name: 'Language', value: showInfo.language, inline: true },
+            {
+              name: 'Genre(s)',
+              value: showInfo.genres,
+              inline: true
+            },
+            {
+              name: 'Show Type',
+              value: showInfo.type,
+              inline: true
+            },
+            {
+              name: 'Premiered',
+              value: showInfo.premiered,
+              inline: true
+            },
+            { name: 'Network', value: showInfo.network, inline: true },
+
+            { name: 'Runtime', value: showInfo.runtime, inline: true },
+            { name: 'Average Rating', value: showInfo.rating }
+          )
           .setFooter({
             text: `(Page ${i}/${data.length}) Powered by tvmaze.com`,
             iconURL: 'https://static.tvmaze.com/images/favico/favicon-32x32.png'
@@ -51,7 +66,6 @@ export class TVShowSearchCommand extends Command {
     }
 
     await interaction.reply('Show info');
-    // @ts-ignore
     return PaginatedEmbed.run(interaction);
   }
 

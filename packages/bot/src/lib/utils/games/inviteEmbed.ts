@@ -49,11 +49,11 @@ export class GameInvite {
       .setDescription(
         `${this.interaction.user} would like to play a game of ${this.title}. Click Yes or No. if you want to join in`
       )
-      .addField(
-        'Players',
-        `${this.players.length > 0 ? this.players : 'None'}`,
-        true
-      )
+      .addFields({
+        name: 'Players',
+        value: `${this.players.length > 0 ? this.players : 'None'}`,
+        inline: true
+      })
       .setFooter({ text: 'Invite will expire in 60 seconds' })
       .setTimestamp();
     return gameInvite;

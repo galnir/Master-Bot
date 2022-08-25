@@ -22,7 +22,7 @@ export class FortuneCommand extends Command {
         const embed = new MessageEmbed()
           .setColor('#F4D190')
           .setAuthor({
-            name: 'Fortune Coookie',
+            name: 'Fortune Cookie',
             url: 'https://yerkee.com',
             iconURL: 'https://i.imgur.com/58wIjK0.png'
           })

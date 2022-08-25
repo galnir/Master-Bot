@@ -7,6 +7,7 @@ import {
 } from '@sapphire/framework';
 import axios from 'axios';
 import { CommandInteraction, MessageEmbed, Constants } from 'discord.js';
+import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'speedrun',
@@ -42,7 +43,8 @@ export class SpeedRunCommand extends Command {
       response = await axios.get(
         `https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=10&embed=game,category,players,platforms,regions`
       );
-    } catch {
+    } catch (error) {
+      Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
       return await interaction.reply(
         'Something went wrong, please try again later'
       );
@@ -58,15 +60,18 @@ export class SpeedRunCommand extends Command {
         .setColor('#3E8657')
         .setTitle(':mag: Search Results')
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
-        .addField(
-          ':x: Try searching again with the following suggestions.',
-          initial.data[0].names.international + ` doesn't have any runs.`
-        )
+        .addFields({
+          name: ':x: Try searching again with the following suggestions.',
+          value: initial.data[0].names.international + ` doesn't have any runs.`
+        })
         .setTimestamp()
         .setFooter({ text: 'Powered by www.speedrun.com' });
 
       gameNameArr.forEach((game, i) => {
-        gameName.addField(`:video_game: Result ${i + 1}`, game);
+        gameName.addFields({
+          name: `:video_game: Result ${i + 1}`,
+          value: game
+        });
       });
 
       interaction.reply({ embeds: [gameName] });
@@ -230,11 +235,18 @@ export class SpeedRunCommand extends Command {
                       category.category.data.name,
                     url: 'http://speedrun.com/'
                   })
-                  .addField(
-                    ':calendar_spiral: Date Played:',
-                    category.runs[i] ? category.runs[i].run.date : 'No Data'
+                  .addFields(
+                    {
+                      name: ':calendar_spiral: Date Played:',
+                      value: category.runs[i]
+                        ? category.runs[i].run.date
+                        : 'No Data'
+                    },
+                    {
+                      name: ':video_game: Played On:',
+                      value: platform + region + emu
+                    }
                   )
-                  .addField(':video_game: Played On:', platform + region + emu)
                   .setFooter({
                     text: 'Powered by www.speedrun.com',
                     iconURL: 'https://i.imgur.com/PpxR9E1.png'
@@ -252,6 +264,7 @@ export class SpeedRunCommand extends Command {
 
       return PaginatedEmbed;
     } catch (error: any) {
+      Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
       return new PaginatedMessage().addPageEmbed(
         new MessageEmbed()
           .setColor('RED')

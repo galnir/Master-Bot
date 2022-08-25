@@ -64,9 +64,15 @@ export class GameSearchCommand extends Command {
         )
         .setColor('#B5B5B5')
         .setThumbnail(game.background_image)
-        .addField('Released', '> ' + firstPageTuple[0], true)
-        .addField('ESRB Rating', '> ' + firstPageTuple[1], true)
-        .addField('Score', '> ' + firstPageTuple[2], true)
+        .addFields(
+          { name: 'Released', value: '> ' + firstPageTuple[0], inline: true },
+          {
+            name: 'ESRB Rating',
+            value: '> ' + firstPageTuple[1],
+            inline: true
+          },
+          { name: 'Score', value: '> ' + firstPageTuple[2], inline: true }
+        )
         .setTimestamp()
     );
 
@@ -123,30 +129,36 @@ export class GameSearchCommand extends Command {
         .setColor('#b5b5b5')
         .setThumbnail(game.background_image_additional ?? game.background_image)
         // Row 1
-        .addField(
-          developerArray.length == 1 ? 'Developer' : 'Developers',
-          '> ' + developerArray.toString().replace(/,/g, ', '),
-          true
-        )
-        .addField(
-          publisherArray.length == 1 ? 'Publisher' : 'Publishers',
-          '> ' + publisherArray.toString().replace(/,/g, ', '),
-          true
-        )
-        .addField(
-          platformArray.length == 1 ? 'Platform' : 'Platforms',
-          '> ' + platformArray.toString().replace(/,/g, ', '),
-          true
+        .addFields(
+          {
+            name: developerArray.length == 1 ? 'Developer' : 'Developers',
+            value: '> ' + developerArray.toString().replace(/,/g, ', '),
+            inline: true
+          },
+          {
+            name: publisherArray.length == 1 ? 'Publisher' : 'Publishers',
+            value: '> ' + publisherArray.toString().replace(/,/g, ', '),
+            inline: true
+          },
+          {
+            name: platformArray.length == 1 ? 'Platform' : 'Platforms',
+            value: '> ' + platformArray.toString().replace(/,/g, ', '),
+            inline: true
+          }
         )
         // Row 2
-        .addField(
-          genreArray.length == 1 ? 'Genre' : 'Genres',
-          '> ' + genreArray.toString().replace(/,/g, ', '),
-          true
-        )
-        .addField(
-          retailerArray.length == 1 ? 'Retailer' : 'Retailers',
-          '> ' + retailerArray.toString().replace(/,/g, ', ').replace(/`/g, '')
+        .addFields(
+          {
+            name: genreArray.length == 1 ? 'Genre' : 'Genres',
+            value: '> ' + genreArray.toString().replace(/,/g, ', '),
+            inline: true
+          },
+          {
+            name: retailerArray.length == 1 ? 'Retailer' : 'Retailers',
+            value:
+              '> ' +
+              retailerArray.toString().replace(/,/g, ', ').replace(/`/g, '')
+          }
         )
         .setTimestamp()
     );

@@ -5,7 +5,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
-import translate from '@vitalets/google-translate-api';
+import translate from 'google-translate-api-x';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -19,15 +19,20 @@ export class TranslateCommand extends Command {
     const targetLang = interaction.options.getString('target', true);
 
     const text = interaction.options.getString('text', true);
-
-    translate(text, { to: targetLang })
-      .then(async response => {
+    translate(text, {
+      to: targetLang,
+      requestFunction: 'axios'
+    })
+      .then(async (response: any) => {
         const embed = new MessageEmbed()
           .setColor('#770000')
           .setTitle('Google Translate')
           .setURL('https://translate.google.com/')
           .setDescription(response.text)
-          .setFooter({ text: 'Powered by Google Translate' });
+          .setFooter({
+            iconURL: 'https://i.imgur.com/ZgFxIwe.png', // Google Translate Icon
+            text: 'Powered by Google Translate'
+          });
 
         return await interaction.reply({ embeds: [embed] });
       })
