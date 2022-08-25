@@ -1,4 +1,4 @@
-# A Discord Music Bot written in TypeScript Sapphire, discord.js, Remix and React
+# A Discord Music Bot written in TypeScript using Sapphire, discord.js, Next.js and React
 
 [![image](https://img.shields.io/badge/language-typescript-blue)](https://www.typescriptlang.org)
 [![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
