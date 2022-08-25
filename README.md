@@ -49,7 +49,7 @@ Follow the instructions [here](https://redis.io/docs/getting-started/installatio
 Create a `.env` file in the root directory and copy the contents of .env.example to it.
 Note: if you are not hosting postgres on Heroku you do not need the SHADOW_DB_URL variable.
 
-```json
+```env
 # DB URL
 DATABASE_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
 SHADOW_DB_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
@@ -219,7 +219,9 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-[Bacon Fixation](https://github.com/Bacon-Fixation) - music controls (buttons), 'connect4', 'tic-tac-toe', 'game-search', 'google-translate', 'speedrun' commands, 'invite', 'vote', 'poll', 'welcome', 'mute', 'unmute', 'twitchstatus', 'twitch-announcer', 'welcome-message', 'tv-show-search', pi instructions and visual updates
+
+**⭐ [Bacon Fixation](https://github.com/Bacon-Fixation) ⭐ - Countless contributions**
+
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
