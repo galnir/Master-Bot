@@ -19,13 +19,12 @@ const GuildIndexPage: NextPageWithLayout = () => {
     { refetchOnWindowFocus: false }
   );
 
-  if (!data) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (
     !data ||
-    isLoading ||
     !data.guilds ||
     !Array.isArray(data.guilds) ||
     data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
