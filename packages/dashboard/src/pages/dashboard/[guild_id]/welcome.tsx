@@ -9,17 +9,17 @@ import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
 import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "../../../shared/get-server-session";
+import { useSession } from "next-auth/react";
 
 const WelcomeDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
-
   const query = router.query.guild_id;
   if (!query || typeof query !== "string") {
     router.push("/");
   }
 
-  const { data, isLoading } = trpc.useQuery(
-    ["guild.get-all-from-discord-api"],
+  const { isLoading, error } = trpc.useQuery(
+    ["guild.get-guild-and-user", { id: query as string }],
     { refetchOnWindowFocus: false }
   );
 
@@ -27,14 +27,8 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (
-    !data ||
-    !data.guilds ||
-    !Array.isArray(data.guilds) ||
-    data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
-      0
-  ) {
-    return <div>No access</div>;
+  if (error?.data?.code === "UNAUTHORIZED") {
+    return <div>{error.message}</div>;
   }
 
   return <WelcomeDashboardPageComponent query={query as string} />;

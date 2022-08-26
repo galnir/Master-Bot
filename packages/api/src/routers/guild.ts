@@ -13,13 +13,39 @@ export const guildRouter = createRouter()
     async resolve({ ctx, input }) {
       const { id } = input;
 
-      const guild = await ctx.prisma.guild.findFirst({
+      const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: id as string,
+          id,
         },
       });
 
       return { guild };
+    },
+  })
+  .query("get-guild-and-user", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { id } = input;
+
+      const guild = await ctx.prisma.guild.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session?.user?.id,
+        },
+      });
+
+      if (guild?.ownerId !== user?.discordId) {
+        throw new TRPCError({ message: "UNAUTHORIZED", code: "UNAUTHORIZED" });
+      }
+
+      return { guild, user };
     },
   })
   // create
@@ -232,6 +258,13 @@ export const guildRouter = createRouter()
   })
   .query("get-all-from-discord-api", {
     async resolve({ ctx }) {
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: "Not Authenticated",
+          code: "UNAUTHORIZED",
+        });
+      }
+
       const account = await ctx.prisma.account.findFirst({
         where: {
           userId: ctx.session?.user?.id,

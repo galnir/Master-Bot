@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
+        session.user.discordId = user.discordId;
       }
       return session;
     },

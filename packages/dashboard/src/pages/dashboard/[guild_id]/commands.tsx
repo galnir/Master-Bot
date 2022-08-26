@@ -14,8 +14,8 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
-  const { data, isLoading } = trpc.useQuery(
-    ["guild.get-all-from-discord-api"],
+  const { isLoading, error } = trpc.useQuery(
+    ["guild.get-guild-and-user", { id: query as string }],
     { refetchOnWindowFocus: false }
   );
 
@@ -23,14 +23,8 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (
-    !data ||
-    !data.guilds ||
-    !Array.isArray(data.guilds) ||
-    data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
-      0
-  ) {
-    return <div>No access</div>;
+  if (error?.data?.code === "UNAUTHORIZED") {
+    return <div>{error.message}</div>;
   }
 
   return <CommandsDashboardPageComponent query={query as string} />;

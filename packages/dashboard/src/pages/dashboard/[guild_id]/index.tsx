@@ -1,4 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
@@ -8,14 +9,13 @@ import { NextPageWithLayout } from "../../_app";
 
 const GuildIndexPage: NextPageWithLayout = () => {
   const router = useRouter();
-
   const query = router.query.guild_id;
   if (!query || typeof query !== "string") {
     router.push("/");
   }
 
-  const { data, isLoading } = trpc.useQuery(
-    ["guild.get-all-from-discord-api"],
+  const { isLoading, error } = trpc.useQuery(
+    ["guild.get-guild-and-user", { id: query as string }],
     { refetchOnWindowFocus: false }
   );
 
@@ -23,14 +23,8 @@ const GuildIndexPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (
-    !data ||
-    !data.guilds ||
-    !Array.isArray(data.guilds) ||
-    data?.guilds.filter((guild) => guild.id === query && guild.owner).length ===
-      0
-  ) {
-    return <div>No access</div>;
+  if (error?.data?.code === "UNAUTHORIZED") {
+    return <div>{error.message}</div>;
   }
 
   return (

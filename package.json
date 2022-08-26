@@ -11,6 +11,8 @@
     "dev": "concurrently \"npm run dev:dashboard\" \"npm run dev:bot\"",
     "dev:bot": "npm run dev --prefix packages/bot",
     "dev:dashboard": "npm run dev --prefix packages/dashboard",
+    "clean": "rm -rf node_modules/ packages/dashboard/node_modules/ packages/dashboard/.next/ packages/bot/node_modules/ packages/bot/dist/",
+    "clean-i": "npm run clean && npm install",
     "postinstall": "npx prisma db push"
   },
   "workspaces": [
