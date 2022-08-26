@@ -174,6 +174,13 @@ export const guildRouter = createRouter()
   })
   .query("get-all", {
     async resolve({ ctx }) {
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: "Not Authenticated",
+          code: "UNAUTHORIZED",
+        });
+      }
+
       const account = await ctx.prisma.account.findFirst({
         where: {
           userId: ctx.session?.user?.id,
