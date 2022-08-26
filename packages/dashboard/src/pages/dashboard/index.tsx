@@ -49,6 +49,13 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const session = await getServerSession(ctx);
 
+  if (!session || !session.user || !session.user.id) {
+    return {
+      redirect: { destination: "../api/auth/signin", permanent: false },
+      props: {},
+    };
+  }
+
   return {
     props: {
       session,
