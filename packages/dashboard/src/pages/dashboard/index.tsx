@@ -2,7 +2,6 @@ import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import { getServerSession } from "../../shared/get-server-session";
 import { trpc } from "../../utils/trpc";
-import { clientEnv } from "../../env/schema.mjs";
 import GuildSelectBox from "../../components/GuildSelectBox";
 
 const DashboardIndexPage: NextPage = () => {
@@ -33,7 +32,6 @@ const DashboardIndexPage: NextPage = () => {
                   name={guild.name}
                   isBotIn={isBotInGuild}
                   id={guild.id}
-                  invite_url={clientEnv.NEXT_PUBLIC_INVITE_URL as string}
                 />
               );
             })}

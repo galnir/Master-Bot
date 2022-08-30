@@ -8,7 +8,8 @@
     "url": "git+https://github.com/galnir/Master-Bot.git"
   },
   "scripts": {
-    "dev": "concurrently \"npm run dev:dashboard\" \"npm run dev:bot\"",
+    "dev": "npm run copy-env && concurrently \"npm run dev:dashboard\" \"npm run dev:bot\"",
+    "copy-env": "cpy .env ./packages/dashboard",
     "dev:bot": "npm run dev --prefix packages/bot",
     "dev:dashboard": "npm run dev --prefix packages/dashboard",
     "clean": "rm -rf node_modules/ packages/dashboard/node_modules/ packages/dashboard/.next/ packages/bot/node_modules/ packages/bot/dist/",
@@ -34,6 +35,7 @@
     "@trpc/react": "^9.27.1",
     "@trpc/server": "^9.27.1",
     "concurrently": "^7.3.0",
+    "cpy-cli": "^4.2.0",
     "superjson": "^1.9.1",
     "zod": "^3.18.0"
   },

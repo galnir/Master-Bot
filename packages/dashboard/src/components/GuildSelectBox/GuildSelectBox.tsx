@@ -1,21 +1,14 @@
 import Link from "next/link";
+import { env } from "../../env/client.mjs";
 
 interface GuildSelectBoxProps {
   img: string;
   name: string;
   isBotIn: boolean;
   id: string;
-  invite_url: string;
 }
 
-const GuildSelectBox = ({
-  img,
-  name,
-  isBotIn,
-  id,
-  invite_url,
-}: GuildSelectBoxProps) => {
-  console.log("dsadsadasdsadsais", invite_url);
+const GuildSelectBox = ({ img, name, isBotIn, id }: GuildSelectBoxProps) => {
   return (
     <div className="flex flex-col gap-4">
       <div className="max-w-xs">
@@ -32,7 +25,7 @@ const GuildSelectBox = ({
         ) : (
           <a
             className="px-7 py-3 bg-blue-900 rounded-md hover:bg-blue-700"
-            href={invite_url}
+            href={env.NEXT_PUBLIC_INVITE_URL}
             target="_blank"
             rel="noreferrer"
           >
