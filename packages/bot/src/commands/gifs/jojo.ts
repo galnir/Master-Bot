@@ -7,7 +7,6 @@ import {
 import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
-import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'jojo',
@@ -22,10 +21,6 @@ export class JojoCommand extends Command {
         `https://api.tenor.com/v1/random?key=${process.env.TENOR_API}&q=jojo&limit=1`
       )
       .then(async response => {
-        const data = await trpcNode.query('user.get-user-by-id', {
-          id: '183647046564184065'
-        });
-
         return await interaction.reply({
           content: response.data.results[0].url
         });
