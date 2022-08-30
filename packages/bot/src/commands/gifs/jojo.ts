@@ -25,7 +25,6 @@ export class JojoCommand extends Command {
         const data = await trpcNode.query('user.get-user-by-id', {
           id: '183647046564184065'
         });
-        console.log('data is', data);
 
         return await interaction.reply({
           content: response.data.results[0].url
