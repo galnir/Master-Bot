@@ -21,9 +21,7 @@ const HomeComponent = () => {
       </Head>
       <header className="p-40 py-10 flex justify-between">
         <div>
-          <Link href="/">
-            <Logo />
-          </Link>
+          <Logo />
         </div>
         <div className="flex items-center justify-between gap-5">
           <HeaderButton
