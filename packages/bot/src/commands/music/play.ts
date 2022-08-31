@@ -4,11 +4,11 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import type { CommandInteraction, GuildMember } from 'discord.js';
 import { container } from '@sapphire/framework';
-//import prisma from '../../lib/prisma';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Song } from '../../lib/utils/queue/Song';
+import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
@@ -31,7 +31,7 @@ export class PlayCommand extends Command {
       interaction.options.getString('is-custom-playlist');
     const shufflePlaylist = interaction.options.getString('shuffle-playlist');
 
-    //const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member as GuildMember;
     const { music } = client;
 
     // had a precondition make sure the user is infact in a voice channel
@@ -60,9 +60,13 @@ export class PlayCommand extends Command {
       //     songs: true
       //   }
       // });
-      const playlist = {
-        songs: []
-      };
+      const data = await trpcNode.query('playlist.get-playlist', {
+        userId: interactionMember.id,
+        name: query
+      });
+
+      const { playlist } = data;
+
       if (!playlist) {
         return await interaction.followUp(`:x: You have no such playlist!`);
       }
