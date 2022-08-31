@@ -22,8 +22,8 @@ export const channelRouter = createRouter().query("get-all", {
     );
     const responseChannels: APIGuildChannel<any>[] = await response.json();
 
-    const channels: APIGuildTextChannel<2>[] = responseChannels.filter(
-      (channel) => channel.type === 2
+    const channels: APIGuildTextChannel<0>[] = responseChannels.filter(
+      (channel) => channel.type === 0
     );
     return { channels };
   },
