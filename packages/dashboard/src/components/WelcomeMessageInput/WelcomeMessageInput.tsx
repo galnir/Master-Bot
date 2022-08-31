@@ -35,7 +35,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
       />
       <button
-        className="hover:text-gray-400"
+        className="mt-1 -mb-1 p-1 px-2 rounded-sm text-white bg-blue-800 hover:bg-blue-900"
         type="submit"
         onClick={handleSubmit}
       >

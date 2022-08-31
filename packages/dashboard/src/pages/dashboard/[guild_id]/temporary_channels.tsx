@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "../../../shared/get-server-session";
-import { useSession } from "next-auth/react";
 
 const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -120,8 +119,8 @@ const TemporaryChannelsDashboardPageComponent = ({
   const enabled = data?.guild?.hub && data.guild.hubChannel;
 
   return (
-    <div className="p-10">
-      <h1 className="text-white text-3xl">Temporary Channels</h1>
+    <div className="p-10 text-xl">
+      <h1 className="text-white text-5xl">Temporary Channels</h1>
       <p className="mt-3">
         Creating a hub enables users to create their own temporary voice
         channels with permissions over it
@@ -136,7 +135,7 @@ const TemporaryChannelsDashboardPageComponent = ({
             type="submit"
             disabled={isToggling}
             onClick={handleToggle}
-            className="bg-red-600 text-white mx-auto w-fit block p-1 rounded-sm hover:bg-red-500"
+            className="bg-red-600 text-white mx-auto w-fit block p-1 px-2 rounded-sm hover:bg-red-500"
           >
             {isToggling
               ? enabled

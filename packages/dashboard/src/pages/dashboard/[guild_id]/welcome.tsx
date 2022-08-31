@@ -9,7 +9,6 @@ import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
 import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession } from "../../../shared/get-server-session";
-import { useSession } from "next-auth/react";
 
 const WelcomeDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();

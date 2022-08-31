@@ -28,9 +28,9 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
       {isLoading && !data && isLoadingChannelData && !channelData ? (
         <div>Loading channels...</div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <select
-            className="w-56 h-7 bg-black text-white"
+            className="w-56 h-7 p-1 bg-black text-white"
             value={value ? value : ""}
             onChange={(e) => setValue(e.target.value)}
           >
@@ -41,7 +41,7 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
             ))}
           </select>
           <button
-            className="w-fit hover:text-gray-400"
+            className="w-fit p-1 px-2 rounded-sm text-white bg-blue-800 hover:bg-blue-900"
             type="submit"
             onClick={() => {
               if (!value) return;
