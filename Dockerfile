@@ -1,13 +1,8 @@
-FROM node:16-alpine
+FROM node:16-slim
 WORKDIR "/Master-Bot"
 
-# Install and register fonts (needed for Game Commands)
-RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
-	update-ms-fonts && \
-	fc-cache -f && \
-	apk del fonts && \
-	find  /usr/share/fonts/truetype/msttcorefonts/ -type l -exec unlink {} \; \
-	&& rm -rf /root /tmp/* /var/cache/apk/* && mkdir /root
+# Install prerequisites and register fonts
+RUN apt-get update && apt-get install -y -q openssl && apt-get install -y -q && apt-get install -y -q --no-install-recommends libfontconfig1
 
 # Copy files to Container (Excluding whats in .dockerignore)
 COPY ./ ./
