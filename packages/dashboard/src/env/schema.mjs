@@ -19,6 +19,7 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   NEXT_PUBLIC_INVITE_URL: z.string().url(),
+  NEXT_PUBLIC_ALLOW_NEW_GUILDS: z.string(),
 });
 
 /**
@@ -29,4 +30,6 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   NEXT_PUBLIC_INVITE_URL: process.env.NEXT_PUBLIC_INVITE_URL,
+  NEXT_PUBLIC_ALLOW_NEW_GUILDS:
+    process.env.NEXT_PUBLIC_ALLOW_NEW_GUILDS ?? "true",
 };
