@@ -45,7 +45,14 @@ export class ExtendedClient extends SapphireClient {
     this.music = new QueueClient({
       sendGatewayPayload: (id, payload) =>
         this.guilds.cache.get(id)?.shard?.send(payload),
-      options: { redis: new Redis() },
+      options: {
+        redis: new Redis({
+          host: process.env.REDIS_HOST || 'localhost',
+          port: Number.parseInt(process.env.REDIS_PORT!) || 6379,
+          password: process.env.REDIS_PASSWORD || '',
+          db: Number.parseInt(process.env.REDIS_DB!) || 0
+        })
+      },
       connection: {
         host: process.env.LAVA_HOST || '',
         password: process.env.LAVA_PASS || '',
