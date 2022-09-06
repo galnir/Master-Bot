@@ -6,10 +6,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { mutate } = trpc.useMutation("welcome.set-message");
-  const { data, isLoading } = trpc.useQuery([
-    "welcome.get-message",
-    { guildId },
-  ]);
+  const { data } = trpc.useQuery(["welcome.get-message", { guildId }]);
 
   function handleSubmit() {
     setIsSubmitting(true);

@@ -30,7 +30,7 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
       ) : (
         <div className="flex flex-col gap-3">
           <select
-            className="w-56 h-7 p-1 bg-black text-white"
+            className="w-56 h-7 outline-none text-black bg-white rounded-sm hover:text-white hover:bg-black hover:cursor-pointer hover:border hover:border-white"
             value={value ? value : ""}
             onChange={(e) => setValue(e.target.value)}
           >
