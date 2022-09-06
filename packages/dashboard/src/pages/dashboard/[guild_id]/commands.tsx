@@ -50,7 +50,7 @@ const CommandsDashboardPageComponent = ({
 
   return (
     <div className="p-10">
-      <h1 className="text-slate-200 text-3xl">
+      <h1 className="text-slate-200 text-3xl mb-3 ml-1">
         Enable / Disable Commands Panel
       </h1>
       {data?.commands &&
