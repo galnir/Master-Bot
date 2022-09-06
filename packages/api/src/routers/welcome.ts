@@ -2,6 +2,24 @@ import { createRouter } from "../createRouter";
 import { z } from "zod";
 
 export const welcomeRouter = createRouter()
+  .query("get-message", {
+    input: z.object({
+      guildId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const { guildId } = input;
+
+      const guild = await ctx.prisma.guild.findUnique({
+        where: {
+          id: guildId,
+        },
+      });
+
+      return {
+        message: guild?.welcomeMessage,
+      };
+    },
+  })
   .mutation("set-message", {
     input: z.object({
       message: z.string().min(4).max(100),

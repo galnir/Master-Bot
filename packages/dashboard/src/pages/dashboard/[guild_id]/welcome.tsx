@@ -57,12 +57,14 @@ const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
 
   return (
     <div className="p-10 text-white">
-      <h1 className="text-3xl">Welcome Message Settings</h1>
+      <h1 className="text-5xl">Welcome Message Settings</h1>
       {isLoading || !data || !data.guild ? (
         <div>Loading...</div>
       ) : (
-        <div>
-          <h3 className="my-10">Welcome new users with a custom message</h3>
+        <div className="ml-1">
+          <h3 className="my-10 text-2xl">
+            Welcome new users with a custom message
+          </h3>
           <div className="flex items-center gap-5">
             <span>
               {data?.guild?.welcomeMessageEnabled ? "Enabled" : "Disabled"}

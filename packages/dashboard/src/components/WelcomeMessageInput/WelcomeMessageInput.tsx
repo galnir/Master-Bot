@@ -6,6 +6,10 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { mutate } = trpc.useMutation("welcome.set-message");
+  const { data, isLoading } = trpc.useQuery([
+    "welcome.get-message",
+    { guildId },
+  ]);
 
   function handleSubmit() {
     setIsSubmitting(true);
@@ -31,6 +35,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         name="welcome_message"
         placeholder="welcome message input"
         value={message}
+        defaultValue={data?.message ? data.message : "Loading..."}
         onChange={(e) => setMessage(e.target.value)}
         className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
       />
