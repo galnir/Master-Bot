@@ -14,7 +14,7 @@ const DashboardIndexPage: NextPage = () => {
         <meta name="description" content="Choose guild to manage screen" />
       </Head>
       <main className="p-10">
-        <h1 className="text-3xl mb-4">Choose guild to manage</h1>
+        <h1 className="text-3xl mb-4 ml-1">Choose guild to manage</h1>
         {data?.apiGuilds ? (
           <div className="flex gap-10">
             {data?.apiGuilds.map((guild) => {
