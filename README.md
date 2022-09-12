@@ -60,7 +60,8 @@ DISCORD_TOKEN=""
 # Next Auth
 
 NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL="http://<public_server_ip>:3000"
+NEXTAUTH_URL_INTERNAL="http://0.0.0.0:3000"
 NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
 
 # Next Auth Discord Provider
@@ -98,10 +99,10 @@ Change 'john' to your pc username and 'doe' to some password, or set the name an
 Generate a token in your Discord developer portal.
 
 #### Next Auth
-You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id.
+Change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and change the `<public_server_ip>` in the `NEXTAUTH_URL` to your public IPv4 IP. You can find your public IP via the `Find Your IP` link in the links below if you are hosting on your own system. If you are hosting on a VPs, the public IP is your VPS IP.
 
 #### Next Auth Discord Provider
-Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set this as the URL under 'Redirects': http://localhost:3000/api/auth/callback/discord.
+Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, add these URLs under 'Redirects': `http://<public_server_ip>:3000/api/auth/callback/discord` and `http://0.0.0.0:3000/api/auth/callback/discord`.
 
 #### Lavalink
 You can leave this as long as the values match your application.yml.
@@ -211,6 +212,10 @@ A full list of commands for use with Master Bot
 [Using a public LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-Up-LavaLink-with-a-public-LavaLink-Server)
 
 [Using an Internal LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-up-LavaLink-with-an-Internal-LavaLink-server)
+
+[Find Your Public IP](https://whatismyipaddress.com/)
+
+[NextAuth Configuration Options](https://next-auth.js.org/configuration/options)
 
 ## Contributing
 
