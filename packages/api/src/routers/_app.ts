@@ -12,7 +12,6 @@ import { channelRouter } from "./channel";
 import { welcomeRouter } from "./welcome";
 import { commandRouter } from "./command";
 import { hubRouter } from "./hub";
-import { reminderRouter } from "./reminder";
 
 /**
  * Create your application's root router
@@ -39,7 +38,6 @@ export const appRouter = createRouter()
   .merge("channel.", channelRouter)
   .merge("welcome.", welcomeRouter)
   .merge("command.", commandRouter)
-  .merge("hub.", hubRouter)
-  .merge("reminder.", reminderRouter);
+  .merge("hub.", hubRouter);
 
 export type AppRouter = typeof appRouter;

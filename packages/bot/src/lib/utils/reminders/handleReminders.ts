@@ -1,5 +1,3 @@
-// import { RemindEmbed } from './reminderEmbed';
-// import { container } from '@sapphire/framework';
 import {
   EmbedLimits,
   PaginatedFieldMessageEmbed
@@ -26,22 +24,16 @@ export async function saveReminder(userId: string, reminder: ReminderI) {
     if (!DB) {
       return Logger.error('not found: ' + userId);
     }
-    const entry = await trpcNode.query('reminder.get-reminder', {
-      userId,
-      event: reminder.event
-    });
-    if (!entry.reminder) {
-      await trpcNode.mutation('reminder.create', reminder);
 
-      // const duplicate = await cache.get(`reminder:${userId}${reminder.event}`);
-      // console.log(duplicate);
-      // if (!duplicate) {
+    const duplicate = await cache.get(`${userId}:reminders:${reminder.event}`);
+    if (!duplicate) {
       await cache.setReminder(
-        `${userId}${reminder.event}`,
+        userId,
+        reminder.event,
         JSON.stringify(reminder),
         reminder.dateTime
       );
-      // }
+
       return true;
     }
     return false;
@@ -132,12 +124,8 @@ export async function removeReminder(
 ) {
   let deleted: any;
   try {
-    deleted = await trpcNode.mutation('reminder.delete', {
-      userId: userId,
-      event: event
-    });
-    const key = `${userId}${event}`;
-    await cache.delete(`reminder:${key}`); // TTL
+    const key = `${userId}:reminders:${event}`;
+    await cache.delete(`${key}:trigger`); // TTL
     await cache.delete(key); // data
   } catch (error) {
     Logger.error(error);
@@ -150,73 +138,6 @@ export async function removeReminder(
 
   return ':x: Something went wrong! Please try again later.';
 }
-// export async function checkReminders() {
-// const DB = await trpcNode.query('reminder.get-all');
-// if (!DB.reminders || DB.reminders.length) return;
-
-// const { client } = container;
-// DB.reminders.forEach(
-// async (reminder: any) => {
-//   if (isPast(reminder.dateTime)) {
-//     await removeReminder(reminder.userId!, reminder.event, false);
-//     return;
-//   }
-// const difference = new Date(reminder.dateTime).getTime() - Date.now();
-// if (!reminderShortTimers[`${reminder.userId}${reminder.event}`]) {
-//   if (difference > 0 && difference < DBReminderInterval) {
-//     const user = client.users.cache.get(reminder.userId!);
-//     const remind = new RemindEmbed(
-//       reminder.user?.id!,
-//       reminder.user?.timeZone!,
-//       reminder.event,
-//       reminder.dateTime,
-//       reminder.description!,
-//       reminder.repeat!
-//     );
-// shortTimer(user!, remind, difference);
-// }
-// }
-// });
-// }
-
-// export function shortTimer(user: User, reminder: RemindEmbed, timeMS: number) {
-// const remind = new RemindEmbed(
-//   reminder.userId!,
-//   reminder.timeZone!,
-//   reminder.event,
-//   reminder.dateTime,
-//   reminder.description!,
-//   reminder.repeat!
-// );
-// reminderShortTimers[`${reminder.userId}${reminder.event}`] = setTimeout(
-//   async () => {
-//     try {
-//       await user.send({
-//         embeds: [remind.RemindEmbed()]
-//       });
-//     } catch (error) {
-//       return Logger.error(error);
-//     }
-
-//     await removeReminder(reminder.userId, reminder.event, false);
-//     if (reminder.repeat) {
-//       const nextAlarm = nextReminder(reminder.repeat, reminder.dateTime);
-//       await saveReminder(reminder.userId, {
-//         event: reminder.event,
-//         dateTime: convertInputsToISO(
-//           reminder.timeZone!,
-//           nextAlarm.time,
-//           nextAlarm.date
-//         ),
-//         description: reminder.description!,
-//         repeat: reminder.repeat
-//       });
-//     }
-//   },
-//   timeMS
-// );
-// return
-// }
 
 export function nextReminder(repeat: string, isoStr: string) {
   const localOffset = new Date().getTimezoneOffset();
@@ -461,10 +382,6 @@ export function padTo2Digits(num: any) {
   return num.toString().padStart(2, '0');
 }
 
-// checkReminders();
-// setInterval(async () => {
-//   await checkReminders();
-// }, DBReminderInterval);
 export interface ReminderI {
   userId: string;
   timeZone: number;

@@ -1,4 +1,4 @@
-import Redis, { RedisKey, RedisValue } from 'ioredis';
+import Redis from 'ioredis';
 
 export default class ReminderStore {
   redis: Redis;
@@ -13,22 +13,32 @@ export default class ReminderStore {
       this.redis.config('SET', 'notify-keyspace-events', 'Ex');
     });
   }
-  get(key: RedisKey) {
+  get(key: string) {
     return this.redis.get(key);
   }
-  delete(key: RedisKey) {
+  getKeys(key: string) {
+    return this.redis.keys(`${key}*`);
+  }
+  getUsersReminders(keys: string[]) {
+    return this.redis.mget(keys);
+  }
+
+  delete(key: string) {
     return this.redis.del(key);
   }
-  setReminder(key: RedisKey, value: RedisValue, expire: string) {
-    console.log(key, value, expire);
+  setReminder(user: string, event: string, value: string, expire: string) {
+    console.log(user, event, value, expire);
     return (
       this.redis
         .multi()
         // Save a key for TTL dummy data
-        .set(`reminder:${key}`, 1)
-        .expireat(`reminder:${key}`, Date.parse(expire) / 1000)
+        .set(`${user}:reminders:${event}:trigger`, 1)
+        .expireat(
+          `${user}:reminders:${event}:trigger`,
+          Date.parse(expire) / 1000
+        )
         // Store actual data (discordId+event)
-        .set(key, value)
+        .set(`${user}:reminders:${event}`, value)
         .exec()
     );
   }

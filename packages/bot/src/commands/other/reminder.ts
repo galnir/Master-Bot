@@ -2,9 +2,7 @@ import {
   askForDateTime,
   checkInputs,
   convertInputsToISO,
-  // DBReminderInterval,
   isPast,
-  // shortTimer,
   saveReminder,
   removeReminder
 } from './../../lib/utils/reminders/handleReminders';
@@ -22,9 +20,9 @@ import {
   MessageEmbed,
   User
 } from 'discord.js';
-// import { RemindEmbed } from '../../lib/utils/reminders/reminderEmbed';
 import { Time } from '@sapphire/time-utilities';
 import { trpcNode } from '../../trpc';
+import ReminderStore from '../../lib/utils/reminders/ReminderStore';
 
 @ApplyOptions<CommandOptions>({
   name: 'reminder',
@@ -111,19 +109,6 @@ export class ReminderCommand extends Command {
           });
         if (savedToDB) {
           await interaction.editReply('All Set');
-
-          // const difference = new Date(isoStr).getTime() - Date.now();
-          // if (difference > 0 && difference < DBReminderInterval) {
-          // const remind = new RemindEmbed(
-          //   interaction.user.id,
-          //   userDB.user.timeZone,
-          //   newEvent,
-          //   isoStr,
-          //   newDescription!,
-          //   repeat!
-          // );
-          // shortTimer(interaction.user, remind, difference);
-          // }
         } else {
           await interaction.editReply(
             `:x: Something went wrong${
@@ -146,13 +131,19 @@ export class ReminderCommand extends Command {
 
     if (subCommand == 'view') {
       const interactionUser = interaction.user as User;
-      const remindersDB = await trpcNode.query('reminder.get-by-user-id', {
-        userId: interactionUser.id
-      });
 
-      if (!remindersDB.reminders.length) {
+      const cache = new ReminderStore();
+      const rawKeys = await cache.getKeys(interactionUser.id);
+      const keyList: string[] = [];
+      if (!rawKeys.length) {
         return await interaction.reply(":x: You don't have any reminders.");
       }
+      rawKeys.forEach(key => {
+        if (!key.endsWith('trigger')) keyList.push(key);
+      });
+      const allReminders = await cache.getUsersReminders(keyList);
+      const remindersDB = allReminders.map(reminders => JSON.parse(reminders!));
+
       const baseEmbed = new MessageEmbed()
         .setColor('#9096e6')
         .setAuthor({
@@ -163,7 +154,7 @@ export class ReminderCommand extends Command {
       const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
         .setTitleField(`Reminders`)
         .setTemplate(baseEmbed)
-        .setItems(remindersDB.reminders)
+        .setItems(remindersDB)
         .formatItems(
           (reminder: any) =>
             `> **${reminder.event}** --> <t:${Math.floor(

@@ -46,7 +46,6 @@ model User {
   sessions      Session[]
   playlists     Playlist[]
   guilds        Guild[]
-  reminders     Reminder[]
   timeZone      Int?
 }
 
@@ -118,15 +117,4 @@ model TwitchNotify {
   live       Boolean  @default(false)
   channelIds String[]
   sent       Boolean
-}
-
-model Reminder {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  repeat      String?
-  event       String
-  description String?
-  dateTime    String
-  userId      String
-  user        User?    @relation(fields: [userId], references: [discordId])
 }
