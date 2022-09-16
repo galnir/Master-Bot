@@ -8,12 +8,15 @@ import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
 import Logger from '../lib/utils/logger';
 import path from 'path';
 import dotenv from 'dotenv';
+import ReminderEvents from '../lib/utils/reminders/ReminderEvents';
+ReminderEvents();
 dotenv.config({
   path: path.resolve(__dirname, '../../../../.env')
 });
 
 export class ExtendedClient extends SapphireClient {
   readonly music: QueueClient;
+  
   leaveTimers: { [key: string]: NodeJS.Timer };
   twitch: ClientTwitchExtension = {
     api: new TwitchAPI(
@@ -37,7 +40,9 @@ export class ExtendedClient extends SapphireClient {
         Intents.FLAGS.GUILD_MEMBERS,
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
       ],
       logger: { level: 100 }
     });

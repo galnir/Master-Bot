@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { CommandInteraction, User } from 'discord.js';
 import Logger from '../lib/utils/logger';
 import { trpcNode } from '../trpc';
 
@@ -15,12 +15,12 @@ export class UserInDB extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
-    const guildMember = interaction.member as GuildMember;
+    const guildMember = interaction.user as User;
 
     try {
       const user = await trpcNode.mutation('user.create', {
         id: guildMember.id,
-        name: guildMember.user.username
+        name: guildMember.username
       });
 
       if (!user) throw new Error();

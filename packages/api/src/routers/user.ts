@@ -55,4 +55,22 @@ export const userRouter = createRouter()
 
       return { user };
     },
+  })
+  //  update
+  .mutation("update-timeZone", {
+    input: z.object({
+      id: z.string(),
+      timeZone: z.number(),
+    }),
+    async resolve({ ctx, input }) {
+      const { id, timeZone } = input;
+      const user = await ctx.prisma.user.update({
+        where: {
+          discordId: id,
+        },
+        data: { timeZone: timeZone },
+        select: { timeZone: true },
+      });
+      return { user };
+    },
   });
