@@ -19,41 +19,30 @@ import Logger from '../logger';
 const cache = new ReminderStore();
 
 export async function saveReminder(userId: string, reminder: ReminderI) {
-  try {
-    const DB = await trpcNode.query('user.get-user-by-id', { id: userId });
-    if (!DB) {
-      return Logger.error('not found: ' + userId);
-    }
-
-    const duplicate = await cache.get(`${userId}:reminders:${reminder.event}`);
-    if (!duplicate) {
-      await cache.setReminder(
-        userId,
-        reminder.event,
-        JSON.stringify(reminder),
-        reminder.dateTime
-      );
-
-      return true;
-    }
-    return false;
-  } catch {
-    return false;
+  const duplicate = await cache.get(`${userId}:reminders:${reminder.event}`);
+  if (!duplicate) {
+    await cache.setReminder(
+      userId,
+      reminder.event,
+      JSON.stringify(reminder),
+      reminder.dateTime
+    );
+    return true;
   }
+  return false;
 }
+
 export function convertInputsToISO(
   userOffset: number,
   timeQuery: string,
   date: string
 ) {
   let isoStr: string = '';
-  const userOperator = userOffset! > 0 ? '+' : '-';
+
   const [hour, minute] = timeQuery.split(':');
   timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
   const localDateTime = new Date();
-  const localOffset = localDateTime.getTimezoneOffset();
-  const localOperator = localOffset > 0 ? '+' : '-';
 
   const DateEntry = date ? true : false;
   if (!date) {
@@ -66,25 +55,20 @@ export function convertInputsToISO(
     day
   )}T${timeQuery}:00.000Z`;
 
-  if (isPast(isoStr.replace('Z', '')) && !DateEntry) {
-    isoStr = new Date(new Date(isoStr).getTime() + Time.Day).toISOString();
+  const timeMS = new Date(isoStr).valueOf();
+  const userOffset2Ms = userOffset * Time.Minute;
+
+  isoStr = new Date(timeMS - userOffset2Ms).toISOString();
+
+  if (isPast(isoStr) && !DateEntry) {
+    isoStr = new Date(new Date(isoStr).valueOf() + Time.Day).toISOString();
   }
 
-  const timeMS = new Date(isoStr).valueOf();
-  const userMinToMS = userOffset! * Time.Minute;
-  const localMinToMS = localOffset * Time.Minute;
-
-  const totalOffset =
-    localOperator == '+'
-      ? localMinToMS - (userOperator == '-' ? -userMinToMS : +userMinToMS)
-      : localMinToMS + (userOperator == '+' ? -userMinToMS : +userMinToMS);
-
-  isoStr = new Date(timeMS + totalOffset).toISOString().replace('Z', '');
   return isoStr;
 }
 
 export function isPast(dateTime: string) {
-  return new Date(dateTime).getTime() - Date.now() < 0 ? true : false;
+  return new Date(dateTime).valueOf() - Date.now() < 0 ? true : false;
 }
 
 export async function findTimeZone(
@@ -93,27 +77,22 @@ export async function findTimeZone(
   date: string
 ) {
   if (await checkInputs(interaction, 'placeholder', timeQuery, date)) {
-    const localDateTime = new Date();
-    let [hour, minute] = timeQuery.split(':');
+    const [hour, minute] = timeQuery.split(':');
 
     timeQuery = `${padTo2Digits(hour)}:${padTo2Digits(minute)}`;
 
-    let userTime: string = localDateTime.toISOString();
-
     const [month, day, year] = date.split('/') || date.split('-');
-    userTime = `${year}-${padTo2Digits(month)}-${padTo2Digits(
+    const userTime = `${year}-${padTo2Digits(month)}-${padTo2Digits(
       day
     )}T${timeQuery}:00.000Z`;
+
     const userTimeMS = new Date(userTime).valueOf();
-    const offset = Math.floor(Date.now() - userTimeMS);
-    const operator = offset! > 0 ? '+' : '-';
-    const roundToNearest5 = (x: number) => Math.round(x / 5) * 5;
-    await trpcNode.mutation('user.update-timeZone', {
+    const rawOffset = userTimeMS - new Date().valueOf();
+    const offset = Math.round(rawOffset / Time.Minute / 5) * 5;
+
+    await trpcNode.mutation('user.update-timeOffset', {
       id: interaction.user.id,
-      timeZone:
-        operator == '+'
-          ? +roundToNearest5(offset / Time.Minute)
-          : -roundToNearest5(offset / Time.Minute)
+      timeOffset: offset
     });
   }
 }
@@ -122,9 +101,9 @@ export async function removeReminder(
   event: string,
   isCommand: boolean
 ) {
-  let deleted: any;
+  const key = `${userId}:reminders:${event}`;
+  const reminderExists = await cache.get(key);
   try {
-    const key = `${userId}:reminders:${event}`;
     await cache.delete(`${key}:trigger`); // TTL
     await cache.delete(key); // data
   } catch (error) {
@@ -132,37 +111,33 @@ export async function removeReminder(
     if (isCommand) return ':x: Something went wrong! Please try again later.';
   }
 
-  if (deleted?.count! > 0 && isCommand)
+  if (reminderExists && isCommand)
     return `:wastebasket: Deleted reminder **${event}**.`;
   else if (isCommand) return `:x: **${event}** was not found.`;
 
   return ':x: Something went wrong! Please try again later.';
 }
 
-export function nextReminder(repeat: string, isoStr: string) {
-  const localOffset = new Date().getTimezoneOffset();
-  const localOperator = localOffset > 0 ? '+' : '-';
+export function nextReminder(
+  repeat: string,
+  isoStr: string,
+  timeOffset: number
+) {
+  const offset2MS = timeOffset * Time.Minute;
 
-  const offset2MS = localOffset * 60000;
   if (repeat === 'Daily') {
     isoStr = new Date(
-      new Date(isoStr).valueOf() +
-        Time.Day -
-        (localOperator === '+' ? +offset2MS : -offset2MS)
-    )
-      .toISOString()
-      .replace('Z', '');
+      new Date(isoStr).valueOf() + Time.Day + offset2MS
+    ).toISOString();
   }
+
   if (repeat === 'Weekly') {
     isoStr = new Date(
-      new Date(isoStr).valueOf() +
-        604800 * 1000 -
-        (localOperator === '+' ? +offset2MS : -offset2MS)
-    )
-      .toISOString()
-      .replace('Z', '');
+      new Date(isoStr).valueOf() + Time.Day * 7 + offset2MS
+    ).toISOString();
   }
-  isoStr = isoStr.replace(':00.000', '');
+
+  isoStr = isoStr.replace(':00.000Z', '');
   const [DBDate, DBTime] = isoStr.split('T');
   const [DBHour, DBMinute] = DBTime.split(':');
   const [DBYear, DBMonth, DBDay] = DBDate.split('-');
@@ -186,7 +161,7 @@ export function nextReminder(repeat: string, isoStr: string) {
     )}/${year.toString()}`,
     time: `${padTo2Digits(hour.toString())}:${padTo2Digits(
       minute.toString()
-    )}:00.000`
+    )}:00.000Z`
   };
 }
 
@@ -198,7 +173,7 @@ export async function checkInputs(
   description?: string,
   repeat?: string
 ) {
-  let Passed = true;
+  let Failed;
   const errors = [];
   let errorCount = 0;
 
@@ -215,7 +190,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Hours** - Only numbers can be used to set Hours. (Example: 13:30 for 1:30 pm)`
         });
-        Passed = false;
+        Failed = true;
       }
     }
 
@@ -224,7 +199,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Hours** - Choose a number between 0 and 23. (Example: 13:30 for 1:30 pm)`
       });
-      Passed = false;
+      Failed = true;
     }
 
     if (
@@ -237,7 +212,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Minutes** - Only numbers can be used to set Minutes. (Example: 13:30 for 1:30 pm)`
         });
-        Passed = false;
+        Failed = true;
       }
     }
     if (Number.parseInt(minute) > 59 || Number.parseInt(minute) < 0) {
@@ -245,7 +220,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Minutes** - Choose a number between 0 and 59. (Example: 13:30 for 1:30 pm)`
       });
-      Passed = false;
+      Failed = true;
     }
   }
 
@@ -261,7 +236,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Date** - Only numbers can be used to set the Date`
       });
-      Passed = false;
+      Failed = true;
     }
 
     if (
@@ -276,7 +251,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Syntax** - Date is formatted MM/DD/YYYY`
       });
-      Passed = false;
+      Failed = true;
     }
 
     if (repeat) {
@@ -285,7 +260,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Setting Combo** - Day cannot be after the 28th with "Monthly" Repeat setting enabled. (Blame February <3)`
         });
-        Passed = false;
+        Failed = true;
       }
     }
   }
@@ -295,7 +270,7 @@ export async function checkInputs(
       content: `**${errorCount}**) **Limitation** - Event titles have a maximum length of ${EmbedLimits.MaximumTitleLength} characters`
     });
 
-    Passed = false;
+    Failed = true;
   }
   if (description) {
     if (description.length > EmbedLimits.MaximumDescriptionLength) {
@@ -303,10 +278,10 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Limitation** - Descriptions have a maximum length of ${EmbedLimits.MaximumDescriptionLength} characters`
       });
-      Passed = false;
+      Failed = true;
     }
   }
-  if (!Passed) {
+  if (Failed) {
     const errorEmbed = new MessageEmbed()
       .setColor('BLURPLE')
       .setAuthor({
@@ -324,8 +299,8 @@ export async function checkInputs(
     const embeds = paginatedFieldTemplate.pages.values().next().value.embeds; // convert to Regular Message Embed For Ephemeral Option
     await interaction.reply({ embeds: embeds, ephemeral: true });
   }
-
-  return Passed;
+  // inputs Passed the Error check
+  return true;
 }
 
 export async function askForDateTime(interaction: CommandInteraction) {
@@ -359,7 +334,7 @@ export async function askForDateTime(interaction: CommandInteraction) {
   };
   const submission = await interaction.awaitModalSubmit({
     filter,
-    time: 10 * 60000
+    time: 5 * Time.Minute
   });
 
   const dateInput = submission.fields.getTextInputValue(
@@ -378,13 +353,13 @@ export async function askForDateTime(interaction: CommandInteraction) {
   }
 }
 
-export function padTo2Digits(num: any) {
+export function padTo2Digits(num: string) {
   return num.toString().padStart(2, '0');
 }
 
 export interface ReminderI {
   userId: string;
-  timeZone: number;
+  timeOffset: number;
   event: string;
   description: string | null;
   dateTime: string;

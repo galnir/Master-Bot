@@ -21,13 +21,15 @@ export default function ReminderEvents() {
     switch (type) {
       case 'reminders': {
         const value = await Reminders.get(`${user}:reminders:${key}`);
+        const discordUser = await container.client.users.fetch(user);
 
-        if (!value) return Logger.error('unable to retrieve reminder');
+        if (!value)
+          return Logger.error('ReminderEvents', 'unable to retrieve reminder');
         const reminder: ReminderI = await JSON.parse(value);
 
         const remind = new RemindEmbed(
           reminder.userId,
-          reminder.timeZone,
+          reminder.timeOffset,
           reminder.event,
           reminder.dateTime,
           reminder.description!,
@@ -35,32 +37,32 @@ export default function ReminderEvents() {
         );
 
         try {
-          const user = await container.client.users.fetch(reminder.userId);
-
-          await user!.send({
+          await discordUser!.send({
             embeds: [remind.RemindEmbed()]
           });
         } catch (error) {
           return Logger.error(error);
         }
-        await Reminders.delete(`${user}:reminders:${key}`);
         await removeReminder(reminder.userId, reminder.event, false);
         if (reminder.repeat) {
-          const nextAlarm = nextReminder(reminder.repeat, reminder.dateTime);
+          const nextAlarm = nextReminder(
+            reminder.repeat,
+            reminder.dateTime,
+            reminder.timeOffset
+          );
           await saveReminder(reminder.userId, {
             userId: reminder.userId,
-            timeZone: reminder.timeZone,
+            timeOffset: reminder.timeOffset,
             event: reminder.event,
             dateTime: convertInputsToISO(
-              reminder.timeZone,
+              reminder.timeOffset,
               nextAlarm.time,
               nextAlarm.date
             ),
-            description: reminder.description!,
+            description: reminder.description,
             repeat: reminder.repeat
           });
         }
-
         break;
       }
     }

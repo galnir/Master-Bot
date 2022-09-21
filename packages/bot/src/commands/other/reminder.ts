@@ -27,7 +27,7 @@ import ReminderStore from '../../lib/utils/reminders/ReminderStore';
 @ApplyOptions<CommandOptions>({
   name: 'reminder',
   description: 'Set or View Personal Reminders',
-  preconditions: ['userInDB', 'timeZoneExists']
+  preconditions: ['timeZoneExists']
 })
 export class ReminderCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
@@ -44,8 +44,15 @@ export class ReminderCommand extends Command {
         id: interaction.user.id
       });
 
-      if (!userDB?.user?.timeZone) return;
-      let date = interaction.options.getString('date');
+      if (!userDB.user || Number.isNaN(userDB?.user?.timeOffset)) {
+        await interaction.reply({
+          content:
+            ':x: Something went wrong, Please retry after using the `/reminder save-timezone` command.'
+        });
+        return;
+      }
+
+      const date = interaction.options.getString('date');
       const newDescription = interaction.options.getString('description');
       const repeat = interaction.options.getString('repeat');
 
@@ -60,7 +67,7 @@ export class ReminderCommand extends Command {
         )
       ) {
         const isoStr = convertInputsToISO(
-          userDB.user.timeZone,
+          userDB.user.timeOffset!,
           timeQuery,
           date!
         );
@@ -88,7 +95,7 @@ export class ReminderCommand extends Command {
               .then(async message => {
                 savedToDB = await saveReminder(interaction.user.id, {
                   userId: interaction.user.id,
-                  timeZone: userDB.user?.timeZone!,
+                  timeOffset: userDB.user?.timeOffset!,
                   event: newEvent,
                   description: newDescription!,
                   repeat: repeat!,
@@ -111,7 +118,7 @@ export class ReminderCommand extends Command {
           await interaction.editReply('All Set');
         } else {
           await interaction.editReply(
-            `:x: Something went wrong${
+            `:x: Reminder was **not** saved${
               interaction.channel?.type !== 'DM'
                 ? `, check your DM's for more info`
                 : ''

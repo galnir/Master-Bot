@@ -5,6 +5,7 @@ import {
   PreconditionOptions
 } from '@sapphire/framework';
 import type { CommandInteraction, User } from 'discord.js';
+import Logger from '../lib/utils/logger';
 import { trpcNode } from '../trpc';
 
 @ApplyOptions<PreconditionOptions>({
@@ -14,6 +15,20 @@ export class TimeZoneExists extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
+    const discordUser = interaction.user as User;
+
+    try {
+      const user = await trpcNode.mutation('user.create', {
+        id: discordUser.id,
+        name: discordUser.username
+      });
+
+      if (!user) throw new Error();
+    } catch (error) {
+      Logger.error(error);
+      return this.error({ message: 'Something went wrong!' });
+    }
+
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'set') {
@@ -23,10 +38,10 @@ export class TimeZoneExists extends Precondition {
         id: discordUser.id
       });
 
-      return user.user?.timeZone
+      return Number.isInteger(user.user?.timeOffset)
         ? this.ok()
         : this.error({
-            message: `You have no Time Zone saved`
+            message: `You have no Time Zone saved\n Please the use \`/reminder save-timezone\` first.`
           });
     }
     return this.ok(); // ok its not the Set Sub_Command

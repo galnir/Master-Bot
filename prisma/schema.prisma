@@ -46,7 +46,7 @@ model User {
   sessions      Session[]
   playlists     Playlist[]
   guilds        Guild[]
-  timeZone      Int?
+  timeOffset    Int?
 }
 
 model VerificationToken {

@@ -4,7 +4,7 @@ import { convertInputsToISO, nextReminder } from './handleReminders';
 
 export class RemindEmbed {
   userId: string;
-  timeZone: number;
+  timeOffset: number;
   event: string;
   dateTime: string;
   description?: string;
@@ -12,14 +12,14 @@ export class RemindEmbed {
 
   public constructor(
     userId: string,
-    timeZone: number,
+    timeOffset: number,
     event: string,
     dateTime: string,
     description?: string,
     repeat?: string
   ) {
     this.userId = userId;
-    this.timeZone = timeZone;
+    this.timeOffset = timeOffset;
     this.event = event;
     this.dateTime = dateTime;
     this.description = description;
@@ -42,13 +42,21 @@ export class RemindEmbed {
       .setTimestamp();
 
     if (this.repeat) {
-      const nextAlarm = nextReminder(this.repeat!, this.dateTime);
+      const nextAlarm = nextReminder(
+        this.repeat!,
+        this.dateTime,
+        this.timeOffset
+      );
       baseEmbed.addFields([
         {
           name: 'Next Alarm',
           value: `> <t:${Math.floor(
             new Date(
-              convertInputsToISO(this.timeZone, nextAlarm.time, nextAlarm.date)
+              convertInputsToISO(
+                this.timeOffset,
+                nextAlarm.time,
+                nextAlarm.date
+              )
             ).valueOf() / 1000
           )}>`,
           inline: true
