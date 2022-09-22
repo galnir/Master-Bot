@@ -60,7 +60,8 @@ DISCORD_TOKEN=""
 # Next Auth
 
 NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://domian:3000
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
 NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
 
 # Next Auth Discord Provider
@@ -98,10 +99,15 @@ Change 'john' to your pc username and 'doe' to some password, or set the name an
 Generate a token in your Discord developer portal.
 
 #### Next Auth
-You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id.
+You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and then change `domain` in `NEXTAUTH_URL` to your domain or public ip. You can find you public ip by going to [www.whatismyip.com](https://www.whatismyip.com/).
 
 #### Next Auth Discord Provider
-Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set this as the URL under 'Redirects': http://localhost:3000/api/auth/callback/discord.
+Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set the following reditrect URLs 'Redirects':
+
+ * `http://localhost:3000/api/auth/callback/discord`
+ * `http://domain:3000/api/auth/callback/discord`
+
+Make sure to change `domain` in `http://domain:3000/api/auth/callback/discord` to your domain or public ip.
 
 #### Lavalink
 You can leave this as long as the values match your application.yml.
