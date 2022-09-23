@@ -19,17 +19,77 @@ import Logger from '../logger';
 const cache = new ReminderStore();
 
 export async function saveReminder(userId: string, reminder: ReminderI) {
-  const duplicate = await cache.get(`${userId}:reminders:${reminder.event}`);
-  if (!duplicate) {
-    await cache.setReminder(
+  try {
+    const entry = await trpcNode.query('reminder.get-reminder', {
       userId,
-      reminder.event,
-      JSON.stringify(reminder),
-      reminder.dateTime
-    );
-    return true;
+      event: reminder.event
+    });
+    if (!entry.reminder) {
+      await trpcNode.mutation('reminder.create', reminder);
+      await cache.setReminder(
+        userId,
+        reminder.event,
+        JSON.stringify(reminder),
+        reminder.dateTime
+      );
+      return true;
+    }
+  } catch (error) {
+    Logger.error('saveReminder: ', error);
+    return false;
   }
   return false;
+}
+
+export async function removeReminder(
+  userId: string,
+  event: string,
+  isCommand: boolean
+) {
+  const key = `reminders.${userId}.${event}`;
+  const reminderExists = await cache.get(key);
+  try {
+    // Delete from Postgres
+    await trpcNode.mutation('reminder.delete', {
+      userId: userId,
+      event: event
+    });
+    // Delete from cache
+    await cache.delete(`${key}.trigger`); // TTL
+    await cache.delete(key); // data
+  } catch (error) {
+    Logger.error('removeReminder: ', error);
+    if (isCommand) return ':x: Something went wrong! Please try again later.';
+  }
+
+  if (reminderExists && isCommand)
+    return `:wastebasket: Deleted reminder **${event}**.`;
+  else if (isCommand) return `:x: **${event}** was not found.`;
+
+  return ':x: Something went wrong! Please try again later.';
+}
+
+export async function checkReminders() {
+  try {
+    const DB = await trpcNode.query('reminder.get-all');
+    if (!DB.reminders || DB.reminders.length) return;
+    DB.reminders.forEach(async (reminder: any) => {
+      // Clean up Postgres incase trigger was missed
+      if (isPast(reminder.dateTime)) {
+        await removeReminder(reminder.userId, reminder.event, false);
+        return;
+      }
+      // Store the DB entry to Cache
+      await cache.setReminder(
+        reminder.userId,
+        reminder.event,
+        JSON.stringify(reminder),
+        reminder.dateTime
+      );
+    });
+  } catch (error) {
+    Logger.error('checkReminders: ', error);
+  }
 }
 
 export function convertInputsToISO(
@@ -71,7 +131,7 @@ export function isPast(dateTime: string) {
   return new Date(dateTime).valueOf() - Date.now() < 0 ? true : false;
 }
 
-export async function findTimeZone(
+async function findTimeZone(
   interaction: CommandInteraction,
   timeQuery: string,
   date: string
@@ -96,38 +156,17 @@ export async function findTimeZone(
     });
   }
 }
-export async function removeReminder(
-  userId: string,
-  event: string,
-  isCommand: boolean
-) {
-  const key = `${userId}:reminders:${event}`;
-  const reminderExists = await cache.get(key);
-  try {
-    await cache.delete(`${key}:trigger`); // TTL
-    await cache.delete(key); // data
-  } catch (error) {
-    Logger.error(error);
-    if (isCommand) return ':x: Something went wrong! Please try again later.';
-  }
-
-  if (reminderExists && isCommand)
-    return `:wastebasket: Deleted reminder **${event}**.`;
-  else if (isCommand) return `:x: **${event}** was not found.`;
-
-  return ':x: Something went wrong! Please try again later.';
-}
 
 export function nextReminder(
+  timeOffset: number,
   repeat: string,
-  isoStr: string,
-  timeOffset: number
+  isoStr: string
 ) {
   const offset2MS = timeOffset * Time.Minute;
 
   if (repeat === 'Daily') {
     isoStr = new Date(
-      new Date(isoStr).valueOf() + Time.Day + offset2MS
+      new Date(isoStr).valueOf() + Time.Day 
     ).toISOString();
   }
 
@@ -353,7 +392,7 @@ export async function askForDateTime(interaction: CommandInteraction) {
   }
 }
 
-export function padTo2Digits(num: string) {
+function padTo2Digits(num: string) {
   return num.toString().padStart(2, '0');
 }
 

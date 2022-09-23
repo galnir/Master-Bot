@@ -30,13 +30,13 @@ export default class ReminderStore {
       this.redis
         .multi()
         // Save a key for TTL dummy data
-        .set(`${user}:reminders:${event}:trigger`, 1)
+        .set(`reminders.${user}.${event}.trigger`, 1)
         .expireat(
-          `${user}:reminders:${event}:trigger`,
+          `reminders.${user}.${event}.trigger`,
           Date.parse(expire) / 1000
         )
         // Store actual data (discordId+event)
-        .set(`${user}:reminders:${event}`, value)
+        .set(`reminders.${user}.${event}`, value)
         .exec()
     );
   }

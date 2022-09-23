@@ -1,3 +1,4 @@
+import { Time } from '@sapphire/time-utilities';
 import { load } from '@lavaclient/spotify';
 import {
   ApplicationCommandRegistries,
@@ -10,6 +11,8 @@ import { notify } from './lib/utils/twitch/notifyChannel';
 import Logger from './lib/utils/logger';
 import { ErrorListeners } from './listeners/ErrorHandling';
 import { trpcNode } from './trpc';
+import ReminderEvents from './lib/utils/reminders/ReminderEvents';
+import { checkReminders } from './lib/utils/reminders/handleReminders';
 
 if (process.env.SPOTIFY_CLIENT_ID && process.env.SPOTIFY_CLIENT_SECRET) {
   load({
@@ -64,7 +67,17 @@ client.on('ready', async () => {
   } catch (err) {
     Logger.error('Prisma ' + err);
   }
+  try {
+    ReminderEvents();
+    await checkReminders();
 
+    // maintence
+    setInterval(async () => {
+      await checkReminders();
+    }, Time.Day);
+  } catch (error) {
+    Logger.error('Reminders Start ' + error);
+  }
   client.guilds.cache.map(async guild => {
     const queue = client.music.queues.get(guild.id);
 

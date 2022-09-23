@@ -43,9 +43,10 @@ export class RemindEmbed {
 
     if (this.repeat) {
       const nextAlarm = nextReminder(
+        this.timeOffset,
         this.repeat!,
         this.dateTime,
-        this.timeOffset
+        
       );
       baseEmbed.addFields([
         {

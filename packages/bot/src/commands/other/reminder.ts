@@ -185,11 +185,7 @@ export class ReminderCommand extends Command {
           new MessageButton()
             .setCustomId(`${interaction.id}-next`)
             .setEmoji('▶️')
-            .setStyle('PRIMARY'),
-          new MessageButton()
-            .setCustomId(`${interaction.id}-delete`)
-            .setEmoji('⏹️')
-            .setStyle('DANGER')
+            .setStyle('PRIMARY')
         );
 
         await interaction
