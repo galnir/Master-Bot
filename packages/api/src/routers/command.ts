@@ -1,4 +1,4 @@
-import { createRouter } from "../createRouter";
+import { t } from "./index";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
@@ -15,12 +15,14 @@ type CommandType = {
   options: any[];
 };
 
-export const commandRouter = createRouter()
-  .query("get-disabled-commands", {
-    input: z.object({
-      guildId: z.string(),
-    }),
-    async resolve({ ctx, input }) {
+export const commandRouter = t.router({
+  getDisabledCommands: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       const { guildId } = input;
 
       const guild = await ctx.prisma.guild.findUnique({
@@ -37,13 +39,14 @@ export const commandRouter = createRouter()
       }
 
       return { disabledCommands: guild.disabledCommands };
-    },
-  })
-  .query("get-commands", {
-    input: z.object({
-      guildId: z.string(),
     }),
-    async resolve() {
+  getCommands: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+      })
+    )
+    .query(async ({}) => {
       try {
         const token = process.env.DISCORD_TOKEN;
         const response = await fetch(
@@ -64,15 +67,16 @@ export const commandRouter = createRouter()
           message: "Something went wrong when trying to fetch guilds",
         });
       }
-    },
-  })
-  .mutation("toggle-command", {
-    input: z.object({
-      guildId: z.string(),
-      commandId: z.string(),
-      status: z.boolean(),
     }),
-    async resolve({ ctx, input }) {
+  toggleCommand: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        commandId: z.string(),
+        status: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { guildId, commandId, status } = input;
 
       const guild = await ctx.prisma.guild.findUnique({
@@ -115,5 +119,5 @@ export const commandRouter = createRouter()
       }
 
       return { updatedGuild };
-    },
-  });
+    }),
+});

@@ -1,13 +1,15 @@
-import { createRouter } from "../createRouter";
+import { t } from "./index";
 import { z } from "zod";
 
-export const playlistRouter = createRouter()
-  .query("get-playlist", {
-    input: z.object({
-      userId: z.string(),
-      name: z.string(),
-    }),
-    async resolve({ ctx, input }) {
+export const playlistRouter = t.router({
+  getPlaylist: t.procedure
+    .input(
+      z.object({
+        userId: z.string(),
+        name: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       const { userId, name } = input;
 
       const playlist = await ctx.prisma.playlist.findFirst({
@@ -21,13 +23,14 @@ export const playlistRouter = createRouter()
       });
 
       return { playlist };
-    },
-  })
-  .query("get-all", {
-    input: z.object({
-      userId: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  getAll: t.procedure
+    .input(
+      z.object({
+        userId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       const { userId } = input;
 
       const playlists = await ctx.prisma.playlist.findMany({
@@ -43,15 +46,15 @@ export const playlistRouter = createRouter()
       });
 
       return { playlists };
-    },
-  })
-  // create
-  .mutation("create", {
-    input: z.object({
-      userId: z.string(),
-      name: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  create: t.procedure
+    .input(
+      z.object({
+        userId: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { userId, name } = input;
 
       const playlist = await ctx.prisma.playlist.create({
@@ -66,15 +69,15 @@ export const playlistRouter = createRouter()
       });
 
       return { playlist };
-    },
-  })
-  // delete
-  .mutation("delete", {
-    input: z.object({
-      userId: z.string(),
-      name: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  delete: t.procedure
+    .input(
+      z.object({
+        userId: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { userId, name } = input;
 
       const playlist = await ctx.prisma.playlist.deleteMany({
@@ -85,5 +88,5 @@ export const playlistRouter = createRouter()
       });
 
       return { playlist };
-    },
-  });
+    }),
+});

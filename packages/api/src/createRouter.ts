@@ -1,9 +1,12 @@
-import * as trpc from "@trpc/server";
-import { Context } from "./createContext";
+import { initTRPC } from "@trpc/server";
+import type { Context } from "./createContext";
+import superjson from "superjson";
 
 /**
  * Helper function to create a router with context
  */
 export function createRouter() {
-  return trpc.router<Context>();
+  return initTRPC.context<Context>().create({
+    transformer: superjson,
+  });
 }
