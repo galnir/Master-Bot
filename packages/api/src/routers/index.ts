@@ -1,7 +1,6 @@
-/**
- * This file contains the root router of your tRPC-backend
- */
-import { createRouter } from "../createRouter";
+import { initTRPC } from "@trpc/server";
+import type { Context } from "../createContext";
+import superjson from "superjson";
 import { userRouter } from "./user";
 import { guildRouter } from "./guild";
 import { playlistRouter } from "./playlist";
@@ -12,7 +11,9 @@ import { welcomeRouter } from "./welcome";
 import { commandRouter } from "./command";
 import { hubRouter } from "./hub";
 
-export const t = createRouter();
+export const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+});
 
 /**
  * Create your application's root router
