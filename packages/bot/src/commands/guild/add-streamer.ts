@@ -68,7 +68,7 @@ export class AddStreamerCommand extends Command {
         content: `:x: Can't send messages to ${channelData.name}`
       });
 
-    const guildDB = await trpcNode.query('guild.get-guild', {
+    const guildDB = await trpcNode.guild.getGuild.query({
       id: interaction.guild!.id
     });
 
@@ -124,7 +124,7 @@ export class AddStreamerCommand extends Command {
         });
 
     // add notification to database
-    await trpcNode.mutation('twitch.create', {
+    await trpcNode.twitch.create.mutate({
       userId: user.id,
       userImage: user.profile_image_url,
       channelId: channelData.id,
@@ -135,7 +135,7 @@ export class AddStreamerCommand extends Command {
     const concatedArray = guildDB.guild.notifyList.concat([user.id]);
 
     const guild = interaction.guild!;
-    await trpcNode.mutation('guild.create-via-twitch-notification', {
+    await trpcNode.guild.createViaTwitchNotification.mutate({
       name: guild.name,
       guildId: guild.id,
       notifyList: concatedArray,

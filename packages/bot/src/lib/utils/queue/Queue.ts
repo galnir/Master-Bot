@@ -232,10 +232,7 @@ export class Queue {
     let data = await this.store.redis.get(this.keys.volume);
 
     if (!data) {
-      await trpcNode.query('guild.get-guild', {
-        id: this.guildID
-      });
-      const guildQuery = await trpcNode.query('guild.get-guild', {
+      const guildQuery = await trpcNode.guild.getGuild.query({
         id: this.guildID
       });
 
@@ -258,7 +255,7 @@ export class Queue {
     const previous = await this.store.redis.getset(this.keys.volume, value);
     await this.refresh();
 
-    await trpcNode.mutation('guild.update-volume', {
+    await trpcNode.guild.updateVolume.mutate({
       guildId: this.guildID,
       volume: this.player.volume
     });

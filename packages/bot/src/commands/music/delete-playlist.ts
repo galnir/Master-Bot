@@ -25,7 +25,7 @@ export class DeletePlaylistCommand extends Command {
     const interactionMember = interaction.member as GuildMember;
 
     try {
-      const playlist = await trpcNode.mutation('playlist.delete', {
+      const playlist = await trpcNode.playlist.delete.mutate({
         name: playlistName,
         userId: interactionMember.id
       });

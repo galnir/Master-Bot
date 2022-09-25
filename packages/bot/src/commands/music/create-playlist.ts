@@ -24,7 +24,7 @@ export class CreatePlaylistCommand extends Command {
     const interactionMember = interaction.member as GuildMember;
 
     try {
-      const playlist = await trpcNode.mutation('playlist.create', {
+      const playlist = await trpcNode.playlist.create.mutate({
         name: playlistName,
         userId: interactionMember.id
       });

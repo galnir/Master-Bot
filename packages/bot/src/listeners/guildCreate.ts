@@ -10,12 +10,12 @@ export class GuildCreateListener extends Listener {
   public override async run(guild: Guild): Promise<void> {
     const owner = await guild.fetchOwner();
 
-    await trpcNode.mutation('user.create', {
+    await trpcNode.user.create.mutate({
       id: owner.id,
       name: owner.user.username
     });
 
-    await trpcNode.mutation('guild.create', {
+    await trpcNode.guild.create.mutate({
       id: guild.id,
       name: guild.name,
       ownerId: owner.id

@@ -38,7 +38,7 @@ client.on('ready', async () => {
 
   // happens to be the first DB call at start up
   try {
-    const notifyDB = await trpcNode.query('twitch.get-all');
+    const notifyDB = await trpcNode.twitch.getAll.query();
 
     const query: string[] = [];
     for (const user of notifyDB.notifications) {

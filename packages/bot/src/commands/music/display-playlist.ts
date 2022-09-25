@@ -24,7 +24,7 @@ export class DisplayPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    const playlistQuery = await trpcNode.query('playlist.get-playlist', {
+    const playlistQuery = await trpcNode.playlist.getPlaylist.query({
       name: playlistName,
       userId: interactionMember.id
     });

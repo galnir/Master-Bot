@@ -60,7 +60,7 @@ export class PlayCommand extends Command {
       //     songs: true
       //   }
       // });
-      const data = await trpcNode.query('playlist.get-playlist', {
+      const data = await trpcNode.playlist.getPlaylist.query({
         userId: interactionMember.id,
         name: query
       });

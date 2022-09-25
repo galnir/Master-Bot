@@ -57,15 +57,11 @@ export class RemoveStreamerCommand extends Command {
         content: `:x: Cant sent messages to ${channelData.name}`
       });
 
-    const guildDB = await trpcNode.query('guild.get-guild', {
+    const guildDB = await trpcNode.guild.getGuild.query({
       id: interaction.guild!.id
     });
 
-    await trpcNode.query('twitch.find-by-user-id', {
-      id: user.id
-    });
-
-    const notifyDB = await trpcNode.query('twitch.find-by-user-id', {
+    const notifyDB = await trpcNode.twitch.findUserById.query({
       id: user.id
     });
 
@@ -94,7 +90,7 @@ export class RemoveStreamerCommand extends Command {
       }
     );
 
-    await trpcNode.mutation('guild.update-twitch-notifications', {
+    await trpcNode.guild.updateTwitchNotifications.mutate({
       guildId: interaction.guild!.id,
       notifyList: filteredTwitchIds
     });
@@ -105,12 +101,12 @@ export class RemoveStreamerCommand extends Command {
       });
 
     if (filteredChannelIds.length == 0) {
-      await trpcNode.mutation('twitch.delete', {
+      await trpcNode.twitch.delete.mutate({
         userId: user.id
       });
       delete client.twitch.notifyList[user.id];
     } else {
-      await trpcNode.mutation('twitch.update-notification', {
+      await trpcNode.twitch.updateNotification.mutate({
         userId: user.id,
         channelIds: filteredChannelIds
       });

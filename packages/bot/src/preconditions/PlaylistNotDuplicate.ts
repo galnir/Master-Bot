@@ -19,7 +19,7 @@ export class PlaylistNotDuplicate extends Precondition {
     const guildMember = interaction.member as GuildMember;
 
     try {
-      const playlist = await trpcNode.query('playlist.get-playlist', {
+      const playlist = await trpcNode.playlist.getPlaylist.query({
         name: playlistName,
         userId: guildMember.id
       });

@@ -1,8 +1,12 @@
-import type { AppRouter } from "@master-bot/api/src/routers/_app";
-import { createTRPCClient } from "@trpc/client";
+import type { AppRouter } from "@master-bot/api/src/routers/index";
+import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 
-export const trpcNode = createTRPCClient<AppRouter>({
-  url: "http://localhost:3000/api/trpc",
+export const trpcNode = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: "http://localhost:3000/api/trpc",
+    }),
+  ],
 });
