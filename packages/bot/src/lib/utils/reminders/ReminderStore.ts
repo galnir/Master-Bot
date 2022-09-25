@@ -17,7 +17,7 @@ export default class ReminderStore {
     return this.redis.get(key);
   }
   getKeys(key: RedisKey) {
-    return this.redis.keys(`${key}*`);
+    return this.redis.keys(`reminders.${key}*`);
   }
   getUsersReminders(keys: RedisKey[]) {
     return this.redis.mget(keys);
@@ -25,18 +25,29 @@ export default class ReminderStore {
   delete(key: RedisKey) {
     return this.redis.del(key);
   }
-  setReminder(user: string, event: string, value: RedisValue, expire: string) {
+  setReminder(
+    userId: string,
+    event: string,
+    value: RedisValue,
+    expire: string
+  ) {
+    event = event.replace(/\./g, '');
+    const delay = 60; // add extra time to data
     return (
       this.redis
         .multi()
-        // Save a key for TTL dummy data
-        .set(`reminders.${user}.${event}.trigger`, 1)
+        // Save a key for TTL (dummy data)
+        .set(`reminders.${userId}.${event}.trigger`, 1)
         .expireat(
-          `reminders.${user}.${event}.trigger`,
+          `reminders.${userId}.${event}.trigger`,
           Date.parse(expire) / 1000
         )
-        // Store actual data (discordId+event)
-        .set(`reminders.${user}.${event}`, value)
+        // Cache actual data
+        .set(`reminders.${userId}.${event}`, value)
+        .expireat(
+          `reminders.${userId}.${event}`,
+          Date.parse(expire) / 1000 + delay
+        )
         .exec()
     );
   }

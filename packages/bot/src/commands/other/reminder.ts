@@ -47,7 +47,8 @@ export class ReminderCommand extends Command {
       if (!userDB.user || Number.isNaN(userDB?.user?.timeOffset)) {
         await interaction.reply({
           content:
-            ':x: Something went wrong, Please retry after using the `/reminder save-timezone` command.'
+            ':x: Something went wrong, Please retry after using the `/reminder save-timezone` command.',
+          ephemeral: true
         });
         return;
       }
@@ -103,9 +104,9 @@ export class ReminderCommand extends Command {
                 });
                 if (!savedToDB) {
                   await message.delete();
-                  await interaction.user.send(
-                    `❌ You already have an event named **${newEvent}**`
-                  );
+                  await interaction.user.send({
+                    content: `❌ You already have an event named **${newEvent}**`
+                  });
                 }
               })
               .catch(async () => {
@@ -131,9 +132,10 @@ export class ReminderCommand extends Command {
 
     if (subCommand == 'remove') {
       const event = interaction.options.getString('event', true);
-      return await interaction.reply(
-        await removeReminder(interaction.user.id, event, true)
-      );
+      return await interaction.reply({
+        content: await removeReminder(interaction.user.id, event, true),
+        ephemeral: true
+      });
     }
 
     if (subCommand == 'view') {
@@ -143,7 +145,10 @@ export class ReminderCommand extends Command {
       const rawKeys = await cache.getKeys(interactionUser.id);
       const keyList: string[] = [];
       if (!rawKeys.length) {
-        return await interaction.reply(":x: You don't have any reminders.");
+        return await interaction.reply({
+          content: ":x: You don't have any reminders.",
+          ephemeral: true
+        });
       }
       rawKeys.forEach(key => {
         if (!key.endsWith('trigger')) keyList.push(key);

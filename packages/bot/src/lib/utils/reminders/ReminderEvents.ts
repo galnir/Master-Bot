@@ -18,9 +18,10 @@ export default function ReminderEvents() {
   PubSub.subscribe(`__keyevent@${process.env.REDIS_DB || 0}__:expired`);
   PubSub.on('message', async (channel: string, message: string) => {
     const [type, user, key, value] = message.split('.');
-    console.log(value);
+
     switch (type) {
       case 'reminders': {
+        if (value != 'trigger') return;
         const discordUser = await container.client.users.fetch(user);
         const cache = await Reminders.get(`reminders.${user}.${key}`);
 
@@ -33,8 +34,7 @@ export default function ReminderEvents() {
               })
             ).reminder;
 
-        if (!reminder)
-          return Logger.error('ReminderEvents: unable to retrieve reminder');
+        if (!reminder) return;
 
         const remind = new RemindEmbed(
           reminder.userId,
@@ -45,14 +45,20 @@ export default function ReminderEvents() {
           reminder.repeat!
         );
 
+        await removeReminder(reminder.userId, reminder.event, false);
+
         try {
           await discordUser!.send({
             embeds: [remind.RemindEmbed()]
           });
         } catch (error) {
-          return Logger.error(error);
+          Logger.info(
+            "A Reminder message failed, the intended users DM's are likely disabled."
+          );
+          Logger.debug(error);
+          return; // don't recreate entry if the users DMs is disabled
         }
-        await removeReminder(reminder.userId, reminder.event, false);
+
         if (reminder.repeat) {
           const nextAlarm = nextReminder(
             reminder.timeOffset,
@@ -73,7 +79,7 @@ export default function ReminderEvents() {
           });
         }
         break;
-      }
+      } // end of Reminder Type
     }
     return;
   });

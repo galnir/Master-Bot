@@ -28,7 +28,7 @@ export async function saveReminder(userId: string, reminder: ReminderI) {
       await trpcNode.mutation('reminder.create', reminder);
       await cache.setReminder(
         userId,
-        reminder.event,
+        reminder.event.replace(/\./g, ''),
         JSON.stringify(reminder),
         reminder.dateTime
       );
@@ -44,9 +44,9 @@ export async function saveReminder(userId: string, reminder: ReminderI) {
 export async function removeReminder(
   userId: string,
   event: string,
-  isCommand: boolean
+  sendReply: boolean
 ) {
-  const key = `reminders.${userId}.${event}`;
+  const key = `reminders.${userId}.${event.replace(/\./g, '')}`;
   const reminderExists = await cache.get(key);
   try {
     // Delete from Postgres
@@ -59,12 +59,12 @@ export async function removeReminder(
     await cache.delete(key); // data
   } catch (error) {
     Logger.error('removeReminder: ', error);
-    if (isCommand) return ':x: Something went wrong! Please try again later.';
+    if (sendReply) return ':x: Something went wrong! Please try again later.';
   }
 
-  if (reminderExists && isCommand)
+  if (reminderExists && sendReply)
     return `:wastebasket: Deleted reminder **${event}**.`;
-  else if (isCommand) return `:x: **${event}** was not found.`;
+  else if (sendReply) return `:x: **${event}** was not found.`;
 
   return ':x: Something went wrong! Please try again later.';
 }
@@ -82,13 +82,14 @@ export async function checkReminders() {
       // Store the DB entry to Cache
       await cache.setReminder(
         reminder.userId,
-        reminder.event,
+        reminder.event.replace(/\./g, ''),
         JSON.stringify(reminder),
         reminder.dateTime
       );
     });
   } catch (error) {
     Logger.error('checkReminders: ', error);
+    return;
   }
 }
 
@@ -166,7 +167,7 @@ export function nextReminder(
 
   if (repeat === 'Daily') {
     isoStr = new Date(
-      new Date(isoStr).valueOf() + Time.Day 
+      new Date(isoStr).valueOf() + Time.Day + offset2MS
     ).toISOString();
   }
 
