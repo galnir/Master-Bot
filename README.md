@@ -99,7 +99,7 @@ Change 'john' to your pc username and 'doe' to some password, or set the name an
 Generate a token in your Discord developer portal.
 
 #### Next Auth
-You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and then change 'domain' in NEXTAUTH_URL to your domain or public ip. You can find you public ip by going to [www.whatismyip.com](https://www.whatismyip.com/).
+You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and then change 'domain' in NEXTAUTH_URL to your domain or public ip. You can find your public ip by going to [www.whatismyip.com](https://www.whatismyip.com/).
 
 #### Next Auth Discord Provider
 Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set the following URLs under 'Redirects':
