@@ -8,6 +8,7 @@ import { z } from "zod";
 export const serverSchema = z.object({
   NEXTAUTH_SECRET: z.string(),
   NEXTAUTH_URL: z.string().url(),
+  NEXTAUTH_URL_INTERNAL: z.string().url().default("http://localhost:3000"),
   DISCORD_CLIENT_ID: z.string(),
   DISCORD_CLIENT_SECRET: z.string(),
 });
