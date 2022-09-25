@@ -11,7 +11,7 @@ export class VoiceStateUpdateListener extends Listener {
     oldState: VoiceState,
     newState: VoiceState
   ): Promise<void> {
-    const { guild: guildDB } = await trpcNode.query('guild.get-guild', {
+    const { guild: guildDB } = await trpcNode.guild.getGuild.query({
       id: newState.guild.id
     });
 
@@ -20,7 +20,7 @@ export class VoiceStateUpdateListener extends Listener {
       if (!newState.member) return; // should not happen but just in case
 
       if (newState.channelId === guildDB?.hubChannel && guildDB.hub) {
-        const { tempChannel } = await trpcNode.query('hub.get-temp-channel', {
+        const { tempChannel } = await trpcNode.hub.getTempChannel.query({
           guildId: newState.guild.id,
           ownerId: newState.member.id
         });
@@ -53,7 +53,7 @@ export class VoiceStateUpdateListener extends Listener {
           }
         );
 
-        await trpcNode.mutation('hub.create-temp-channel', {
+        await trpcNode.hub.createTempChannel.mutate({
           guildId: newState.guild.id,
           ownerId: newState.member.id,
           channelId: channel.id
@@ -61,7 +61,7 @@ export class VoiceStateUpdateListener extends Listener {
 
         await newState.member.voice.setChannel(channel);
       } else {
-        const { tempChannel } = await trpcNode.query('hub.get-temp-channel', {
+        const { tempChannel } = await trpcNode.hub.getTempChannel.query({
           guildId: newState.guild.id,
           ownerId: newState.member.id
         });
@@ -76,7 +76,7 @@ export class VoiceStateUpdateListener extends Listener {
 
         Promise.all([
           channel.delete(),
-          trpcNode.mutation('hub.delete-temp-channel', {
+          trpcNode.hub.deleteTempChannel.mutate({
             channelId: tempChannel.id
           })
         ]);
@@ -89,7 +89,7 @@ export class VoiceStateUpdateListener extends Listener {
 }
 
 async function deleteChannel(state: VoiceState) {
-  const { tempChannel } = await trpcNode.query('hub.get-temp-channel', {
+  const { tempChannel } = await trpcNode.hub.getTempChannel.query({
     guildId: state.guild.id,
     ownerId: state.member!.id
   });
@@ -97,7 +97,7 @@ async function deleteChannel(state: VoiceState) {
   if (tempChannel) {
     Promise.all([
       state.channel?.delete(),
-      trpcNode.mutation('hub.delete-temp-channel', {
+      trpcNode.hub.deleteTempChannel.mutate({
         channelId: tempChannel.id
       })
     ]);

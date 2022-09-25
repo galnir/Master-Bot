@@ -2,25 +2,20 @@ import React from "react";
 import { trpc } from "../../utils/trpc";
 
 const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
-  const { data: channelData, isLoading: isLoadingChannelData } = trpc.useQuery([
-    "welcome.get-channel",
-    {
+  const { data: channelData, isLoading: isLoadingChannelData } =
+    trpc.welcome.getChannel.useQuery({
       guildId,
-    },
-  ]);
+    });
 
   const [value, setValue] = React.useState(
     channelData?.guild?.welcomeMessageChannel
   );
 
-  const { data, isLoading } = trpc.useQuery([
-    "channel.get-all",
-    {
-      guildId,
-    },
-  ]);
+  const { data, isLoading } = trpc.channel.getAll.useQuery({
+    guildId,
+  });
 
-  const { mutate } = trpc.useMutation("welcome.set-channel");
+  const { mutate } = trpc.welcome.setChannel.useMutation();
 
   return (
     <div className="flex flex-col gap-2">

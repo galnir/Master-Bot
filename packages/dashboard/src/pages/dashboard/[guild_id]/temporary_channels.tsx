@@ -16,8 +16,8 @@ const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
-  const { isLoading, error } = trpc.useQuery(
-    ["guild.get-guild-and-user", { id: query as string }],
+  const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
+    { id: query as string },
     { refetchOnWindowFocus: false }
   );
 
@@ -56,7 +56,7 @@ const TemporaryChannelsDashboardPageComponent = ({
               draggable: true,
               progress: undefined,
             });
-            utils.invalidateQueries(["guild.get-guild"]);
+            utils.guild.getGuild.invalidate();
           },
           onError: () => {
             setIsToggling(false);
@@ -87,7 +87,7 @@ const TemporaryChannelsDashboardPageComponent = ({
               draggable: true,
               progress: undefined,
             });
-            utils.invalidateQueries(["guild.get-guild"]);
+            utils.guild.getGuild.invalidate();
           },
           onError: () => {
             setIsToggling(false);
@@ -106,15 +106,12 @@ const TemporaryChannelsDashboardPageComponent = ({
     }
   }
 
-  const { mutate: createHub } = trpc.useMutation(["hub.create"]);
-  const { mutate: deleteHub } = trpc.useMutation(["hub.delete"]);
+  const { mutate: createHub } = trpc.hub.create.useMutation();
+  const { mutate: deleteHub } = trpc.hub.delete.useMutation();
   const utils = trpc.useContext();
-  const { data, isLoading } = trpc.useQuery([
-    "guild.get-guild",
-    {
-      id: query as string,
-    },
-  ]);
+  const { data, isLoading } = trpc.guild.getGuild.useQuery({
+    id: query as string,
+  });
 
   const enabled = data?.guild?.hub && data.guild.hubChannel;
 

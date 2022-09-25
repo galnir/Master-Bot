@@ -14,8 +14,8 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
-  const { isLoading, error } = trpc.useQuery(
-    ["guild.get-guild-and-user", { id: query as string }],
+  const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
+    { id: query as string },
     { refetchOnWindowFocus: false }
   );
 
@@ -35,18 +35,12 @@ const CommandsDashboardPageComponent = ({
 }: {
   query: string;
 }): ReactElement => {
-  const { data, isLoading } = trpc.useQuery([
-    "command.get-commands",
-    {
-      guildId: query as string,
-    },
-  ]);
+  const { data, isLoading } = trpc.command.getCommands.useQuery({
+    guildId: query as string,
+  });
 
   const { data: disabledCommandsData, isLoading: disabledCommandsLoading } =
-    trpc.useQuery([
-      "command.get-disabled-commands",
-      { guildId: query as string },
-    ]);
+    trpc.command.getDisabledCommands.useQuery({ guildId: query as string });
 
   return (
     <div className="p-10">

@@ -1,35 +1,30 @@
-import { createReactQueryHooks } from "@trpc/react";
-// ℹ️ Type-only import:
-// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
-import type { AppRouter } from "@master-bot/api/src/routers/_app";
-import type { inferProcedureOutput, inferProcedureInput } from "@trpc/server";
+// src/utils/trpc.ts
+import { httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCNext } from "@trpc/next";
+import type { AppRouter } from "@master-bot/api/src/routers/index";
 import superjson from "superjson";
-/**
- * A set of strongly-typed React hooks from your `AppRouter` type signature with `createReactQueryHooks`.
- * @link https://trpc.io/docs/react#3-create-trpc-hooks
- */
-export const trpc = createReactQueryHooks<AppRouter>();
 
-export const transformer = superjson;
+const getBaseUrl = () => {
+  if (typeof window !== "undefined") return ""; // browser should use relative url
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
+  return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+};
 
-/**
- * This is a helper method to infer the output of a query resolver
- * @example type HelloOutput = inferQueryOutput<'hello'>
- */
-export type inferQueryOutput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"]
-> = inferProcedureOutput<AppRouter["_def"]["queries"][TRouteKey]>;
-
-export type inferQueryInput<
-  TRouteKey extends keyof AppRouter["_def"]["queries"]
-> = inferProcedureInput<AppRouter["_def"]["queries"][TRouteKey]>;
-
-export type inferMutationOutput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"]
-> = inferProcedureOutput<AppRouter["_def"]["mutations"][TRouteKey]>;
-
-export type inferMutationInput<
-  TRouteKey extends keyof AppRouter["_def"]["mutations"]
-> = inferProcedureInput<AppRouter["_def"]["mutations"][TRouteKey]>;
-
-export type { AppRouter };
+export const trpc = createTRPCNext<AppRouter>({
+  config() {
+    return {
+      transformer: superjson,
+      links: [
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === "development" ||
+            (opts.direction === "down" && opts.result instanceof Error),
+        }),
+        httpBatchLink({
+          url: `${getBaseUrl()}/api/trpc`,
+        }),
+      ],
+    };
+  },
+  ssr: false,
+});

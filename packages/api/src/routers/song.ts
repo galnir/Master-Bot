@@ -1,6 +1,5 @@
 import { t } from "./index";
 import { z } from "zod";
-import { APIGuildChannel, APIGuildTextChannel } from "discord-api-types/v10";
 
 export const songRouter = t.router({
   createMany: t.procedure

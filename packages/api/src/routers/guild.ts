@@ -38,6 +38,7 @@ export const guildRouter = t.router({
 
       const user = await ctx.prisma.user.findUnique({
         where: {
+          // @ts-ignore
           id: ctx.session?.user?.id,
         },
       });
@@ -213,6 +214,7 @@ export const guildRouter = t.router({
 
     const account = await ctx.prisma.account.findFirst({
       where: {
+        // @ts-ignore
         userId: ctx.session?.user?.id,
       },
       select: {
@@ -266,6 +268,7 @@ export const guildRouter = t.router({
 
     const account = await ctx.prisma.account.findFirst({
       where: {
+        // @ts-ignore
         userId: ctx.session?.user?.id,
       },
       select: {

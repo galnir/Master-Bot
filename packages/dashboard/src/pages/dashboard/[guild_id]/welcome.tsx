@@ -1,4 +1,3 @@
-import React from "react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
@@ -17,8 +16,8 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
-  const { isLoading, error } = trpc.useQuery(
-    ["guild.get-guild-and-user", { id: query as string }],
+  const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
+    { id: query as string },
     { refetchOnWindowFocus: false }
   );
 
@@ -35,21 +34,18 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
 
 const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
   const utils = trpc.useContext();
-  const { data, isLoading } = trpc.useQuery([
-    "guild.get-guild",
-    {
-      id: query,
-    },
-  ]);
+  const { data, isLoading } = trpc.guild.getGuild.useQuery({
+    id: query,
+  });
 
-  const { mutate } = trpc.useMutation(["welcome.toggle"]);
+  const { mutate } = trpc.welcome.toggle.useMutation();
 
   function toggleWelcomeMessage(status: boolean) {
     mutate(
       { guildId: query, status },
       {
         onSuccess: () => {
-          utils.invalidateQueries(["guild.get-guild"]);
+          utils.guild.getGuild.invalidate();
         },
       }
     );

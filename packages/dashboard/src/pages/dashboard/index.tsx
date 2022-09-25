@@ -5,7 +5,7 @@ import { trpc } from "../../utils/trpc";
 import GuildSelectBox from "../../components/GuildSelectBox";
 
 const DashboardIndexPage: NextPage = () => {
-  const { data } = trpc.useQuery(["guild.get-all"]);
+  const { data } = trpc.guild.getAll.useQuery();
 
   return (
     <div className="bg-slate-900 h-screen text-gray-100">
