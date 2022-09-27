@@ -15,6 +15,8 @@ export const t = initTRPC.context<Context>().create({
   transformer: superjson,
 });
 
+export type T = typeof t;
+
 /**
  * Create your application's root router
  * If you want to use SSG, you need export this
@@ -23,15 +25,15 @@ export const t = initTRPC.context<Context>().create({
  */
 
 export const appRouter = t.router({
-  user: userRouter,
-  guild: guildRouter,
-  playlist: playlistRouter,
-  song: songRouter,
-  twitch: twitchRouter,
-  channel: channelRouter,
-  welcome: welcomeRouter,
-  command: commandRouter,
-  hub: hubRouter,
+  user: userRouter(t),
+  guild: guildRouter(t),
+  playlist: playlistRouter(t),
+  song: songRouter(t),
+  twitch: twitchRouter(t),
+  channel: channelRouter(t),
+  welcome: welcomeRouter(t),
+  command: commandRouter(t),
+  hub: hubRouter(t),
 });
 
 export type AppRouter = typeof appRouter;
