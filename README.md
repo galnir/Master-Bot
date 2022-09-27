@@ -62,7 +62,7 @@ DISCORD_TOKEN=""
 NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
 NEXTAUTH_URL=http://domian:3000
 NEXTAUTH_URL_INTERNAL=http://localhost:3000
-NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
+NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=identify+guilds+email+applications.commands.permissions.update"
 
 # Next Auth Discord Provider
 DISCORD_CLIENT_ID=""
