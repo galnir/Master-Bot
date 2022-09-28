@@ -108,7 +108,7 @@ export async function notify(query: string[]) {
               client.twitch.notifyList[entry].messageSent = true;
 
               // Update DataBase
-              await trpcNode.mutation('twitch.update-notification-status', {
+              await trpcNode.twitch.updateNotificationStatus.mutate({
                 userId: entry,
                 sent: true,
                 live: true
@@ -207,7 +207,7 @@ export async function notify(query: string[]) {
             client.twitch.notifyList[entry].messageSent = false;
             client.twitch.notifyList[entry].messageHandler = {};
             // Update DataBase
-            await trpcNode.mutation('twitch.update-notification-status', {
+            await trpcNode.twitch.updateNotificationStatus.mutate({
               userId: entry,
               sent: false,
               live: false

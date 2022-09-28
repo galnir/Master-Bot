@@ -1,5 +1,5 @@
-import type { AppRouter } from '@master-bot/api/src/routers/_app';
-import { createTRPCClient } from '@trpc/client';
+import type { AppRouter } from '@master-bot/api/src/routers/index';
+import { createTRPCProxyClient } from '@trpc/client';
 import { httpLink } from '@trpc/client/links/httpLink';
 import { splitLink } from '@trpc/client/links/splitLink';
 import { createWSClient, wsLink } from '@trpc/client/links/wsLink';
@@ -15,8 +15,7 @@ const wsClient = createWSClient({
   url: `ws://localhost:2022`
 });
 
-export const trpcNode = createTRPCClient<AppRouter>({
-  url: 'http://localhost:3000/api/trpc',
+export const trpcNode = createTRPCProxyClient<AppRouter>({
   transformer: superjson,
   links: [
     splitLink({

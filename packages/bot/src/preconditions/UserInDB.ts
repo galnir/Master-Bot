@@ -18,7 +18,7 @@ export class UserInDB extends Precondition {
     const guildMember = interaction.member as GuildMember;
 
     try {
-      const user = await trpcNode.mutation('user.create', {
+      const user = await trpcNode.user.create.mutate({
         id: guildMember.id,
         name: guildMember.user.username
       });

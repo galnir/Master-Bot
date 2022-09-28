@@ -1,12 +1,14 @@
-import { createRouter } from "../createRouter";
+import { t } from "../trpc";
 import { z } from "zod";
 
-export const songRouter = createRouter()
-  .mutation("create-many", {
-    input: z.object({
-      songs: z.array(z.any()),
-    }),
-    async resolve({ ctx, input }) {
+export const songRouter = t.router({
+  createMany: t.procedure
+    .input(
+      z.object({
+        songs: z.array(z.any()),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { songs } = input;
 
       const songsCreated = await ctx.prisma.song.createMany({
@@ -14,13 +16,14 @@ export const songRouter = createRouter()
       });
 
       return { songsCreated };
-    },
-  })
-  .mutation("delete", {
-    input: z.object({
-      id: z.number(),
     }),
-    async resolve({ ctx, input }) {
+  delete: t.procedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
       const song = await ctx.prisma.song.delete({
@@ -30,5 +33,5 @@ export const songRouter = createRouter()
       });
 
       return { song };
-    },
-  });
+    }),
+});

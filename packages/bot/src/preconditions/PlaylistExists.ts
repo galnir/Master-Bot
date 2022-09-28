@@ -18,7 +18,7 @@ export class PlaylistExists extends Precondition {
 
     const guildMember = interaction.member as GuildMember;
 
-    const playlist = await trpcNode.query('playlist.get-playlist', {
+    const playlist = await trpcNode.playlist.getPlaylist.query({
       name: playlistName,
       userId: guildMember.id
     });

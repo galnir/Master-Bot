@@ -27,7 +27,7 @@ export class SaveToPlaylistCommand extends Command {
 
     const interactionMember = interaction.member as GuildMember;
 
-    const playlistQuery = await trpcNode.query('playlist.get-playlist', {
+    const playlistQuery = await trpcNode.playlist.getPlaylist.query({
       name: playlistName,
       userId: interactionMember.id
     });
@@ -56,7 +56,7 @@ export class SaveToPlaylistCommand extends Command {
     }
 
     try {
-      await trpcNode.mutation('song.create-many', {
+      await trpcNode.song.createMany.mutate({
         songs: songsToAdd
       });
 

@@ -8,7 +8,7 @@ import { trpcNode } from '../trpc';
 })
 export class GuildDeleteListener extends Listener {
   public override async run(guild: Guild): Promise<void> {
-    await trpcNode.mutation('guild.delete', {
+    await trpcNode.guild.delete.mutate({
       id: guild.id
     });
   }

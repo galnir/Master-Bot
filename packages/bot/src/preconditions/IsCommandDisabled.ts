@@ -17,7 +17,7 @@ export class IsCommandDisabled extends Precondition {
     const commandID = interaction.commandId;
     const guildID = interaction.guildId as string;
 
-    const data = await trpcNode.query('command.get-disabled-commands', {
+    const data = await trpcNode.command.getDisabledCommands.query({
       guildId: guildID
     });
 

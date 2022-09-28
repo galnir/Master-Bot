@@ -27,7 +27,7 @@ export class MyPlaylistsCommand extends Command {
       iconURL: interactionMember.user.displayAvatarURL()
     });
 
-    const playlistsQuery = await trpcNode.query('playlist.get-all', {
+    const playlistsQuery = await trpcNode.playlist.getAll.query({
       userId: interactionMember.id
     });
 

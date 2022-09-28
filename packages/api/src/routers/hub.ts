@@ -1,14 +1,16 @@
-import { createRouter } from "../createRouter";
+import { t } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 
-export const hubRouter = createRouter()
-  .mutation("create", {
-    input: z.object({
-      guildId: z.string(),
-      name: z.string(),
-    }),
-    async resolve({ ctx, input }) {
+export const hubRouter = t.router({
+  create: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { guildId, name } = input;
       const token = process.env.DISCORD_TOKEN;
 
@@ -75,13 +77,14 @@ export const hubRouter = createRouter()
       return {
         guild: updatedGuild,
       };
-    },
-  })
-  .mutation("delete", {
-    input: z.object({
-      guildId: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  delete: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { guildId } = input;
 
       const token = process.env.DISCORD_TOKEN;
@@ -135,14 +138,15 @@ export const hubRouter = createRouter()
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-    },
-  })
-  .query("get-temp-channel", {
-    input: z.object({
-      guildId: z.string(),
-      ownerId: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  getTempChannel: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        ownerId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       const { guildId, ownerId } = input;
 
       const tempChannel = await ctx.prisma.tempChannel.findFirst({
@@ -153,15 +157,16 @@ export const hubRouter = createRouter()
       });
 
       return { tempChannel };
-    },
-  })
-  .mutation("create-temp-channel", {
-    input: z.object({
-      guildId: z.string(),
-      ownerId: z.string(),
-      channelId: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  createTempChannel: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        ownerId: z.string(),
+        channelId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { guildId, ownerId, channelId } = input;
 
       const tempChannel = await ctx.prisma.tempChannel.create({
@@ -173,13 +178,14 @@ export const hubRouter = createRouter()
       });
 
       return { tempChannel };
-    },
-  })
-  .mutation("delete-temp-channel", {
-    input: z.object({
-      channelId: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  deleteTempChannel: t.procedure
+    .input(
+      z.object({
+        channelId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { channelId } = input;
 
       const tempChannel = await ctx.prisma.tempChannel.delete({
@@ -189,5 +195,5 @@ export const hubRouter = createRouter()
       });
 
       return { tempChannel };
-    },
-  });
+    }),
+});

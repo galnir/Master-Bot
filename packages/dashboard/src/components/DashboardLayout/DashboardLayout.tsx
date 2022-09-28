@@ -14,12 +14,9 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     router.push("/");
   }
 
-  const { data, isLoading } = trpc.useQuery([
-    "guild.get-guild",
-    {
-      id: query as string,
-    },
-  ]);
+  const { data, isLoading } = trpc.guild.getGuild.useQuery({
+    id: query as string,
+  });
 
   return (
     <>

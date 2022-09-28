@@ -27,7 +27,7 @@ export class RemoveFromPlaylistCommand extends Command {
 
     let playlist;
     try {
-      const playlistQuery = await trpcNode.query('playlist.get-playlist', {
+      const playlistQuery = await trpcNode.playlist.getPlaylist.query({
         name: playlistName,
         userId: interactionMember.id
       });
@@ -49,7 +49,7 @@ export class RemoveFromPlaylistCommand extends Command {
 
     const id = songs[location - 1].id;
 
-    const song = await trpcNode.mutation('song.delete', {
+    const song = await trpcNode.song.delete.mutate({
       id
     });
 

@@ -4,7 +4,6 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import HeaderButton from "../components/HeaderButton";
 import Logo from "../components/Logo";
 import { getServerSession } from "../shared/get-server-session";

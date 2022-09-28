@@ -20,7 +20,7 @@ export class ShowAnnouncerListCommand extends Command {
     const { client } = container;
     const interactionGuild = interaction.guild as Guild;
 
-    const guildDB = await trpcNode.query('guild.get-guild', {
+    const guildDB = await trpcNode.guild.getGuild.query({
       id: interactionGuild.id
     });
 

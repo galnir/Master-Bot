@@ -1,12 +1,14 @@
-import { createRouter } from "../createRouter";
+import { t } from "../trpc";
 import { z } from "zod";
 
-export const userRouter = createRouter()
-  .query("get-user-by-id", {
-    input: z.object({
-      id: z.string(),
-    }),
-    async resolve({ ctx, input }) {
+export const userRouter = t.router({
+  getUserById: t.procedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
       const { id } = input;
 
       const user = await ctx.prisma.user.findUnique({
@@ -16,15 +18,15 @@ export const userRouter = createRouter()
       });
 
       return { user };
-    },
-  })
-  // create
-  .mutation("create", {
-    input: z.object({
-      id: z.string(),
-      name: z.string(),
     }),
-    async resolve({ ctx, input }) {
+  create: t.procedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { id, name } = input;
       const user = await ctx.prisma.user.upsert({
         where: {
@@ -37,14 +39,14 @@ export const userRouter = createRouter()
         },
       });
       return { user };
-    },
-  })
-  // delete
-  .mutation("delete", {
-    input: z.object({
-      id: z.string(),
     }),
-    async resolve({ input, ctx }) {
+  delete: t.procedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
       const user = await ctx.prisma.user.delete({
@@ -54,5 +56,5 @@ export const userRouter = createRouter()
       });
 
       return { user };
-    },
-  });
+    }),
+});

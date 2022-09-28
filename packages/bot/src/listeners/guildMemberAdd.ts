@@ -9,7 +9,7 @@ import { trpcNode } from '../trpc';
 })
 export class GuildMemberListener extends Listener {
   public override async run(member: GuildMember): Promise<void> {
-    const guildQuery = await trpcNode.query('guild.get-guild', {
+    const guildQuery = await trpcNode.guild.getGuild.query({
       id: member.guild.id
     });
 

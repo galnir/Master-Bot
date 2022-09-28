@@ -1,5 +1,4 @@
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
@@ -14,8 +13,8 @@ const GuildIndexPage: NextPageWithLayout = () => {
     router.push("/");
   }
 
-  const { isLoading, error } = trpc.useQuery(
-    ["guild.get-guild-and-user", { id: query as string }],
+  const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
+    { id: query as string },
     { refetchOnWindowFocus: false }
   );
 

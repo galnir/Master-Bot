@@ -16,7 +16,7 @@ const CommandInfo = ({
   disabled: boolean;
 }) => {
   const [disableSwitch, setDisableSwitch] = React.useState(false);
-  const { mutate } = trpc.useMutation("command.toggle-command");
+  const { mutate } = trpc.command.toggleCommand.useMutation();
   const utils = trpc.useContext();
 
   function handleToggle(status: boolean) {
@@ -28,8 +28,8 @@ const CommandInfo = ({
       },
       {
         onSuccess: () => {
-          utils.invalidateQueries(["command.get-commands"]);
-          utils.invalidateQueries(["command.get-disabled-commands"]);
+          utils.command.getCommands.invalidate();
+          utils.command.getDisabledCommands.invalidate();
           setDisableSwitch(false);
         },
         onError: () => {
