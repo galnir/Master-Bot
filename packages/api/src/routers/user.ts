@@ -57,4 +57,23 @@ export const userRouter = t.router({
 
       return { user };
     }),
+  updateTimeOffset: t.procedure
+    .input(
+      z.object({
+        id: z.string(),
+        timeOffset: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, timeOffset } = input;
+      const userTime = await ctx.prisma.user.update({
+        where: {
+          discordId: id,
+        },
+        data: { timeOffset: timeOffset },
+        select: { timeOffset: true },
+      });
+
+      return { userTime };
+    }),
 });
