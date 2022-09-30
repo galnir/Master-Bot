@@ -1,8 +1,8 @@
-import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
-import Head from "next/head";
-import { getServerSession } from "../../shared/get-server-session";
-import { trpc } from "../../utils/trpc";
-import GuildSelectBox from "../../components/GuildSelectBox";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from 'next';
+import Head from 'next/head';
+import { getServerSession } from '../../shared/get-server-session';
+import { trpc } from '../../utils/trpc';
+import GuildSelectBox from '../../components/GuildSelectBox';
 
 const DashboardIndexPage: NextPage = () => {
   const { data } = trpc.guild.getAll.useQuery();
@@ -17,9 +17,9 @@ const DashboardIndexPage: NextPage = () => {
         <h1 className="text-3xl mb-4 ml-1">Choose guild to manage</h1>
         {data?.apiGuilds ? (
           <div className="flex gap-10">
-            {data?.apiGuilds.map((guild) => {
+            {data?.apiGuilds.map(guild => {
               const isBotInGuild = data.dbGuilds.some(
-                (dbGuild) => dbGuild.id === guild.id
+                dbGuild => dbGuild.id === guild.id
               );
               return (
                 <GuildSelectBox
@@ -27,7 +27,7 @@ const DashboardIndexPage: NextPage = () => {
                   img={
                     guild.icon
                       ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}`
-                      : "generic-image.png"
+                      : 'generic-image.png'
                   }
                   name={guild.name}
                   isBotIn={isBotInGuild}
@@ -49,15 +49,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!session || !session.user || !session.user.id) {
     return {
-      redirect: { destination: "../api/auth/signin", permanent: false },
-      props: {},
+      redirect: { destination: '../api/auth/signin', permanent: false },
+      props: {}
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 

@@ -1,8 +1,8 @@
-import React from "react";
-import { trpc } from "../../utils/trpc";
+import React from 'react';
+import { trpc } from '../../utils/trpc';
 
 const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const { mutate } = trpc.welcome.setMessage.useMutation();
@@ -13,7 +13,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
     mutate(
       {
         guildId,
-        message,
+        message
       },
       {
         onSuccess: () => {
@@ -21,7 +21,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         },
         onError: () => {
           setIsSubmitting(false);
-        },
+        }
       }
     );
   }
@@ -32,8 +32,8 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         name="welcome_message"
         placeholder="welcome message input"
         value={message}
-        defaultValue={data?.message ? data.message : "Loading..."}
-        onChange={(e) => setMessage(e.target.value)}
+        defaultValue={data?.message ? data.message : 'Loading...'}
+        onChange={e => setMessage(e.target.value)}
         className="block -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
       />
       <button
@@ -41,7 +41,7 @@ const WelcomeMessageInput = ({ guildId }: { guildId: string }) => {
         type="submit"
         onClick={handleSubmit}
       >
-        {isSubmitting ? "Submitting..." : "Submit"}
+        {isSubmitting ? 'Submitting...' : 'Submit'}
       </button>
     </div>
   );

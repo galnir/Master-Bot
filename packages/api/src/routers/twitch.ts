@@ -1,5 +1,5 @@
-import { t } from "../trpc";
-import { z } from "zod";
+import { t } from '../trpc';
+import { z } from 'zod';
 
 export const twitchRouter = t.router({
   getAll: t.procedure.query(async ({ ctx }) => {
@@ -10,7 +10,7 @@ export const twitchRouter = t.router({
   findUserById: t.procedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.string()
       })
     )
     .query(async ({ ctx, input }) => {
@@ -18,8 +18,8 @@ export const twitchRouter = t.router({
 
       const notification = await ctx.prisma.twitchNotify.findFirst({
         where: {
-          twitchId: id,
-        },
+          twitchId: id
+        }
       });
 
       return { notification };
@@ -30,7 +30,7 @@ export const twitchRouter = t.router({
         userId: z.string(),
         userImage: z.string(),
         channelId: z.string(),
-        sendTo: z.array(z.string()),
+        sendTo: z.array(z.string())
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -40,17 +40,17 @@ export const twitchRouter = t.router({
           twitchId: userId,
           channelIds: [channelId],
           logo: userImage,
-          sent: false,
+          sent: false
         },
         update: { channelIds: sendTo },
-        where: { twitchId: userId },
+        where: { twitchId: userId }
       });
     }),
   updateNotification: t.procedure
     .input(
       z.object({
         userId: z.string(),
-        channelIds: z.array(z.string()),
+        channelIds: z.array(z.string())
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -58,11 +58,11 @@ export const twitchRouter = t.router({
 
       const notification = await ctx.prisma.twitchNotify.update({
         where: {
-          twitchId: userId,
+          twitchId: userId
         },
         data: {
-          channelIds,
-        },
+          channelIds
+        }
       });
 
       return { notification };
@@ -70,7 +70,7 @@ export const twitchRouter = t.router({
   delete: t.procedure
     .input(
       z.object({
-        userId: z.string(),
+        userId: z.string()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -78,8 +78,8 @@ export const twitchRouter = t.router({
 
       const notification = await ctx.prisma.twitchNotify.delete({
         where: {
-          twitchId: userId,
-        },
+          twitchId: userId
+        }
       });
 
       return { notification };
@@ -89,7 +89,7 @@ export const twitchRouter = t.router({
       z.object({
         userId: z.string(),
         live: z.boolean(),
-        sent: z.boolean(),
+        sent: z.boolean()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -97,9 +97,9 @@ export const twitchRouter = t.router({
 
       const notification = await ctx.prisma.twitchNotify.update({
         where: { twitchId: userId },
-        data: { live, sent },
+        data: { live, sent }
       });
 
       return { notification };
-    }),
+    })
 });

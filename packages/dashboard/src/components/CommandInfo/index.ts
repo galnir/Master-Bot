@@ -1,2 +1,2 @@
-export { default } from "./CommandInfo";
-export * from "./CommandInfo";
+export { default } from './CommandInfo';
+export * from './CommandInfo';

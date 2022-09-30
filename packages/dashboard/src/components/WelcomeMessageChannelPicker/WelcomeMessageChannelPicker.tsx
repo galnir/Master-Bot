@@ -1,10 +1,10 @@
-import React from "react";
-import { trpc } from "../../utils/trpc";
+import React from 'react';
+import { trpc } from '../../utils/trpc';
 
 const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
   const { data: channelData, isLoading: isLoadingChannelData } =
     trpc.welcome.getChannel.useQuery({
-      guildId,
+      guildId
     });
 
   const [value, setValue] = React.useState(
@@ -12,7 +12,7 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
   );
 
   const { data, isLoading } = trpc.channel.getAll.useQuery({
-    guildId,
+    guildId
   });
 
   const { mutate } = trpc.welcome.setChannel.useMutation();
@@ -26,10 +26,10 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
         <div className="flex flex-col gap-3">
           <select
             className="w-56 h-7 outline-none text-black bg-white rounded-sm hover:text-white hover:bg-black hover:cursor-pointer hover:border hover:border-white"
-            value={value ? value : ""}
-            onChange={(e) => setValue(e.target.value)}
+            value={value ? value : ''}
+            onChange={e => setValue(e.target.value)}
           >
-            {data?.channels.map((channel) => (
+            {data?.channels.map(channel => (
               <option value={channel.id} key={channel.id}>
                 {channel.name}
               </option>
@@ -42,7 +42,7 @@ const WelcomeMessageChannelPicker = ({ guildId }: { guildId: string }) => {
               if (!value) return;
               mutate({
                 guildId,
-                channelId: value,
+                channelId: value
               });
             }}
           >

@@ -1,1 +1,1 @@
-export * from "@master-bot/react/trpc";
+export * from '@master-bot/react/trpc';

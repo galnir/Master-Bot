@@ -1,5 +1,5 @@
 // @ts-check
-import { z } from "zod";
+import { z } from 'zod';
 
 /**
  * Specify your server-side environment variables schema here.
@@ -8,9 +8,9 @@ import { z } from "zod";
 export const serverSchema = z.object({
   NEXTAUTH_SECRET: z.string(),
   NEXTAUTH_URL: z.string().url(),
-  NEXTAUTH_URL_INTERNAL: z.string().url().default("http://localhost:3000"),
+  NEXTAUTH_URL_INTERNAL: z.string().url().default('http://localhost:3000'),
   DISCORD_CLIENT_ID: z.string(),
-  DISCORD_CLIENT_SECRET: z.string(),
+  DISCORD_CLIENT_SECRET: z.string()
 });
 
 /**
@@ -19,7 +19,7 @@ export const serverSchema = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 export const clientSchema = z.object({
-  NEXT_PUBLIC_INVITE_URL: z.string().url(),
+  NEXT_PUBLIC_INVITE_URL: z.string().url()
 });
 
 /**
@@ -29,5 +29,5 @@ export const clientSchema = z.object({
  * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
 export const clientEnv = {
-  NEXT_PUBLIC_INVITE_URL: process.env.NEXT_PUBLIC_INVITE_URL,
+  NEXT_PUBLIC_INVITE_URL: process.env.NEXT_PUBLIC_INVITE_URL
 };

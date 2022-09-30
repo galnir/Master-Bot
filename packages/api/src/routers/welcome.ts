@@ -1,11 +1,11 @@
-import { t } from "../trpc";
-import { z } from "zod";
+import { t } from '../trpc';
+import { z } from 'zod';
 
 export const welcomeRouter = t.router({
   getMessage: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({ ctx, input }) => {
@@ -13,19 +13,19 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId,
-        },
+          id: guildId
+        }
       });
 
       return {
-        message: guild?.welcomeMessage,
+        message: guild?.welcomeMessage
       };
     }),
   setMessage: t.procedure
     .input(
       z.object({
         message: z.string().min(4).max(100),
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -33,11 +33,11 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId,
+          id: guildId
         },
         data: {
-          welcomeMessage: message,
-        },
+          welcomeMessage: message
+        }
       });
 
       return { guild };
@@ -46,7 +46,7 @@ export const welcomeRouter = t.router({
     .input(
       z.object({
         channelId: z.string(),
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -54,11 +54,11 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId,
+          id: guildId
         },
         data: {
-          welcomeMessageChannel: channelId,
-        },
+          welcomeMessageChannel: channelId
+        }
       });
 
       return { guild };
@@ -66,7 +66,7 @@ export const welcomeRouter = t.router({
   getChannel: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({ ctx, input }) => {
@@ -74,11 +74,11 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId,
+          id: guildId
         },
         select: {
-          welcomeMessageChannel: true,
-        },
+          welcomeMessageChannel: true
+        }
       });
 
       return { guild };
@@ -86,7 +86,7 @@ export const welcomeRouter = t.router({
   getStatus: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({ ctx, input }) => {
@@ -94,11 +94,11 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId,
+          id: guildId
         },
         select: {
-          welcomeMessageEnabled: true,
-        },
+          welcomeMessageEnabled: true
+        }
       });
 
       return { guild };
@@ -107,7 +107,7 @@ export const welcomeRouter = t.router({
     .input(
       z.object({
         guildId: z.string(),
-        status: z.boolean(),
+        status: z.boolean()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -115,13 +115,13 @@ export const welcomeRouter = t.router({
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId,
+          id: guildId
         },
         data: {
-          welcomeMessageEnabled: status,
-        },
+          welcomeMessageEnabled: status
+        }
       });
 
       return { guild };
-    }),
+    })
 });

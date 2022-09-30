@@ -36,12 +36,15 @@ Getting Postgres and Prisma to work together on Windows is not worth the hassle.
 ### Redis
 
 #### MacOS
+
 `brew install redis`.
 
 #### Windows
+
 Download from [here](https://redis.io/download/).
 
 #### Linux
+
 Follow the instructions [here](https://redis.io/docs/getting-started/installation/install-redis-on-linux/).
 
 ### Settings (env)
@@ -89,33 +92,42 @@ GENIUS_API=""
 RAWG_API=""
 
 ```
+
 #### Gif features
+
 If you have no use in the gif commands, leave everything under 'Other APIs' empty. Same applies for Twitch, everything else is needed.
 
 #### DB URL
+
 Change 'john' to your pc username and 'doe' to some password, or set the name and password you created when you installed Postgres.
 
 #### Bot Token
+
 Generate a token in your Discord developer portal.
 
 #### Next Auth
+
 You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and then change 'domain' in NEXTAUTH_URL to your domain or public ip. You can find your public ip by going to [www.whatismyip.com](https://www.whatismyip.com/).
 
 #### Next Auth Discord Provider
+
 Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set the following URLs under 'Redirects':
 
- * http://localhost:3000/api/auth/callback/discord
- * http://domain:3000/api/auth/callback/discord
+- http://localhost:3000/api/auth/callback/discord
+- http://domain:3000/api/auth/callback/discord
 
 Make sure to change 'domain' in http://domain:3000/api/auth/callback/discord to your domain or public ip.
 
 #### Lavalink
+
 You can leave this as long as the values match your application.yml.
 
 #### Spotify and Twitch
+
 Create an application in each platform's developer portal and paste the relevant values.
 
 # Running the bot
+
 1. If you followed everything right, hit `npm i` in the root folder. When it finishes make sure prisma didn't error.
 2. Open a separate terminal in the root folder and run 'java -jar Lavalink.jar'.
 3. Wait a few seconds and hit `npm run dev`.
@@ -173,7 +185,6 @@ A full list of commands for use with Master Bot
 
 ## Other
 
-
 | Command           | Description                                                                                                                                                        | Usage                                   |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
 | /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                |
@@ -225,9 +236,7 @@ Anyone is welcome to suggest new features and improve code quality!
 
 ## Contributors ❤️
 
-
 **⭐ [Bacon Fixation](https://github.com/Bacon-Fixation) ⭐ - Countless contributions**
-
 
 [ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
