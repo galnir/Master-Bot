@@ -18,6 +18,9 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  session: {
+    maxAge: 60 * 60 * 24 * 6, // 6 days
+  },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
