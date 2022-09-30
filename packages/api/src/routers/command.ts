@@ -1,6 +1,6 @@
-import { t } from "../trpc";
-import { z } from "zod";
-import { TRPCError } from "@trpc/server";
+import { t } from '../trpc';
+import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
 type CommandType = {
   id: string;
@@ -19,7 +19,7 @@ export const commandRouter = t.router({
   getDisabledCommands: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({ ctx, input }) => {
@@ -27,17 +27,17 @@ export const commandRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId,
+          id: guildId
         },
         select: {
-          disabledCommands: true,
-        },
+          disabledCommands: true
+        }
       });
 
       if (!guild) {
         throw new TRPCError({
-          message: "Guild not found",
-          code: "NOT_FOUND",
+          message: 'Guild not found',
+          code: 'NOT_FOUND'
         });
       }
 
@@ -46,7 +46,7 @@ export const commandRouter = t.router({
   getCommands: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({}) => {
@@ -56,8 +56,8 @@ export const commandRouter = t.router({
           `https://discordapp.com/api/applications/${process.env.DISCORD_CLIENT_ID}/commands`,
           {
             headers: {
-              Authorization: `Bot ${token}`,
-            },
+              Authorization: `Bot ${token}`
+            }
           }
         );
         const commands: CommandType[] = await response.json();
@@ -66,8 +66,8 @@ export const commandRouter = t.router({
       } catch (e) {
         console.error(e);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong when trying to fetch guilds",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong when trying to fetch guilds'
         });
       }
     }),
@@ -76,7 +76,7 @@ export const commandRouter = t.router({
       z.object({
         guildId: z.string(),
         commandId: z.string(),
-        status: z.boolean(),
+        status: z.boolean()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -84,17 +84,17 @@ export const commandRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId,
+          id: guildId
         },
         select: {
-          disabledCommands: true,
-        },
+          disabledCommands: true
+        }
       });
 
       if (!guild) {
         throw new TRPCError({
-          message: "Guild not found",
-          code: "NOT_FOUND",
+          message: 'Guild not found',
+          code: 'NOT_FOUND'
         });
       }
 
@@ -103,27 +103,27 @@ export const commandRouter = t.router({
       if (status) {
         updatedGuild = await ctx.prisma.guild.update({
           where: {
-            id: guildId,
+            id: guildId
           },
           data: {
             disabledCommands: {
-              set: [...guild?.disabledCommands, commandId],
-            },
-          },
+              set: [...guild?.disabledCommands, commandId]
+            }
+          }
         });
       } else {
         updatedGuild = await ctx.prisma.guild.update({
           where: {
-            id: guildId,
+            id: guildId
           },
           data: {
             disabledCommands: {
-              set: guild?.disabledCommands.filter((cid) => cid !== commandId),
-            },
-          },
+              set: guild?.disabledCommands.filter(cid => cid !== commandId)
+            }
+          }
         });
       }
 
       return { updatedGuild };
-    }),
+    })
 });

@@ -1,19 +1,19 @@
-import { useRouter } from "next/router";
-import { ReactElement } from "react";
-import DashboardLayout from "../../../components/DashboardLayout";
-import { trpc } from "../../../utils/trpc";
-import { NextPageWithLayout } from "../../_app";
-import { Switch } from "@headlessui/react";
-import WelcomeMessageInput from "../../../components/WelcomeMessageInput";
-import WelcomeMessageChannelPicker from "../../../components/WelcomeMessageChannelPicker";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getServerSession } from "../../../shared/get-server-session";
+import { useRouter } from 'next/router';
+import { ReactElement } from 'react';
+import DashboardLayout from '../../../components/DashboardLayout';
+import { trpc } from '../../../utils/trpc';
+import { NextPageWithLayout } from '../../_app';
+import { Switch } from '@headlessui/react';
+import WelcomeMessageInput from '../../../components/WelcomeMessageInput';
+import WelcomeMessageChannelPicker from '../../../components/WelcomeMessageChannelPicker';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { getServerSession } from '../../../shared/get-server-session';
 
 const WelcomeDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query.guild_id;
-  if (!query || typeof query !== "string") {
-    router.push("/");
+  if (!query || typeof query !== 'string') {
+    router.push('/');
   }
 
   const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
@@ -25,7 +25,7 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (error?.data?.code === "UNAUTHORIZED") {
+  if (error?.data?.code === 'UNAUTHORIZED') {
     return <div>{error.message}</div>;
   }
 
@@ -35,7 +35,7 @@ const WelcomeDashboardPage: NextPageWithLayout = () => {
 const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
   const utils = trpc.useContext();
   const { data, isLoading } = trpc.guild.getGuild.useQuery({
-    id: query,
+    id: query
   });
 
   const { mutate } = trpc.welcome.toggle.useMutation();
@@ -46,7 +46,7 @@ const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
       {
         onSuccess: () => {
           utils.guild.getGuild.invalidate();
-        },
+        }
       }
     );
   }
@@ -63,7 +63,7 @@ const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
           </h3>
           <div className="flex items-center gap-5">
             <span>
-              {data?.guild?.welcomeMessageEnabled ? "Enabled" : "Disabled"}
+              {data?.guild?.welcomeMessageEnabled ? 'Enabled' : 'Disabled'}
             </span>
             <Switch
               checked={data?.guild?.welcomeMessageEnabled}
@@ -72,16 +72,16 @@ const WelcomeDashboardPageComponent = ({ query }: { query: string }) => {
               }
               className={`${
                 data?.guild?.welcomeMessageEnabled
-                  ? "bg-blue-600"
-                  : "bg-gray-400"
+                  ? 'bg-blue-600'
+                  : 'bg-gray-400'
               } relative inline-flex h-6 w-11 items-center rounded-full`}
             >
               <span
                 aria-hidden="true"
                 className={`${
                   data?.guild?.welcomeMessageEnabled
-                    ? "translate-x-6"
-                    : "translate-x-1"
+                    ? 'translate-x-6'
+                    : 'translate-x-1'
                 } inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out`}
               />
             </Switch>
@@ -113,15 +113,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!session || !session.user || !session.user.id) {
     return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
+      redirect: { destination: '../../api/auth/signin', permanent: false },
+      props: {}
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 

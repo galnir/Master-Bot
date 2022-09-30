@@ -1,12 +1,12 @@
-import { t } from "../trpc";
-import { z } from "zod";
-import { APIGuildChannel, APIGuildTextChannel } from "discord-api-types/v10";
+import { t } from '../trpc';
+import { z } from 'zod';
+import { APIGuildChannel, APIGuildTextChannel } from 'discord-api-types/v10';
 
 export const channelRouter = t.router({
   getAll: t.procedure
     .input(
       z.object({
-        guildId: z.string(),
+        guildId: z.string()
       })
     )
     .query(async ({ input }) => {
@@ -19,15 +19,15 @@ export const channelRouter = t.router({
         `https://discordapp.com/api/guilds/${guildId}/channels`,
         {
           headers: {
-            Authorization: `Bot ${token}`,
-          },
+            Authorization: `Bot ${token}`
+          }
         }
       );
       const responseChannels: APIGuildChannel<any>[] = await response.json();
 
       const channels: APIGuildTextChannel<0>[] = responseChannels.filter(
-        (channel) => channel.type === 0
+        channel => channel.type === 0
       );
       return { channels };
-    }),
+    })
 });

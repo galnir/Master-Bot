@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { env } from "../../env/client.mjs";
+import Link from 'next/link';
+import { env } from '../../env/client.mjs';
 
 interface GuildSelectBoxProps {
   img: string;
@@ -19,7 +19,7 @@ const GuildSelectBox = ({ img, name, isBotIn, id }: GuildSelectBoxProps) => {
         {isBotIn ? (
           <Link href={`/dashboard/${id}`}>
             <button className="px-7 py-3 bg-blue-900 rounded-md hover:bg-blue-700">
-              {isBotIn ? "Go" : "Invite"}
+              {isBotIn ? 'Go' : 'Invite'}
             </button>
           </Link>
         ) : (

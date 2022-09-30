@@ -1,14 +1,14 @@
-import { t } from "../trpc";
+import { t } from '../trpc';
 
-import { userRouter } from "./user";
-import { guildRouter } from "./guild";
-import { playlistRouter } from "./playlist";
-import { songRouter } from "./song";
-import { twitchRouter } from "./twitch";
-import { channelRouter } from "./channel";
-import { welcomeRouter } from "./welcome";
-import { commandRouter } from "./command";
-import { hubRouter } from "./hub";
+import { userRouter } from './user';
+import { guildRouter } from './guild';
+import { playlistRouter } from './playlist';
+import { songRouter } from './song';
+import { twitchRouter } from './twitch';
+import { channelRouter } from './channel';
+import { welcomeRouter } from './welcome';
+import { commandRouter } from './command';
+import { hubRouter } from './hub';
 
 /**
  * Create your application's root router
@@ -26,7 +26,7 @@ export const appRouter = t.router({
   channel: channelRouter,
   welcome: welcomeRouter,
   command: commandRouter,
-  hub: hubRouter,
+  hub: hubRouter
 });
 
 export type AppRouter = typeof appRouter;

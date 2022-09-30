@@ -1,17 +1,17 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
-import type { ReactElement } from "react";
-import CommandInfo from "../../../components/CommandInfo";
-import DashboardLayout from "../../../components/DashboardLayout";
-import { getServerSession } from "../../../shared/get-server-session";
-import { trpc } from "../../../utils/trpc";
-import { NextPageWithLayout } from "../../_app";
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
+import type { ReactElement } from 'react';
+import CommandInfo from '../../../components/CommandInfo';
+import DashboardLayout from '../../../components/DashboardLayout';
+import { getServerSession } from '../../../shared/get-server-session';
+import { trpc } from '../../../utils/trpc';
+import { NextPageWithLayout } from '../../_app';
 
 const CommandsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query.guild_id;
-  if (!query || typeof query !== "string") {
-    router.push("/");
+  if (!query || typeof query !== 'string') {
+    router.push('/');
   }
 
   const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
@@ -23,7 +23,7 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (error?.data?.code === "UNAUTHORIZED") {
+  if (error?.data?.code === 'UNAUTHORIZED') {
     return <div>{error.message}</div>;
   }
 
@@ -31,12 +31,12 @@ const CommandsDashboardPage: NextPageWithLayout = () => {
 };
 
 const CommandsDashboardPageComponent = ({
-  query,
+  query
 }: {
   query: string;
 }): ReactElement => {
   const { data, isLoading } = trpc.command.getCommands.useQuery({
-    guildId: query as string,
+    guildId: query as string
   });
 
   const { data: disabledCommandsData, isLoading: disabledCommandsLoading } =
@@ -52,7 +52,7 @@ const CommandsDashboardPageComponent = ({
       disabledCommandsData?.disabledCommands &&
       !disabledCommandsLoading ? (
         <div className="p-5 bg-gray-900 text-slate-300 flex flex-col gap-7">
-          {data.commands.map((command) => (
+          {data.commands.map(command => (
             <CommandInfo
               key={command.id}
               guildId={query as string}
@@ -83,15 +83,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!session || !session.user || !session.user.id) {
     return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
+      redirect: { destination: '../../api/auth/signin', permanent: false },
+      props: {}
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 

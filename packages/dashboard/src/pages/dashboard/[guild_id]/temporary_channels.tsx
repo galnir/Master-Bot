@@ -1,19 +1,19 @@
-import React from "react";
-import { useRouter } from "next/router";
-import { ReactElement } from "react";
-import DashboardLayout from "../../../components/DashboardLayout";
-import { trpc } from "../../../utils/trpc";
-import { NextPageWithLayout } from "../../_app";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { getServerSession } from "../../../shared/get-server-session";
+import React from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement } from 'react';
+import DashboardLayout from '../../../components/DashboardLayout';
+import { trpc } from '../../../utils/trpc';
+import { NextPageWithLayout } from '../../_app';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { getServerSession } from '../../../shared/get-server-session';
 
 const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query.guild_id;
-  if (!query || typeof query !== "string") {
-    router.push("/");
+  if (!query || typeof query !== 'string') {
+    router.push('/');
   }
 
   const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
@@ -25,7 +25,7 @@ const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (error?.data?.code === "UNAUTHORIZED") {
+  if (error?.data?.code === 'UNAUTHORIZED') {
     return <div>{error.message}</div>;
   }
 
@@ -33,7 +33,7 @@ const TemporaryChannelsDashboardPage: NextPageWithLayout = () => {
 };
 
 const TemporaryChannelsDashboardPageComponent = ({
-  query,
+  query
 }: {
   query: string;
 }) => {
@@ -47,60 +47,60 @@ const TemporaryChannelsDashboardPageComponent = ({
         {
           onSuccess: () => {
             setIsToggling(false);
-            toast.success("Temporary channels disabled", {
-              position: "top-right",
+            toast.success('Temporary channels disabled', {
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: false,
               draggable: true,
-              progress: undefined,
+              progress: undefined
             });
             utils.guild.getGuild.invalidate();
           },
           onError: () => {
             setIsToggling(false);
-            toast.error("Error!", {
-              position: "top-right",
+            toast.error('Error!', {
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: false,
               draggable: true,
-              progress: undefined,
+              progress: undefined
             });
-          },
+          }
         }
       );
     } else {
       createHub(
-        { guildId: query as string, name: "Join To Create" },
+        { guildId: query as string, name: 'Join To Create' },
         {
           onSuccess: () => {
             setIsToggling(false);
-            toast.success("Temporary channels enabled", {
-              position: "top-right",
+            toast.success('Temporary channels enabled', {
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: false,
               draggable: true,
-              progress: undefined,
+              progress: undefined
             });
             utils.guild.getGuild.invalidate();
           },
           onError: () => {
             setIsToggling(false);
-            toast.error("Error!", {
-              position: "top-right",
+            toast.error('Error!', {
+              position: 'top-right',
               autoClose: 5000,
               hideProgressBar: false,
               closeOnClick: true,
               pauseOnHover: false,
               draggable: true,
-              progress: undefined,
+              progress: undefined
             });
-          },
+          }
         }
       );
     }
@@ -110,7 +110,7 @@ const TemporaryChannelsDashboardPageComponent = ({
   const { mutate: deleteHub } = trpc.hub.delete.useMutation();
   const utils = trpc.useContext();
   const { data, isLoading } = trpc.guild.getGuild.useQuery({
-    id: query as string,
+    id: query as string
   });
 
   const enabled = data?.guild?.hub && data.guild.hubChannel;
@@ -125,8 +125,8 @@ const TemporaryChannelsDashboardPageComponent = ({
       {data?.guild && !isLoading ? (
         <div className="flex flex-col gap-4">
           <h3>
-            The temporary channels feature is {enabled ? "enabled" : "disabled"}
-            , do you want to {enabled ? "disable" : "enable"} it?
+            The temporary channels feature is {enabled ? 'enabled' : 'disabled'}
+            , do you want to {enabled ? 'disable' : 'enable'} it?
           </h3>
           <button
             type="submit"
@@ -136,11 +136,11 @@ const TemporaryChannelsDashboardPageComponent = ({
           >
             {isToggling
               ? enabled
-                ? "Disabling..."
-                : "Enabling..."
+                ? 'Disabling...'
+                : 'Enabling...'
               : enabled
-              ? "Disable"
-              : "Enable"}
+              ? 'Disable'
+              : 'Enable'}
           </button>
         </div>
       ) : (
@@ -163,15 +163,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!session || !session.user || !session.user.id) {
     return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
+      redirect: { destination: '../../api/auth/signin', permanent: false },
+      props: {}
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 

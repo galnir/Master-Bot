@@ -1,6 +1,6 @@
 // @ts-check
-import transpile from "next-transpile-modules";
-import { env } from "./src/env/server.mjs";
+import transpile from 'next-transpile-modules';
+import { env } from './src/env/server.mjs';
 /**
  * Don't be scared of the generics here.
  * All they do is to give us autocompletion when using this.
@@ -13,14 +13,14 @@ function defineNextConfig(config) {
   return config;
 }
 
-const withTM = transpile(["@master-bot/api", "@master-bot/react"]);
+const withTM = transpile(['@master-bot/api', '@master-bot/react']);
 
 export default withTM(
   defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,
     experimental: {
-      externalDir: true,
-    },
+      externalDir: true
+    }
   })
 );

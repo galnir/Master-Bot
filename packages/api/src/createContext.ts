@@ -1,10 +1,10 @@
 // src/server/router/context.ts
-import * as trpc from "@trpc/server";
-import * as trpcNext from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
-import { unstable_getServerSession as getServerSession } from "next-auth";
-import { authOptions as nextAuthOptions } from "../../dashboard/src/pages/api/auth/[...nextauth]";
-import { prisma } from "./db/client";
+import * as trpc from '@trpc/server';
+import * as trpcNext from '@trpc/server/adapters/next';
+import { Session } from 'next-auth';
+import { unstable_getServerSession as getServerSession } from 'next-auth';
+import { authOptions as nextAuthOptions } from '../../dashboard/src/pages/api/auth/[...nextauth]';
+import { prisma } from './db/client';
 
 type CreateContextOptions = {
   session: Session | null;
@@ -17,7 +17,7 @@ type CreateContextOptions = {
 export const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    prisma,
+    prisma
   };
 };
 
@@ -31,7 +31,7 @@ export const createContext = async (
   const session = await getServerSession(opts.req, opts.res, nextAuthOptions);
 
   return await createContextInner({
-    session,
+    session
   });
 };
 

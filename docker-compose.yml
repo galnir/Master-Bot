@@ -5,7 +5,7 @@ services:
     restart: always
     build: .
     ports:
-      - "3000:3000" # Dashboard
+      - '3000:3000' # Dashboard
       # - "5555:5555" # Prisma Studio Port  - uncomment to open
     command: >
       sh -c "npx prisma db push && npm run dev"
@@ -35,7 +35,7 @@ services:
     restart: always
     image: fredboat/lavalink:dev
     healthcheck:
-      test: "echo lavalink"
+      test: 'echo lavalink'
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml
   postgres:
@@ -45,7 +45,7 @@ services:
     restart: always
     healthcheck:
       test:
-        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_NAME}"]
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_NAME}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -67,7 +67,7 @@ services:
       - REDIS_DB=${REDIS_DB}
     command: redis-server --save 20 1 --loglevel warning
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 10s
       retries: 3

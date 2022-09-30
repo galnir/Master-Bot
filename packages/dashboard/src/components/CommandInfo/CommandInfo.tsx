@@ -1,13 +1,13 @@
-import { Switch } from "@headlessui/react";
-import React from "react";
-import { trpc } from "../../utils/trpc";
+import { Switch } from '@headlessui/react';
+import React from 'react';
+import { trpc } from '../../utils/trpc';
 
 const CommandInfo = ({
   name,
   description,
   guildId,
   commandId,
-  disabled,
+  disabled
 }: {
   name: string;
   description: string;
@@ -24,7 +24,7 @@ const CommandInfo = ({
       {
         guildId,
         commandId,
-        status,
+        status
       },
       {
         onSuccess: () => {
@@ -37,7 +37,7 @@ const CommandInfo = ({
         },
         onSettled: () => {
           setDisableSwitch(false);
-        },
+        }
       }
     );
   }
@@ -45,13 +45,13 @@ const CommandInfo = ({
   return (
     <div
       className={`p-5 flex justify-between items-center transition duration-200 ease-in-out ${
-        disabled ? "bg-gray-700" : "bg-black"
+        disabled ? 'bg-gray-700' : 'bg-black'
       }`}
     >
       <div className="flex flex-col gap-2">
         <h2
           className={`transition duration-200 ease-in-out ${
-            disabled ? "text-slate-400" : "text-white"
+            disabled ? 'text-slate-400' : 'text-white'
           }`}
         >
           {name}
@@ -67,15 +67,15 @@ const CommandInfo = ({
             handleToggle(!disabled);
           }}
           className={`${
-            disabled ? "bg-gray-400" : "bg-blue-600"
+            disabled ? 'bg-gray-400' : 'bg-blue-600'
           } relative inline-flex h-6 w-11 items-center rounded-full`}
         >
-          {" "}
+          {' '}
           <span className="sr-only">Enable or disable command</span>
           <span
             aria-hidden="true"
             className={`${
-              disabled ? "translate-x-1" : "translate-x-6"
+              disabled ? 'translate-x-1' : 'translate-x-6'
             } inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out`}
           />
         </Switch>

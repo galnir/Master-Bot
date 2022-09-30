@@ -1,11 +1,11 @@
 // @ts-nocheck
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import DiscordProvider, { DiscordProfile } from "next-auth/providers/discord";
+import NextAuth, { type NextAuthOptions } from 'next-auth';
+import DiscordProvider, { DiscordProfile } from 'next-auth/providers/discord';
 
 // Prisma adapter for NextAuth
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@master-bot/api/src/db/client";
-import { env } from "../../../env/server.mjs";
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from '@master-bot/api/src/db/client';
+import { env } from '../../../env/server.mjs';
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
@@ -16,10 +16,10 @@ export const authOptions: NextAuthOptions = {
         session.user.discordId = user.discordId;
       }
       return session;
-    },
+    }
   },
   session: {
-    maxAge: 60 * 60 * 24 * 6, // 6 days
+    maxAge: 60 * 60 * 24 * 6 // 6 days
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
@@ -27,23 +27,23 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-      authorization: { params: { scope: "identify guilds" } },
+      authorization: { params: { scope: 'identify guilds' } },
       profile(profile: DiscordProfile) {
         return {
           id: profile.id,
           name: profile.username,
           email: profile.email,
           image: profile.avatar,
-          discordId: profile.id,
+          discordId: profile.id
         };
-      },
-    }),
+      }
+    })
     // ...add more providers here
   ],
   pages: {
-    signin: "/auth/signin",
-    signout: "/auth/signout",
-  },
+    signin: '/auth/signin',
+    signout: '/auth/signout'
+  }
 };
 
 export default NextAuth(authOptions);

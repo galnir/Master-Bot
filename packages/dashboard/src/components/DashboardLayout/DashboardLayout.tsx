@@ -1,21 +1,21 @@
-import React from "react";
-import Logo from "../Logo";
-import Link from "next/link";
-import { trpc } from "../../utils/trpc";
-import { useRouter } from "next/router";
-import Head from "next/head";
+import React from 'react';
+import Logo from '../Logo';
+import Link from 'next/link';
+import { trpc } from '../../utils/trpc';
+import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const router = useRouter();
   const query = router.query.guild_id;
 
-  if (!query || typeof query !== "string") {
-    router.push("/");
+  if (!query || typeof query !== 'string') {
+    router.push('/');
   }
 
   const { data, isLoading } = trpc.guild.getGuild.useQuery({
-    id: query as string,
+    id: query as string
   });
 
   return (
@@ -31,7 +31,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="bg-black text-center text-white font-semibold py-2 mb-12 rounded-xl">
               <p>
-                {isLoading && !data ? "Loading Guild..." : data!.guild!.name}
+                {isLoading && !data ? 'Loading Guild...' : data!.guild!.name}
               </p>
             </div>
             <div className="flex flex-col gap-8">

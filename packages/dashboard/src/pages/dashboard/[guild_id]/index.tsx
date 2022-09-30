@@ -1,16 +1,16 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
-import { ReactElement } from "react";
-import DashboardLayout from "../../../components/DashboardLayout";
-import { getServerSession } from "../../../shared/get-server-session";
-import { trpc } from "../../../utils/trpc";
-import { NextPageWithLayout } from "../../_app";
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
+import { ReactElement } from 'react';
+import DashboardLayout from '../../../components/DashboardLayout';
+import { getServerSession } from '../../../shared/get-server-session';
+import { trpc } from '../../../utils/trpc';
+import { NextPageWithLayout } from '../../_app';
 
 const GuildIndexPage: NextPageWithLayout = () => {
   const router = useRouter();
   const query = router.query.guild_id;
-  if (!query || typeof query !== "string") {
-    router.push("/");
+  if (!query || typeof query !== 'string') {
+    router.push('/');
   }
 
   const { isLoading, error } = trpc.guild.getGuildAndUser.useQuery(
@@ -22,7 +22,7 @@ const GuildIndexPage: NextPageWithLayout = () => {
     return <div>Loading...</div>;
   }
 
-  if (error?.data?.code === "UNAUTHORIZED") {
+  if (error?.data?.code === 'UNAUTHORIZED') {
     return <div>{error.message}</div>;
   }
 
@@ -44,15 +44,15 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!session || !session.user || !session.user.id) {
     return {
-      redirect: { destination: "../../api/auth/signin", permanent: false },
-      props: {},
+      redirect: { destination: '../../api/auth/signin', permanent: false },
+      props: {}
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 
