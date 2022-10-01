@@ -9,7 +9,7 @@ const options = {
 
 const pubSub = new Redis(options);
 
-export default new (class PubSub {
+class PubSub {
   publish(channel: string, message: string) {
     pubSub.publish(channel, message);
   }
@@ -21,4 +21,8 @@ export default new (class PubSub {
       callback(channel, message);
     });
   }
-})();
+}
+
+const instance = new PubSub();
+
+export default instance;
