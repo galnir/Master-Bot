@@ -16,6 +16,15 @@ import { trpcNode } from '../../../trpc';
 import ReminderStore from './ReminderStore';
 import Logger from '../logger';
 
+export interface ReminderI {
+  userId: string;
+  timeOffset: number;
+  event: string;
+  description: string | null;
+  dateTime: string;
+  repeat: string | null;
+}
+
 const cache = new ReminderStore();
 
 export async function saveReminder(userId: string, reminder: ReminderI) {
@@ -213,7 +222,7 @@ export async function checkInputs(
   description?: string,
   repeat?: string
 ) {
-  let Failed;
+  let failed;
   const errors = [];
   let errorCount = 0;
 
@@ -230,7 +239,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Hours** - Only numbers can be used to set Hours. (Example: 13:30 for 1:30 pm)`
         });
-        Failed = true;
+        failed = true;
       }
     }
 
@@ -239,7 +248,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Hours** - Choose a number between 0 and 23. (Example: 13:30 for 1:30 pm)`
       });
-      Failed = true;
+      failed = true;
     }
 
     if (
@@ -252,7 +261,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Minutes** - Only numbers can be used to set Minutes. (Example: 13:30 for 1:30 pm)`
         });
-        Failed = true;
+        failed = true;
       }
     }
     if (Number.parseInt(minute) > 59 || Number.parseInt(minute) < 0) {
@@ -260,7 +269,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Minutes** - Choose a number between 0 and 59. (Example: 13:30 for 1:30 pm)`
       });
-      Failed = true;
+      failed = true;
     }
   }
 
@@ -276,7 +285,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Date** - Only numbers can be used to set the Date`
       });
-      Failed = true;
+      failed = true;
     }
 
     if (
@@ -291,7 +300,7 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Invalid Syntax** - Date is formatted MM/DD/YYYY`
       });
-      Failed = true;
+      failed = true;
     }
 
     if (repeat) {
@@ -300,7 +309,7 @@ export async function checkInputs(
         errors.push({
           content: `**${errorCount}**) **Invalid Setting Combo** - Day cannot be after the 28th with "Monthly" Repeat setting enabled. (Blame February <3)`
         });
-        Failed = true;
+        failed = true;
       }
     }
   }
@@ -310,7 +319,7 @@ export async function checkInputs(
       content: `**${errorCount}**) **Limitation** - Event titles have a maximum length of ${EmbedLimits.MaximumTitleLength} characters`
     });
 
-    Failed = true;
+    failed = true;
   }
   if (description) {
     if (description.length > EmbedLimits.MaximumDescriptionLength) {
@@ -318,10 +327,10 @@ export async function checkInputs(
       errors.push({
         content: `**${errorCount}**) **Limitation** - Descriptions have a maximum length of ${EmbedLimits.MaximumDescriptionLength} characters`
       });
-      Failed = true;
+      failed = true;
     }
   }
-  if (Failed) {
+  if (failed) {
     const errorEmbed = new MessageEmbed()
       .setColor('BLURPLE')
       .setAuthor({
@@ -395,13 +404,4 @@ export async function askForDateTime(interaction: CommandInteraction) {
 
 function padTo2Digits(num: string) {
   return num.toString().padStart(2, '0');
-}
-
-export interface ReminderI {
-  userId: string;
-  timeOffset: number;
-  event: string;
-  description: string | null;
-  dateTime: string;
-  repeat: string | null;
 }
