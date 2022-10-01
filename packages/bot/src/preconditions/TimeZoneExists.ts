@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, User } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import Logger from '../lib/utils/logger';
 import { trpcNode } from '../trpc';
 
@@ -15,7 +15,7 @@ export class TimeZoneExists extends Precondition {
   public override async chatInputRun(
     interaction: CommandInteraction
   ): AsyncPreconditionResult {
-    const discordUser = interaction.user as User;
+    const discordUser = interaction.user;
 
     try {
       const user = await trpcNode.user.create.mutate({
@@ -32,8 +32,6 @@ export class TimeZoneExists extends Precondition {
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'set') {
-      const discordUser = interaction.user as User;
-
       const user = await trpcNode.user.getUserById.query({
         id: discordUser.id
       });
