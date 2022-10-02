@@ -9,6 +9,7 @@ import { channelRouter } from './channel';
 import { welcomeRouter } from './welcome';
 import { commandRouter } from './command';
 import { hubRouter } from './hub';
+import { reminderRouter } from './reminder';
 
 /**
  * Create your application's root router
@@ -26,7 +27,8 @@ export const appRouter = t.router({
   channel: channelRouter,
   welcome: welcomeRouter,
   command: commandRouter,
-  hub: hubRouter
+  hub: hubRouter,
+  reminder: reminderRouter
 });
 
 export type AppRouter = typeof appRouter;
