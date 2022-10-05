@@ -71,6 +71,59 @@ export const commandRouter = t.router({
         });
       }
     }),
+  getCommand: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        commandId: z.string()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const clientID = process.env.DISCORD_CLIENT_ID;
+      const { guildId, commandId } = input;
+
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: 'Not Authenticated',
+          code: 'UNAUTHORIZED'
+        });
+      }
+
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          // @ts-ignore
+          userId: ctx.session?.user?.id
+        },
+        select: {
+          access_token: true,
+          providerAccountId: true,
+          user: {
+            select: {
+              discordId: true
+            }
+          }
+        }
+      });
+      try {
+        const response = await fetch(
+          `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
+          {
+            headers: {
+              Authorization: `Bearer ${account?.access_token}`
+            }
+          }
+        );
+        const command = await response.json();
+        if (!command) throw new Error();
+
+        return { command };
+      } catch {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong when trying to fetch guilds'
+        });
+      }
+    }),
   toggleCommand: t.procedure
     .input(
       z.object({
