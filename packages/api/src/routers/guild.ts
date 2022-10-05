@@ -1,6 +1,6 @@
 import { t } from '../trpc';
 import { z } from 'zod';
-import { APIGuild } from 'discord-api-types/v10';
+import { APIGuild, APIRole } from 'discord-api-types/v10';
 import { TRPCError } from '@trpc/server';
 
 export const guildRouter = t.router({
@@ -20,6 +20,42 @@ export const guildRouter = t.router({
       });
 
       return { guild };
+    }),
+  getGuildFromAPI: t.procedure
+    .input(
+      z.object({
+        guildId: z.string()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const token = process.env.DISCORD_BOT_TOKEN;
+      const { guildId } = input;
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: 'Not Authenticated',
+          code: 'UNAUTHORIZED'
+        });
+      }
+
+      try {
+        const response = await fetch(
+          `https://discord.com/api/guilds/${guildId}`,
+          {
+            headers: {
+              Authorization: `Bot ${token}`
+            }
+          }
+        );
+
+        const guild: APIGuild = await response.json();
+
+        return { guild };
+      } catch {
+        throw new TRPCError({
+          message: 'Not Found',
+          code: 'NOT_FOUND'
+        });
+      }
     }),
   getGuildAndUser: t.procedure
     .input(
@@ -331,5 +367,35 @@ export const guildRouter = t.router({
         where: { id: guildId },
         data: { volume }
       });
+    }),
+  getRoles: t.procedure
+    .input(
+      z.object({
+        guildId: z.string()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { guildId } = input;
+      const token = process.env.DISCORD_TOKEN;
+
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: 'Not Authenticated',
+          code: 'UNAUTHORIZED'
+        });
+      }
+
+      const response = await fetch(
+        `https://discord.com/api/guilds/${guildId}/roles`,
+        {
+          headers: {
+            Authorization: `Bot ${token}`
+          }
+        }
+      );
+
+      const roles: APIRole[] = await response.json();
+
+      return { roles };
     })
 });
