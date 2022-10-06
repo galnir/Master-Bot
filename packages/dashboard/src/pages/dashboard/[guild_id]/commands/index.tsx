@@ -1,11 +1,11 @@
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { useRouter } from 'next/router';
 import type { ReactElement } from 'react';
-import CommandInfo from '../../../components/CommandInfo';
-import DashboardLayout from '../../../components/DashboardLayout';
-import { getServerSession } from '../../../shared/get-server-session';
-import { trpc } from '../../../utils/trpc';
-import { NextPageWithLayout } from '../../_app';
+import CommandInfo from '../../../../components/CommandInfo';
+import DashboardLayout from '../../../../components/DashboardLayout';
+import { getServerSession } from '../../../../shared/get-server-session';
+import { trpc } from '../../../../utils/trpc';
+import { NextPageWithLayout } from '../../../_app';
 
 const CommandsDashboardPage: NextPageWithLayout = () => {
   const router = useRouter();
