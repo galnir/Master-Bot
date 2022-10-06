@@ -227,6 +227,71 @@ export const commandRouter = t.router({
         });
       }
     }),
+  editCommandPermissions: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        commandId: z.string(),
+        permissions: z.array(
+          z.object({
+            id: z.string(),
+            type: z.number(),
+            permission: z.boolean()
+          })
+        )
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const clientID = process.env.DISCORD_CLIENT_ID;
+      const { guildId, commandId, permissions } = input;
+
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: 'Not Authenticated',
+          code: 'UNAUTHORIZED'
+        });
+      }
+
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          // @ts-ignore
+          userId: ctx.session?.user?.id
+        },
+        select: {
+          access_token: true,
+          providerAccountId: true,
+          user: {
+            select: {
+              discordId: true
+            }
+          }
+        }
+      });
+
+      try {
+        const response = await fetch(
+          `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${account?.access_token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ permissions })
+          }
+        );
+        const command = await response.json();
+        if (!command) throw new Error();
+
+        return { command };
+      } catch {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong when trying to fetch guilds'
+        });
+      }
+    }),
+
   toggleCommand: t.procedure
     .input(
       z.object({
