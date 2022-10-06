@@ -1,8 +1,15 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import {
+  APIGuildChannel,
+  APIRole,
+  ChannelType,
+  APIApplicationCommandPermission
+} from 'discord-api-types/v10';
 
-type CommandType = {
+export type CommandType = {
+  code: number;
   id: string;
   applicationId: string;
   version: string;
@@ -13,6 +20,18 @@ type CommandType = {
   description: string;
   dm_permission: boolean;
   options: any[];
+};
+
+export type CommandPermissionsResponseOkay = {
+  id: string;
+  application_id: string;
+  guild_id: string;
+  permissions: APIApplicationCommandPermission[];
+};
+
+export type CommandPermissionsResponseNotOkay = {
+  message: string;
+  code: number;
 };
 
 export const commandRouter = t.router({
@@ -71,7 +90,91 @@ export const commandRouter = t.router({
         });
       }
     }),
-  getCommand: t.procedure
+  getCommandAndGuildChannels: t.procedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        commandId: z.string()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      if (!ctx.session) {
+        throw new TRPCError({
+          message: 'Not Authenticated',
+          code: 'UNAUTHORIZED'
+        });
+      }
+
+      const token = process.env.DISCORD_TOKEN;
+      const clientID = process.env.DISCORD_CLIENT_ID;
+      const { guildId, commandId } = input;
+
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          // @ts-ignore
+          userId: ctx.session?.user?.id
+        },
+        select: {
+          access_token: true,
+          providerAccountId: true,
+          user: {
+            select: {
+              discordId: true
+            }
+          }
+        }
+      });
+
+      try {
+        const [
+          guildChannelsResponse,
+          guildRolesResponse,
+          commandResponse,
+          permissionsResponse
+        ] = await Promise.all([
+          fetch(`https://discord.com/api/guilds/${guildId}/channels`, {
+            headers: {
+              Authorization: `Bot ${token}`
+            }
+          }).then(res => res.json()) as Promise<unknown>,
+          fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
+            headers: {
+              Authorization: `Bot ${token}`
+            }
+          }).then(res => res.json()) as Promise<unknown>,
+          fetch(
+            `https://discord.com/api/applications/${clientID}/commands/${commandId}`,
+            {
+              headers: {
+                Authorization: `Bot ${token}`
+              }
+            }
+          ).then(res => res.json()) as Promise<unknown>,
+          fetch(
+            `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
+            {
+              headers: {
+                Authorization: `Bearer ${account?.access_token}`
+              }
+            }
+          ).then(res => res.json()) as Promise<any>
+        ]);
+
+        const channels =
+          guildChannelsResponse as APIGuildChannel<ChannelType>[];
+        const roles = guildRolesResponse as APIRole[];
+        const command = commandResponse as CommandType;
+        const permissions = permissionsResponse as any;
+
+        return { channels, roles, command, permissions };
+      } catch {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Something went wrong when trying to fetch guilds'
+        });
+      }
+    }),
+  getCommandPermissions: t.procedure
     .input(
       z.object({
         guildId: z.string(),
