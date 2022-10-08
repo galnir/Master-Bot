@@ -196,7 +196,7 @@ const PermissionsEdit = ({
                   xmlns="http://www.w3.org/2000/svg"
                   className="cursor-pointer ml-1"
                   onClick={() =>
-                    handleRoleChange({ id: role.id, type: 'allow' })
+                    handleRoleChange({ id: role.id, type: 'deny' })
                   }
                 >
                   <path
@@ -277,7 +277,7 @@ const PermissionsEdit = ({
                   xmlns="http://www.w3.org/2000/svg"
                   className="cursor-pointer ml-1"
                   onClick={() =>
-                    handleRoleChange({ id: role.id, type: 'deny' })
+                    handleRoleChange({ id: role.id, type: 'allow' })
                   }
                 >
                   <path
