@@ -76,27 +76,38 @@ const CommandPageComponent = ({
   return (
     <div className="p-5">
       <h1 className="font-bold text-2xl mb-10">Edit /{command.name}</h1>
-      <PermissionsEdit roles={sortRolePermissions({ roles, permissions })} />
+      <PermissionsEdit
+        allRoles={roles}
+        roles={sortRolePermissions({ roles, permissions })}
+      />
     </div>
   );
 };
 
 const PermissionsEdit = ({
-  roles
+  roles,
+  allRoles
 }: {
   roles: {
     allowedRoles: Role[];
     deniedRoles: Role[];
   };
+  allRoles: APIRole[];
 }) => {
   const router = useRouter();
   const guildId = router.query.guild_id as string;
   const commandId = router.query.command_id as string;
 
+  const allowedIds = roles.allowedRoles.map(r => r.id);
+  const deniedIds = roles.deniedRoles.map(r => r.id);
+
   const [allowedRoles, setAllowedRoles] = useState(roles.allowedRoles);
   const [deniedRoles, setDeniedRoles] = useState(roles.deniedRoles);
 
   const [disableSave, setDisableSave] = useState(false);
+
+  const [openAllowModal, setOpenAllowModal] = useState(false);
+  const [openDenyModal, setOpenDenyModal] = useState(false);
 
   const { mutate } = trpc.command.editCommandPermissions.useMutation();
   const utils = trpc.useContext();
@@ -161,12 +172,17 @@ const PermissionsEdit = ({
       <div className="mt-10 flex flex-col gap-4">
         <h2 className="font-bold text-slate-300">Role permissions</h2>
         <div className="w-fit">
-          <h3>Allowed Roles</h3>
+          <h1>Deny for</h1>
           <div className="max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
-            {allowedRoles.map(role => (
+            {deniedRoles.map(role => (
               <div
                 key={role.id}
-                style={{ backgroundColor: `#${role.color.toString(16)}` }}
+                style={{
+                  backgroundColor:
+                    role.color.toString(16) == '0'
+                      ? 'gray'
+                      : `#${role.color.toString(16)}`
+                }}
                 className={`flex rounded-lg px-2 py-1 text-white items-center`}
               >
                 <div>
@@ -192,15 +208,64 @@ const PermissionsEdit = ({
                 </svg>
               </div>
             ))}
+            <div className="relative">
+              <div
+                className={`p-2 text-white hover:cursor-pointer ${
+                  openDenyModal ? 'text-blue-700' : ''
+                }`}
+                onClick={() => setOpenDenyModal(state => !state)}
+              >
+                +
+              </div>
+              {openDenyModal ? (
+                <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
+                  <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
+                    {allRoles
+                      .filter(role => !deniedIds.includes(role.id))
+                      .map(role => {
+                        return (
+                          <div
+                            onClick={() => {
+                              setDeniedRoles(state => [
+                                ...state,
+                                {
+                                  id: role.id,
+                                  name: role.name,
+                                  color: role.color
+                                }
+                              ]);
+                              if (allowedIds.includes(role.id)) {
+                                setAllowedRoles(state =>
+                                  state.filter(r => r.id !== role.id)
+                                );
+                              }
+                              setOpenDenyModal(false);
+                            }}
+                            className="hover:bg-slate-700 hover:cursor-pointer"
+                            key={role.id}
+                          >
+                            {role.name}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
         <div className="w-fit">
-          <h3>Denied Roles</h3>
+          <div>Allow for</div>
           <div className="p-2 max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
-            {deniedRoles.map(role => (
+            {allowedRoles.map(role => (
               <div
                 key={role.id}
-                style={{ backgroundColor: `#${role.color.toString(16)}` }}
+                style={{
+                  backgroundColor:
+                    role.color.toString(16) == '0'
+                      ? 'gray'
+                      : `#${role.color.toString(16)}`
+                }}
                 className={`flex rounded-lg px-2 py-1 text-white items-center`}
               >
                 <div>@{role.name}</div>
@@ -224,6 +289,51 @@ const PermissionsEdit = ({
                 </svg>
               </div>
             ))}
+            <div className="relative">
+              <div
+                className={`p-2 text-white hover:cursor-pointer ${
+                  openAllowModal ? 'text-blue-700' : ''
+                }`}
+                onClick={() => setOpenAllowModal(state => !state)}
+              >
+                +
+              </div>
+              {openAllowModal ? (
+                <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
+                  <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
+                    {allRoles
+                      .filter(role => !allowedIds.includes(role.id))
+                      .map(role => {
+                        return (
+                          <div
+                            onClick={() => {
+                              setAllowedRoles(state => [
+                                ...state,
+                                {
+                                  id: role.id,
+                                  name: role.name,
+                                  color: role.color
+                                }
+                              ]);
+                              if (deniedIds.includes(role.id)) {
+                                setDeniedRoles(state =>
+                                  state.filter(r => r.id !== role.id)
+                                );
+                              }
+
+                              setOpenAllowModal(false);
+                            }}
+                            className="hover:bg-slate-700 hover:cursor-pointer"
+                            key={role.id}
+                          >
+                            {role.name}
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
