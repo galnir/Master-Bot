@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
   const router = useRouter();
   const query = router.query.guild_id;
 
@@ -26,9 +25,12 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       <main className="flex text-gray-400 w-full h-screen relative overflow-auto">
         <div className="min-w-[350px]">
           <div className="min-w-[350px] border-r-2 h-full border-gray-500 p-8 fixed">
-            <div className="mb-8">
-              <Logo />
-            </div>
+            <Link href={`/dashboard/${query}`}>
+              <div className="mb-8 hover:cursor-pointer">
+                <Logo />
+              </div>
+            </Link>
+
             <div className="bg-black text-center text-white font-semibold py-2 mb-12 rounded-xl">
               <p>
                 {isLoading && !data ? 'Loading Guild...' : data!.guild!.name}
