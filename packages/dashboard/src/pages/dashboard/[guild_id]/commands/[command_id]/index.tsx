@@ -247,6 +247,7 @@ const PermissionsEdit = ({
                       {allRoles
                         .filter(role => !deniedIds.includes(role.id))
                         .map(role => {
+                          if (role.name === '@everyone') return;
                           return (
                             <div
                               onClick={() => {
@@ -342,6 +343,7 @@ const PermissionsEdit = ({
                       {allRoles
                         .filter(role => !allowedIds.includes(role.id))
                         .map(role => {
+                          if (role.name === '@everyone') return;
                           return (
                             <div
                               onClick={() => {
