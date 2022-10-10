@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
 import DashboardLayout from '../../../../../components/DashboardLayout';
@@ -13,6 +13,7 @@ import {
   APIRole,
   APIApplicationCommandPermission
 } from 'discord-api-types/v10';
+import { toast } from 'react-toastify';
 
 type Role = { name: string; id: string; color: number };
 
@@ -65,7 +66,6 @@ const CommandPage: NextPageWithLayout = () => {
 const CommandPageComponent = ({
   command,
   roles,
-  channels,
   permissions
 }: {
   command: CommandType;
@@ -109,6 +109,14 @@ const PermissionsEdit = ({
   const [openAllowModal, setOpenAllowModal] = useState(false);
   const [openDenyModal, setOpenDenyModal] = useState(false);
 
+  const [selectedRadio, setSelectedRadio] = useState(
+    allowedIds.length ? 'deny' : 'allow'
+  );
+  const isRadioSelected = (value: string) => selectedRadio === value;
+
+  const handleRadioClick = (e: React.ChangeEvent<HTMLInputElement>): void =>
+    setSelectedRadio(e.currentTarget.value);
+
   const { mutate } = trpc.command.editCommandPermissions.useMutation();
   const utils = trpc.useContext();
 
@@ -140,15 +148,18 @@ const PermissionsEdit = ({
       {
         guildId,
         commandId,
-        permissions: [...allowedPerms, ...deniedPerms]
+        permissions: selectedRadio === 'allow' ? deniedPerms : allowedPerms,
+        type: selectedRadio
       },
       {
         onSuccess: () => {
           utils.command.getCommandAndGuildChannels.invalidate();
           setDisableSave(false);
+          toast.success('Permissions updated!');
         },
         onError: () => {
           setDisableSave(false);
+          toast.error('An error occurred while updating permissions.');
         },
         onSettled: () => {
           setDisableSave(false);
@@ -172,169 +183,197 @@ const PermissionsEdit = ({
       <div className="mt-10 flex flex-col gap-4">
         <h2 className="font-bold text-slate-300">Role permissions</h2>
         <div className="w-fit">
-          <h1>Deny for</h1>
-          <div className="max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
-            {deniedRoles.map(role => (
-              <div
-                key={role.id}
-                style={{
-                  backgroundColor:
-                    role.color.toString(16) == '0'
-                      ? 'gray'
-                      : `#${role.color.toString(16)}`
-                }}
-                className={`flex rounded-lg px-2 py-1 text-white items-center`}
-              >
-                <div>
-                  {role.name == '@everyone' ? '@everyone' : `@${role.name}`}
-                </div>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="cursor-pointer ml-1"
-                  onClick={() =>
-                    handleRoleChange({ id: role.id, type: 'deny' })
-                  }
-                >
-                  <path
-                    d="M7.757 7.757l8.486 8.486m0-8.486l-8.486 8.486"
-                    stroke="#9B9D9F"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  ></path>
-                </svg>
-              </div>
-            ))}
-            <div className="relative">
-              <div
-                className={`p-2 text-white hover:cursor-pointer ${
-                  openDenyModal ? 'text-blue-700' : ''
-                }`}
-                onClick={() => setOpenDenyModal(state => !state)}
-              >
-                +
-              </div>
-              {openDenyModal ? (
-                <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
-                  <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
-                    {allRoles
-                      .filter(role => !deniedIds.includes(role.id))
-                      .map(role => {
-                        return (
-                          <div
-                            onClick={() => {
-                              setDeniedRoles(state => [
-                                ...state,
-                                {
-                                  id: role.id,
-                                  name: role.name,
-                                  color: role.color
-                                }
-                              ]);
-                              if (allowedIds.includes(role.id)) {
-                                setAllowedRoles(state =>
-                                  state.filter(r => r.id !== role.id)
-                                );
-                              }
-                              setOpenDenyModal(false);
-                            }}
-                            className="hover:bg-slate-700 hover:cursor-pointer"
-                            key={role.id}
-                          >
-                            {role.name}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              ) : null}
-            </div>
+          <div className="flex gap-2">
+            <input
+              type="radio"
+              checked={isRadioSelected('allow')}
+              value="allow"
+              name="role"
+              onChange={handleRadioClick}
+            />
+            <h1>Allow for everyone except</h1>
           </div>
+          {selectedRadio === 'deny' ? null : (
+            <div className="max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
+              {deniedRoles.map(role => {
+                if (role.name === '@everyone') return null;
+                return (
+                  <div
+                    key={role.id}
+                    style={{
+                      backgroundColor:
+                        role.color.toString(16) == '0'
+                          ? 'gray'
+                          : `#${role.color.toString(16)}`
+                    }}
+                    className={`flex rounded-lg px-2 py-1 text-white items-center`}
+                  >
+                    <div>
+                      {role.name == '@everyone' ? '@everyone' : `@${role.name}`}
+                    </div>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="cursor-pointer ml-1"
+                      onClick={() =>
+                        handleRoleChange({ id: role.id, type: 'deny' })
+                      }
+                    >
+                      <path
+                        d="M7.757 7.757l8.486 8.486m0-8.486l-8.486 8.486"
+                        stroke="#9B9D9F"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      ></path>
+                    </svg>
+                  </div>
+                );
+              })}
+              <div className="relative">
+                <div
+                  className={`p-2 text-white hover:cursor-pointer ${
+                    openDenyModal ? 'text-blue-700' : ''
+                  }`}
+                  onClick={() => setOpenDenyModal(state => !state)}
+                >
+                  +
+                </div>
+                {openDenyModal ? (
+                  <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
+                    <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
+                      {allRoles
+                        .filter(role => !deniedIds.includes(role.id))
+                        .map(role => {
+                          return (
+                            <div
+                              onClick={() => {
+                                setDeniedRoles(state => [
+                                  ...state,
+                                  {
+                                    id: role.id,
+                                    name: role.name,
+                                    color: role.color
+                                  }
+                                ]);
+                                if (allowedIds.includes(role.id)) {
+                                  setAllowedRoles(state =>
+                                    state.filter(r => r.id !== role.id)
+                                  );
+                                }
+                                setOpenDenyModal(false);
+                              }}
+                              className="hover:bg-slate-700 hover:cursor-pointer"
+                              key={role.id}
+                            >
+                              {role.name}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          )}
         </div>
         <div className="w-fit">
-          <div>Allow for</div>
-          <div className="p-2 max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
-            {allowedRoles.map(role => (
-              <div
-                key={role.id}
-                style={{
-                  backgroundColor:
-                    role.color.toString(16) == '0'
-                      ? 'gray'
-                      : `#${role.color.toString(16)}`
-                }}
-                className={`flex rounded-lg px-2 py-1 text-white items-center`}
-              >
-                <div>@{role.name}</div>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="cursor-pointer ml-1"
-                  onClick={() =>
-                    handleRoleChange({ id: role.id, type: 'allow' })
-                  }
-                >
-                  <path
-                    d="M7.757 7.757l8.486 8.486m0-8.486l-8.486 8.486"
-                    stroke="#9B9D9F"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  ></path>
-                </svg>
-              </div>
-            ))}
-            <div className="relative">
-              <div
-                className={`p-2 text-white hover:cursor-pointer ${
-                  openAllowModal ? 'text-blue-700' : ''
-                }`}
-                onClick={() => setOpenAllowModal(state => !state)}
-              >
-                +
-              </div>
-              {openAllowModal ? (
-                <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
-                  <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
-                    {allRoles
-                      .filter(role => !allowedIds.includes(role.id))
-                      .map(role => {
-                        return (
-                          <div
-                            onClick={() => {
-                              setAllowedRoles(state => [
-                                ...state,
-                                {
-                                  id: role.id,
-                                  name: role.name,
-                                  color: role.color
-                                }
-                              ]);
-                              if (deniedIds.includes(role.id)) {
-                                setDeniedRoles(state =>
-                                  state.filter(r => r.id !== role.id)
-                                );
-                              }
-
-                              setOpenAllowModal(false);
-                            }}
-                            className="hover:bg-slate-700 hover:cursor-pointer"
-                            key={role.id}
-                          >
-                            {role.name}
-                          </div>
-                        );
-                      })}
-                  </div>
-                </div>
-              ) : null}
-            </div>
+          <div className="flex gap-2">
+            <input
+              type="radio"
+              checked={isRadioSelected('deny')}
+              value="deny"
+              name="role"
+              onChange={handleRadioClick}
+            />
+            <h1>Deny for everyone except</h1>
           </div>
+          {selectedRadio === 'deny' ? (
+            <div className="p-2 max-w-[320px] flex gap-4 flex-wrap bg-black rounded-lg">
+              {allowedRoles.map(role => {
+                if (role.name == '@everyone') return null;
+                return (
+                  <div
+                    key={role.id}
+                    style={{
+                      backgroundColor:
+                        role.color.toString(16) == '0'
+                          ? 'gray'
+                          : `#${role.color.toString(16)}`
+                    }}
+                    className={`flex rounded-lg px-2 py-1 text-white items-center`}
+                  >
+                    {role.name == '@everyone' ? '@everyone' : `@${role.name}`}
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="cursor-pointer ml-1"
+                      onClick={() =>
+                        handleRoleChange({ id: role.id, type: 'allow' })
+                      }
+                    >
+                      <path
+                        d="M7.757 7.757l8.486 8.486m0-8.486l-8.486 8.486"
+                        stroke="#9B9D9F"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      ></path>
+                    </svg>
+                  </div>
+                );
+              })}
+              <div className="relative">
+                <div
+                  className={`p-2 text-white hover:cursor-pointer ${
+                    openAllowModal ? 'text-blue-700' : ''
+                  }`}
+                  onClick={() => setOpenAllowModal(state => !state)}
+                >
+                  +
+                </div>
+                {openAllowModal ? (
+                  <div className="absolute z-10 left-0 bg-white p-2 border border-blue-900">
+                    <div className="flex flex-col gap-2 w-44 max-h-96 overflow-auto">
+                      {allRoles
+                        .filter(role => !allowedIds.includes(role.id))
+                        .map(role => {
+                          return (
+                            <div
+                              onClick={() => {
+                                setAllowedRoles(state => [
+                                  ...state,
+                                  {
+                                    id: role.id,
+                                    name: role.name,
+                                    color: role.color
+                                  }
+                                ]);
+                                if (deniedIds.includes(role.id)) {
+                                  setDeniedRoles(state =>
+                                    state.filter(r => r.id !== role.id)
+                                  );
+                                }
+
+                                setOpenAllowModal(false);
+                              }}
+                              className="hover:bg-slate-700 hover:cursor-pointer"
+                              key={role.id}
+                            >
+                              {role.name}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

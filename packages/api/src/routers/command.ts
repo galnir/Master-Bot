@@ -238,13 +238,13 @@ export const commandRouter = t.router({
             type: z.number(),
             permission: z.boolean()
           })
-        )
+        ),
+        type: z.string()
       })
     )
     .mutation(async ({ ctx, input }) => {
       const clientID = process.env.DISCORD_CLIENT_ID;
-      const { guildId, commandId, permissions } = input;
-
+      const { guildId, commandId, permissions, type } = input;
       if (!ctx.session) {
         throw new TRPCError({
           message: 'Not Authenticated',
@@ -268,6 +268,12 @@ export const commandRouter = t.router({
         }
       });
 
+      let everyone = {
+        id: guildId,
+        type: 1,
+        permission: type === 'allow' ? true : false
+      };
+
       try {
         const response = await fetch(
           `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
@@ -277,7 +283,7 @@ export const commandRouter = t.router({
               Authorization: `Bearer ${account?.access_token}`,
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ permissions })
+            body: JSON.stringify({ permissions: [everyone, ...permissions] })
           }
         );
         const command = await response.json();
