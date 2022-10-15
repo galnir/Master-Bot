@@ -7,6 +7,15 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@master-bot/api/src/db/client';
 import { env } from '../../../env/server.mjs';
 
+const perms = [
+  'identify',
+  'guilds',
+  'email',
+  'applications.commands.permissions.update'
+];
+
+const scope = perms.join(' ');
+
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
@@ -27,7 +36,11 @@ export const authOptions: NextAuthOptions = {
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
       clientSecret: env.DISCORD_CLIENT_SECRET,
-      authorization: { params: { scope: 'identify guilds' } },
+      authorization: {
+        params: {
+          scope
+        }
+      },
       profile(profile: DiscordProfile) {
         return {
           id: profile.id,

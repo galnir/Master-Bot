@@ -1,4 +1,5 @@
 import { Switch } from '@headlessui/react';
+import Link from 'next/link';
 import React from 'react';
 import { trpc } from '../../utils/trpc';
 
@@ -58,7 +59,16 @@ const CommandInfo = ({
         </h2>
         <h3>{description}</h3>
       </div>
-      <div>
+      <div className="flex gap-2">
+        <Link href={`/dashboard/${guildId}/commands/${commandId}`}>
+          <div
+            className={`hover:cursor-pointer ${
+              disabled ? 'text-gray-700' : ''
+            }`}
+          >
+            Edit
+          </div>
+        </Link>
         <Switch
           disabled={disableSwitch}
           checked={!disabled}
