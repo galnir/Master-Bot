@@ -1,6 +1,9 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
+import { getFetch } from '@trpc/client';
+
+const fetch = getFetch();
 
 export const hubRouter = t.router({
   create: t.procedure

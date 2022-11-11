@@ -1,6 +1,9 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { APIGuildChannel, APIGuildTextChannel } from 'discord-api-types/v10';
+import { getFetch } from '@trpc/client';
+
+const fetch = getFetch();
 
 export const channelRouter = t.router({
   getAll: t.procedure

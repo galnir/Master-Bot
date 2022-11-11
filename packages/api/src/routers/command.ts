@@ -7,6 +7,9 @@ import {
   ChannelType,
   APIApplicationCommandPermission
 } from 'discord-api-types/v10';
+import { getFetch } from '@trpc/client';
+
+const fetch = getFetch();
 
 export type CommandType = {
   code: number;
@@ -136,12 +139,12 @@ export const commandRouter = t.router({
             headers: {
               Authorization: `Bot ${token}`
             }
-          }).then(res => res.json()) as Promise<unknown>,
+          }).then((res: any) => res.json()) as Promise<unknown>,
           fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
             headers: {
               Authorization: `Bot ${token}`
             }
-          }).then(res => res.json()) as Promise<unknown>,
+          }).then((res: any) => res.json()) as Promise<unknown>,
           fetch(
             `https://discord.com/api/applications/${clientID}/commands/${commandId}`,
             {
@@ -149,7 +152,7 @@ export const commandRouter = t.router({
                 Authorization: `Bot ${token}`
               }
             }
-          ).then(res => res.json()) as Promise<unknown>,
+          ).then((res: any) => res.json()) as Promise<unknown>,
           fetch(
             `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
             {
@@ -157,7 +160,7 @@ export const commandRouter = t.router({
                 Authorization: `Bearer ${account?.access_token}`
               }
             }
-          ).then(res => res.json()) as Promise<any>
+          ).then((res: any) => res.json()) as Promise<any>
         ]);
 
         const channels =

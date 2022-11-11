@@ -2,6 +2,9 @@ import { t } from '../trpc';
 import { z } from 'zod';
 import { APIGuild, APIRole } from 'discord-api-types/v10';
 import { TRPCError } from '@trpc/server';
+import { getFetch } from '@trpc/client';
+
+const fetch = getFetch();
 
 export const guildRouter = t.router({
   getGuild: t.procedure
