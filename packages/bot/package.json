@@ -24,7 +24,7 @@
     "@sapphire/framework": "^3.1.3",
     "@sapphire/time-utilities": "^1.7.8",
     "@sapphire/utilities": "^3.11.0",
-    "@trpc/client": "^10.0.0-proxy-beta.7",
+    "@trpc/client": "^10.1.0",
     "axios": "^0.27.2",
     "discord-api-types": "^0.33.4",
     "discord.js": "^13.8.0",
