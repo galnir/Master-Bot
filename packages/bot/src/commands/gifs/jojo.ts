@@ -18,7 +18,7 @@ export class JojoCommand extends Command {
     if (!process.env.TENOR_API) return;
     axios
       .get(
-        `https://api.tenor.com/v1/random?key=${process.env.TENOR_API}&q=jojo&limit=1`
+        `https://tenor.googleapis.com/v2/search?key=${process.env.TENOR_API}&q=jojo&limit=1&random=true`
       )
       .then(async response => {
         return await interaction.reply({
