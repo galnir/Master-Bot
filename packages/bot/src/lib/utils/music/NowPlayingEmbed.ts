@@ -1,5 +1,5 @@
 import { container } from '@sapphire/framework';
-import { ColorResolvable, MessageEmbed } from 'discord.js';
+import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from '../queue/Song';
 
@@ -32,7 +32,7 @@ export class NowPlayingEmbed {
     this.paused = paused;
   }
 
-  public async NowPlayingEmbed(): Promise<MessageEmbed> {
+  public async NowPlayingEmbed(): Promise<EmbedBuilder> {
     let trackLength = this.timeString(
       this.millisecondsToTimeObject(this.length)
     );
@@ -123,7 +123,7 @@ export class NowPlayingEmbed {
         }
       );
     }
-    const baseEmbed = new MessageEmbed()
+    const baseEmbed = new EmbedBuilder()
       .setTitle(
         `${this.paused ? ':pause_button: ' : ':arrow_forward: '} ${
           this.track.title

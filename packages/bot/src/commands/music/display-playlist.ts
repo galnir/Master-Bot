@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { trpcNode } from '../../trpc';
 
@@ -19,10 +15,18 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class DisplayPlaylistCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const playlistName = interaction.options.getString('playlist-name', true);
 
-    const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member?.user;
+
+    if (!interactionMember) {
+      return await interaction.reply({
+        content: ':x: Something went wrong! Please try again later'
+      });
+    }
 
     const playlistQuery = await trpcNode.playlist.getPlaylist.query({
       name: playlistName,
@@ -37,9 +41,9 @@ export class DisplayPlaylistCommand extends Command {
       );
     }
 
-    const baseEmbed = new MessageEmbed().setColor('#9096e6').setAuthor({
-      name: interactionMember.user.username,
-      iconURL: interactionMember.user.displayAvatarURL()
+    const baseEmbed = new EmbedBuilder().setColor('#9096e6').setAuthor({
+      name: interactionMember.username,
+      iconURL: interactionMember.avatar || undefined
     });
 
     new PaginatedFieldMessageEmbed()
@@ -50,22 +54,25 @@ export class DisplayPlaylistCommand extends Command {
       .setItemsPerPage(5)
       .make()
       .run(interaction);
+
+    return;
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'playlist-name',
-          description: 'What is the name of the playlist you want to display?',
-          type: 'STRING',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('playlist-name')
+            .setDescription(
+              'What is the name of the playlist you want to display?'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }

@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
@@ -19,7 +14,9 @@ import { container } from '@sapphire/framework';
   ]
 })
 export class RemoveCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const position = interaction.options.getInteger('position', true);
 
@@ -36,20 +33,20 @@ export class RemoveCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'position',
-          description:
-            'What is the position of the song you want to remove from the queue?',
-          type: 'INTEGER',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addIntegerOption(option =>
+          option
+            .setName('position')
+            .setDescription(
+              'What is the position of the song you want to remove from the queue?'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }

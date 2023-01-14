@@ -12,7 +12,7 @@ import { trpcNode } from '../trpc';
 })
 export class PlaylistExists extends Precondition {
   public override async chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const playlistName = interaction.options.getString('playlist-name', true);
 

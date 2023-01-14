@@ -5,7 +5,7 @@ import {
   CommandOptions,
   RegisterBehavior
 } from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { CommandInteraction, EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'rockpaperscissors',
@@ -13,14 +13,16 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
   preconditions: ['isCommandDisabled']
 })
 export class RockPaperScissorsCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const move = interaction.options.getString('move', true) as
       | 'rock'
       | 'paper'
       | 'scissors';
     const resultMessage = this.rpsLogic(move);
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setColor('RANDOM')
       .setTitle('Rock, Paper, Scissors')
       .setDescription(`**${resultMessage[0]}**, I formed ${resultMessage[1]}`);
@@ -29,7 +31,7 @@ export class RockPaperScissorsCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand(
       {

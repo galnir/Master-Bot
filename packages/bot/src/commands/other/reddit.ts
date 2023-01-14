@@ -1,14 +1,9 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
+import { Command, CommandOptions } from '@sapphire/framework';
 import {
   ColorResolvable,
-  CommandInteraction,
-  MessageActionRow,
-  MessageSelectMenu
+  ActionRowBuilder,
+  StringSelectMenuBuilder
 } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
@@ -20,7 +15,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RedditCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     await interaction.deferReply();
     const channel = interaction.channel;
     if (!channel) return await interaction.reply('Something went wrong :('); // type guard
@@ -28,8 +25,8 @@ export class RedditCommand extends Command {
     const sort = interaction.options.getString('sort', true);
 
     if (['controversial', 'top'].some(val => val === sort)) {
-      const row = new MessageActionRow().addComponents(
-        new MessageSelectMenu()
+      const row = new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
           .setCustomId('top_or_controversial')
           .setPlaceholder('Please select an option')
           .addOptions(optionsArray)
@@ -67,7 +64,7 @@ export class RedditCommand extends Command {
   }
 
   private async fetchFromReddit(
-    interaction: CommandInteraction,
+    interaction: Command.ChatInputCommandInteraction,
     subreddit: string,
     sort: string,
     timeFilter = 'day'
@@ -136,53 +133,53 @@ export class RedditCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'subreddit',
-          type: 'STRING',
-          required: true,
-          description: 'Subreddit name'
-        },
-        {
-          name: 'sort',
-          type: 'STRING',
-          required: true,
-          description:
-            'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
-          choices: [
-            {
-              name: 'Best',
-              value: 'best'
-            },
-            {
-              name: 'Hot',
-              value: 'hot'
-            },
-            {
-              name: 'New',
-              value: 'new'
-            },
-            {
-              name: 'Top',
-              value: 'top'
-            },
-            {
-              name: 'Controversial',
-              value: 'controversial'
-            },
-            {
-              name: 'Rising',
-              value: 'rising'
-            }
-          ]
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('subreddit')
+            .setDescription('Subreddit name')
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('sort')
+            .setDescription(
+              'What posts do you want to see? Select from best/hot/top/new/controversial/rising'
+            )
+            .setRequired(true)
+            .addChoices(
+              {
+                name: 'Best',
+                value: 'best'
+              },
+              {
+                name: 'Hot',
+                value: 'hot'
+              },
+              {
+                name: 'New',
+                value: 'new'
+              },
+              {
+                name: 'Top',
+                value: 'top'
+              },
+              {
+                name: 'Controversial',
+                value: 'controversial'
+              },
+              {
+                name: 'Rising',
+                value: 'rising'
+              }
+            )
+        )
+    );
   }
 }
 

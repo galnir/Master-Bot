@@ -6,7 +6,9 @@ import type { CommandInteraction } from 'discord.js';
   name: 'musicSongResume'
 })
 export class MusicSongResumeListener extends Listener {
-  public override async run(interaction: CommandInteraction): Promise<void> {
+  public override async run(
+    interaction: Command.ChatInputCommandInteraction
+  ): Promise<void> {
     await interaction.reply({ content: `Track resumed.` });
   }
 }

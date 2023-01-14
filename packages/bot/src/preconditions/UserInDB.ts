@@ -13,7 +13,7 @@ import { trpcNode } from '../trpc';
 })
 export class UserInDB extends Precondition {
   public override async chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const guildMember = interaction.member as GuildMember;
 

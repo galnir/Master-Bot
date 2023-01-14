@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'about',
@@ -12,8 +8,10 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
   preconditions: ['isCommandDisabled']
 })
 export class AboutCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
-    const embed = new MessageEmbed()
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
+    const embed = new EmbedBuilder()
       .setTitle('About')
       .setDescription(
         'A Discord bot with slash commands, playlist support, Spotify, music quiz, saved playlists, lyrics, gifs and more.\n\n :white_small_square: [Commands](https://github.com/galnir/Master-Bot#commands)\n :white_small_square: [Contributors](https://github.com/galnir/Master-Bot#contributors-%EF%B8%8F)'
@@ -24,7 +22,7 @@ export class AboutCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

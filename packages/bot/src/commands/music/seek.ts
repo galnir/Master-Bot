@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
@@ -19,7 +14,9 @@ import { container } from '@sapphire/framework';
   ]
 })
 export class SeekCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const seconds = interaction.options.getInteger('seconds', true);
     const milliseconds = seconds * 1000;
@@ -42,20 +39,20 @@ export class SeekCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'seconds',
-          type: 'INTEGER',
-          description:
-            'To what point in the track do you want to seek? (in seconds)',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addIntegerOption(option =>
+          option
+            .setName('seconds')
+            .setDescription(
+              'To what point in the track do you want to seek? (in seconds)'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }

@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
@@ -15,7 +10,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class GameSearchCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     if (!process.env.RAWG_API)
       return await interaction.reply(
         ':x: Command is Disabled - Missing API Key'
@@ -168,24 +165,24 @@ export class GameSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     if (!process.env.RAWG_API) {
       Logger.info('Game-Search-Command - Disabled');
       return;
     } else Logger.info('Game-Search-Command - Enabled');
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'game',
-          description: 'What game do you want to look up?',
-          required: true,
-          type: 'STRING'
-        }
-      ]
-    });
+
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('game')
+            .setDescription('What game do you want to look up?')
+            .setRequired(true)
+        )
+    );
   }
 
   private filterTitle(title: string) {

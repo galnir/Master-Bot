@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   CommandInteraction,
   MessageAttachment,
-  MessageEmbed,
+  EmbedBuilder,
   MessageReaction,
   User,
   Message
@@ -13,7 +13,7 @@ import Logger from '../logger';
 
 export class Connect4Game {
   public async connect4(
-    interaction: CommandInteraction,
+    interaction: Command.ChatInputCommandInteraction,
     playerMap: Map<string, User>
   ) {
     const player1 = interaction.user;
@@ -74,7 +74,7 @@ export class Connect4Game {
       await createBoard();
       ++currentTurn;
 
-      const Embed = new MessageEmbed()
+      const Embed = new EmbedBuilder()
         .setThumbnail(player1Avatar)
         .setColor('RED')
         .setTitle(`Connect 4 - Player 1's Turn`)
@@ -336,7 +336,7 @@ export class Connect4Game {
       async function playerMove(
         index: number,
         user: User,
-        instance: MessageEmbed
+        instance: EmbedBuilder
       ) {
         if (currentPlayer === 'Game Over' || row[index].length === 0) {
           return;

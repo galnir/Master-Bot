@@ -1,6 +1,6 @@
 import {
   CommandInteraction,
-  MessageEmbed,
+  EmbedBuilder,
   User,
   MessageActionRow,
   MessageButton
@@ -9,19 +9,19 @@ import {
 export class GameInvite {
   title: string;
   players: User[];
-  interaction: CommandInteraction;
+  interaction: Command.ChatInputCommandInteraction;
 
   public constructor(
     title: string,
     players: User[],
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ) {
     this.title = title;
     this.players = players;
     this.interaction = interaction;
   }
 
-  public gameInviteEmbed(): MessageEmbed {
+  public gameInviteEmbed(): EmbedBuilder {
     let thumbnail: string = '';
     switch (this.title) {
       case 'Connect 4':
@@ -32,11 +32,11 @@ export class GameInvite {
         break;
 
       default:
-        thumbnail = this.interaction.user.displayAvatarURL({ dynamic: true });
+        thumbnail = this.interaction.user.displayAvatarURL();
         break;
     }
 
-    const gameInvite = new MessageEmbed()
+    const gameInvite = new EmbedBuilder()
       .setAuthor({
         name: this.interaction.user.username,
         iconURL: this.interaction.user.avatar

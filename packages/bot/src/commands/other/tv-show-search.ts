@@ -15,7 +15,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class TVShowSearchCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const query = interaction.options.getString('query', true);
 
     try {
@@ -70,7 +72,7 @@ export class TVShowSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

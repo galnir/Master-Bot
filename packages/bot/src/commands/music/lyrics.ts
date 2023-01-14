@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { GeniusLyrics } from 'genius-discord-lyrics';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
@@ -19,7 +15,9 @@ const genius = new GeniusLyrics(process.env.GENIUS_API || '');
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class LyricsCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     let title = interaction.options.getString('title');
 
@@ -41,7 +39,7 @@ export class LyricsCommand extends Command {
       const lyrics = (await genius.fetchLyrics(title)) as string;
       const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
       const paginatedLyrics = new PaginatedMessage({
-        template: new MessageEmbed()
+        template: new EmbedBuilder()
           .setColor('#ff0000')
           .setTitle(title)
           .setFooter({
@@ -71,18 +69,18 @@ export class LyricsCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'title',
-          description: ':mag: What song lyrics would you like to get?',
-          type: 'STRING'
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('title')
+            .setDescription(':mag: What song lyrics would you like to get?')
+            .setRequired(true)
+        )
+    );
   }
 }

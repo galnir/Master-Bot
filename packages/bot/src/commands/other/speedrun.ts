@@ -6,7 +6,7 @@ import {
   CommandOptions
 } from '@sapphire/framework';
 import axios from 'axios';
-import { CommandInteraction, MessageEmbed, Constants } from 'discord.js';
+import { CommandInteraction, EmbedBuilder, Constants } from 'discord.js';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -15,7 +15,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class SpeedRunCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const query = interaction.options.getString('game', true);
     let queryCat = interaction.options.getString('category', false);
 
@@ -56,7 +58,7 @@ export class SpeedRunCommand extends Command {
       initial.data.slice(0, 6).forEach((id: any) => {
         gameNameArr.push(id.names.international);
       });
-      let gameName = new MessageEmbed()
+      let gameName = new EmbedBuilder()
         .setColor('#3E8657')
         .setTitle(':mag: Search Results')
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
@@ -90,7 +92,7 @@ export class SpeedRunCommand extends Command {
       await interaction
         .reply({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setColor('#3E8657')
               .setDescription('Getting Data')
           ],
@@ -136,7 +138,7 @@ export class SpeedRunCommand extends Command {
           } catch (error: any) {
             new PaginatedMessage()
               .addPageEmbed(
-                new MessageEmbed()
+                new EmbedBuilder()
                   .setColor('RED')
                   .setTitle('Error')
                   .setDescription(error.toString())
@@ -146,7 +148,7 @@ export class SpeedRunCommand extends Command {
           await interaction
             .update({
               embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                   .setColor('#3E8657')
                   .setDescription('Getting Data')
               ],
@@ -167,7 +169,7 @@ export class SpeedRunCommand extends Command {
         if (
           category.category.data.name.toLowerCase() == queryCat?.toLowerCase()
         ) {
-          const catRules = new MessageEmbed()
+          const catRules = new EmbedBuilder()
             .setDescription(
               category.category.data.rules.toString().length
                 ? `**${category.category.data.name} Rules**:\n` +
@@ -266,7 +268,7 @@ export class SpeedRunCommand extends Command {
     } catch (error: any) {
       Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
       return new PaginatedMessage().addPageEmbed(
-        new MessageEmbed()
+        new EmbedBuilder()
           .setColor('RED')
           .setTitle('Error')
           .setDescription(error.toString())
@@ -323,7 +325,7 @@ export class SpeedRunCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

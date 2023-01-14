@@ -6,7 +6,7 @@ import {
   saveReminder,
   removeReminder
 } from './../../lib/utils/reminders/handleReminders';
-import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
+import { PaginatedFieldEmbedBuilder } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   ApplicationCommandRegistry,
@@ -17,7 +17,7 @@ import {
   CommandInteraction,
   MessageActionRow,
   MessageButton,
-  MessageEmbed,
+  EmbedBuilder,
   User
 } from 'discord.js';
 import { Time } from '@sapphire/time-utilities';
@@ -30,7 +30,9 @@ import ReminderStore from '../../lib/utils/reminders/ReminderStore';
   preconditions: ['timeZoneExists']
 })
 export class ReminderCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'save-timezone') {
@@ -156,14 +158,14 @@ export class ReminderCommand extends Command {
       const allReminders = await cache.getUsersReminders(keyList);
       const remindersDB = allReminders.map(reminders => JSON.parse(reminders!));
 
-      const baseEmbed = new MessageEmbed()
+      const baseEmbed = new EmbedBuilder()
         .setColor('#9096e6')
         .setAuthor({
           name: `⏰ ${interactionUser.username} - Reminder List`
         })
         .setTimestamp();
 
-      const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
+      const paginatedFieldTemplate = new PaginatedFieldEmbedBuilder()
         .setTitleField(`Reminders`)
         .setTemplate(baseEmbed)
         .setItems(remindersDB)
@@ -232,7 +234,7 @@ export class ReminderCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

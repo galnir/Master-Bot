@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'ping',
@@ -12,7 +7,9 @@ import type { CommandInteraction } from 'discord.js';
   preconditions: ['isCommandDisabled']
 })
 export class PingCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const ping = interaction.createdTimestamp - Date.now();
     const apiPing = Math.round(interaction.client.ws.ping);
     return await interaction.reply(
@@ -23,7 +20,7 @@ export class PingCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

@@ -1,5 +1,5 @@
 import { container } from '@sapphire/framework';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { convertInputsToISO, nextReminder } from './handleReminders';
 
 export class RemindEmbed {
@@ -28,7 +28,7 @@ export class RemindEmbed {
   public RemindEmbed() {
     const { client } = container;
     const user = client.users.cache.get(this.userId);
-    const baseEmbed = new MessageEmbed()
+    const baseEmbed = new EmbedBuilder()
       .setColor('YELLOW')
       .setTitle(
         `⏰ Reminder - ${

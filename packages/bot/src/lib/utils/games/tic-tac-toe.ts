@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   CommandInteraction,
   MessageAttachment,
-  MessageEmbed,
+  EmbedBuilder,
   MessageReaction,
   User,
   Message
@@ -13,7 +13,7 @@ import Logger from '../logger';
 
 export class TicTacToeGame {
   public async ticTacToe(
-    interaction: CommandInteraction,
+    interaction: Command.ChatInputCommandInteraction,
     playerMap: Map<string, User>
   ) {
     const player1 = interaction.user;
@@ -62,7 +62,7 @@ export class TicTacToeGame {
       await createBoard();
       ++currentTurn;
 
-      const Embed = new MessageEmbed()
+      const Embed = new EmbedBuilder()
         .setThumbnail(player1Avatar)
         .setColor('RED')
         .setTitle(`Tic Tac Toe - Player 1's Turn`)
@@ -336,7 +336,7 @@ export class TicTacToeGame {
         row: number,
         column: number,
         user: User,
-        instance: MessageEmbed
+        instance: EmbedBuilder
       ) {
         const rowsLetters = ['A', 'B', 'C'];
         if (currentPlayer === user.id) {
