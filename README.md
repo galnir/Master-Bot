@@ -207,7 +207,7 @@ A full list of commands for use with Master Bot
 
 ## Resources
 
-[Getting a Tenor API key](https://tenor.com/developer/keyregistration)
+[Getting a Tenor API key](https://developers.google.com/tenor/guides/quickstart)
 
 [Getting a NewsAPI API key](https://newsapi.org/)
 
