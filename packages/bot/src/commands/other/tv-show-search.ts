@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
@@ -74,18 +69,17 @@ export class TVShowSearchCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'query',
-          description: 'What TV show do you want to look up?',
-          type: 'STRING',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('query')
+            .setDescription('What TV show do you want to look up?')
+            .setRequired(true)
+        )
+    );
   }
 
   private getData(query: string): Promise<ResponseData> {

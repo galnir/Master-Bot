@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, EmbedBuilder } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 

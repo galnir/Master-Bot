@@ -1,11 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  container
-} from '@sapphire/framework';
-import { CommandInteraction, EmbedBuilder } from 'discord.js';
+import { Command, CommandOptions, container } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -39,10 +34,10 @@ export class TwitchStatusCommand extends Command {
               ? `${user.display_name} - Online`
               : `${user.display_name} - Offline`
           }`,
-          icon_url: user.profile_image_url,
+          iconURL: user.profile_image_url,
           url: `https://twitch.tv/${user.display_name}`
         },
-        color: '#6441A5',
+        color: 644115,
         url: `https://twitch.tv/${user.display_name}`,
         footer: {
           text: stream[0]?.type ? `Stream Started` : 'Joined Twitch',
@@ -141,17 +136,17 @@ export class TwitchStatusCommand extends Command {
       return;
     }
     Logger.info('Twitch-Status-Command - Enabled');
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'STRING',
-          required: true,
-          name: 'streamer',
-          description: 'The Streamers Name'
-        }
-      ]
-    });
+
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('streamer')
+            .setDescription('The Streamers Name')
+            .setRequired(true)
+        )
+    );
   }
 }

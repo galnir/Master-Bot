@@ -1,11 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  RegisterBehavior
-} from '@sapphire/framework';
-import { CommandInteraction, EmbedBuilder } from 'discord.js';
+import { Command, CommandOptions, RegisterBehavior } from '@sapphire/framework';
+import { Colors, EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'rockpaperscissors',
@@ -23,7 +18,7 @@ export class RockPaperScissorsCommand extends Command {
     const resultMessage = this.rpsLogic(move);
 
     const embed = new EmbedBuilder()
-      .setColor('RANDOM')
+      .setColor(Colors.White)
       .setTitle('Rock, Paper, Scissors')
       .setDescription(`**${resultMessage[0]}**, I formed ${resultMessage[1]}`);
 
@@ -34,23 +29,21 @@ export class RockPaperScissorsCommand extends Command {
     registry: Command.Registry
   ): void {
     registry.registerChatInputCommand(
-      {
-        name: this.name,
-        description: this.description,
-        options: [
-          {
-            name: 'move',
-            type: 'STRING',
-            required: true,
-            description: 'What is your move?',
-            choices: [
-              { name: 'Rock', value: 'rock' },
-              { name: 'Paper', value: 'paper' },
-              { name: 'Scissors', value: 'scissors' }
-            ]
-          }
-        ]
-      },
+      builder =>
+        builder
+          .setName(this.name)
+          .setDescription(this.description)
+          .addStringOption(option =>
+            option
+              .setName('move')
+              .setDescription('What is your move?')
+              .setRequired(true)
+              .addChoices(
+                { name: 'Rock', value: 'rock' },
+                { name: 'Paper', value: 'paper' },
+                { name: 'Scissors', value: 'scissors' }
+              )
+          ),
       {
         behaviorWhenNotIdentical: RegisterBehavior.Overwrite
       }

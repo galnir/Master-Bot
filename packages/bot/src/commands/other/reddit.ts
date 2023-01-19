@@ -3,7 +3,8 @@ import { Command, CommandOptions } from '@sapphire/framework';
 import {
   ColorResolvable,
   ActionRowBuilder,
-  StringSelectMenuBuilder
+  StringSelectMenuBuilder,
+  ComponentType
 } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
@@ -34,11 +35,17 @@ export class RedditCommand extends Command {
 
       const menu = await channel.send({
         content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
-        components: [row]
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            //@ts-ignore
+            components: [row]
+          }
+        ]
       });
 
       const collector = menu.createMessageComponentCollector({
-        componentType: 'SELECT_MENU',
+        componentType: ComponentType.SelectMenu,
         time: 30000 // 30 sec
       });
 
@@ -52,15 +59,19 @@ export class RedditCommand extends Command {
             content: 'This element is not for you!',
             ephemeral: true
           });
+          return;
         } else {
           collector.stop();
           const timeFilter = i.values[0];
           this.fetchFromReddit(interaction, subreddit, sort, timeFilter);
+          return;
         }
       });
     } else {
       this.fetchFromReddit(interaction, subreddit, sort);
+      return;
     }
+    return;
   }
 
   private async fetchFromReddit(

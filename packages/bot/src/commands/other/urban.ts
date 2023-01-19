@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, EmbedBuilder } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 
@@ -46,17 +42,16 @@ export class UrbanCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'query',
-          type: 'STRING',
-          description: 'What term do you want to look up?',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('query')
+            .setDescription('What term do you want to look up?')
+            .setRequired(true)
+        )
+    );
   }
 }
