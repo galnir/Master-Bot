@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'motivation',
-  description: 'Replies with a motivational quote!',
+  description: 'Respostas com uma citação motivacional!',
   preconditions: ['isCommandDisabled']
 })
 export class MotivationCommand extends Command {
@@ -32,14 +32,14 @@ export class MotivationCommand extends Command {
           .setDescription(`*"${randomQuote.text}*"\n\n-${randomQuote.author}`)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by type.fit'
+            text: 'Fornecido por type.fit'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when fetching a motivational quote :('
+          'Algo deu errado ao buscar uma citação motivacional :('
         );
       });
   }

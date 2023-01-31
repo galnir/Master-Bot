@@ -9,7 +9,7 @@ import * as fs from 'fs';
 
 @ApplyOptions<CommandOptions>({
   name: '8ball',
-  description: 'Get the answer to anything!',
+  description: 'Obtenha a resposta para qualquer coisa!',
   preconditions: ['isCommandDisabled']
 })
 export class EightBallCommand extends Command {
@@ -17,7 +17,7 @@ export class EightBallCommand extends Command {
     const question = interaction.options.getString('question', true);
 
     if (question.length > 255) {
-      return await interaction.reply('Please ask a shorter question!');
+      return await interaction.reply('Por favor, faça uma pergunta mais curta!');
     }
 
     const possibleAnswers = fs.readFileSync(
@@ -52,7 +52,7 @@ export class EightBallCommand extends Command {
           type: 'STRING',
           required: true,
           name: 'question',
-          description: 'What question do you want to ask the magic ball?'
+          description: 'Que pergunta você quer fazer à bola mágica?'
         }
       ]
     });

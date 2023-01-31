@@ -13,7 +13,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'add-streamer',
-  description: 'Add a Stream alert from your favorite Twitch streamer',
+  description: 'Adicionar um alerta de Stream do seu streamer favorito do Twitch!!',
   requiredUserPermissions: 'MODERATE_MEMBERS',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
@@ -34,38 +34,38 @@ export class AddStreamerCommand extends Command {
         isError = true;
         if (error.status == 400) {
           return await interaction.reply({
-            content: `:x: "${streamerName}" was Invalid, Please try again.`
+            content: `:x: "${streamerName}" foi invalido, tente novamente.`
           });
         }
         if (error.status === 401) {
           return await interaction.reply({
-            content: `:x: You are not authorized to use this command.`
+            content: `:x: Você não está autorizado a usar este comando.`
           });
         }
         if (error.status == 429) {
           return await interaction.reply({
             content:
-              ':x: Rate Limit exceeded. Please try again in a few minutes.'
+              ':x: Limite de avaliação excedido. Tente novamente em alguns minutos.'
           });
         }
         if (error.status == 500) {
           return await interaction.reply({
-            content: `:x: Twitch service's are currently unavailable. Please try again later.`
+            content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
           });
         } else {
           return await interaction.reply({
-            content: `:x: Something went wrong.`
+            content: `:x: Alguma coisa deu errada!`
           });
         }
       });
     if (isError) return;
     if (!user)
       return await interaction.reply({
-        content: `:x: ${streamerName} was not Found`
+        content: `:x: ${streamerName} não foi achado.`
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
       return await interaction.reply({
-        content: `:x: Can't send messages to ${channelData.name}`
+        content: `:x: Não é possível enviar mensagens para ${channelData.name}`
       });
 
     const guildDB = await trpcNode.guild.getGuild.query({
@@ -74,14 +74,14 @@ export class AddStreamerCommand extends Command {
 
     if (!guildDB.guild) {
       return await interaction.reply({
-        content: `:x: Something went wrong.`
+        content: `:x: Alguma coisa deu errada!`
       });
     }
 
     // check if streamer is already on notify list
     if (guildDB?.guild.notifyList.includes(user.id))
       return await interaction.reply({
-        content: `:x: ${user.display_name} is already on your Notification list`
+        content: `:x: ${user.display_name} já está na sua lista de Notificações`
       });
 
     // make sure channel is not already on notify list
@@ -93,7 +93,7 @@ export class AddStreamerCommand extends Command {
           if (query.guild.id == interaction.guild?.id) {
             if (twitchChannel == user.id)
               return await interaction.reply({
-                content: `:x: **${user.display_name}** is already has a notification in **#${query.name}**`
+                content: `:x: **${user.display_name}** já tem uma notificação em **#${query.name}**`
               });
           }
       }
@@ -101,7 +101,7 @@ export class AddStreamerCommand extends Command {
     // make sure no one else is already sending alerts about this streamer
     if (client.twitch.notifyList[user.id]?.sendTo.includes(channelData.id))
       return await interaction.reply({
-        content: `:x: **${user.display_name}** is already messaging ${channelData.name}`
+        content: `:x: **${user.display_name}** já está enviando mensagens para ${channelData.name}`
       });
 
     let channelArray;
@@ -144,7 +144,7 @@ export class AddStreamerCommand extends Command {
     });
 
     await interaction.reply({
-      content: `**${user.display_name}** Stream Notification will be sent to **#${channelData.name}**`
+      content: `**${user.display_name}** A Notificação da Live será enviada para **#${channelData.name}**`
     });
     const newQuery: string[] = [];
     // pickup newly added entries
@@ -167,14 +167,14 @@ export class AddStreamerCommand extends Command {
       options: [
         {
           name: 'streamer-name',
-          description: 'What is the name of the Twitch streamer?',
+          description: 'Qual é o nome do streamer da Twitch?',
           type: 'STRING',
           required: true
         },
         {
           name: 'channel-name',
           description:
-            'What is the name of the Channel you would like the Alert sent to?',
+            'Qual é o nome do Canal para o qual você gostaria que o Alerta fosse enviado?',
           type: 'CHANNEL',
           required: true
         }

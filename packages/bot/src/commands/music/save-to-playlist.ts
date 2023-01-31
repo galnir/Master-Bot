@@ -11,7 +11,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'save-to-playlist',
-  description: 'Save a song or a playlist to a custom playlist',
+  description: 'Salvar uma música ou uma playlist em uma playlist personalizada',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -33,7 +33,7 @@ export class SaveToPlaylistCommand extends Command {
     });
 
     if (!playlistQuery.playlist) {
-      return await interaction.followUp('Playlist does not exist');
+      return await interaction.followUp('Playlist não existente');
     }
 
     const playlistId = playlistQuery.playlist.id;
@@ -60,10 +60,10 @@ export class SaveToPlaylistCommand extends Command {
         songs: songsToAdd
       });
 
-      return await interaction.followUp(`Added tracks to **${playlistName}**`);
+      return await interaction.followUp(`Músicas adicionadas na **${playlistName}**`);
     } catch (error) {
       Logger.error(error);
-      return await interaction.followUp(':x: Something went wrong!');
+      return await interaction.followUp(':x: Alguma coisa deu errada!');
     }
   }
 
@@ -76,13 +76,13 @@ export class SaveToPlaylistCommand extends Command {
       options: [
         {
           name: 'playlist-name',
-          description: 'What is the name of the playlist you want to save to?',
+          description: 'Qual é o nome da playlist que você quer salvar?',
           type: 'STRING',
           required: true
         },
         {
           name: 'url',
-          description: 'What do you want to save to the custom playlist?',
+          description: 'O que você quer salvar na playlist personalizada?',
           type: 'STRING',
           required: true // todo: not required so if a song is playing it can be saved
         }

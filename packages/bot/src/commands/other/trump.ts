@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'trump',
-  description: 'Replies with a random Trump quote',
+  description: 'Respostas com uma citação aleatória de Trump',
   preconditions: ['isCommandDisabled']
 })
 export class TrumpCommand extends Command {
@@ -30,14 +30,14 @@ export class TrumpCommand extends Command {
           .setDescription(quote)
           .setTimestamp(response.data.appeared_at)
           .setFooter({
-            text: 'Powered by api.tronalddump.io'
+            text: 'Desenvolvido por api.tronalddump.io'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when fetching a Trump quote :('
+          'Algo deu errado ao buscar uma citação de Trump :('
         );
       });
   }

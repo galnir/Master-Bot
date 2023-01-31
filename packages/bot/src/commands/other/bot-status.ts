@@ -12,7 +12,7 @@ import pkg from '../../../package.json';
 
 @ApplyOptions<CommandOptions>({
   name: 'bot-status',
-  description: `Shows the current system status`,
+  description: `Mostra o status atual do sistema`,
   preconditions: ['isCommandDisabled']
 })
 export class BotStatusCommand extends Command {

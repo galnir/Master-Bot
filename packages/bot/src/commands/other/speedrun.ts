@@ -11,7 +11,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'speedrun',
-  description: 'Look for the world record of a game!',
+  description: 'Procure o recorde mundial de um jogo!',
   preconditions: ['isCommandDisabled']
 })
 export class SpeedRunCommand extends Command {
@@ -27,13 +27,13 @@ export class SpeedRunCommand extends Command {
       );
     } catch {
       return await interaction.reply(
-        'Something went wrong, please try again later'
+        'Algo deu errado, por favor, tente novamente mais tarde'
       );
     }
     const initial = initialRaw.data;
 
     if (!initial.data.length) {
-      return await interaction.reply('No game was found.');
+      return await interaction.reply('Nenhum jogo foi encontrado.');
     }
 
     let gameID: string = initial.data[0].id;
@@ -44,9 +44,9 @@ export class SpeedRunCommand extends Command {
         `https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=10&embed=game,category,players,platforms,regions`
       );
     } catch (error) {
-      Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
+      Logger.error(`${this.name} Comando - ${JSON.stringify(error)}`);
       return await interaction.reply(
-        'Something went wrong, please try again later'
+        'Algo deu errado, por favor, tente novamente mais tarde'
       );
     }
     const body = response.data;
@@ -58,18 +58,18 @@ export class SpeedRunCommand extends Command {
       });
       let gameName = new MessageEmbed()
         .setColor('#3E8657')
-        .setTitle(':mag: Search Results')
+        .setTitle(':mag: Resultados da pesquisa')
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
         .addFields({
-          name: ':x: Try searching again with the following suggestions.',
-          value: initial.data[0].names.international + ` doesn't have any runs.`
+          name: ':x: Tente pesquisar novamente com as seguintes sugestões.',
+          value: initial.data[0].names.international + ` não tem nenhuma execução.`
         })
         .setTimestamp()
-        .setFooter({ text: 'Powered by www.speedrun.com' });
+        .setFooter({ text: 'Desenvolvido por www.speedrun.com' });
 
       gameNameArr.forEach((game, i) => {
         gameName.addFields({
-          name: `:video_game: Result ${i + 1}`,
+          name: `:video_game: Resultado ${i + 1}`,
           value: game
         });
       });
@@ -92,7 +92,7 @@ export class SpeedRunCommand extends Command {
           embeds: [
             new MessageEmbed()
               .setColor('#3E8657')
-              .setDescription('Getting Data')
+              .setDescription('Obtendo dados')
           ],
           fetchReply: true
         })
@@ -148,7 +148,7 @@ export class SpeedRunCommand extends Command {
               embeds: [
                 new MessageEmbed()
                   .setColor('#3E8657')
-                  .setDescription('Getting Data')
+                  .setDescription('Obtendo dados')
               ],
               fetchReply: true
             })
@@ -237,18 +237,18 @@ export class SpeedRunCommand extends Command {
                   })
                   .addFields(
                     {
-                      name: ':calendar_spiral: Date Played:',
+                      name: ':calendar_spiral: Data jogada:',
                       value: category.runs[i]
                         ? category.runs[i].run.date
                         : 'No Data'
                     },
                     {
-                      name: ':video_game: Played On:',
+                      name: ':video_game: Jogado em:',
                       value: platform + region + emu
                     }
                   )
                   .setFooter({
-                    text: 'Powered by www.speedrun.com',
+                    text: 'Desenvolvido por www.speedrun.com',
                     iconURL: 'https://i.imgur.com/PpxR9E1.png'
                   })
               );
@@ -333,13 +333,13 @@ export class SpeedRunCommand extends Command {
           type: 'STRING',
           required: true,
           name: 'game',
-          description: 'Video Game Title?'
+          description: 'Título do videogame?'
         },
         {
           type: 'STRING',
           required: false,
           name: 'category',
-          description: 'speed run Category?'
+          description: 'Categoria do speedrun?'
         }
       ]
     });

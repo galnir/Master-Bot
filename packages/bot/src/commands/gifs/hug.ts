@@ -28,7 +28,7 @@ export class HugCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when trying to fetch a hug gif :('
+          'Algo deu errado ao tentar buscar um gif de abraço :('
         );
       });
   }

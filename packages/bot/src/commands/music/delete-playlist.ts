@@ -10,7 +10,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'delete-playlist',
-  description: 'Delete a playlist from your saved playlists',
+  description: 'Deleta uma das playlists que você criou!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -34,11 +34,11 @@ export class DeletePlaylistCommand extends Command {
     } catch (error) {
       Logger.error(error);
       return await interaction.reply(
-        ':x: Something went wrong! Please try again later'
+        ':x: Deu alguma coisa de errado, tenta mais tarde!'
       );
     }
 
-    return await interaction.reply(`:wastebasket: Deleted **${playlistName}**`);
+    return await interaction.reply(`:wastebasket: Deletado **${playlistName}**`);
   }
 
   public override registerApplicationCommands(
@@ -50,7 +50,7 @@ export class DeletePlaylistCommand extends Command {
       options: [
         {
           name: 'playlist-name',
-          description: 'What is the name of the playlist you want to delete?',
+          description: 'Qual o nome da playlist que você quer deletar?',
           type: 'STRING',
           required: true
         }

@@ -12,7 +12,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'show-announcer-list',
-  description: 'Display the Guilds Twitch notification list',
+  description: 'Exibir a lista de notificações da  Guilds Twitch',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class ShowAnnouncerListCommand extends Command {
@@ -25,11 +25,11 @@ export class ShowAnnouncerListCommand extends Command {
     });
 
     if (!guildDB || !guildDB.guild || guildDB.guild.notifyList.length === 0) {
-      return await interaction.reply(':x: No streamers are in your list');
+      return await interaction.reply(':x: Nenhum streamer está na sua lista');
     }
     const icon = interactionGuild.iconURL({ dynamic: true });
     const baseEmbed = new MessageEmbed().setColor('#6441A5').setAuthor({
-      name: `${interactionGuild.name} - Twitch Alerts`,
+      name: `${interactionGuild.name} - Twitch Alertas`,
       iconURL: icon!
     });
 
@@ -42,16 +42,16 @@ export class ShowAnnouncerListCommand extends Command {
         if (error.status == 429) {
           return interaction.reply({
             content:
-              ':x: Rate Limit exceeded. Please try again in a few minutes.'
+              ':x: Limite de avaliação excedido. Tente novamente em alguns minutos.'
           });
         }
         if (error.status == 500) {
           return interaction.reply({
-            content: `:x: Twitch service's are currently unavailable. Please try again later.`
+            content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
           });
         } else {
           return interaction.reply({
-            content: `:x: Something went wrong.`
+            content: `:x: Alguma coisa deu errada.`
           });
         }
       });
@@ -75,7 +75,7 @@ export class ShowAnnouncerListCommand extends Command {
       .setTemplate(baseEmbed)
       .setItems(myList)
       .formatItems(
-        (index: any) => `**${index.name}** Sending to **#${index.channel}**`
+        (index: any) => `**${index.name}** Mandando para **#${index.channel}**`
       )
       .setItemsPerPage(10)
       .make()

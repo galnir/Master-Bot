@@ -11,7 +11,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
-  description: 'Add a Stream alert from your favorite Twitch streamer',
+  description: 'Adicionar um alerta de Stream do seu streamer favorito da Twitch',
   requiredUserPermissions: 'MODERATE_MEMBERS',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
@@ -28,33 +28,33 @@ export class RemoveStreamerCommand extends Command {
       .catch(async error => {
         if (error.status == 400) {
           return await interaction.reply({
-            content: `:x: "${streamerName}" was Invalid, Please try again.`
+            content: `:x: "${streamerName}" foi inválido, tente novamente por favor.`
           });
         }
         if (error.status == 429) {
           return await interaction.reply({
             content:
-              ':x: Rate Limit exceeded. Please try again in a few minutes.'
+              ':x: Limite de avaliação excedido. Tente novamente em alguns minutos.'
           });
         }
         if (error.status == 500) {
           return await interaction.reply({
-            content: `:x: Twitch service's are currently unavailable. Please try again later.`
+            content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
           });
         } else {
           return await interaction.reply({
-            content: `:x: Something went wrong.`
+            content: `:x: Alguma coisa deu errada.`
           });
         }
       });
 
     if (!user)
       return await interaction.reply({
-        content: `:x: ${streamerName} was not Found`
+        content: `:x: ${streamerName} não foi encontrado`
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
       return await interaction.reply({
-        content: `:x: Cant sent messages to ${channelData.name}`
+        content: `:x: Não é possível enviar mensagens para ${channelData.name}`
       });
 
     const guildDB = await trpcNode.guild.getGuild.query({
@@ -67,12 +67,12 @@ export class RemoveStreamerCommand extends Command {
 
     if (!guildDB.guild || !guildDB.guild.notifyList.includes(user.id))
       return await interaction.reply({
-        content: `:x: **${user.display_name}** is not in your Notification list`
+        content: `:x: **${user.display_name}** não está na sua lista de Notificações`
       });
 
     if (!notifyDB || !notifyDB.notification)
       return await interaction.reply({
-        content: `:x: **${user.display_name}** was not found in Database`
+        content: `:x: **${user.display_name}** não foi encontrado no banco de dados`
       });
 
     let found = false;
@@ -81,7 +81,7 @@ export class RemoveStreamerCommand extends Command {
     });
     if (found === false)
       return await interaction.reply({
-        content: `:x: **${user.display_name}** is not assigned to **${channelData}**`
+        content: `:x: **${user.display_name}** não está atribuído a **${channelData}**`
       });
 
     const filteredTwitchIds: string[] = guildDB.guild.notifyList.filter(
@@ -115,7 +115,7 @@ export class RemoveStreamerCommand extends Command {
     }
 
     await interaction.reply({
-      content: `**${user.display_name}** Stream Notification will no longer be sent to **#${channelData.name}**`
+      content: `**${user.display_name}** A Notificação de Live não será mais enviada para **#${channelData.name}**`
     });
   }
 
@@ -132,14 +132,14 @@ export class RemoveStreamerCommand extends Command {
       options: [
         {
           name: 'streamer-name',
-          description: 'What is the name of the Twitch streamer?',
+          description: 'Qual é o nome do streamer do Twitch?',
           type: 'STRING',
           required: true
         },
         {
           name: 'channel-name',
           description:
-            'What is the name of the Channel you would like the Alert to be removed from?',
+            'Qual é o nome do Canal do qual você gostaria que o Alerta fosse removido?',
           type: 'CHANNEL',
           required: true
         }

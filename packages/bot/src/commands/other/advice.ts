@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'advice',
-  description: 'Get some advice!',
+  description: 'Obtenha alguns conselhos!',
   preconditions: ['isCommandDisabled']
 })
 export class AdviceCommand extends Command {
@@ -29,7 +29,7 @@ export class AdviceCommand extends Command {
           .setDescription(advice)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by adviceslip.com'
+            text: 'Desenvolvido por adviceslip.com'
           });
 
         return await interaction.reply({ embeds: [embed] });
@@ -37,7 +37,7 @@ export class AdviceCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when asking for advice :('
+          'Algo deu errado ao pedir conselhos :('
         );
       });
   }

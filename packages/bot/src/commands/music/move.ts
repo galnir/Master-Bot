@@ -37,7 +37,7 @@ export class MoveCommand extends Command {
       currentPosition == newPosition
     ) {
       return await interaction.reply(
-        ':x: Please enter valid position numbers!'
+        ':x: Por favor, insira números de posição válidos!'
       );
     }
 
@@ -53,13 +53,13 @@ export class MoveCommand extends Command {
       options: [
         {
           name: 'current-position',
-          description: 'What is the position of the song you want to move?',
+          description: 'Qual é a posição da música que você quer mover?',
           type: 'INTEGER',
           required: true
         },
         {
           name: 'new-position',
-          description: 'What is the position you want to move the song to?',
+          description: 'Qual é a posição para a qual você deseja mover a música?',
           type: 'INTEGER',
           required: true
         }

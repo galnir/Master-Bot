@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'leave',
-  description: 'Make the bot leave its voice channel and stop playing music',
+  description: 'Faz o bot sair do canal de voz e parar a música!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -26,7 +26,7 @@ export class LeaveCommand extends Command {
 
     await queue.leave();
 
-    await interaction.reply({ content: 'Left the voice channel.' });
+    await interaction.reply({ content: 'Saiu do canal de voz.' });
   }
 
   public override registerApplicationCommands(

@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove',
-  description: 'Remove a track from the queue',
+  description: 'Remover uma música da fila',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -26,12 +26,12 @@ export class RemoveCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
     const length = await queue.count();
     if (position < 1 || position > length) {
-      return interaction.reply(':x: Please enter a valid position number!');
+      return interaction.reply(':x: Por favor, insira um número de posição válido!');
     }
 
     await queue.removeAt(position - 1);
     return await interaction.reply({
-      content: `Removed track at position ${position}`
+      content: `Música removida na posição ${position}`
     });
   }
 
@@ -45,7 +45,7 @@ export class RemoveCommand extends Command {
         {
           name: 'position',
           description:
-            'What is the position of the song you want to remove from the queue?',
+            'Qual é a posição da música que você deseja remover da fila?',
           type: 'INTEGER',
           required: true
         }

@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'chucknorris',
-  description: 'Get a satirical fact about Chuck Norris!',
+  description: 'Obtenha um fato satírico sobre Chuck Norris!',
   preconditions: ['isCommandDisabled']
 })
 export class ChuckNorrisCommand extends Command {
@@ -28,14 +28,14 @@ export class ChuckNorrisCommand extends Command {
           .setDescription(response.data.value)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by chucknorris.io'
+            text: 'Desenvolvido por chucknorris.io'
           });
         return interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          ':x: An error occured, Chuck is investigating this!'
+          ':x: Ocorreu um erro, Chuck está investigando isso!'
         );
       });
   }

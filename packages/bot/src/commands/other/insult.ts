@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'insult',
-  description: 'Replies with a mean insult',
+  description: 'Respostas com um insulto maldoso',
   preconditions: ['isCommandDisabled']
 })
 export class InsultCommand extends Command {
@@ -29,14 +29,14 @@ export class InsultCommand extends Command {
           .setDescription(insult)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by evilinsult.com'
+            text: 'Desenvolvido por evilinsult.com'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when fetching an insult :('
+          'Algo deu errado ao buscar um insulto :('
         );
       });
   }

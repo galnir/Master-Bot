@@ -33,7 +33,7 @@ export class DisplayPlaylistCommand extends Command {
 
     if (!playlist) {
       return await interaction.reply(
-        ':x: Something went wrong! Please try again soon'
+        ':x: Deu alguma coisa de errado, tenta de novo mais tarde!'
       );
     }
 
@@ -61,7 +61,7 @@ export class DisplayPlaylistCommand extends Command {
       options: [
         {
           name: 'playlist-name',
-          description: 'What is the name of the playlist you want to display?',
+          description: 'Qual o nome da playlist que você quer ver?',
           type: 'STRING',
           required: true
         }

@@ -18,7 +18,7 @@ import {
 
 @ApplyOptions<CommandOptions>({
   name: 'help',
-  description: 'Get the Command List or add a command-name to get more info.',
+  description: 'Obter a Lista de Comandos ou adicionar um nome de comando para obter mais informações',
   preconditions: ['isCommandDisabled']
 })
 export class HelpCommand extends Command {
@@ -75,7 +75,7 @@ export class HelpCommand extends Command {
           characters = 0;
           PaginatedEmbed.addPageEmbed(
             new MessageEmbed()
-              .setTitle(`Command List - Page ${page}`)
+              .setTitle(`Lista de Comando - Página ${page}`)
               .setThumbnail(app?.iconURL()!)
               .setColor('#9096e6')
               .setAuthor({
@@ -134,7 +134,7 @@ export class HelpCommand extends Command {
           .make();
 
         return DetailedPagination.run(interaction);
-      } else await interaction.reply(`:x: Command: **${query}** was not found`);
+      } else await interaction.reply(`:x: Comando: **${query}** não foi achado`);
     }
     interface CommandInfo {
       name: string;
@@ -155,7 +155,7 @@ export class HelpCommand extends Command {
           type: 'STRING',
           required: false,
           name: 'command-name',
-          description: 'Which command would you like to know about?',
+          description: 'Qual comando você gostaria de conhecer?',
           autocomplete: true
         }
       ]

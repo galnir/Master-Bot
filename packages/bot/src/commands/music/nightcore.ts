@@ -10,7 +10,7 @@ import type { Node, Player } from 'lavaclient';
 
 @ApplyOptions<CommandOptions>({
   name: 'nightcore',
-  description: 'Enable/Disable Nightcore filter',
+  description: 'Liga/Desliga filtro Nightcore',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -33,7 +33,7 @@ export class NightcoreCommand extends Command {
 
     await player.setFilters();
     return await interaction.reply(
-      `Nightcore ${player.nightcore ? 'enabled' : 'disabled'}`
+      `Nightcore ${player.nightcore ? 'Liga!' : 'Desliga!'}`
     );
   }
 

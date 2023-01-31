@@ -15,7 +15,7 @@ const genius = new GeniusLyrics(process.env.GENIUS_API || '');
 @ApplyOptions<CommandOptions>({
   name: 'lyrics',
   description:
-    'Get the lyrics of any song or the lyrics of the currently playing song!',
+    'Obtenha a letra de qualquer música ou a letra da música que está tocando no momento!',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class LyricsCommand extends Command {
@@ -30,7 +30,7 @@ export class LyricsCommand extends Command {
     if (!title) {
       if (!player) {
         return await interaction.followUp(
-          'Please provide a valid song name or start playing one and try again!'
+          'Por favor, forneça um nome de música válido ou comece a reproduzir uma e tente novamente!'
         );
       }
       //title = player.queue.current?.title as string;
@@ -65,7 +65,7 @@ export class LyricsCommand extends Command {
     } catch (e) {
       Logger.error(e);
       return interaction.followUp(
-        'Something when wrong when trying to fetch lyrics :('
+        'Algo deu errado ao tentar buscar a letras :('
       );
     }
   }
@@ -79,7 +79,7 @@ export class LyricsCommand extends Command {
       options: [
         {
           name: 'title',
-          description: ':mag: What song lyrics would you like to get?',
+          description: ':mag: Que letra de música você gostaria de obter?',
           type: 'STRING'
         }
       ]

@@ -47,14 +47,14 @@ export class GameInvite {
       .setColor('YELLOW')
       .setThumbnail(thumbnail)
       .setDescription(
-        `${this.interaction.user} would like to play a game of ${this.title}. Click Yes or No. if you want to join in`
+        `${this.interaction.user} gostaria de jogar um jogo de ${this.title}. Clique em Sim ou Não. se você quiser participar`
       )
       .addFields({
         name: 'Players',
         value: `${this.players.length > 0 ? this.players : 'None'}`,
         inline: true
       })
-      .setFooter({ text: 'Invite will expire in 60 seconds' })
+      .setFooter({ text: 'O convite expirará em 60 segundos' })
       .setTimestamp();
     return gameInvite;
   }

@@ -29,14 +29,14 @@ export class FortuneCommand extends Command {
           .setDescription(tip)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by yerkee.com'
+            text: 'Desenvolvido por yerkee.com'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when fetching a fortune cookie :('
+          'Algo deu errado ao buscar um biscoito da sorte :('
         );
       });
   }

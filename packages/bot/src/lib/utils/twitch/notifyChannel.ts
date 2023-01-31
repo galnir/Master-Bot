@@ -32,7 +32,7 @@ export async function notify(query: string[]) {
           })
           .catch(async error => {
             Logger.error(
-              'Failed to Get Games, refreshing Access Token ' + error
+              'Falha ao obter jogos, atualizando o token de acesso ' + error
             );
             await client.twitch.api
               .getAccessToken('user:read:email')
@@ -198,7 +198,7 @@ export async function notify(query: string[]) {
                       )
                       .catch(error =>
                         Logger.error(
-                          'Failed to Edit Offline Stream Notification ' + error
+                          'Falha ao editar a notificação da stream offline ' + error
                         )
                       );
                   }
@@ -217,7 +217,7 @@ export async function notify(query: string[]) {
       })
       .catch(async error => {
         Logger.error(
-          'Failed to Get Streaming Users, refreshing Access Token ' + error
+          'Falha ao obter usuários de streaming, atualizando o token de acesso ' + error
         );
 
         await client.twitch.api

@@ -67,17 +67,17 @@ export class TicTacToeGame {
         .setColor('RED')
         .setTitle(`Tic Tac Toe - Player 1's Turn`)
         .setDescription(
-          `Use the emojis 1️⃣, 2️⃣, 3️⃣ for columns and 🇦, 🇧, 🇨 for rows.\n
-        You must click both a **Number** and a **Letter** to place your colored square in that space.\n
-        You have 1 minute per turn or it's an automatic forfeit.
-        Incase of invisible board click 🔄.`
+          `Use os emojis 1️⃣, 2️⃣, 3️⃣ para as colunas e 🇦, 🇧, 🇨 para as linhas.\n
+        Você deve clicar em um **Número** e uma **Letra** para colocar seu quadrado colorido nesse espaço.\n
+        Você tem 1 minuto por volta ou é uma perda automática.
+        Em caso de clique na placa invisível 🔄.`
         )
         .addFields(
           { name: 'Column', value: 'None', inline: true },
           { name: 'Row', value: 'None', inline: true }
         )
         .setImage(boardImageURL!)
-        .setFooter({ text: 'Incase of invisible board click 🔄' })
+        .setFooter({ text: 'Em caso de clique na placa invisível 🔄' })
         .setTimestamp();
 
       await interaction.channel

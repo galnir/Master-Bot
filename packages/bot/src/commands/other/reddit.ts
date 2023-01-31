@@ -16,7 +16,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'reddit',
-  description: 'Get posts from reddit by specifying a subreddit',
+  description: 'Obtenha postagens do reddit especificando um subreddit',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RedditCommand extends Command {
@@ -31,12 +31,12 @@ export class RedditCommand extends Command {
       const row = new MessageActionRow().addComponents(
         new MessageSelectMenu()
           .setCustomId('top_or_controversial')
-          .setPlaceholder('Please select an option')
+          .setPlaceholder('Selecione uma opção')
           .addOptions(optionsArray)
       );
 
       const menu = await channel.send({
-        content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
+        content: `:loud_sound: Você quer obter o ${sort} posts da hora passada/semana/mês/ano ou todos?`,
         components: [row]
       });
 
@@ -52,7 +52,7 @@ export class RedditCommand extends Command {
       collector.on('collect', async i => {
         if (i.user.id !== interaction.user.id) {
           i.reply({
-            content: 'This element is not for you!',
+            content: 'Este elemento não é para você!',
             ephemeral: true
           });
         } else {
@@ -127,9 +127,9 @@ export class RedditCommand extends Command {
       );
       const data = response.data.data;
       if (!data) {
-        reject(`**${subreddit}** is a private subreddit!`);
+        reject(`**${subreddit}** é um subreddit privado!`);
       } else if (!data.children.length) {
-        reject('Please provide a valid subreddit name!');
+        reject('Por favor, forneça um nome de subreddit válido!');
       }
       resolve(data);
     });
@@ -146,14 +146,14 @@ export class RedditCommand extends Command {
           name: 'subreddit',
           type: 'STRING',
           required: true,
-          description: 'Subreddit name'
+          description: 'Nome do subreddit'
         },
         {
           name: 'sort',
           type: 'STRING',
           required: true,
           description:
-            'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
+            'Quais posts você quer ver? Selecione de best/hot/top/new/controversial/rising',
           choices: [
             {
               name: 'Best',

@@ -11,14 +11,14 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'game-search',
-  description: 'Search for video game information',
+  description: 'Procurar informações sobre videogame',
   preconditions: ['isCommandDisabled']
 })
 export class GameSearchCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     if (!process.env.RAWG_API)
       return await interaction.reply(
-        ':x: Command is Disabled - Missing API Key'
+        ':x: O comando está desabilitado - Chave de API ausente'
       );
     const title = interaction.options.getString('game', true);
     const filteredTitle = this.filterTitle(title);
@@ -55,23 +55,23 @@ export class GameSearchCommand extends Command {
 
     PaginatedEmbed.addPageEmbed(embed =>
       embed
-        .setTitle(`Game Info: ${game.name}`)
+        .setTitle(`Informações do jogo: ${game.name}`)
         .setDescription(
           '>>> ' +
-            '**Game Description**\n' +
+            '**Descrição do jogo**\n' +
             game.description_raw.slice(0, 2000) +
             '...'
         )
         .setColor('#B5B5B5')
         .setThumbnail(game.background_image)
         .addFields(
-          { name: 'Released', value: '> ' + firstPageTuple[0], inline: true },
+          { name: 'Lançado', value: '> ' + firstPageTuple[0], inline: true },
           {
-            name: 'ESRB Rating',
+            name: 'Classificação ESRB',
             value: '> ' + firstPageTuple[1],
             inline: true
           },
-          { name: 'Score', value: '> ' + firstPageTuple[2], inline: true }
+          { name: 'Pontuação', value: '> ' + firstPageTuple[2], inline: true }
         )
         .setTimestamp()
     );
@@ -82,7 +82,7 @@ export class GameSearchCommand extends Command {
         developerArray.push(game.developers[i].name);
       }
     } else {
-      developerArray.push('None Listed');
+      developerArray.push('Nenhum listado');
     }
 
     const publisherArray: string[] = [];
@@ -91,7 +91,7 @@ export class GameSearchCommand extends Command {
         publisherArray.push(game.publishers[i].name);
       }
     } else {
-      publisherArray.push('None Listed');
+      publisherArray.push('Nenhum listado');
     }
 
     const platformArray: string[] = [];
@@ -100,7 +100,7 @@ export class GameSearchCommand extends Command {
         platformArray.push(game.platforms[i].platform.name);
       }
     } else {
-      platformArray.push('None Listed');
+      platformArray.push('Nenhum listado');
     }
 
     const genreArray: string[] = [];
@@ -109,7 +109,7 @@ export class GameSearchCommand extends Command {
         genreArray.push(game.genres[i].name);
       }
     } else {
-      genreArray.push('None Listed');
+      genreArray.push('Nenhum listado');
     }
 
     const retailerArray: string[] = [];
@@ -120,12 +120,12 @@ export class GameSearchCommand extends Command {
         );
       }
     } else {
-      retailerArray.push('None Listed');
+      retailerArray.push('Nenhum listado');
     }
 
     PaginatedEmbed.addPageEmbed(embed =>
       embed
-        .setTitle(`Game Info: ${game.name}`)
+        .setTitle(`Informações do jogo: ${game.name}`)
         .setColor('#b5b5b5')
         .setThumbnail(game.background_image_additional ?? game.background_image)
         // Row 1
@@ -136,12 +136,12 @@ export class GameSearchCommand extends Command {
             inline: true
           },
           {
-            name: publisherArray.length == 1 ? 'Publisher' : 'Publishers',
+            name: publisherArray.length == 1 ? 'Editor' : 'Editores',
             value: '> ' + publisherArray.toString().replace(/,/g, ', '),
             inline: true
           },
           {
-            name: platformArray.length == 1 ? 'Platform' : 'Platforms',
+            name: platformArray.length == 1 ? 'Plataforma' : 'Plataformas',
             value: '> ' + platformArray.toString().replace(/,/g, ', '),
             inline: true
           }
@@ -149,12 +149,12 @@ export class GameSearchCommand extends Command {
         // Row 2
         .addFields(
           {
-            name: genreArray.length == 1 ? 'Genre' : 'Genres',
+            name: genreArray.length == 1 ? 'Gênero' : 'Gêneros',
             value: '> ' + genreArray.toString().replace(/,/g, ', '),
             inline: true
           },
           {
-            name: retailerArray.length == 1 ? 'Retailer' : 'Retailers',
+            name: retailerArray.length == 1 ? 'Revendedor' : 'Revendedores',
             value:
               '> ' +
               retailerArray.toString().replace(/,/g, ', ').replace(/`/g, '')
@@ -180,7 +180,7 @@ export class GameSearchCommand extends Command {
       options: [
         {
           name: 'game',
-          description: 'What game do you want to look up?',
+          description: 'Que jogo você quer procurar?',
           required: true,
           type: 'STRING'
         }
@@ -200,11 +200,11 @@ export class GameSearchCommand extends Command {
       try {
         const response = await axios.get(url);
         if (response.status === 429) {
-          reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
+          reject(':x: Limite de Taxa excedido. Tente novamente em alguns minutos.');
         }
         if (response.status === 503) {
           reject(
-            ':x: The service is currently unavailable. Please try again later.'
+            ':x: O serviço está indisponível no momento. Tente novamente mais tarde.'
           );
         }
         if (response.status === 404) {
@@ -212,7 +212,7 @@ export class GameSearchCommand extends Command {
         }
         if (response.status !== 200) {
           reject(
-            ':x: There was a problem getting game from the API, make sure you entered a valid game tittle'
+            ':x: Ocorreu um problema ao obter o jogo a partir da API, certifique-se de que introduziu um título de jogo válido'
           );
         }
 
@@ -226,14 +226,14 @@ export class GameSearchCommand extends Command {
         // 'id' is the only value that must be present to all valid queries
         if (!body.id) {
           reject(
-            ':x: There was a problem getting data from the API, make sure you entered a valid game title'
+            ':x: Ocorreu um problema ao obter dados da API, certifique-se de que introduziu um título de jogo válido'
           );
         }
         resolve(body);
       } catch (e) {
         Logger.error(e);
         reject(
-          'There was a problem getting data from the API, make sure you entered a valid game title'
+          'Ocorreu um problema ao obter dados da API, certifique-se de que introduziu um título de jogo válido'
         );
       }
     });
