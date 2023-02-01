@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'twitch-status',
-  description: 'Check the status of your favorite streamer',
+  description: 'Verifique o status do seu streamer favorito',
   preconditions: ['isCommandDisabled']
 })
 export class TwitchStatusCommand extends Command {
@@ -25,7 +25,7 @@ export class TwitchStatusCommand extends Command {
       });
 
       if (!user)
-        return interaction.reply({ content: `${query} was not Found` });
+        return interaction.reply({ content: `${query} não foi achado` });
       const stream = await client.twitch.api.getStreamingUsers({
         token: client.twitch.auth.access_token,
         user_ids: [user.id]
@@ -43,7 +43,7 @@ export class TwitchStatusCommand extends Command {
         color: '#6441A5',
         url: `https://twitch.tv/${user.display_name}`,
         footer: {
-          text: stream[0]?.type ? `Stream Started` : 'Joined Twitch',
+          text: stream[0]?.type ? `Stream Iniciada` : 'Juntou a Twitch',
           iconURL:
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
@@ -59,7 +59,7 @@ export class TwitchStatusCommand extends Command {
 
         baseEmbed
           .setThumbnail(game.box_art_url.replace('-{width}x{height}', ''))
-          .setTitle(`Looks like ${user.display_name} is Online!!!`)
+          .setTitle(`Parece que ${user.display_name} está Online!!!`)
           .addFields(
             { name: 'Title', value: stream[0].title ?? 'N/A' },
             {
@@ -83,10 +83,10 @@ export class TwitchStatusCommand extends Command {
       } else {
         baseEmbed
           .setThumbnail(user.profile_image_url)
-          .setTitle(`Looks like ${user.display_name} is Offline.`)
+          .setTitle(`Parece que ${user.display_name} está Offline.`)
           .addFields(
             {
-              name: 'Profile Description',
+              name: 'Descrição do perfil',
               value: user.description == '' ? 'None' : user.description
             },
             { name: 'Total Viewers', value: `${user.view_count}`, inline: true }
@@ -110,22 +110,22 @@ export class TwitchStatusCommand extends Command {
       Logger.error(error);
       if (error.status == 400) {
         return interaction.reply({
-          content: `:x: "${query}" was Invalid, Please try again.`
+          content: `:x: "${query}"  foi Inválido, Tente novamente.`
         });
       }
       if (error.status == 429) {
         return interaction.reply({
-          content: ':x: Rate Limit exceeded. Please try again in a few minutes.'
+          content: ':x: Limite de Taxa excedido. Tente novamente em alguns minutos.'
         });
       }
       if (error.status == 500) {
         return interaction.reply({
-          content: `:x: Twitch service's are currently unavailable. Please try again later.`
+          content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
         });
       } else {
         Logger.http(`${this.name} Command - ${JSON.stringify(error)}`);
         return interaction.reply({
-          content: `:x: Something went wrong.`
+          content: `:x: Algo deu errado.`
         });
       }
     }
@@ -147,7 +147,7 @@ export class TwitchStatusCommand extends Command {
           type: 'STRING',
           required: true,
           name: 'streamer',
-          description: 'The Streamers Name'
+          description: 'O nome dos streamers'
         }
       ]
     });

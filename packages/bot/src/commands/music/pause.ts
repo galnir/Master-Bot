@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'pause',
-  description: 'Pause the music',
+  description: 'Pausa a música!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',

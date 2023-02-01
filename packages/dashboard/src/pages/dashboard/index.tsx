@@ -10,11 +10,11 @@ const DashboardIndexPage: NextPage = () => {
   return (
     <div className="bg-slate-900 h-screen text-gray-100">
       <Head>
-        <title>Choose Guild</title>
-        <meta name="description" content="Choose guild to manage screen" />
+        <title>Escolha o servidor!</title>
+        <meta name="description" content="Escolha o servidor para administrar!" />
       </Head>
       <main className="p-10">
-        <h1 className="text-3xl mb-4 ml-1">Choose guild to manage</h1>
+        <h1 className="text-3xl mb-4 ml-1">Escolha o servidor para administrar!</h1>
         {data?.apiGuilds ? (
           <div className="flex gap-10">
             {data?.apiGuilds.map(guild => {

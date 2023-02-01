@@ -26,7 +26,7 @@ export default async function searchSong(
             name: username
           })
         ];
-        displayMessage = `Queued track [**${item.name}**](${query}).`;
+        displayMessage = `Música enfileirada [**${item.name}**](${query}).`;
         break;
       case SpotifyItemType.Artist:
         response = await item.resolveYoutubeTracks();
@@ -40,7 +40,7 @@ export default async function searchSong(
             })
           )
         );
-        displayMessage = `Queued the **Top ${tracks.length} tracks** for [**${item.name}**](${query}).`;
+        displayMessage = `Enfileirada **Top ${tracks.length} músicas** para [**${item.name}**](${query}).`;
         break;
       case SpotifyItemType.Album:
       case SpotifyItemType.Playlist:
@@ -62,7 +62,7 @@ export default async function searchSong(
         }**](${query}).`;
         break;
       default:
-        displayMessage = ":x: Couldn't find what you were looking for :(";
+        displayMessage = ":x: Não foi possível encontrar o que você estava procurando :(";
         return [displayMessage, tracks];
     }
     return [displayMessage, tracks];
@@ -74,7 +74,7 @@ export default async function searchSong(
     switch (results.loadType) {
       case 'LOAD_FAILED':
       case 'NO_MATCHES':
-        displayMessage = ":x: Couldn't find what you were looking for :(";
+        displayMessage = ":x:  Não foi possível encontrar o que você estava procurando :(";
         return [displayMessage, tracks];
       case 'PLAYLIST_LOADED':
         results.tracks.forEach((track: any) =>
@@ -87,7 +87,7 @@ export default async function searchSong(
             })
           )
         );
-        displayMessage = `Queued playlist [**${results.playlistInfo.name}**](${query}), it has a total of **${tracks.length}** tracks.`;
+        displayMessage = `Playlist enileirada [**${results.playlistInfo.name}**](${query}), tem um total de **${tracks.length}** músicas.`;
         break;
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':

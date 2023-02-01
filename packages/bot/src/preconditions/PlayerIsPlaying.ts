@@ -18,7 +18,7 @@ export class PlayerIsPlaying extends Precondition {
     const player = client.music.players.get(interaction.guildId as string);
 
     if (!player) {
-      return this.error({ message: 'There is nothing playing at the moment!' });
+      return this.error({ message: 'Não há nada tocando no momento!' });
     }
     return this.ok();
   }

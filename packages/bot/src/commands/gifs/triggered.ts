@@ -28,7 +28,7 @@ export class TriggeredCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when trying to fetch a triggered gif :('
+          'Algo deu errado ao tentar buscar triggered gif :('
         );
       });
   }

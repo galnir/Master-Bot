@@ -38,7 +38,7 @@ export class KaraokeCommand extends Command {
 
     await player.setFilters();
     return await interaction.reply(
-      `Karaoke ${player.karaoke ? 'enabled' : 'disabled'}`
+      `Karaoke ${player.karaoke ? 'Ligado!' : 'Desligado!'}`
     );
   }
 

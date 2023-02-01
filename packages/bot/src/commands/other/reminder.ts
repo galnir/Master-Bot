@@ -26,7 +26,7 @@ import ReminderStore from '../../lib/utils/reminders/ReminderStore';
 
 @ApplyOptions<CommandOptions>({
   name: 'reminder',
-  description: 'Set or View Personal Reminders',
+  description: 'Definir ou Exibir Lembretes Pessoais',
   preconditions: ['timeZoneExists']
 })
 export class ReminderCommand extends Command {
@@ -47,7 +47,7 @@ export class ReminderCommand extends Command {
       if (!userDB.user || Number.isNaN(userDB?.user?.timeOffset)) {
         await interaction.reply({
           content:
-            ':x: Something went wrong, Please retry after using the `/reminder save-timezone` command.',
+            ':x: Algo deu errado, por favor, tente novamente depois de usar o `/reminder save-timezone` comando.',
           ephemeral: true
         });
         return;
@@ -75,7 +75,7 @@ export class ReminderCommand extends Command {
 
         if (isPast(isoStr)) {
           await interaction.reply({
-            content: `:x: I can't go back in time`,
+            content: `:x: Não consigo voltar no tempo`,
             ephemeral: true
           });
           return;
@@ -105,13 +105,13 @@ export class ReminderCommand extends Command {
                 if (!savedToDB) {
                   await message.delete();
                   await interaction.user.send({
-                    content: `❌ You already have an event named **${newEvent}**`
+                    content: `❌ Você já tem um evento chamado **${newEvent}**`
                   });
                 }
               })
               .catch(async () => {
                 await interaction.editReply(
-                  ':x: Unable to send you a DM, reminder has been **Canceled**.'
+                  ':x: Não é possível enviar-lhe um DM, lembrete foi **Cancelado**.'
                 );
               });
           });
@@ -119,9 +119,9 @@ export class ReminderCommand extends Command {
           await interaction.editReply('All Set');
         } else {
           await interaction.editReply(
-            `:x: Reminder was **not** saved${
+            `:x: Lembrete **não** foi salvo${
               interaction.channel?.type !== 'DM'
-                ? `, check your DM's for more info`
+                ? `, verifique sua DM's para mais informações`
                 : ''
             } `
           );
@@ -146,7 +146,7 @@ export class ReminderCommand extends Command {
       const keyList: string[] = [];
       if (!rawKeys.length) {
         return await interaction.reply({
-          content: ":x: You don't have any reminders.",
+          content: ":x: Você não tem nenhum lembrete.",
           ephemeral: true
         });
       }
@@ -159,7 +159,7 @@ export class ReminderCommand extends Command {
       const baseEmbed = new MessageEmbed()
         .setColor('#9096e6')
         .setAuthor({
-          name: `⏰ ${interactionUser.username} - Reminder List`
+          name: `⏰ ${interactionUser.username} - Lista de lembretes`
         })
         .setTimestamp();
 
@@ -204,16 +204,16 @@ export class ReminderCommand extends Command {
             const collector =
               interaction.channel?.createMessageComponentCollector();
             let currentPage = 0;
-            collector?.on('collect', button => {
+            collector?.on('coletar', button => {
               if (interaction.user.id != button.user.id) return;
 
-              if (button.customId == `${interaction.id}-previous`) {
+              if (button.customId == `${interaction.id}-anterior`) {
                 currentPage = currentPage - 1 < 0 ? 0 : currentPage - 1;
                 button.update({
                   embeds: embeds[currentPage]
                 });
               }
-              if (button.customId == `${interaction.id}-next`) {
+              if (button.customId == `${interaction.id}-próximo`) {
                 currentPage =
                   currentPage + 1 > totalPages ? totalPages : currentPage + 1;
                 button.update({
@@ -241,52 +241,52 @@ export class ReminderCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'set',
-          description: 'Set a reminder.',
+          description: 'Definir um lembrete.',
           options: [
             {
               type: 'STRING',
               required: true,
               name: 'event',
-              description: 'What would you like to be reminded of?'
+              description: 'Do que você gostaria de ser lembrado?'
             },
             {
               type: 'STRING',
               required: true,
               name: 'time',
               description:
-                'Enter a Time for your Reminder. (ex: 14:30 for 2:30 pm)'
+                'Insira um Tempo para o seu Lembrete. (ex: 14:30 para 02:30pm)'
             },
             {
               type: 'STRING',
               required: false,
               name: 'date',
-              description: 'Enter a Date for your reminder. (MM/DD/YYYY)'
+              description: 'Insira uma Data para o seu lembrete. (MM/DD/AAAA)'
             },
             {
               type: 'STRING',
               required: false,
               name: 'description',
-              description: 'Enter a Description to you reminder. (Optional)'
+              description: 'Insira um lembrete de Descrição para você. (Opcional)'
             },
             {
               type: 'STRING',
               required: false,
               name: 'repeat',
-              description: 'How often to repeat the reminder. (Optional)',
+              description: 'Com que frequência repetir o lembrete. (Opcional)',
               choices: [
                 {
-                  name: 'Yearly',
+                  name: 'Anual',
                   value: 'Yearly'
                 },
                 {
-                  name: 'Monthly',
+                  name: 'Mensal',
                   value: 'Monthly'
                 },
                 {
-                  name: 'Weekly',
+                  name: 'Semanalmente',
                   value: 'Weekly'
                 },
-                { name: 'Daily', value: 'Daily' }
+                { name: 'Diário', value: 'Daily' }
               ]
             }
           ]
@@ -294,25 +294,25 @@ export class ReminderCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'view',
-          description: 'Show your reminders.'
+          description: 'Mostre seus lembretes.'
         },
         {
           type: 'SUB_COMMAND',
           name: 'remove',
-          description: 'Delete a reminder from you list.',
+          description: 'Exclua um lembrete da sua lista.',
           options: [
             {
               type: 'STRING',
               required: true,
               name: 'event',
-              description: 'Which reminder would you like to remove?'
+              description: 'Qual lembrete você gostaria de remover?'
             }
           ]
         },
         {
           type: 'SUB_COMMAND',
           name: 'save-timezone',
-          description: 'Save your timezone.'
+          description: 'Salve seu fuso horário.'
         }
       ]
     });

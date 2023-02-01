@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'skip',
-  description: 'Skip the current song playing',
+  description: 'Pulando para a próxima música!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',

@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'volume',
-  description: 'Set the Volume',
+  description: 'Muda o volume!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -26,13 +26,13 @@ export class VolumeCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
 
     if (query > 200 || query < 0) {
-      return await interaction.reply(':x: Volume must be between 0 and 200!');
+      return await interaction.reply(':x: O volume deve estar entre 0 e 200!');
     }
 
     await queue.setVolume(query);
 
     return await interaction.reply(
-      `:white_check_mark: Volume set to ${query}!`
+      `:white_check_mark: Volume foi para ${query}!`
     );
   }
 
@@ -45,7 +45,7 @@ export class VolumeCommand extends Command {
       options: [
         {
           name: 'setting',
-          description: 'What Volume? (0 to 200)',
+          description: 'Qual volume?(0 a 200)',
           type: 'NUMBER',
           required: true
         }

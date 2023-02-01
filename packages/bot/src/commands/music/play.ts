@@ -12,7 +12,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
-  description: 'Play any song or playlist from YouTube, Spotify and more!',
+  description: 'Reproduza qualquer música ou playlist do YouTube, Spotify e muito mais!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -68,15 +68,15 @@ export class PlayCommand extends Command {
       const { playlist } = data;
 
       if (!playlist) {
-        return await interaction.followUp(`:x: You have no such playlist!`);
+        return await interaction.followUp(`:x: Você não tem essa playlist!`);
       }
       if (!playlist.songs.length) {
-        return await interaction.followUp(`:x: **${query}** is empty!`);
+        return await interaction.followUp(`:x: **${query}** está vazia!`);
       }
 
       const { songs } = playlist;
       tracks.push(...songs);
-      message = `Added songs from **${playlist}** to the queue!`;
+      message = `Musicas adicionadas da playlist **${playlist}** na fila!`;
     } else {
       const trackTuple = await searchSong(query, interaction.user);
       if (!trackTuple[1].length) {
@@ -116,36 +116,36 @@ export class PlayCommand extends Command {
       options: [
         {
           name: 'query',
-          description: 'What song or playlist would you like to listen to?',
+          description: 'Que música ou playlist você gostaria de ouvir?',
           type: 'STRING',
           required: true
         },
         {
           name: 'is-custom-playlist',
-          description: 'Is it a custom playlist?',
+          description: 'É uma playlist personalizada?',
           type: 'STRING',
           choices: [
             {
-              name: 'Yes',
+              name: 'Sim',
               value: 'Yes'
             },
             {
-              name: 'No',
+              name: 'Não',
               value: 'No'
             }
           ]
         },
         {
           name: 'shuffle-playlist',
-          description: 'Would you like to shuffle the playlist?',
+          description: 'Gostaria de embaralhar a playlist?',
           type: 'STRING',
           choices: [
             {
-              name: 'Yes',
+              name: 'Sim',
               value: 'Yes'
             },
             {
-              name: 'No',
+              name: 'Não',
               value: 'No'
             }
           ]

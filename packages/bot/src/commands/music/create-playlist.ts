@@ -9,7 +9,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'create-playlist',
-  description: 'Create a custom playlist that you can play anytime',
+  description: 'Criar uma Playlist personalizada que você pode tocar qualquer hora!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -32,12 +32,12 @@ export class CreatePlaylistCommand extends Command {
       if (!playlist) throw new Error();
     } catch (error) {
       await interaction.reply({
-        content: `:x: You already have a playlist named **${playlistName}**`
+        content: `:x: Você já deu esse nome para uma playlist! **${playlistName}**`
       });
       return;
     }
 
-    await interaction.reply(`Created a playlist named **${playlistName}**`);
+    await interaction.reply(`Playlist **${playlistName}** Criada!`);
     return;
   }
 
@@ -50,7 +50,7 @@ export class CreatePlaylistCommand extends Command {
       options: [
         {
           name: 'playlist-name',
-          description: 'What is the name of the playlist you want to create?',
+          description: 'Qual o nome da playlist que você quer criar?',
           type: 'STRING',
           required: true
         }

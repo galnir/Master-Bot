@@ -50,7 +50,7 @@ export class TwitchEmbed {
     if (this.ended) {
       const offlineEmbed = new MessageEmbed({
         author: {
-          name: `Twitch Notification - Stream Ended`,
+          name: `Twitch Notification - Stream Acabou`,
           icon_url: this.logo
         },
         color: '#6441A5',
@@ -62,7 +62,7 @@ export class TwitchEmbed {
       });
       return offlineEmbed
         .setThumbnail(this.logo)
-        .setTitle(`${this.userName}'s stream has Ended`)
+        .setTitle(`${this.userName} stream acabou`)
         .addFields(
           { name: 'Title', value: this.title ?? 'N/A' },
           { name: gameOrTopic, value: this.gameName ?? 'N/A', inline: true },
@@ -73,7 +73,7 @@ export class TwitchEmbed {
       const onlineEmbed = new MessageEmbed({
         author: {
           name: `Twitch Notification - ${
-            this.change ? 'Stream Update' : 'Stream Started'
+            this.change ? 'Stream Update' : 'Stream Iniciada'
           }`,
           icon_url: this.logo,
           url: `https://twitch.tv/${this.userName}`
@@ -81,7 +81,7 @@ export class TwitchEmbed {
         color: '#6441A5',
         url: `https://twitch.tv/${this.userName}`,
         footer: {
-          text: this.change ? 'Stream Update' : 'Stream Started',
+          text: this.change ? 'Stream Update' : 'Stream Iniciada',
           iconURL:
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }

@@ -10,7 +10,7 @@ import type { Node, Player } from 'lavaclient';
 
 @ApplyOptions<CommandOptions>({
   name: 'vaporwave',
-  description: 'Apply vaporwave on the playing track!',
+  description: 'Adiciona Vaporwave na música que está tocando!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -46,7 +46,7 @@ export class VaporWaveCommand extends Command {
 
     await player.setFilters();
     return await interaction.reply(
-      `Vaporwave ${player.vaporwave ? 'enabled' : 'disabled'}`
+      `Vaporwave ${player.vaporwave ? 'Ligado!' : 'Desligado!'}`
     );
   }
 

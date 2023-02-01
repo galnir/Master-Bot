@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'kanye',
-  description: 'Replies with a random Kanye quote',
+  description: 'Respostas com uma citação aleatória de Kanye',
   preconditions: ['isCommandDisabled']
 })
 export class KanyeCommand extends Command {
@@ -29,14 +29,14 @@ export class KanyeCommand extends Command {
           .setDescription(quote)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by kanye.rest'
+            text: 'Desenvolvido por kanye.rest'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when fetching a Kanye quote :('
+          'Algo deu errado ao buscar uma citação de Kanye :('
         );
       });
   }

@@ -28,7 +28,7 @@ export class JojoCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when trying to fetch a jojo gif :('
+          'Algo deu errado ao tentar buscar um gif de jojo :('
         );
       });
   }

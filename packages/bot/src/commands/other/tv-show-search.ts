@@ -11,7 +11,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'tv-show-search',
-  description: 'Get TV shows information',
+  description: 'Obter informações sobre programas de TV',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class TVShowSearchCommand extends Command {
@@ -59,13 +59,13 @@ export class TVShowSearchCommand extends Command {
             { name: 'Average Rating', value: showInfo.rating }
           )
           .setFooter({
-            text: `(Page ${i}/${data.length}) Powered by tvmaze.com`,
+            text: `(Página ${i}/${data.length}) fornecida pela tvmaze.com`,
             iconURL: 'https://static.tvmaze.com/images/favico/favicon-32x32.png'
           })
       );
     }
 
-    await interaction.reply('Show info');
+    await interaction.reply('Mostrar informações');
     return PaginatedEmbed.run(interaction);
   }
 
@@ -78,7 +78,7 @@ export class TVShowSearchCommand extends Command {
       options: [
         {
           name: 'query',
-          description: 'What TV show do you want to look up?',
+          description: 'Qual programa de TV você quer procurar?',
           type: 'STRING',
           required: true
         }
@@ -92,29 +92,29 @@ export class TVShowSearchCommand extends Command {
       try {
         const response = await axios.get(url);
         if (response.status == 429) {
-          reject(':x: Rate Limit exceeded. Please try again in a few minutes.');
+          reject(':x: Limite de Taxa excedido. Tente novamente em alguns minutos.');
         }
         if (response.status == 503) {
           reject(
-            ':x: The service is currently unavailable. Please try again later.'
+            ':x: O serviço está indisponível no momento. Tente novamente mais tarde.'
           );
         }
         if (response.status !== 200) {
           reject(
-            'There was a problem getting data from the API, make sure you entered a valid TV show name'
+            'O serviço está indisponível no momento. Tente novamente mais tarde.'
           );
         }
         const data = response.data;
         if (!data.length) {
           reject(
-            'There was a problem getting data from the API, make sure you entered a valid TV show name'
+            'O serviço está indisponível no momento. Tente novamente mais tarde.'
           );
         }
         resolve(data);
       } catch (e) {
         Logger.error(e);
         reject(
-          'There was a problem getting data from the API, make sure you entered a valid TV show name'
+          'O serviço está indisponível no momento. Tente novamente mais tarde.'
         );
       }
     });

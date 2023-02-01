@@ -10,7 +10,7 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 
 @ApplyOptions<CommandOptions>({
   name: 'queue',
-  description: 'Get a List of the Music Queue',
+  description: 'Obter uma lista da fila de música',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',

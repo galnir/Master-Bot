@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'resume',
-  description: 'Resume the music',
+  description: 'Continua a música!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',

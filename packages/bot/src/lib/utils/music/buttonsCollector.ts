@@ -21,7 +21,7 @@ export default async function buttonsCollector(message: Message, song: Song) {
   collector.on('collect', async (i: MessageComponentInteraction) => {
     if (!message.member?.voice.channel?.members.has(i.user.id))
       return await i.reply({
-        content: `:x: Only available to members in ${message.member?.voice.channel} <-- Click To Join`,
+        content: `:x: Disponível apenas para membros em ${message.member?.voice.channel} <-- Clique para participar`,
         ephemeral: true
       });
 
@@ -31,7 +31,7 @@ export default async function buttonsCollector(message: Message, song: Song) {
         clearTimeout(client.leaveTimers[queue.guildID]!);
       } else {
         client.leaveTimers[queue.guildID] = setTimeout(async () => {
-          await channel.send(':zzz: Leaving due to inactivity');
+          await channel.send(':zzz: Sair por inatividade');
           await queue.leave();
         }, maxLimit);
         await queue.pause();

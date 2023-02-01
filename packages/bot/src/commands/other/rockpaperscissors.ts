@@ -9,21 +9,21 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'rockpaperscissors',
-  description: 'Play rock paper scissors with me!',
+  description: 'Jogue pedra, papel e tesoura comigo!',
   preconditions: ['isCommandDisabled']
 })
 export class RockPaperScissorsCommand extends Command {
   public override async chatInputRun(interaction: CommandInteraction) {
     const move = interaction.options.getString('move', true) as
-      | 'rock'
-      | 'paper'
-      | 'scissors';
+      | 'pedra'
+      | 'papel'
+      | 'tesoura';
     const resultMessage = this.rpsLogic(move);
 
     const embed = new MessageEmbed()
       .setColor('RANDOM')
-      .setTitle('Rock, Paper, Scissors')
-      .setDescription(`**${resultMessage[0]}**, I formed ${resultMessage[1]}`);
+      .setTitle('Pedra, Papel, Tesoura')
+      .setDescription(`**${resultMessage[0]}**, Eu formei ${resultMessage[1]}`);
 
     return await interaction.reply({ embeds: [embed] });
   }
@@ -40,11 +40,11 @@ export class RockPaperScissorsCommand extends Command {
             name: 'move',
             type: 'STRING',
             required: true,
-            description: 'What is your move?',
+            description: 'Qual é o seu movimento?',
             choices: [
-              { name: 'Rock', value: 'rock' },
-              { name: 'Paper', value: 'paper' },
-              { name: 'Scissors', value: 'scissors' }
+              { name: 'Pedra', value: 'pedra' },
+              { name: 'Papel', value: 'papel' },
+              { name: 'Tesoura', value: 'tesoura' }
             ]
           }
         ]
@@ -56,34 +56,34 @@ export class RockPaperScissorsCommand extends Command {
   }
 
   private rpsLogic(player_move: string) {
-    const bot_move = ['rock', 'paper', 'scissors'][
+    const bot_move = ['pedra', 'papel', 'tesoura'][
       Math.floor(Math.random() * 3)
     ];
 
-    if (player_move === 'rock') {
-      if (bot_move === 'rock') {
-        return ['Tie!', 'Rock'];
+    if (player_move === 'pedra') {
+      if (bot_move === 'pedra') {
+        return ['Empate!', 'Pedra'];
       }
-      if (bot_move === 'paper') {
-        return ['I win!', 'Paper'];
+      if (bot_move === 'papel') {
+        return ['Eu Ganhei!', 'Papel'];
       }
-      return ['You win!', 'Scissors'];
-    } else if (player_move === 'paper') {
-      if (bot_move === 'rock') {
-        return ['You win!', 'Rock'];
+      return ['Você Ganhou!', 'Tesoura'];
+    } else if (player_move === 'papel') {
+      if (bot_move === 'pedra') {
+        return ['Você ganhou!', 'Pedra'];
       }
-      if (bot_move === 'paper') {
-        return ['Tie!', 'Paper'];
+      if (bot_move === 'papel') {
+        return ['Empate!', 'Papel'];
       }
-      return ['I win!', 'Scissors'];
+      return ['Eu Ganhei!', 'Tesoura'];
     } else {
-      if (bot_move === 'rock') {
-        return ['I win!', 'Rock'];
+      if (bot_move === 'pedra') {
+        return ['Eu Ganhei!', 'Pedra'];
       }
-      if (bot_move === 'paper') {
-        return ['You win!', 'Paper'];
+      if (bot_move === 'papel') {
+        return ['Você Ganhou!', 'Papel'];
       }
-      return ['Tie!', 'Scissors'];
+      return ['Empate!', 'Tesoura'];
     }
   }
 }

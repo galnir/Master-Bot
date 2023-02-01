@@ -10,7 +10,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'my-playlists',
-  description: "Display your custom playlists' names",
+  description: "Exibir os nomes da sua playlists personalizadas",
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -32,7 +32,7 @@ export class MyPlaylistsCommand extends Command {
     });
 
     if (!playlistsQuery || !playlistsQuery.playlists.length) {
-      return await interaction.reply(':x: You have no custom playlists');
+      return await interaction.reply(':x: Você não tem playlists personalizadas');
     }
 
     new PaginatedFieldMessageEmbed()

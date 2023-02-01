@@ -11,7 +11,7 @@ import Logger from '../../lib/utils/logger';
 @ApplyOptions<CommandOptions>({
   name: 'translate',
   description:
-    'Translate from any language to any language using Google Translate',
+    'Traduza de qualquer idioma para qualquer idioma usando o Google Tradutor',
   preconditions: ['GuildOnly', 'isCommandDisabled', 'validateLanguageCode']
 })
 export class TranslateCommand extends Command {
@@ -26,12 +26,12 @@ export class TranslateCommand extends Command {
       .then(async (response: any) => {
         const embed = new MessageEmbed()
           .setColor('#770000')
-          .setTitle('Google Translate')
+          .setTitle('Google Tradutor')
           .setURL('https://translate.google.com/')
           .setDescription(response.text)
           .setFooter({
             iconURL: 'https://i.imgur.com/ZgFxIwe.png', // Google Translate Icon
-            text: 'Powered by Google Translate'
+            text: 'Powered by Google Tradutor'
           });
 
         return await interaction.reply({ embeds: [embed] });
@@ -39,7 +39,7 @@ export class TranslateCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          ':x: Something went wrong when trying to translate the text'
+          ':x: Algo deu errado ao tentar traduzir o texto'
         );
       });
   }
@@ -56,13 +56,13 @@ export class TranslateCommand extends Command {
           type: 'STRING',
           required: true,
           description:
-            'What is the target language?(language you want to translate to)'
+            'Qual é a língua alvo? (idioma para o qual você deseja traduzir)'
         },
         {
           name: 'text',
           type: 'STRING',
           required: true,
-          description: 'What text do you want to translate?'
+          description: 'Que texto você quer traduzir?'
         }
       ]
     });

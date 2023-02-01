@@ -20,7 +20,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Head>
-        <title>Master Bot Dashboard</title>
+        <title>Hell Bot Dashboard</title>
       </Head>
       <main className="flex text-gray-400 w-full h-screen relative overflow-auto">
         <div className="min-w-[350px]">

@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'seek',
-  description: 'Seek to a desired point in a track',
+  description: 'Procure um ponto desejado em uma música',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -27,18 +27,18 @@ export class SeekCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
     const track = await queue.getCurrentTrack();
     if (!track)
-      return await interaction.reply(':x: There is no track playing!'); // should never happen
+      return await interaction.reply(':x: Não tem nenhuma música tocando!'); // should never happen
     if (!track.isSeekable)
-      return await interaction.reply(':x: This track is not seekable!');
+      return await interaction.reply(':x: Esta música não é pesquisável!');
 
     if (milliseconds > track.length || milliseconds < 0) {
-      return await interaction.reply(':x: Please enter a valid number!');
+      return await interaction.reply(':x: Por favor, insira um número válido!');
     }
 
     const player = queue.player;
     await player.seek(milliseconds);
 
-    return await interaction.reply(`Seeked to ${seconds} seconds`);
+    return await interaction.reply(`Buscado ${seconds} segundos`);
   }
 
   public override registerApplicationCommands(
@@ -52,7 +52,7 @@ export class SeekCommand extends Command {
           name: 'seconds',
           type: 'INTEGER',
           description:
-            'To what point in the track do you want to seek? (in seconds)',
+            'Até que ponto da música você quer buscar? (em segundos)',
           required: true
         }
       ]

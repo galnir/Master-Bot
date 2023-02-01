@@ -27,7 +27,7 @@ export class PlaylistNotDuplicate extends Precondition {
       if (playlist) throw new Error();
     } catch {
       return this.error({
-        message: `There is already a playlist named **${playlistName}** in your saved playlists!`
+        message: `Já existe uma playlist chamada **${playlistName}** em suas listas de reprodução salvas!`
       });
     }
 

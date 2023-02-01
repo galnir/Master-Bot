@@ -41,7 +41,7 @@ export class BassboostCommand extends Command {
 
     await player.setFilters();
     return await interaction.reply(
-      `Bassboost ${player.bassboost ? 'enabled' : 'disabled'}`
+      `Bassboost ${player.bassboost ? 'ligado!' : 'desligado!'}`
     );
   }
 

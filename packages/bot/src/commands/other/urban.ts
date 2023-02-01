@@ -10,7 +10,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'urban',
-  description: 'Get definitions from urban dictionary',
+  description: 'Obter definições do dicionário urbano',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class UrbanCommand extends Command {
@@ -31,13 +31,13 @@ export class UrbanCommand extends Command {
           .setURL(response.data.list[0].permalink)
           .setTimestamp()
           .setFooter({
-            text: 'Powered by UrbanDictionary'
+            text: 'Desenvolvido por UrbanDictionary'
           });
         return await interaction.reply({ embeds: [embed] });
       })
       .catch(async error => {
         Logger.error(error);
-        return await interaction.reply('Failed to deliver definition :sob:');
+        return await interaction.reply('Falha ao fornecer a definição :sob:');
       });
   }
 
@@ -51,7 +51,7 @@ export class UrbanCommand extends Command {
         {
           name: 'query',
           type: 'STRING',
-          description: 'What term do you want to look up?',
+          description: 'Que termo você quer procurar?',
           required: true
         }
       ]

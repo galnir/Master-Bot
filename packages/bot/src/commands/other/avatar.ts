@@ -8,7 +8,7 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'avatar',
-  description: `Responds with a user's avatar`,
+  description: `Responde com o avatar de um usuário`,
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class AvatarCommand extends Command {
@@ -33,7 +33,7 @@ export class AvatarCommand extends Command {
           type: 'USER',
           required: true,
           name: 'user',
-          description: `Which user's avatar do you want to look at?`
+          description: `Qual avatar de usuário você deseja ver?`
         }
       ]
     });

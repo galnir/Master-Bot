@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'skipto',
-  description: 'Skip to a track in queue',
+  description: 'Pular para alguma música específica que está na fila',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',

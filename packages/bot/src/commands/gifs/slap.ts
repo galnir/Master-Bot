@@ -28,7 +28,7 @@ export class SlapCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Something went wrong when trying to fetch a slap gif :('
+          'Algo deu errado ao tentar buscar um gif de tapa :('
         );
       });
   }

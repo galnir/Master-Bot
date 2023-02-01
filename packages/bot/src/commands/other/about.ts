@@ -8,7 +8,7 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'about',
-  description: 'Display info about the bot!',
+  description: 'Exibir informações sobre o bot!',
   preconditions: ['isCommandDisabled']
 })
 export class AboutCommand extends Command {
@@ -16,7 +16,7 @@ export class AboutCommand extends Command {
     const embed = new MessageEmbed()
       .setTitle('About')
       .setDescription(
-        'A Discord bot with slash commands, playlist support, Spotify, music quiz, saved playlists, lyrics, gifs and more.\n\n :white_small_square: [Commands](https://github.com/galnir/Master-Bot#commands)\n :white_small_square: [Contributors](https://github.com/galnir/Master-Bot#contributors-%EF%B8%8F)'
+        'Um bot do Discord com comandos de barra, suporte a playlists, Spotify, quiz de música, playlists salvas, letras, gifs e muito mais.\n\n :white_small_square: [Commands](https://github.com/galnir/Master-Bot#commands)\n :white_small_square: [Contributors](https://github.com/galnir/Master-Bot#contributors-%EF%B8%8F)'
       )
       .setColor('#0x00ae86');
 

@@ -9,7 +9,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'shuffle',
-  description: 'Shuffle the music queue',
+  description: 'Embaralhar a fila de músicas!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -25,12 +25,12 @@ export class LeaveCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
 
     if (!(await queue.count())) {
-      return await interaction.reply(':x: There are no songs in queue!');
+      return await interaction.reply(':x: Não existe músicas na fila!');
     }
 
     await queue.shuffleTracks();
 
-    return await interaction.reply(':white_check_mark: Shuffled queue!');
+    return await interaction.reply(':white_check_mark: Fila embaralhada!');
   }
 
   public override registerApplicationCommands(

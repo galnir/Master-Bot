@@ -9,7 +9,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-from-playlist',
-  description: 'Remove a song from a saved playlist',
+  description: 'Remover uma música de uma playlist salva',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -34,17 +34,17 @@ export class RemoveFromPlaylistCommand extends Command {
 
       playlist = playlistQuery.playlist;
     } catch (error) {
-      return await interaction.followUp(':x: Something went wrong!');
+      return await interaction.followUp(':x: Alguma coisa deu errada!');
     }
 
     const songs = playlist?.songs;
 
     if (!songs?.length) {
-      return await interaction.followUp(`:x: **${playlistName}** is empty!`);
+      return await interaction.followUp(`:x: **${playlistName}** está vazia!`);
     }
 
     if (location > songs.length || location < 0) {
-      return await interaction.followUp(':x: Please enter a valid index!');
+      return await interaction.followUp(':x: Por favor, insira um índice válido!');
     }
 
     const id = songs[location - 1].id;
@@ -54,11 +54,11 @@ export class RemoveFromPlaylistCommand extends Command {
     });
 
     if (!song) {
-      return await interaction.followUp(':x: Something went wrong!');
+      return await interaction.followUp(':x: Alguma coisa deu errado!');
     }
 
     await interaction.followUp(
-      `:wastebasket: Deleted **${song.song.title}** from **${playlistName}**`
+      `:wastebasket: **${song.song.title}** deletada da playlist **${playlistName}**`
     );
     return;
   }
@@ -73,14 +73,14 @@ export class RemoveFromPlaylistCommand extends Command {
         {
           name: 'playlist-name',
           description:
-            'What is the name of the playlist you want to remove from?',
+            'Qual é o nome da playlist da qual você deseja remover?',
           type: 'STRING',
           required: true
         },
         {
           name: 'location',
           description:
-            'What is the index of the video you would like to delete from your saved playlist?',
+            'Qual é o índice do vídeo que você gostaria de excluir da sua playlist salva?',
           type: 'INTEGER',
           required: true // todo: not required so if a song is playing it can be saved
         }

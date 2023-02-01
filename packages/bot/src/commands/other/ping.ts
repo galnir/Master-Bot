@@ -8,7 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'ping',
-  description: 'Replies with Pong!',
+  description: 'Respostas com Pong!',
   preconditions: ['isCommandDisabled']
 })
 export class PingCommand extends Command {
@@ -16,7 +16,7 @@ export class PingCommand extends Command {
     const ping = interaction.createdTimestamp - Date.now();
     const apiPing = Math.round(interaction.client.ws.ping);
     return await interaction.reply(
-      `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms - Round Trip: ${
+      `Pong! - Latência do Bot: ${ping}ms - API Latência: ${apiPing}ms - Ida e volta: ${
         ping + apiPing
       }ms`
     );

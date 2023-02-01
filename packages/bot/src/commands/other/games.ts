@@ -12,7 +12,7 @@ import { Connect4Game } from '../../lib/utils/games/connect-4';
 export const playersInGame: Map<string, User> = new Map();
 @ApplyOptions<CommandOptions>({
   name: 'games',
-  description: 'Play a game with another person',
+  description: 'Jogar um jogo com outra pessoa',
   preconditions: ['isCommandDisabled']
 })
 export class GamesCommand extends Command {
@@ -25,7 +25,7 @@ export class GamesCommand extends Command {
     let gameTitle: string;
     if (playersInGame.has(player1.id)) {
       await interaction.reply({
-        content: ":x: You can't play more than 1 game at a time",
+        content: ":x: Você não pode jogar mais de 1 jogo por vez",
         ephemeral: true
       });
       return;
@@ -55,7 +55,7 @@ export class GamesCommand extends Command {
               playerMap.delete(response.user.id);
             } else {
               await interaction.followUp({
-                content: ':x: You started the invite.',
+                content: ':x: Você iniciou o convite.',
                 ephemeral: true
               });
             }
@@ -64,7 +64,7 @@ export class GamesCommand extends Command {
           if (response.customId === `${interaction.id}${player1.id}-Yes`) {
             if (playersInGame.has(response.user.id)) {
               await interaction.followUp({
-                content: `:x: You are already playing a game.`,
+                content: `:x: Você já está jogando um jogo.`,
                 ephemeral: true
               });
             }
@@ -99,7 +99,7 @@ export class GamesCommand extends Command {
           }
           if (reason === 'time') {
             await interaction.followUp({
-              content: `:x: No one responded to your invitation.`,
+              content: `:x: Ninguém respondeu ao seu convite.`,
               ephemeral: true,
               target: player1
             });
@@ -138,12 +138,12 @@ export class GamesCommand extends Command {
         {
           type: 'SUB_COMMAND',
           name: 'connect-4',
-          description: 'Play a game of Connect-4 with another Person.'
+          description: 'Jogue um jogo de Connect-4 com outra pessoa.'
         },
         {
           type: 'SUB_COMMAND',
           name: 'tic-tac-toe',
-          description: 'Play a game of Tic-Tac-Toe with another Person.'
+          description: 'Jogue um jogo de Tic-Tac-Toe com outra pessoa.'
         }
       ]
     });

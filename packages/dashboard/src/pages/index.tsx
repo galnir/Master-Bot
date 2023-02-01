@@ -12,10 +12,10 @@ const HomeComponent = () => {
   return (
     <div className="bg-slate-900 h-screen">
       <Head>
-        <title>Master Bot Dashboard</title>
+        <title>HellBot</title>
         <meta
           name="description"
-          content="Dashboard that controls master bot settings"
+          content="HELLBOT BRABOO!"
         />
       </Head>
       <header className="p-40 py-10 flex justify-between">
@@ -24,11 +24,11 @@ const HomeComponent = () => {
         </div>
         <div className="flex items-center justify-between gap-5">
           <HeaderButton
-            linkTo="https://github.com/galnir/Master-Bot"
+            linkTo="https://www.youtube.com/shorts/NP-Ywn0giNk"
             external={true}
             newWindow={true}
           >
-            Code
+            VIP FREE!
           </HeaderButton>
           <HeaderButton linkTo="/dashboard">Dashboard</HeaderButton>
         </div>

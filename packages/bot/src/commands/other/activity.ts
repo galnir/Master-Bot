@@ -8,7 +8,7 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'activity',
-  description: "Generate an invite link to your voice channel's activity",
+  description: "Gerar um link de convite para a atividade do seu canal de voz",
   preconditions: ['GuildOnly', 'isCommandDisabled', 'inVoiceChannel']
 })
 export class ActivityCommand extends Command {
@@ -18,7 +18,7 @@ export class ActivityCommand extends Command {
 
     if (channel.type !== 'GUILD_VOICE') {
       return await interaction.reply(
-        'You can only invite someone to a voice channel!'
+        'Você só pode convidar alguém para um canal de voz!'
       );
     }
 
@@ -26,17 +26,17 @@ export class ActivityCommand extends Command {
 
     if (member.voice.channelId !== channel.id) {
       return await interaction.reply(
-        'You can only invite to the channel you are in!'
+        'Você só pode convidar para o canal em que está!'
       );
     }
 
     let invite;
     try {
       invite = await channel.createInvite({
-        reason: 'Activity command generated invite'
+        reason: 'Comando de atividade gerado o convite'
       });
     } catch (err) {
-      return await interaction.reply(`Something went wrong!`);
+      return await interaction.reply(`Alguma coisa deu errado!`);
     }
 
     return await interaction.reply(
@@ -55,13 +55,13 @@ export class ActivityCommand extends Command {
           type: 'CHANNEL',
           required: true,
           name: 'channel',
-          description: 'Channel to invite to'
+          description: 'Canal para o qual convidar'
         },
         {
           type: 'STRING',
           required: true,
           name: 'activity',
-          description: 'Activity description'
+          description: 'Descrição da atividade'
         }
       ]
     });
