@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 import type { Node, Player } from 'lavaclient';
 
@@ -20,7 +15,9 @@ import type { Node, Player } from 'lavaclient';
   ]
 })
 export class NightcoreCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
 
     const player = client.music.players.get(
@@ -38,7 +35,7 @@ export class NightcoreCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

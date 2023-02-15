@@ -5,12 +5,12 @@ import {
   Message,
   MessageActionRow,
   MessageButton,
-  MessageEmbed
+  EmbedBuilder
 } from 'discord.js';
 import buttonsCollector, { deletePlayerEmbed } from './buttonsCollector';
 
 export async function embedButtons(
-  embed: MessageEmbed,
+  embed: EmbedBuilder,
   queue: Queue,
   song: Song,
   message?: string

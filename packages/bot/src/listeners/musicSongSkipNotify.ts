@@ -8,7 +8,7 @@ import type { CommandInteraction } from 'discord.js';
 })
 export class MusicSongSkipNotifyListener extends Listener {
   public override async run(
-    interaction: CommandInteraction,
+    interaction: Command.ChatInputCommandInteraction,
     track: Song
   ): Promise<void> {
     if (!track) return;

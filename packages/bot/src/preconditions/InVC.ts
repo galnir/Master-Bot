@@ -11,7 +11,7 @@ import type { CommandInteraction, GuildMember } from 'discord.js';
 })
 export class inVoiceChannel extends Precondition {
   public override chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): PreconditionResult {
     const member = interaction.member as GuildMember;
     const voiceChannel = member!.voice!.channel;

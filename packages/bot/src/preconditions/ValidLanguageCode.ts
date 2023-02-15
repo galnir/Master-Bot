@@ -12,7 +12,7 @@ import type { CommandInteraction } from 'discord.js';
 })
 export class ValidLanguageCode extends Precondition {
   public override chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): PreconditionResult {
     const targetLang = interaction.options.getString('target', true);
     const languageCode = ISO6391.getCode(targetLang);

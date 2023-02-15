@@ -13,7 +13,7 @@ import { trpcNode } from '../trpc';
 })
 export class TimeZoneExists extends Precondition {
   public override async chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const discordUser = interaction.user;
 

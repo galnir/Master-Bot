@@ -1,5 +1,5 @@
 import type { TwitchStream } from './twitchAPI-types';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 export class TwitchEmbed {
   stream: TwitchStream;
@@ -34,7 +34,7 @@ export class TwitchEmbed {
     this.viewers = viewers;
   }
 
-  public async TwitchEmbed(): Promise<MessageEmbed> {
+  public async TwitchEmbed(): Promise<EmbedBuilder> {
     const notGames = [
       'Software and Game Development',
       'Just Chatting',
@@ -48,7 +48,7 @@ export class TwitchEmbed {
       gameOrTopic = ':film_frames: Topic';
 
     if (this.ended) {
-      const offlineEmbed = new MessageEmbed({
+      const offlineEmbed = new EmbedBuilder({
         author: {
           name: `Twitch Notification - Stream Acabou`,
           icon_url: this.logo
@@ -70,7 +70,7 @@ export class TwitchEmbed {
         )
         .setTimestamp();
     } else {
-      const onlineEmbed = new MessageEmbed({
+      const onlineEmbed = new EmbedBuilder({
         author: {
           name: `Twitch Notification - ${
             this.change ? 'Stream Update' : 'Stream Iniciada'

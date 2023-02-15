@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
@@ -19,7 +14,9 @@ import { container } from '@sapphire/framework';
   ]
 })
 export class SkipCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const { music } = client;
     const queue = music.queues.get(interaction.guildId!);
@@ -33,7 +30,7 @@ export class SkipCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

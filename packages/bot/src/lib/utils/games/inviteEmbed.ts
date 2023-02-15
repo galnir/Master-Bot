@@ -1,27 +1,29 @@
 import {
-  CommandInteraction,
-  MessageEmbed,
+  EmbedBuilder,
   User,
-  MessageActionRow,
-  MessageButton
+  ActionRowBuilder,
+  ButtonBuilder,
+  ChatInputCommandInteraction,
+  Colors,
+  ButtonStyle
 } from 'discord.js';
 
 export class GameInvite {
   title: string;
   players: User[];
-  interaction: CommandInteraction;
+  interaction: ChatInputCommandInteraction;
 
   public constructor(
     title: string,
     players: User[],
-    interaction: CommandInteraction
+    interaction: ChatInputCommandInteraction
   ) {
     this.title = title;
     this.players = players;
     this.interaction = interaction;
   }
 
-  public gameInviteEmbed(): MessageEmbed {
+  public gameInviteEmbed(): EmbedBuilder {
     let thumbnail: string = '';
     switch (this.title) {
       case 'Connect 4':
@@ -32,11 +34,11 @@ export class GameInvite {
         break;
 
       default:
-        thumbnail = this.interaction.user.displayAvatarURL({ dynamic: true });
+        thumbnail = this.interaction.user.displayAvatarURL();
         break;
     }
 
-    const gameInvite = new MessageEmbed()
+    const gameInvite = new EmbedBuilder()
       .setAuthor({
         name: this.interaction.user.username,
         iconURL: this.interaction.user.avatar
@@ -44,7 +46,7 @@ export class GameInvite {
           : this.interaction.user.defaultAvatarURL
       })
       .setTitle(`${this.title} - Game Invitation`)
-      .setColor('YELLOW')
+      .setColor(Colors.Yellow)
       .setThumbnail(thumbnail)
       .setDescription(
         `${this.interaction.user} gostaria de jogar um jogo de ${this.title}. Clique em Sim ou Não. se você quiser participar`
@@ -58,20 +60,20 @@ export class GameInvite {
       .setTimestamp();
     return gameInvite;
   }
-  public gameInviteButtons(): MessageActionRow {
-    const gameInviteButtons = new MessageActionRow().addComponents(
-      new MessageButton()
+  public gameInviteButtons(): ActionRowBuilder {
+    const gameInviteButtons = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
         .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Yes`)
         .setLabel('Yes')
-        .setStyle('SUCCESS'),
-      new MessageButton()
+        .setStyle(ButtonStyle.Success),
+      new ButtonBuilder()
         .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-No`)
         .setLabel('No')
-        .setStyle('DANGER'),
-      new MessageButton()
+        .setStyle(ButtonStyle.Danger),
+      new ButtonBuilder()
         .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Start`)
         .setLabel('Start')
-        .setStyle('PRIMARY')
+        .setStyle(ButtonStyle.Primary)
     );
     return gameInviteButtons;
   }

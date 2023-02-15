@@ -1,11 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  container
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions, container } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -14,7 +9,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class TwitchStatusCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const query = interaction.options.getString('streamer', true).toString();
 
@@ -30,17 +27,17 @@ export class TwitchStatusCommand extends Command {
         token: client.twitch.auth.access_token,
         user_ids: [user.id]
       });
-      let baseEmbed = new MessageEmbed({
+      let baseEmbed = new EmbedBuilder({
         author: {
           name: `Status Check: ${
             stream[0]?.type == 'live'
               ? `${user.display_name} - Online`
               : `${user.display_name} - Offline`
           }`,
-          icon_url: user.profile_image_url,
+          iconURL: user.profile_image_url,
           url: `https://twitch.tv/${user.display_name}`
         },
-        color: '#6441A5',
+        color: 644115,
         url: `https://twitch.tv/${user.display_name}`,
         footer: {
           text: stream[0]?.type ? `Stream Iniciada` : 'Juntou a Twitch',
@@ -132,13 +129,14 @@ export class TwitchStatusCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
       Logger.info('Twitch-Status-Command - Disabled');
       return;
     }
     Logger.info('Twitch-Status-Command - Enabled');
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -151,5 +149,19 @@ export class TwitchStatusCommand extends Command {
         }
       ]
     });
+=======
+
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('streamer')
+            .setDescription('The Streamers Name')
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

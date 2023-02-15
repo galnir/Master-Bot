@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 import searchSong from '../../lib/utils/music/searchSong';
 import type { Song } from '../../lib/utils/queue/Song';
@@ -21,7 +16,9 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class PlayCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     await interaction.deferReply();
 
     const { client } = container;
@@ -31,7 +28,14 @@ export class PlayCommand extends Command {
       interaction.options.getString('is-custom-playlist');
     const shufflePlaylist = interaction.options.getString('shuffle-playlist');
 
-    const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member?.user;
+
+    if (!interactionMember) {
+      return await interaction.followUp(
+        ':x: Something went wrong! Please try again later'
+      );
+    }
+
     const { music } = client;
 
     // had a precondition make sure the user is infact in a voice channel
@@ -51,15 +55,6 @@ export class PlayCommand extends Command {
     let message: string = '';
 
     if (isCustomPlaylist == 'Yes') {
-      // const playlist = await prisma.playlist.findFirst({
-      //   where: {
-      //     userId: interactionMember.id,
-      //     name: query
-      //   },
-      //   select: {
-      //     songs: true
-      //   }
-      // });
       const data = await trpcNode.playlist.getPlaylist.query({
         userId: interactionMember.id,
         name: query
@@ -108,8 +103,9 @@ export class PlayCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -152,5 +148,50 @@ export class PlayCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('query')
+            .setDescription(
+              'What song or playlist would you like to listen to?'
+            )
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('is-custom-playlist')
+            .setDescription('Is it a custom playlist?')
+            .addChoices(
+              {
+                name: 'Yes',
+                value: 'Yes'
+              },
+              {
+                name: 'No',
+                value: 'No'
+              }
+            )
+        )
+        .addStringOption(option =>
+          option
+            .setName('shuffle-playlist')
+            .setDescription('Would you like to shuffle the playlist?')
+            .addChoices(
+              {
+                name: 'Yes',
+                value: 'Yes'
+              },
+              {
+                name: 'No',
+                value: 'No'
+              }
+            )
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

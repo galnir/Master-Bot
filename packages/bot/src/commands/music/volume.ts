@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
@@ -19,7 +14,9 @@ import { container } from '@sapphire/framework';
   ]
 })
 export class VolumeCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const query = interaction.options.getNumber('setting', true);
 
@@ -37,8 +34,9 @@ export class VolumeCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -51,5 +49,18 @@ export class VolumeCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addNumberOption(option =>
+          option
+            .setName('setting')
+            .setDescription('What Volume? (0 to 200)')
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

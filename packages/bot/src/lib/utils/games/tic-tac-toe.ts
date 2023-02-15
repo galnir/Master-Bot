@@ -2,18 +2,20 @@ import { createCanvas, Image } from '@napi-rs/canvas';
 import axios from 'axios';
 import {
   CommandInteraction,
-  MessageAttachment,
-  MessageEmbed,
+  AttachmentBuilder,
+  EmbedBuilder,
   MessageReaction,
   User,
-  Message
+  Message,
+  ChatInputCommandInteraction,
+  Colors
 } from 'discord.js';
 import { playersInGame } from '../../../commands/other/games';
 import Logger from '../logger';
 
 export class TicTacToeGame {
   public async ticTacToe(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     playerMap: Map<string, User>
   ) {
     const player1 = interaction.user;
@@ -23,7 +25,7 @@ export class TicTacToeGame {
     });
 
     const player1Avatar = player1.displayAvatarURL({
-      format: 'jpg'
+      extension: 'jpg'
     });
     const player1Image = await axios.request({
       responseType: 'arraybuffer',
@@ -34,7 +36,7 @@ export class TicTacToeGame {
     player1Piece.src = Buffer.from(await player1Image.data);
 
     const player2Avatar = player2!.displayAvatarURL({
-      format: 'jpg'
+      extension: 'jpg'
     });
 
     const player2Image = await axios.request({
@@ -62,9 +64,9 @@ export class TicTacToeGame {
       await createBoard();
       ++currentTurn;
 
-      const Embed = new MessageEmbed()
+      const Embed = new EmbedBuilder()
         .setThumbnail(player1Avatar)
-        .setColor('RED')
+        .setColor(Colors.Red)
         .setTitle(`Tic Tac Toe - Player 1's Turn`)
         .setDescription(
           `Use os emojis 1️⃣, 2️⃣, 3️⃣ para as colunas e 🇦, 🇧, 🇨 para as linhas.\n
@@ -315,7 +317,7 @@ export class TicTacToeGame {
         return await interaction.channel
           ?.send({
             files: [
-              new MessageAttachment(
+              new AttachmentBuilder(
                 canvas.toBuffer('image/png'),
                 `TicTacToe-${player1.id}-${player2.id}${currentTurn}.png`
               )
@@ -336,7 +338,7 @@ export class TicTacToeGame {
         row: number,
         column: number,
         user: User,
-        instance: MessageEmbed
+        instance: EmbedBuilder
       ) {
         const rowsLetters = ['A', 'B', 'C'];
         if (currentPlayer === user.id) {
@@ -364,7 +366,7 @@ export class TicTacToeGame {
             instance
               .setThumbnail(player2Avatar!)
               .setTitle(`Tic Tac Toe - Player 2's Turn`)
-              .setColor('BLUE')
+              .setColor(Colors.Blue)
               .setTimestamp();
           } else {
             gameBoard[row][column] = 2;
@@ -372,7 +374,7 @@ export class TicTacToeGame {
             instance
               .setThumbnail(player1Avatar)
               .setTitle(`Tic Tac Toe - Player 1's Turn`)
-              .setColor('RED')
+              .setColor(Colors.Red)
               .setTimestamp();
           }
           await createBoard();
@@ -384,7 +386,7 @@ export class TicTacToeGame {
           if (!emptySpaces(gameBoard)) {
             instance
               .setTitle(`Tic Tac Toe - Game Over`)
-              .setColor('GREY')
+              .setColor(Colors.Grey)
               .setThumbnail('');
             currentPlayer = 'Game Over';
             playerMap.forEach(player => playersInGame.delete(player.id));
@@ -399,9 +401,9 @@ export class TicTacToeGame {
             )
             .setTimestamp();
           if (currentPlayer === player1.id) {
-            instance.setThumbnail(player2Avatar!).setColor('BLUE');
+            instance.setThumbnail(player2Avatar!).setColor(Colors.Blue);
           } else {
-            instance.setThumbnail(player1Avatar).setColor('RED');
+            instance.setThumbnail(player1Avatar).setColor(Colors.Red);
           }
           currentPlayer = 'Game Over';
           playerMap.forEach(player => playersInGame.delete(player.id));

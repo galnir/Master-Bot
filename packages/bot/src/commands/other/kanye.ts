@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 
@@ -14,12 +10,14 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class KanyeCommand extends Command {
-  public override chatInputRun(interaction: CommandInteraction) {
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     axios
       .get('https://api.kanye.rest/?format=json')
       .then(async response => {
         const quote: string = response.data.quote;
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
           .setColor('#F4D190')
           .setAuthor({
             name: 'Kanye West',
@@ -42,7 +40,7 @@ export class KanyeCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

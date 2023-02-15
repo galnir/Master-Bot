@@ -3,17 +3,11 @@ import {
   PaginatedFieldMessageEmbed
 } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  container
-} from '@sapphire/framework';
+import { Command, CommandOptions, container } from '@sapphire/framework';
 import {
   ApplicationCommandOption,
   AutocompleteInteraction,
-  CommandInteraction,
-  MessageEmbed
+  EmbedBuilder
 } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
@@ -33,7 +27,9 @@ export class HelpCommand extends Command {
     interaction;
     return interaction.respond(result!);
   }
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
 
     const query = interaction.options.getString('command-name')?.toLowerCase();
@@ -74,8 +70,13 @@ export class HelpCommand extends Command {
           page++;
           characters = 0;
           PaginatedEmbed.addPageEmbed(
+<<<<<<< HEAD
             new MessageEmbed()
               .setTitle(`Lista de Comando - Página ${page}`)
+=======
+            new EmbedBuilder()
+              .setTitle(`Command List - Page ${page}`)
+>>>>>>> upgrade-to-v14
               .setThumbnail(app?.iconURL()!)
               .setColor('#9096e6')
               .setAuthor({
@@ -106,7 +107,7 @@ export class HelpCommand extends Command {
         });
         const DetailedPagination = new PaginatedFieldMessageEmbed();
 
-        const commandDetails = new MessageEmbed()
+        const commandDetails = new EmbedBuilder()
           .setAuthor({
             name: interaction.user.username + ' - Help Command',
             iconURL: interaction.user.displayAvatarURL()
@@ -134,7 +135,14 @@ export class HelpCommand extends Command {
           .make();
 
         return DetailedPagination.run(interaction);
+<<<<<<< HEAD
       } else await interaction.reply(`:x: Comando: **${query}** não foi achado`);
+=======
+      } else
+        return await interaction.reply(
+          `:x: Command: **${query}** was not found`
+        );
+>>>>>>> upgrade-to-v14
     }
     interface CommandInfo {
       name: string;
@@ -144,8 +152,9 @@ export class HelpCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -160,5 +169,18 @@ export class HelpCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('command-name')
+            .setDescription('Which command would you like to know about?')
+            .setRequired(false)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

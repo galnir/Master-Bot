@@ -16,7 +16,7 @@ import { container } from '@sapphire/framework';
 })
 export class inPlayerVoiceChannel extends Precondition {
   public override chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): PreconditionResult {
     const member = interaction.member as GuildMember;
     // this precondition comes after a precondition that makes sure the user is in a voice channel

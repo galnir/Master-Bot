@@ -12,7 +12,7 @@ import { trpcNode } from '../trpc';
 })
 export class IsCommandDisabled extends Precondition {
   public override async chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const commandID = interaction.commandId;
     const guildID = interaction.guildId as string;

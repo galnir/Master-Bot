@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import searchSong from '../../lib/utils/music/searchSong';
 import Logger from '../../lib/utils/logger';
 import { trpcNode } from '../../trpc';
@@ -20,12 +15,20 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class SaveToPlaylistCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     await interaction.deferReply();
     const playlistName = interaction.options.getString('playlist-name', true);
     const url = interaction.options.getString('url', true);
 
-    const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member?.user;
+
+    if (!interactionMember) {
+      return await interaction.followUp(
+        ':x: Something went wrong! Please try again later'
+      );
+    }
 
     const playlistQuery = await trpcNode.playlist.getPlaylist.query({
       name: playlistName,
@@ -68,8 +71,9 @@ export class SaveToPlaylistCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -88,5 +92,26 @@ export class SaveToPlaylistCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('playlist-name')
+            .setDescription(
+              'What is the name of the playlist you want to save to?'
+            )
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('url')
+            .setDescription('What do you want to save to the custom playlist?')
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

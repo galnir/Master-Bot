@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
@@ -18,12 +13,20 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class RemoveFromPlaylistCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     await interaction.deferReply();
     const playlistName = interaction.options.getString('playlist-name', true);
     const location = interaction.options.getInteger('location', true);
 
-    const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member?.user;
+
+    if (!interactionMember) {
+      return await interaction.followUp(
+        ':x: Something went wrong! Please try again later'
+      );
+    }
 
     let playlist;
     try {
@@ -64,8 +67,9 @@ export class RemoveFromPlaylistCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -86,5 +90,28 @@ export class RemoveFromPlaylistCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('playlist-name')
+            .setDescription(
+              'What is the name of the playlist you want to remove from?'
+            )
+            .setRequired(true)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('location')
+            .setDescription(
+              'What is the index of the video you would like to delete from your saved playlist?'
+            )
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

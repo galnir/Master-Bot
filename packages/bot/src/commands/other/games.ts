@@ -1,12 +1,8 @@
 import { TicTacToeGame } from '../../lib/utils/games/tic-tac-toe';
 import { GameInvite } from '../../lib/utils/games/inviteEmbed';
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction, User } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import type { User } from 'discord.js';
 import { Connect4Game } from '../../lib/utils/games/connect-4';
 
 export const playersInGame: Map<string, User> = new Map();
@@ -16,7 +12,9 @@ export const playersInGame: Map<string, User> = new Map();
   preconditions: ['isCommandDisabled']
 })
 export class GamesCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     let maxPlayers = 2;
     const playerMap = new Map();
     const player1 = interaction.user;
@@ -129,8 +127,9 @@ export class GamesCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -147,5 +146,22 @@ export class GamesCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addSubcommand(subCommand =>
+          subCommand
+            .setName('connect-4')
+            .setDescription('Play a game of Connect-4 with another Person.')
+        )
+        .addSubcommand(subCommand =>
+          subCommand
+            .setName('tic-tac-toe')
+            .setDescription('Play a game of Tic-Tac-Toe with another Person.')
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

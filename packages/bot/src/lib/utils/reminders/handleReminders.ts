@@ -1,11 +1,11 @@
 import {
   EmbedLimits,
-  PaginatedFieldMessageEmbed
+  PaginatedFieldEmbedBuilder
 } from '@sapphire/discord.js-utilities';
 import {
   CommandInteraction,
   MessageActionRow,
-  MessageEmbed,
+  EmbedBuilder,
   Modal,
   ModalActionRowComponent,
   ModalSubmitInteraction,
@@ -142,7 +142,7 @@ export function isPast(dateTime: string) {
 }
 
 async function findTimeZone(
-  interaction: CommandInteraction,
+  interaction: Command.ChatInputCommandInteraction,
   timeQuery: string,
   date: string
 ) {
@@ -215,7 +215,7 @@ export function nextReminder(
 }
 
 export async function checkInputs(
-  interaction: CommandInteraction | ModalSubmitInteraction,
+  interaction: Command.ChatInputCommandInteraction | ModalSubmitInteraction,
   event: string,
   time?: string,
   date?: string,
@@ -331,14 +331,14 @@ export async function checkInputs(
     }
   }
   if (failed) {
-    const errorEmbed = new MessageEmbed()
+    const errorEmbed = new EmbedBuilder()
       .setColor('BLURPLE')
       .setAuthor({
         name: `Reminder - Error Message`,
         iconURL: interaction.user.displayAvatarURL()
       })
       .setDescription(`**There was an error processing your request!**`);
-    const paginatedFieldTemplate = new PaginatedFieldMessageEmbed()
+    const paginatedFieldTemplate = new PaginatedFieldEmbedBuilder()
       .setTitleField(`:x: Issues`)
       .setTemplate(errorEmbed)
       .setItems(errors)
@@ -352,7 +352,9 @@ export async function checkInputs(
   return true;
 }
 
-export async function askForDateTime(interaction: CommandInteraction) {
+export async function askForDateTime(
+  interaction: Command.ChatInputCommandInteraction
+) {
   const modal = new Modal()
     .setCustomId('Reminder-TimeZone' + interaction.id)
     .setTitle('Reminder - Save Time Zone');

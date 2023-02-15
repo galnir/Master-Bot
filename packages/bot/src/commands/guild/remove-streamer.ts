@@ -1,29 +1,34 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  container
-} from '@sapphire/framework';
-import type { CommandInteraction, GuildChannel } from 'discord.js';
+import { Command, CommandOptions, container } from '@sapphire/framework';
+import type { GuildChannel } from 'discord.js';
 import { isTextBasedChannel } from '@sapphire/discord.js-utilities';
 import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
+<<<<<<< HEAD
   description: 'Adicionar um alerta de Stream do seu streamer favorito da Twitch',
   requiredUserPermissions: 'MODERATE_MEMBERS',
+=======
+  description: 'Add a Stream alert from your favorite Twitch streamer',
+  requiredUserPermissions: 'ModerateMembers',
+>>>>>>> upgrade-to-v14
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RemoveStreamerCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const streamerName = interaction.options.getString('streamer-name', true);
     const channelData = interaction.options.getChannel('channel-name', true);
     const { client } = container;
-    const user = await client.twitch.api
-      .getUser({
+
+    let user: any;
+    try {
+      user = await client.twitch.api.getUser({
         login: streamerName,
         token: client.twitch.auth.access_token
+<<<<<<< HEAD
       })
       .catch(async error => {
         if (error.status == 400) {
@@ -46,7 +51,30 @@ export class RemoveStreamerCommand extends Command {
             content: `:x: Alguma coisa deu errada.`
           });
         }
+=======
+>>>>>>> upgrade-to-v14
       });
+    } catch (error: any) {
+      if (error.status == 400) {
+        return await interaction.reply({
+          content: `:x: "${streamerName}" was Invalid, Please try again.`
+        });
+      }
+      if (error.status == 429) {
+        return await interaction.reply({
+          content: ':x: Rate Limit exceeded. Please try again in a few minutes.'
+        });
+      }
+      if (error.status == 500) {
+        return await interaction.reply({
+          content: `:x: Twitch service's are currently unavailable. Please try again later.`
+        });
+      } else {
+        return await interaction.reply({
+          content: `:x: Something went wrong.`
+        });
+      }
+    }
 
     if (!user)
       return await interaction.reply({
@@ -117,18 +145,18 @@ export class RemoveStreamerCommand extends Command {
     await interaction.reply({
       content: `**${user.display_name}** A Notificação de Live não será mais enviada para **#${channelData.name}**`
     });
+
+    return;
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     if (!process.env.TWITCH_CLIENT_ID || !process.env.TWITCH_CLIENT_SECRET) {
       return;
     }
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
 
+<<<<<<< HEAD
       options: [
         {
           name: 'streamer-name',
@@ -145,5 +173,26 @@ export class RemoveStreamerCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('streamer-name')
+            .setDescription('What is the name of the Twitch streamer?')
+            .setRequired(true)
+        )
+        .addChannelOption(option =>
+          option
+            .setName('channel-name')
+            .setDescription(
+              'What is the name of the Channel you would like the Alert to be removed from?'
+            )
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

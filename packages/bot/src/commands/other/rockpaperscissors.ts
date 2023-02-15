@@ -1,11 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions,
-  RegisterBehavior
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions, RegisterBehavior } from '@sapphire/framework';
+import { Colors, EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'rockpaperscissors',
@@ -13,25 +8,35 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
   preconditions: ['isCommandDisabled']
 })
 export class RockPaperScissorsCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const move = interaction.options.getString('move', true) as
       | 'pedra'
       | 'papel'
       | 'tesoura';
     const resultMessage = this.rpsLogic(move);
 
+<<<<<<< HEAD
     const embed = new MessageEmbed()
       .setColor('RANDOM')
       .setTitle('Pedra, Papel, Tesoura')
       .setDescription(`**${resultMessage[0]}**, Eu formei ${resultMessage[1]}`);
+=======
+    const embed = new EmbedBuilder()
+      .setColor(Colors.White)
+      .setTitle('Rock, Paper, Scissors')
+      .setDescription(`**${resultMessage[0]}**, I formed ${resultMessage[1]}`);
+>>>>>>> upgrade-to-v14
 
     return await interaction.reply({ embeds: [embed] });
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand(
+<<<<<<< HEAD
       {
         name: this.name,
         description: this.description,
@@ -49,6 +54,23 @@ export class RockPaperScissorsCommand extends Command {
           }
         ]
       },
+=======
+      builder =>
+        builder
+          .setName(this.name)
+          .setDescription(this.description)
+          .addStringOption(option =>
+            option
+              .setName('move')
+              .setDescription('What is your move?')
+              .setRequired(true)
+              .addChoices(
+                { name: 'Rock', value: 'rock' },
+                { name: 'Paper', value: 'paper' },
+                { name: 'Scissors', value: 'scissors' }
+              )
+          ),
+>>>>>>> upgrade-to-v14
       {
         behaviorWhenNotIdentical: RegisterBehavior.Overwrite
       }

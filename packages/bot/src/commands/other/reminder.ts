@@ -8,17 +8,15 @@ import {
 } from './../../lib/utils/reminders/handleReminders';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
+import { Command, CommandOptions } from '@sapphire/framework';
 import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
-  User
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  User,
+  ButtonStyle,
+  ChannelType,
+  ComponentType
 } from 'discord.js';
 import { Time } from '@sapphire/time-utilities';
 import { trpcNode } from '../../trpc';
@@ -30,7 +28,9 @@ import ReminderStore from '../../lib/utils/reminders/ReminderStore';
   preconditions: ['timeZoneExists']
 })
 export class ReminderCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const subCommand = interaction.options.getSubcommand(true);
 
     if (subCommand == 'save-timezone') {
@@ -119,9 +119,15 @@ export class ReminderCommand extends Command {
           await interaction.editReply('All Set');
         } else {
           await interaction.editReply(
+<<<<<<< HEAD
             `:x: Lembrete **não** foi salvo${
               interaction.channel?.type !== 'DM'
                 ? `, verifique sua DM's para mais informações`
+=======
+            `:x: Reminder was **not** saved${
+              interaction.channel?.type !== ChannelType.DM
+                ? `, check your DM's for more info`
+>>>>>>> upgrade-to-v14
                 : ''
             } `
           );
@@ -156,7 +162,7 @@ export class ReminderCommand extends Command {
       const allReminders = await cache.getUsersReminders(keyList);
       const remindersDB = allReminders.map(reminders => JSON.parse(reminders!));
 
-      const baseEmbed = new MessageEmbed()
+      const baseEmbed = new EmbedBuilder()
         .setColor('#9096e6')
         .setAuthor({
           name: `⏰ ${interactionUser.username} - Lista de lembretes`
@@ -182,15 +188,15 @@ export class ReminderCommand extends Command {
       ); // convert to Regular Message Embed For Ephemeral Option
       const totalPages = paginatedFieldTemplate.pages.length;
       if (totalPages > 1) {
-        const rowOne = new MessageActionRow().addComponents(
-          new MessageButton()
+        const rowOne = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
             .setCustomId(`${interaction.id}-previous`)
             .setEmoji('◀️')
-            .setStyle('PRIMARY'),
-          new MessageButton()
+            .setStyle(ButtonStyle.Primary),
+          new ButtonBuilder()
             .setCustomId(`${interaction.id}-next`)
             .setEmoji('▶️')
-            .setStyle('PRIMARY')
+            .setStyle(ButtonStyle.Primary)
         );
 
         await interaction
@@ -198,7 +204,13 @@ export class ReminderCommand extends Command {
             embeds: embeds[0],
             ephemeral: true,
             fetchReply: true,
-            components: [rowOne]
+            components: [
+              {
+                type: ComponentType.ActionRow,
+                // @ts-ignore
+                components: [rowOne]
+              }
+            ]
           })
           .then(() => {
             const collector =
@@ -232,8 +244,9 @@ export class ReminderCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -316,5 +329,68 @@ export class ReminderCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addSubcommand(subCommand =>
+          subCommand
+            .setName('set')
+            .setDescription('Set a reminder.')
+            .addStringOption(option =>
+              option
+                .setName('event')
+                .setDescription('What would you like to be reminded of?')
+                .setRequired(true)
+            )
+            .addStringOption(option =>
+              option
+                .setName('time')
+                .setDescription(
+                  'Enter a Time for your Reminder. (ex: 14:30 for 2:30 pm)'
+                )
+                .setRequired(true)
+            )
+            .addStringOption(option =>
+              option
+                .setName('date')
+                .setDescription('Enter a Date for your reminder. (MM/DD/YYYY)')
+                .setRequired(false)
+            )
+            .addStringOption(option =>
+              option
+                .setName('description')
+                .setDescription('Enter a Description for your reminder.')
+                .setRequired(false)
+            )
+        )
+        .addSubcommand(subCommand =>
+          subCommand
+            .setName('remove')
+            .setDescription('Remove a reminder.')
+            .addStringOption(option =>
+              option
+                .setName('event')
+                .setDescription('What reminder would you like to remove?')
+                .setRequired(true)
+            )
+        )
+        .addSubcommand(subCommand =>
+          subCommand.setName('view').setDescription('View your reminders.')
+        )
+        .addSubcommand(subCommand =>
+          subCommand
+            .setName('timezone')
+            .setDescription('Set your timezone.')
+            .addStringOption(option =>
+              option
+                .setName('timezone')
+                .setDescription('Enter your timezone.')
+                .setRequired(true)
+            )
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

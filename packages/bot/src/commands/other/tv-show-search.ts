@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
@@ -15,7 +10,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class TVShowSearchCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const query = interaction.options.getString('query', true);
 
     try {
@@ -70,8 +67,9 @@ export class TVShowSearchCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -84,6 +82,19 @@ export class TVShowSearchCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('query')
+            .setDescription('What TV show do you want to look up?')
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 
   private getData(query: string): Promise<ResponseData> {

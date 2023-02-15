@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import * as fs from 'fs';
 
 @ApplyOptions<CommandOptions>({
@@ -13,7 +9,9 @@ import * as fs from 'fs';
   preconditions: ['isCommandDisabled']
 })
 export class EightBallCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const question = interaction.options.getString('question', true);
 
     if (question.length > 255) {
@@ -29,7 +27,7 @@ export class EightBallCommand extends Command {
     const randomAnswer =
       answersArray[Math.floor(Math.random() * answersArray.length)];
 
-    const answerEmbed = new MessageEmbed()
+    const answerEmbed = new EmbedBuilder()
       .setTitle(question)
       .setAuthor({
         name: 'Magic 8 Ball',
@@ -42,8 +40,9 @@ export class EightBallCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -56,5 +55,18 @@ export class EightBallCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('question')
+            .setDescription('What question do you want to ask the magic ball?')
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

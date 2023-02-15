@@ -1,12 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
+import { Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
-import { CommandInteraction, MessageEmbed, Constants } from 'discord.js';
+import { EmbedBuilder, Colors, ButtonStyle, ComponentType } from 'discord.js';
 import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
@@ -15,7 +11,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class SpeedRunCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const query = interaction.options.getString('game', true);
     let queryCat = interaction.options.getString('category', false);
 
@@ -56,7 +54,7 @@ export class SpeedRunCommand extends Command {
       initial.data.slice(0, 6).forEach((id: any) => {
         gameNameArr.push(id.names.international);
       });
-      let gameName = new MessageEmbed()
+      let gameName = new EmbedBuilder()
         .setColor('#3E8657')
         .setTitle(':mag: Resultados da pesquisa')
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
@@ -87,10 +85,10 @@ export class SpeedRunCommand extends Command {
         } else if (i == categories.length)
           queryCat = categories[0].category.data.name;
       }
-      await interaction
+      return await interaction
         .reply({
           embeds: [
-            new MessageEmbed()
+            new EmbedBuilder()
               .setColor('#3E8657')
               .setDescription('Obtendo dados')
           ],
@@ -118,11 +116,11 @@ export class SpeedRunCommand extends Command {
         style:
           categories[index].category.data.name.toLowerCase() ==
           queryCat.toLowerCase()
-            ? 'SUCCESS'
-            : 'PRIMARY',
+            ? ButtonStyle.Success
+            : ButtonStyle.Primary,
         customId: `Category-${index}`,
         label: categories[index].category.data.name,
-        type: Constants.MessageComponentTypes.BUTTON,
+        type: ComponentType.Button,
         run: async ({ interaction }) => {
           // message = new PaginatedMessage();
           queryCat = categories[index].category.data.name;
@@ -136,8 +134,8 @@ export class SpeedRunCommand extends Command {
           } catch (error: any) {
             new PaginatedMessage()
               .addPageEmbed(
-                new MessageEmbed()
-                  .setColor('RED')
+                new EmbedBuilder()
+                  .setColor(Colors.Red)
                   .setTitle('Error')
                   .setDescription(error.toString())
               )
@@ -146,7 +144,7 @@ export class SpeedRunCommand extends Command {
           await interaction
             .update({
               embeds: [
-                new MessageEmbed()
+                new EmbedBuilder()
                   .setColor('#3E8657')
                   .setDescription('Obtendo dados')
               ],
@@ -167,7 +165,7 @@ export class SpeedRunCommand extends Command {
         if (
           category.category.data.name.toLowerCase() == queryCat?.toLowerCase()
         ) {
-          const catRules = new MessageEmbed()
+          const catRules = new EmbedBuilder()
             .setDescription(
               category.category.data.rules.toString().length
                 ? `**${category.category.data.name} Rules**:\n` +
@@ -266,8 +264,8 @@ export class SpeedRunCommand extends Command {
     } catch (error: any) {
       Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
       return new PaginatedMessage().addPageEmbed(
-        new MessageEmbed()
-          .setColor('RED')
+        new EmbedBuilder()
+          .setColor(Colors.Red)
           .setTitle('Error')
           .setDescription(error.toString())
       );
@@ -323,8 +321,9 @@ export class SpeedRunCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -343,5 +342,24 @@ export class SpeedRunCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('game')
+            .setDescription('Video Game Title?')
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('category')
+            .setDescription('speed run Category?')
+            .setRequired(false)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

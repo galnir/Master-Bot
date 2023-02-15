@@ -1,11 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
-import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
@@ -19,12 +15,20 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class MyPlaylistsCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
-    const interactionMember = interaction.member as GuildMember;
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
+    const interactionMember = interaction.member?.user;
 
-    const baseEmbed = new MessageEmbed().setColor('#9096e6').setAuthor({
-      name: `${interactionMember.user.username}`,
-      iconURL: interactionMember.user.displayAvatarURL()
+    if (!interactionMember) {
+      return await interaction.reply({
+        content: ':x: Something went wrong! Please try again later'
+      });
+    }
+
+    const baseEmbed = new EmbedBuilder().setColor('#9096e6').setAuthor({
+      name: `${interactionMember.username}`,
+      iconURL: interactionMember.avatar || undefined
     });
 
     const playlistsQuery = await trpcNode.playlist.getAll.query({
@@ -43,10 +47,12 @@ export class MyPlaylistsCommand extends Command {
       .setItemsPerPage(5)
       .make()
       .run(interaction);
+
+    return;
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

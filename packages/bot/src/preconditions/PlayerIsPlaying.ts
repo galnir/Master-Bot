@@ -12,7 +12,7 @@ import { container } from '@sapphire/framework';
 })
 export class PlayerIsPlaying extends Precondition {
   public override chatInputRun(
-    interaction: CommandInteraction
+    interaction: Command.ChatInputCommandInteraction
   ): PreconditionResult {
     const { client } = container;
     const player = client.music.players.get(interaction.guildId as string);

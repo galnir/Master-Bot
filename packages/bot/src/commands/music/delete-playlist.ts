@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import Logger from '../../lib/utils/logger';
 import { trpcNode } from '../../trpc';
 
@@ -19,10 +14,18 @@ import { trpcNode } from '../../trpc';
   ]
 })
 export class DeletePlaylistCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const playlistName = interaction.options.getString('playlist-name', true);
 
-    const interactionMember = interaction.member as GuildMember;
+    const interactionMember = interaction.member?.user;
+
+    if (!interactionMember) {
+      return await interaction.reply(
+        ':x: Something went wrong! Please try again later'
+      );
+    }
 
     try {
       const playlist = await trpcNode.playlist.delete.mutate({
@@ -42,8 +45,9 @@ export class DeletePlaylistCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -56,5 +60,20 @@ export class DeletePlaylistCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('playlist-name')
+            .setDescription(
+              'What is the name of the playlist you want to delete?'
+            )
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }

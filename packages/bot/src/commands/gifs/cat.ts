@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 
@@ -14,8 +9,15 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class CatCommand extends Command {
+<<<<<<< HEAD
   public override chatInputRun(interaction: CommandInteraction) {
     if (!process.env.TENOR_API) return;
+=======
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
+    if (!process.env.CAT_API) return;
+>>>>>>> upgrade-to-v14
     axios
       .get(
         `https://tenor.googleapis.com/v2/search?key=${process.env.TENOR_API}&q=cat&limit=1&random=true`
@@ -34,7 +36,7 @@ export class CatCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

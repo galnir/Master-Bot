@@ -4,7 +4,6 @@ import {
   Command,
   CommandOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 
@@ -14,7 +13,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class AnimeCommand extends Command {
-  public override chatInputRun(interaction: CommandInteraction) {
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     if (!process.env.TENOR_API) return;
     axios
       .get(
@@ -34,7 +35,7 @@ export class AnimeCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

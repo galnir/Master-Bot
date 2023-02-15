@@ -1,10 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
 import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
@@ -19,7 +14,9 @@ import { container } from '@sapphire/framework';
   ]
 })
 export class MoveCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const currentPosition = interaction.options.getInteger(
       'current-position',
@@ -42,11 +39,13 @@ export class MoveCommand extends Command {
     }
 
     await queue.moveTracks(currentPosition - 1, newPosition - 1);
+    return;
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
+<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -65,5 +64,28 @@ export class MoveCommand extends Command {
         }
       ]
     });
+=======
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addIntegerOption(option =>
+          option
+            .setName('current-position')
+            .setDescription(
+              'What is the position of the song you want to move?'
+            )
+            .setRequired(true)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('new-position')
+            .setDescription(
+              'What is the position you want to move the song to?'
+            )
+            .setRequired(true)
+        )
+    );
+>>>>>>> upgrade-to-v14
   }
 }
