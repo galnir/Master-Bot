@@ -31,7 +31,6 @@ export class AddStreamerCommand extends Command {
       user = await client.twitch.api.getUser({
         login: streamerName,
         token: client.twitch.auth.access_token
-<<<<<<< HEAD
       })
       .catch(async error => {
         isError = true;
@@ -60,8 +59,6 @@ export class AddStreamerCommand extends Command {
             content: `:x: Alguma coisa deu errada!`
           });
         }
-=======
->>>>>>> upgrade-to-v14
       });
     } catch (error: any) {
       isError = true;

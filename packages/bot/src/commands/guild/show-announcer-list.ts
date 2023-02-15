@@ -29,15 +29,9 @@ export class ShowAnnouncerListCommand extends Command {
     if (!guildDB || !guildDB.guild || guildDB.guild.notifyList.length === 0) {
       return await interaction.reply(':x: Nenhum streamer está na sua lista');
     }
-<<<<<<< HEAD
     const icon = interactionGuild.iconURL({ dynamic: true });
     const baseEmbed = new MessageEmbed().setColor('#6441A5').setAuthor({
       name: `${interactionGuild.name} - Twitch Alertas`,
-=======
-    const icon = interactionGuild.iconURL();
-    const baseEmbed = new EmbedBuilder().setColor('#6441A5').setAuthor({
-      name: `${interactionGuild.name} - Twitch Alerts`,
->>>>>>> upgrade-to-v14
       iconURL: icon!
     });
 
@@ -46,7 +40,6 @@ export class ShowAnnouncerListCommand extends Command {
       users = await client.twitch.api.getUsers({
         ids: guildDB.guild.notifyList,
         token: client.twitch.auth.access_token
-<<<<<<< HEAD
       })
       .catch(error => {
         if (error.status == 429) {
@@ -64,8 +57,6 @@ export class ShowAnnouncerListCommand extends Command {
             content: `:x: Alguma coisa deu errada.`
           });
         }
-=======
->>>>>>> upgrade-to-v14
       });
     } catch (error: any) {
       if (error.status == 429) {

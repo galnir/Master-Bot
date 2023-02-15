@@ -6,13 +6,8 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
-<<<<<<< HEAD
   description: 'Adicionar um alerta de Stream do seu streamer favorito da Twitch',
   requiredUserPermissions: 'MODERATE_MEMBERS',
-=======
-  description: 'Add a Stream alert from your favorite Twitch streamer',
-  requiredUserPermissions: 'ModerateMembers',
->>>>>>> upgrade-to-v14
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RemoveStreamerCommand extends Command {
@@ -28,7 +23,6 @@ export class RemoveStreamerCommand extends Command {
       user = await client.twitch.api.getUser({
         login: streamerName,
         token: client.twitch.auth.access_token
-<<<<<<< HEAD
       })
       .catch(async error => {
         if (error.status == 400) {
@@ -51,8 +45,6 @@ export class RemoveStreamerCommand extends Command {
             content: `:x: Alguma coisa deu errada.`
           });
         }
-=======
->>>>>>> upgrade-to-v14
       });
     } catch (error: any) {
       if (error.status == 400) {
