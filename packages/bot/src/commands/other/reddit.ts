@@ -34,10 +34,6 @@ export class RedditCommand extends Command {
       );
 
       const menu = await channel.send({
-<<<<<<< HEAD
-        content: `:loud_sound: Você quer obter o ${sort} posts da hora passada/semana/mês/ano ou todos?`,
-        components: [row]
-=======
         content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
         components: [
           {
@@ -46,7 +42,6 @@ export class RedditCommand extends Command {
             components: [row]
           }
         ]
->>>>>>> upgrade-to-v14
       });
 
       const collector = menu.createMessageComponentCollector({
@@ -151,53 +146,6 @@ export class RedditCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'subreddit',
-          type: 'STRING',
-          required: true,
-          description: 'Nome do subreddit'
-        },
-        {
-          name: 'sort',
-          type: 'STRING',
-          required: true,
-          description:
-            'Quais posts você quer ver? Selecione de best/hot/top/new/controversial/rising',
-          choices: [
-            {
-              name: 'Best',
-              value: 'best'
-            },
-            {
-              name: 'Hot',
-              value: 'hot'
-            },
-            {
-              name: 'New',
-              value: 'new'
-            },
-            {
-              name: 'Top',
-              value: 'top'
-            },
-            {
-              name: 'Controversial',
-              value: 'controversial'
-            },
-            {
-              name: 'Rising',
-              value: 'rising'
-            }
-          ]
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -243,7 +191,6 @@ export class RedditCommand extends Command {
             )
         )
     );
->>>>>>> upgrade-to-v14
   }
 }
 
@@ -269,3 +216,4 @@ const optionsArray = [
     value: 'all'
   }
 ];
+x

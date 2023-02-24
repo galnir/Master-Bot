@@ -61,20 +61,6 @@ export class DisplayPlaylistCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'playlist-name',
-          description: 'Qual o nome da playlist que você quer ver?',
-          type: 'STRING',
-          required: true
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -88,6 +74,5 @@ export class DisplayPlaylistCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

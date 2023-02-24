@@ -71,19 +71,6 @@ export class LyricsCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'title',
-          description: ':mag: Que letra de música você gostaria de obter?',
-          type: 'STRING'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -95,6 +82,5 @@ export class LyricsCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

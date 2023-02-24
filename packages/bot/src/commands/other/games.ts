@@ -129,24 +129,6 @@ export class GamesCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'SUB_COMMAND',
-          name: 'connect-4',
-          description: 'Jogue um jogo de Connect-4 com outra pessoa.'
-        },
-        {
-          type: 'SUB_COMMAND',
-          name: 'tic-tac-toe',
-          description: 'Jogue um jogo de Tic-Tac-Toe com outra pessoa.'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -162,6 +144,5 @@ export class GamesCommand extends Command {
             .setDescription('Play a game of Tic-Tac-Toe with another Person.')
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

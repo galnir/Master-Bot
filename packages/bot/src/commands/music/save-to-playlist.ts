@@ -73,26 +73,6 @@ export class SaveToPlaylistCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'playlist-name',
-          description: 'Qual é o nome da playlist que você quer salvar?',
-          type: 'STRING',
-          required: true
-        },
-        {
-          name: 'url',
-          description: 'O que você quer salvar na playlist personalizada?',
-          type: 'STRING',
-          required: true // todo: not required so if a song is playing it can be saved
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -112,6 +92,5 @@ export class SaveToPlaylistCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

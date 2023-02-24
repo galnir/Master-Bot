@@ -136,20 +136,6 @@ export class TwitchStatusCommand extends Command {
       return;
     }
     Logger.info('Twitch-Status-Command - Enabled');
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'STRING',
-          required: true,
-          name: 'streamer',
-          description: 'O nome dos streamers'
-        }
-      ]
-    });
-=======
 
     registry.registerChatInputCommand(builder =>
       builder
@@ -162,6 +148,5 @@ export class TwitchStatusCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

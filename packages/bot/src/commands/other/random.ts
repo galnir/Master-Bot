@@ -24,26 +24,6 @@ export class RandomCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'INTEGER',
-          required: true,
-          name: 'min',
-          description: 'Qual é o número mínimo?'
-        },
-        {
-          type: 'INTEGER',
-          required: true,
-          name: 'max',
-          description: 'Qual é o número máximo?'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -61,6 +41,5 @@ export class RandomCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

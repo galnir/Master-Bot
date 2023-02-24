@@ -119,15 +119,9 @@ export class ReminderCommand extends Command {
           await interaction.editReply('All Set');
         } else {
           await interaction.editReply(
-<<<<<<< HEAD
-            `:x: Lembrete **não** foi salvo${
-              interaction.channel?.type !== 'DM'
-                ? `, verifique sua DM's para mais informações`
-=======
             `:x: Reminder was **not** saved${
               interaction.channel?.type !== ChannelType.DM
                 ? `, check your DM's for more info`
->>>>>>> upgrade-to-v14
                 : ''
             } `
           );
@@ -246,90 +240,6 @@ export class ReminderCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'SUB_COMMAND',
-          name: 'set',
-          description: 'Definir um lembrete.',
-          options: [
-            {
-              type: 'STRING',
-              required: true,
-              name: 'event',
-              description: 'Do que você gostaria de ser lembrado?'
-            },
-            {
-              type: 'STRING',
-              required: true,
-              name: 'time',
-              description:
-                'Insira um Tempo para o seu Lembrete. (ex: 14:30 para 02:30pm)'
-            },
-            {
-              type: 'STRING',
-              required: false,
-              name: 'date',
-              description: 'Insira uma Data para o seu lembrete. (MM/DD/AAAA)'
-            },
-            {
-              type: 'STRING',
-              required: false,
-              name: 'description',
-              description: 'Insira um lembrete de Descrição para você. (Opcional)'
-            },
-            {
-              type: 'STRING',
-              required: false,
-              name: 'repeat',
-              description: 'Com que frequência repetir o lembrete. (Opcional)',
-              choices: [
-                {
-                  name: 'Anual',
-                  value: 'Yearly'
-                },
-                {
-                  name: 'Mensal',
-                  value: 'Monthly'
-                },
-                {
-                  name: 'Semanalmente',
-                  value: 'Weekly'
-                },
-                { name: 'Diário', value: 'Daily' }
-              ]
-            }
-          ]
-        },
-        {
-          type: 'SUB_COMMAND',
-          name: 'view',
-          description: 'Mostre seus lembretes.'
-        },
-        {
-          type: 'SUB_COMMAND',
-          name: 'remove',
-          description: 'Exclua um lembrete da sua lista.',
-          options: [
-            {
-              type: 'STRING',
-              required: true,
-              name: 'event',
-              description: 'Qual lembrete você gostaria de remover?'
-            }
-          ]
-        },
-        {
-          type: 'SUB_COMMAND',
-          name: 'save-timezone',
-          description: 'Salve seu fuso horário.'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -391,6 +301,6 @@ export class ReminderCommand extends Command {
             )
         )
     );
->>>>>>> upgrade-to-v14
   }
 }
+x

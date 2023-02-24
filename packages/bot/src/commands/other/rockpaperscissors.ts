@@ -17,17 +17,10 @@ export class RockPaperScissorsCommand extends Command {
       | 'tesoura';
     const resultMessage = this.rpsLogic(move);
 
-<<<<<<< HEAD
-    const embed = new MessageEmbed()
-      .setColor('RANDOM')
-      .setTitle('Pedra, Papel, Tesoura')
-      .setDescription(`**${resultMessage[0]}**, Eu formei ${resultMessage[1]}`);
-=======
     const embed = new EmbedBuilder()
       .setColor(Colors.White)
       .setTitle('Rock, Paper, Scissors')
       .setDescription(`**${resultMessage[0]}**, I formed ${resultMessage[1]}`);
->>>>>>> upgrade-to-v14
 
     return await interaction.reply({ embeds: [embed] });
   }
@@ -36,25 +29,6 @@ export class RockPaperScissorsCommand extends Command {
     registry: Command.Registry
   ): void {
     registry.registerChatInputCommand(
-<<<<<<< HEAD
-      {
-        name: this.name,
-        description: this.description,
-        options: [
-          {
-            name: 'move',
-            type: 'STRING',
-            required: true,
-            description: 'Qual é o seu movimento?',
-            choices: [
-              { name: 'Pedra', value: 'pedra' },
-              { name: 'Papel', value: 'papel' },
-              { name: 'Tesoura', value: 'tesoura' }
-            ]
-          }
-        ]
-      },
-=======
       builder =>
         builder
           .setName(this.name)
@@ -70,7 +44,6 @@ export class RockPaperScissorsCommand extends Command {
                 { name: 'Scissors', value: 'scissors' }
               )
           ),
->>>>>>> upgrade-to-v14
       {
         behaviorWhenNotIdentical: RegisterBehavior.Overwrite
       }

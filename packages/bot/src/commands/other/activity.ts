@@ -53,26 +53,6 @@ export class ActivityCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'CHANNEL',
-          required: true,
-          name: 'channel',
-          description: 'Canal para o qual convidar'
-        },
-        {
-          type: 'STRING',
-          required: true,
-          name: 'activity',
-          description: 'Descrição da atividade'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -90,6 +70,5 @@ export class ActivityCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

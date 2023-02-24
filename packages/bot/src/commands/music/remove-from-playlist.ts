@@ -69,28 +69,6 @@ export class RemoveFromPlaylistCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'playlist-name',
-          description:
-            'Qual é o nome da playlist da qual você deseja remover?',
-          type: 'STRING',
-          required: true
-        },
-        {
-          name: 'location',
-          description:
-            'Qual é o índice do vídeo que você gostaria de excluir da sua playlist salva?',
-          type: 'INTEGER',
-          required: true // todo: not required so if a song is playing it can be saved
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -112,6 +90,5 @@ export class RemoveFromPlaylistCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

@@ -41,21 +41,6 @@ export class SeekCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'seconds',
-          type: 'INTEGER',
-          description:
-            'Até que ponto da música você quer buscar? (em segundos)',
-          required: true
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -69,6 +54,5 @@ export class SeekCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

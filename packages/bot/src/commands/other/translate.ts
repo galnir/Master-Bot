@@ -46,27 +46,6 @@ export class TranslateCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'target',
-          type: 'STRING',
-          required: true,
-          description:
-            'Qual é a língua alvo? (idioma para o qual você deseja traduzir)'
-        },
-        {
-          name: 'text',
-          type: 'STRING',
-          required: true,
-          description: 'Que texto você quer traduzir?'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -86,6 +65,5 @@ export class TranslateCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

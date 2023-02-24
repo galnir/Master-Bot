@@ -323,26 +323,6 @@ export class SpeedRunCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'STRING',
-          required: true,
-          name: 'game',
-          description: 'Título do videogame?'
-        },
-        {
-          type: 'STRING',
-          required: false,
-          name: 'category',
-          description: 'Categoria do speedrun?'
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -360,6 +340,5 @@ export class SpeedRunCommand extends Command {
             .setRequired(false)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

@@ -70,13 +70,8 @@ export class HelpCommand extends Command {
           page++;
           characters = 0;
           PaginatedEmbed.addPageEmbed(
-<<<<<<< HEAD
-            new MessageEmbed()
-              .setTitle(`Lista de Comando - Página ${page}`)
-=======
             new EmbedBuilder()
               .setTitle(`Command List - Page ${page}`)
->>>>>>> upgrade-to-v14
               .setThumbnail(app?.iconURL()!)
               .setColor('#9096e6')
               .setAuthor({
@@ -135,14 +130,10 @@ export class HelpCommand extends Command {
           .make();
 
         return DetailedPagination.run(interaction);
-<<<<<<< HEAD
-      } else await interaction.reply(`:x: Comando: **${query}** não foi achado`);
-=======
       } else
         return await interaction.reply(
           `:x: Command: **${query}** was not found`
         );
->>>>>>> upgrade-to-v14
     }
     interface CommandInfo {
       name: string;
@@ -154,22 +145,6 @@ export class HelpCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-
-      options: [
-        {
-          type: 'STRING',
-          required: false,
-          name: 'command-name',
-          description: 'Qual comando você gostaria de conhecer?',
-          autocomplete: true
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -181,6 +156,5 @@ export class HelpCommand extends Command {
             .setRequired(false)
         )
     );
->>>>>>> upgrade-to-v14
   }
 }

@@ -69,20 +69,6 @@ export class TVShowSearchCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'query',
-          description: 'Qual programa de TV você quer procurar?',
-          type: 'STRING',
-          required: true
-        }
-      ]
-    });
-=======
     registry.registerChatInputCommand(builder =>
       builder
         .setName(this.name)
@@ -94,7 +80,6 @@ export class TVShowSearchCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 
   private getData(query: string): Promise<ResponseData> {

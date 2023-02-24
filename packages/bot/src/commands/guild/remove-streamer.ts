@@ -148,7 +148,6 @@ export class RemoveStreamerCommand extends Command {
       return;
     }
 
-<<<<<<< HEAD
       options: [
         {
           name: 'streamer-name',
@@ -165,26 +164,5 @@ export class RemoveStreamerCommand extends Command {
         }
       ]
     });
-=======
-    registry.registerChatInputCommand(builder =>
-      builder
-        .setName(this.name)
-        .setDescription(this.description)
-        .addStringOption(option =>
-          option
-            .setName('streamer-name')
-            .setDescription('What is the name of the Twitch streamer?')
-            .setRequired(true)
-        )
-        .addChannelOption(option =>
-          option
-            .setName('channel-name')
-            .setDescription(
-              'What is the name of the Channel you would like the Alert to be removed from?'
-            )
-            .setRequired(true)
-        )
-    );
->>>>>>> upgrade-to-v14
   }
 }

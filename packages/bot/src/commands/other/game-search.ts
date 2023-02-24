@@ -171,20 +171,6 @@ export class GameSearchCommand extends Command {
       Logger.info('Game-Search-Command - Disabled');
       return;
     } else Logger.info('Game-Search-Command - Enabled');
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'game',
-          description: 'Que jogo você quer procurar?',
-          required: true,
-          type: 'STRING'
-        }
-      ]
-    });
-=======
 
     registry.registerChatInputCommand(builder =>
       builder
@@ -197,7 +183,6 @@ export class GameSearchCommand extends Command {
             .setRequired(true)
         )
     );
->>>>>>> upgrade-to-v14
   }
 
   private filterTitle(title: string) {

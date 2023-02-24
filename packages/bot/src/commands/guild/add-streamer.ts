@@ -8,13 +8,8 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'add-streamer',
-<<<<<<< HEAD
   description: 'Adicionar um alerta de Stream do seu streamer favorito do Twitch!!',
   requiredUserPermissions: 'MODERATE_MEMBERS',
-=======
-  description: 'Add a Stream alert from your favorite Twitch streamer',
-  requiredUserPermissions: 'ModerateMembers',
->>>>>>> upgrade-to-v14
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class AddStreamerCommand extends Command {
@@ -192,7 +187,6 @@ export class AddStreamerCommand extends Command {
       return;
     }
 
-<<<<<<< HEAD
       options: [
         {
           name: 'streamer-name',
@@ -209,26 +203,5 @@ export class AddStreamerCommand extends Command {
         }
       ]
     });
-=======
-    registry.registerChatInputCommand(builder =>
-      builder
-        .setName(this.name)
-        .setDescription(this.description)
-        .addStringOption(option =>
-          option
-            .setName('streamer-name')
-            .setDescription('What is the name of the Twitch streamer?')
-            .setRequired(true)
-        )
-        .addChannelOption(option =>
-          option
-            .setName('channel-name')
-            .setDescription(
-              'What is the name of the Channel you would like the alert to be sent to?'
-            )
-            .setRequired(true)
-        )
-    );
->>>>>>> upgrade-to-v14
   }
 }
