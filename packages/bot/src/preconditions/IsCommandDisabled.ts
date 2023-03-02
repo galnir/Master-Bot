@@ -16,7 +16,10 @@ export class IsCommandDisabled extends Precondition {
   ): AsyncPreconditionResult {
     const commandID = interaction.commandId;
     const guildID = interaction.guildId as string;
-
+    // Most likly a DM
+    if (!interaction.guildId && interaction.user.id) {
+      return this.ok();
+    }
     const data = await trpcNode.command.getDisabledCommands.query({
       guildId: guildID
     });
