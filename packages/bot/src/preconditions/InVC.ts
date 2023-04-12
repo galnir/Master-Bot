@@ -4,14 +4,14 @@ import {
   PreconditionOptions,
   PreconditionResult
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'inVoiceChannel'
 })
 export class inVoiceChannel extends Precondition {
   public override chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): PreconditionResult {
     const member = interaction.member as GuildMember;
     const voiceChannel = member!.voice!.channel;

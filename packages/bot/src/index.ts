@@ -3,7 +3,13 @@ import {
   ApplicationCommandRegistries,
   RegisterBehavior
 } from '@sapphire/framework';
-import type { NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
+import {
+  ActivityType,
+  ChannelType,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel
+} from 'discord.js';
 import buttonsCollector from './lib/utils/music/buttonsCollector';
 import { ExtendedClient } from './structures/ExtendedClient';
 import { notify } from './lib/utils/twitch/notifyChannel';
@@ -31,7 +37,7 @@ ErrorListeners();
 client.on('ready', async () => {
   client.music.connect(client.user!.id);
   client.user?.setActivity('/', {
-    type: 'WATCHING'
+    type: ActivityType.Watching
   });
 
   client.user?.setStatus('online');
@@ -93,10 +99,10 @@ client.on('ready', async () => {
       session_id: voiceState?.sessionId,
       channel_id: voiceState?.channel?.id,
       guild_id: voiceState?.guild.id,
-      user_id: guild.me?.id
+      user_id: guild.members.me
     };
     if (queue) {
-      if (guild.me?.voice) {
+      if (guild.members?.me?.voice) {
         if (!customVoiceStateUpdate.channel_id) return;
         queue.createPlayer();
         queue.connect(customVoiceStateUpdate.channel_id);
@@ -108,7 +114,7 @@ client.on('ready', async () => {
             (await queue.getTextChannelID()) as string
           );
           // remake the message collector so buttons will work again after restart
-          if (channel?.isText()) {
+          if (channel?.type === ChannelType.GuildText) {
             const message = await channel.messages.fetch(
               (await queue.getEmbed()) as string
             );

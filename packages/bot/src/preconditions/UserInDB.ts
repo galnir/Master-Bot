@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import Logger from '../lib/utils/logger';
 import { trpcNode } from '../trpc';
 
@@ -13,7 +13,7 @@ import { trpcNode } from '../trpc';
 })
 export class UserInDB extends Precondition {
   public override async chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const guildMember = interaction.member as GuildMember;
 

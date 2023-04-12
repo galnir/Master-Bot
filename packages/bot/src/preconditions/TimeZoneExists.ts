@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import Logger from '../lib/utils/logger';
 import { trpcNode } from '../trpc';
 
@@ -13,7 +13,7 @@ import { trpcNode } from '../trpc';
 })
 export class TimeZoneExists extends Precondition {
   public override async chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const discordUser = interaction.user;
 

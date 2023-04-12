@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction, GuildMember } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { trpcNode } from '../trpc';
 
 @ApplyOptions<PreconditionOptions>({
@@ -12,7 +12,7 @@ import { trpcNode } from '../trpc';
 })
 export class PlaylistExists extends Precondition {
   public override async chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const playlistName = interaction.options.getString('playlist-name', true);
 

@@ -9,7 +9,7 @@
     "noUnusedParameters": false,
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
-    "importsNotUsedAsValues": "preserve"
+    "verbatimModuleSyntax": false
   },
   "include": ["src", "scripts"],
   "exclude": ["node_modules"]

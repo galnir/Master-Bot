@@ -1,8 +1,8 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import {
-  ChatInputCommandDeniedPayload,
+  type ChatInputCommandDeniedPayload,
   Listener,
-  ListenerOptions,
+  type ListenerOptions,
   UserError
 } from '@sapphire/framework';
 
@@ -14,9 +14,11 @@ export class CommandDeniedListener extends Listener {
     { context, message: content }: UserError,
     { interaction }: ChatInputCommandDeniedPayload
   ): Promise<void> {
-    return await interaction.reply({
+    await interaction.reply({
       ephemeral: true,
       content: content
     });
+
+    return;
   }
 }

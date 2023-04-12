@@ -1,7 +1,6 @@
 import { createCanvas, Image } from '@napi-rs/canvas';
 import axios from 'axios';
 import {
-  CommandInteraction,
   AttachmentBuilder,
   EmbedBuilder,
   MessageReaction,
