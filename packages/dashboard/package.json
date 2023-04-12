@@ -17,7 +17,6 @@
     "@trpc/react-query": "^10.19.1",
     "next": "13.3.0",
     "next-auth": "^4.22.0",
-    "next-transpile-modules": "^9.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-toastify": "^9.1.2",
