@@ -39,14 +39,11 @@ export class LyricsCommand extends Command {
       const lyrics = (await genius.fetchLyrics(title)) as string;
       const lyricsIndex = Math.round(lyrics.length / 4096) + 1;
       const paginatedLyrics = new PaginatedMessage({
-        template: new EmbedBuilder()
-          .setColor('#ff0000')
-          .setTitle(title)
-          .setFooter({
-            text: 'Provided by genius.com',
-            iconURL:
-              'https://assets.genius.com/images/apple-touch-icon.png?1652977688' // Genius Lyrics Icon
-          })
+        template: new EmbedBuilder().setColor('Red').setTitle(title).setFooter({
+          text: 'Provided by genius.com',
+          iconURL:
+            'https://assets.genius.com/images/apple-touch-icon.png?1652977688' // Genius Lyrics Icon
+        })
       });
 
       for (let i = 1; i <= lyricsIndex; ++i) {

@@ -18,7 +18,7 @@ export class InsultCommand extends Command {
       .then(async response => {
         const insult: string = response.data.insult;
         const embed = new EmbedBuilder()
-          .setColor('#E41032')
+          .setColor('Red')
           .setAuthor({
             name: 'Evil Insult',
             url: 'https://evilinsult.com',

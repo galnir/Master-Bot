@@ -30,7 +30,7 @@ export class TVShowSearchCommand extends Command {
         embed
           .setTitle(showInfo.name)
           .setURL(showInfo.url)
-          .setColor('#17a589')
+          .setColor('DarkAqua')
           .setThumbnail(showInfo.thumbnail)
           .setDescription(showInfo.summary)
           .addFields(

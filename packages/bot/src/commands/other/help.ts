@@ -73,7 +73,7 @@ export class HelpCommand extends Command {
             new EmbedBuilder()
               .setTitle(`Command List - Page ${page}`)
               .setThumbnail(app?.iconURL()!)
-              .setColor('#9096e6')
+              .setColor('Purple')
               .setAuthor({
                 name: interaction.user.username + ' - Help Command',
                 iconURL: interaction.user.displayAvatarURL()
@@ -114,7 +114,7 @@ export class HelpCommand extends Command {
               command.name.slice(1).toLowerCase()
             } - Details`
           )
-          .setColor('#9096e6')
+          .setColor('Purple')
           .setDescription(`**Description**\n> ${command.details}`);
 
         if (!command.options.length)

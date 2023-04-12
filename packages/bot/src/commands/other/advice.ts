@@ -18,7 +18,7 @@ export class AdviceCommand extends Command {
       .then(async response => {
         const advice: string = response.data.slip.advice;
         const embed = new EmbedBuilder()
-          .setColor('#403B3A')
+          .setColor('NotQuiteBlack')
           .setAuthor({
             name: 'Advice Slip',
             url: 'https://adviceslip.com/',

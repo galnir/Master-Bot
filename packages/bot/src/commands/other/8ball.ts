@@ -34,7 +34,7 @@ export class EightBallCommand extends Command {
         iconURL: 'https://i.imgur.com/HbwMhWM.png'
       })
       .setDescription(randomAnswer)
-      .setColor('#000000')
+      .setColor('DarkButNotBlack')
       .setTimestamp();
     return await interaction.reply({ embeds: [answerEmbed] });
   }

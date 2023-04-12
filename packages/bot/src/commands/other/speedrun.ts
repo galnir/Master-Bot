@@ -55,7 +55,7 @@ export class SpeedRunCommand extends Command {
         gameNameArr.push(id.names.international);
       });
       let gameName = new EmbedBuilder()
-        .setColor('#3E8657')
+        .setColor('Green')
         .setTitle(':mag: Search Results')
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
         .addFields({
@@ -88,9 +88,7 @@ export class SpeedRunCommand extends Command {
       return await interaction
         .reply({
           embeds: [
-            new EmbedBuilder()
-              .setColor('#3E8657')
-              .setDescription('Getting Data')
+            new EmbedBuilder().setColor('Green').setDescription('Getting Data')
           ],
           fetchReply: true
         })
@@ -145,7 +143,7 @@ export class SpeedRunCommand extends Command {
             .update({
               embeds: [
                 new EmbedBuilder()
-                  .setColor('#3E8657')
+                  .setColor('Green')
                   .setDescription('Getting Data')
               ],
               fetchReply: true
@@ -172,7 +170,7 @@ export class SpeedRunCommand extends Command {
                     category.category.data.rules.toString()
                 : 'No Data'
             )
-            .setColor('#3E8657')
+            .setColor('Green')
             .setThumbnail(category.game.data.assets['cover-medium'].uri)
             .setAuthor({
               name:
@@ -209,7 +207,7 @@ export class SpeedRunCommand extends Command {
             if (category.runs[i]) {
               PaginatedEmbed.addPageEmbed(embeds =>
                 embeds
-                  .setColor('#3E8657')
+                  .setColor('Green')
                   .setTitle(
                     category.runs[i]
                       ? trophyIcon +

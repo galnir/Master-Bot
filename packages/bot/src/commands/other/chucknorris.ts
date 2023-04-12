@@ -17,7 +17,7 @@ export class ChuckNorrisCommand extends Command {
       .get('https://api.chucknorris.io/jokes/random')
       .then(async response => {
         const embed = new EmbedBuilder()
-          .setColor('#CD7232')
+          .setColor('Orange')
           .setAuthor({
             name: 'Chuck Norris',
             url: 'https://chucknorris.io',

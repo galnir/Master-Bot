@@ -18,7 +18,7 @@ export class KanyeCommand extends Command {
       .then(async response => {
         const quote: string = response.data.quote;
         const embed = new EmbedBuilder()
-          .setColor('#F4D190')
+          .setColor('Orange')
           .setAuthor({
             name: 'Kanye West',
             url: 'https://kanye.rest',

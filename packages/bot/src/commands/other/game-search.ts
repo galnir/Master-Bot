@@ -59,7 +59,7 @@ export class GameSearchCommand extends Command {
             game.description_raw.slice(0, 2000) +
             '...'
         )
-        .setColor('#B5B5B5')
+        .setColor('Grey')
         .setThumbnail(game.background_image)
         .addFields(
           { name: 'Released', value: '> ' + firstPageTuple[0], inline: true },
@@ -123,7 +123,7 @@ export class GameSearchCommand extends Command {
     PaginatedEmbed.addPageEmbed(embed =>
       embed
         .setTitle(`Game Info: ${game.name}`)
-        .setColor('#b5b5b5')
+        .setColor('Grey')
         .setThumbnail(game.background_image_additional ?? game.background_image)
         // Row 1
         .addFields(
