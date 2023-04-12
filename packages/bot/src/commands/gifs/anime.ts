@@ -1,9 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
+import { Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 

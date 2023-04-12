@@ -1,17 +1,17 @@
 import type { Queue } from '../queue/Queue';
-import type { AnyChannel, GuildMember } from 'discord.js';
+import { Channel, GuildMember, ChannelType } from 'discord.js';
 import Logger from '../logger';
 
 export async function manageStageChannel(
-  voiceChannel: AnyChannel,
+  voiceChannel: Channel,
   botUser: GuildMember,
   instance: Queue
 ) {
-  if (voiceChannel.type !== 'GUILD_STAGE_VOICE') return;
+  if (voiceChannel.type !== ChannelType.GuildStageVoice) return;
   // Stage Channel Permissions From Discord.js Doc's
   if (
     !botUser?.permissions.has(
-      ('MANAGE_CHANNELS' && 'MUTE_MEMBERS' && 'MOVE_MEMBERS') || 'ADMINISTRATOR'
+      ('ManageChannels' && 'MuteMembers' && 'MoveMembers') || 'ADMINISTRATOR'
     )
   )
     if (botUser.voice.suppress)

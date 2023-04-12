@@ -82,7 +82,7 @@ export const commandRouter = t.router({
             }
           }
         );
-        const commands: CommandType[] = await response.json();
+        const commands = (await response.json()) as CommandType[];
 
         return { commands };
       } catch (e) {

@@ -19,11 +19,13 @@ export default async function buttonsCollector(message: Message, song: Song) {
   let timer: NodeJS.Timer;
 
   collector.on('collect', async (i: MessageComponentInteraction) => {
-    if (!message.member?.voice.channel?.members.has(i.user.id))
-      return await i.reply({
+    if (!message.member?.voice.channel?.members.has(i.user.id)) {
+      await i.reply({
         content: `:x: Only available to members in ${message.member?.voice.channel} <-- Click To Join`,
         ephemeral: true
       });
+      return;
+    }
 
     if (i.customId === 'playPause') {
       if (queue.paused) {
@@ -48,9 +50,10 @@ export default async function buttonsCollector(message: Message, song: Song) {
         queue.player.paused
       );
       collector.empty();
-      return await i.update({
+      await i.update({
         embeds: [await NowPlaying.NowPlayingEmbed()]
       });
+      return;
     }
     if (i.customId === 'stop') {
       clearTimeout(timer);

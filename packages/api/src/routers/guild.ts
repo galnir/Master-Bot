@@ -50,7 +50,7 @@ export const guildRouter = t.router({
           }
         );
 
-        const guild: APIGuild = await response.json();
+        const guild = (await response.json()) as APIGuild;
 
         return { guild };
       } catch {
@@ -286,7 +286,7 @@ export const guildRouter = t.router({
         }
       });
 
-      const userGuilds: APIGuild[] = await response.json();
+      const userGuilds = (await response.json()) as APIGuild[];
       if (!userGuilds.length) {
         return { guilds: dbGuilds };
       }
@@ -337,7 +337,7 @@ export const guildRouter = t.router({
       }
     });
 
-    const userGuilds: APIGuild[] = await response.json();
+    const userGuilds = (await response.json()) as APIGuild[];
 
     return { guilds: userGuilds, discordId: account.user.discordId };
   }),
@@ -397,7 +397,7 @@ export const guildRouter = t.router({
         }
       );
 
-      const roles: APIRole[] = await response.json();
+      const roles = (await response.json()) as APIRole[];
 
       return { roles };
     })
