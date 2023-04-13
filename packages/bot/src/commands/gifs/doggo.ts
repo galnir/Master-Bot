@@ -9,7 +9,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class DoggoCommand extends Command {
-  public override chatInputRun(interaction: CommandInteraction) {
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     if (!process.env.TENOR_API) return;
     axios
       .get(

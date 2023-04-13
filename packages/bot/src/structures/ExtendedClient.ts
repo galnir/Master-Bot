@@ -61,8 +61,8 @@ export class ExtendedClient extends SapphireClient {
       }
     });
 
-    this.ws.on(GatewayDispatchEvents.VoiceServerUpdate, data => {
-      this.music.handleVoiceUpdate(data);
+    this.ws.on(GatewayDispatchEvents.VoiceServerUpdate, async data => {
+      await this.music.handleVoiceUpdate(data);
     });
 
     this.ws.on(GatewayDispatchEvents.VoiceStateUpdate, async data => {
@@ -73,7 +73,7 @@ export class ExtendedClient extends SapphireClient {
         await queue.clear();
         queue.destroyPlayer();
       }
-      this.music.handleVoiceUpdate(data);
+      await this.music.handleVoiceUpdate(data);
     });
 
     if (process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET) {

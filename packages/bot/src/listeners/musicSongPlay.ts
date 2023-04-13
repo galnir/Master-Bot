@@ -1,6 +1,5 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { container, Listener, type ListenerOptions } from '@sapphire/framework';
-import { manageStageChannel } from '../lib/utils/music/channelHandler';
 import type { Queue } from '../lib/utils/queue/Queue';
 import type { Song } from '../lib/utils/queue/Song';
 
@@ -22,11 +21,6 @@ export class MusicSongPlayListener extends Listener {
         return;
       }
       queue.client.emit('musicSongPlayMessage', channel, track);
-      await manageStageChannel(
-        channel.guild.members.me?.voice.channel!,
-        channel.guild.members.me!,
-        queue
-      );
     }
   }
 }

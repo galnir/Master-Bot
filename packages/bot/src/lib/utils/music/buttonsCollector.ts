@@ -113,17 +113,21 @@ export default async function buttonsCollector(message: Message, song: Song) {
 }
 
 export async function deletePlayerEmbed(queue: Queue) {
-  const embedID = await queue.getEmbed();
-  if (embedID) {
-    const channel = await queue.getTextChannel();
-    await channel?.messages.fetch(embedID).then(async oldMessage => {
-      if (oldMessage)
-        await oldMessage
-          .delete()
-          .catch(error =>
-            Logger.error('Failed to Delete Old Message. ' + error)
-          );
-      await queue.deleteEmbed();
-    });
+  try {
+    const embedID = await queue.getEmbed();
+    if (embedID) {
+      const channel = await queue.getTextChannel();
+      await channel?.messages.fetch(embedID).then(async oldMessage => {
+        if (oldMessage)
+          await oldMessage
+            .delete()
+            .catch(error =>
+              Logger.error('Failed to Delete Old Message. ' + error)
+            );
+        await queue.deleteEmbed();
+      });
+    }
+  } catch (error) {
+    Logger.error('Failed to Delete Player Embed. ' + error);
   }
 }
