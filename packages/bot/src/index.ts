@@ -105,7 +105,7 @@ client.on('ready', async () => {
       if (guild.members?.me?.voice) {
         if (!customVoiceStateUpdate.channel_id) return;
         queue.createPlayer();
-        queue.connect(customVoiceStateUpdate.channel_id);
+        await queue.connect(customVoiceStateUpdate.channel_id);
         await queue.start();
 
         const song = await queue.getCurrentTrack();

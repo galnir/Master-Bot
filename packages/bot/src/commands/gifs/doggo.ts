@@ -12,7 +12,7 @@ export class DoggoCommand extends Command {
   public override chatInputRun(
     interaction: Command.ChatInputCommandInteraction
   ) {
-    if (!process.env.DOGGO_API) return;
+    if (!process.env.TENOR_API) return;
     axios
       .get(
         `https://tenor.googleapis.com/v2/search?key=${process.env.TENOR_API}&q=dog&limit=1&random=true`
