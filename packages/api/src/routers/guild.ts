@@ -264,6 +264,7 @@ export const guildRouter = t.router({
         {
           headers: {
             Authorization: `Bearer ${account.access_token}`,
+            // @ts-ignore
             'X-User-Id': ctx.session.user.id,
             'X-Refresh-Token': account.refresh_token
           }
