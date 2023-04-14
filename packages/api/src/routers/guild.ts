@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { APIGuild, APIRole } from 'discord-api-types/v10';
 import { TRPCError } from '@trpc/server';
 import { getFetch } from '@trpc/client';
+import axiosInstance from '../utils/axiosWithRefresh';
 
 const fetch = getFetch();
 
@@ -229,25 +230,8 @@ export const guildRouter = t.router({
 
       return { guild };
     }),
-  getAllFromLocal: t.procedure
-    .input(
-      z.object({
-        ownerId: z.string()
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { ownerId } = input;
-
-      const guilds = await ctx.prisma.guild.findMany({
-        where: {
-          ownerId: ownerId as string
-        }
-      });
-
-      return { guilds };
-    }),
   getAll: t.procedure.query(async ({ ctx }) => {
-    if (!ctx.session) {
+    if (!ctx.session || !ctx.session.user) {
       throw new TRPCError({
         message: 'Not Authenticated',
         code: 'UNAUTHORIZED'
@@ -258,10 +242,6 @@ export const guildRouter = t.router({
       where: {
         // @ts-ignore
         userId: ctx.session?.user?.id
-      },
-      select: {
-        access_token: true,
-        providerAccountId: true
       }
     });
 
@@ -272,26 +252,32 @@ export const guildRouter = t.router({
       });
     }
 
-    const dbGuilds = await ctx.prisma.guild.findMany({
-      where: {
-        ownerId: account.providerAccountId
-      }
-    });
-
-    // fetch guilds the user is owner in from discord api using the ownerId and token
     try {
-      const response = await fetch(`https://discord.com/api/users/@me/guilds`, {
-        headers: {
-          Authorization: `Bearer ${account.access_token}`
+      const dbGuilds = await ctx.prisma.guild.findMany({
+        where: {
+          ownerId: account.providerAccountId
         }
       });
 
-      const userGuilds = (await response.json()) as APIGuild[];
-      if (!userGuilds.length) {
-        return { guilds: dbGuilds };
-      }
-      const guildsUserOwns = userGuilds.filter(guild => guild.owner);
-      return { apiGuilds: guildsUserOwns, dbGuilds };
+      const response = await axiosInstance.get(
+        'https://discord.com/api/users/@me/guilds',
+        {
+          headers: {
+            Authorization: `Bearer ${account.access_token}`,
+            'X-User-Id': ctx.session.user.id,
+            'X-Refresh-Token': account.refresh_token
+          }
+        }
+      );
+
+      const apiGuilds = response.data as APIGuild[];
+
+      const apiGuildsOwns = apiGuilds.filter(guild => guild.owner);
+
+      return {
+        apiGuilds: apiGuildsOwns,
+        dbGuilds
+      };
     } catch (e) {
       console.error(e);
       throw new TRPCError({
@@ -299,47 +285,6 @@ export const guildRouter = t.router({
         message: 'Something went wrong when trying to fetch guilds'
       });
     }
-  }),
-  getAllFromDiscordAPI: t.procedure.query(async ({ ctx }) => {
-    if (!ctx.session) {
-      throw new TRPCError({
-        message: 'Not Authenticated',
-        code: 'UNAUTHORIZED'
-      });
-    }
-
-    const account = await ctx.prisma.account.findFirst({
-      where: {
-        // @ts-ignore
-        userId: ctx.session?.user?.id
-      },
-      select: {
-        access_token: true,
-        providerAccountId: true,
-        user: {
-          select: {
-            discordId: true
-          }
-        }
-      }
-    });
-
-    if (!account || !account.access_token) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Account not found'
-      });
-    }
-
-    const response = await fetch(`https://discord.com/api/users/@me/guilds`, {
-      headers: {
-        Authorization: `Bearer ${account.access_token}`
-      }
-    });
-
-    const userGuilds = (await response.json()) as APIGuild[];
-
-    return { guilds: userGuilds, discordId: account.user.discordId };
   }),
   updateTwitchNotifications: t.procedure
     .input(

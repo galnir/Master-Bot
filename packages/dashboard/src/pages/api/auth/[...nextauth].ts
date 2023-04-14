@@ -28,10 +28,19 @@ export const authOptions: NextAuthOptions = {
     }
   },
   session: {
-    maxAge: 60 * 60 * 24 * 6 // 6 days
+    maxAge: 60 * 60 * 24 * 365 // 365 days
   },
   // Configure one or more authentication providers
-  adapter: PrismaAdapter(prisma),
+  adapter: {
+    ...PrismaAdapter(prisma),
+    createUser: async data => {
+      return await prisma.user.upsert({
+        where: { discordId: data.discordId },
+        update: data,
+        create: data
+      });
+    }
+  },
   providers: [
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
