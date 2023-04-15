@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
 
@@ -20,10 +16,12 @@ import { PaginatedFieldMessageEmbed } from '@sapphire/discord.js-utilities';
   ]
 })
 export class QueueCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const { client } = container;
     const queue = client.music.queues.get(interaction.guildId!);
-    const baseEmbed = new MessageEmbed().setColor('#FF0000').setAuthor({
+    const baseEmbed = new EmbedBuilder().setColor('Red').setAuthor({
       name: `${interaction.user.username}`,
       iconURL: interaction.user.displayAvatarURL()
     });
@@ -42,7 +40,7 @@ export class QueueCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

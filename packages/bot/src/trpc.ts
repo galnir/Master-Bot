@@ -4,7 +4,12 @@ import { httpLink } from '@trpc/client/links/httpLink';
 import { splitLink } from '@trpc/client/links/splitLink';
 import { createWSClient, wsLink } from '@trpc/client/links/wsLink';
 import superjson from 'superjson';
-import fetch from 'node-fetch';
+const _importDynamic = new Function('modulePath', 'return import(modulePath)');
+
+const fetch = async function (...args: any) {
+  const { default: fetch } = await _importDynamic('node-fetch');
+  return fetch(...args);
+};
 import ws from 'ws';
 
 const globalAny = global as any;

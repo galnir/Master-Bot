@@ -3,14 +3,15 @@ import { container } from '@sapphire/framework';
 import type { Queue } from '../queue/Queue';
 import {
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+  ButtonStyle
 } from 'discord.js';
 import buttonsCollector, { deletePlayerEmbed } from './buttonsCollector';
 
 export async function embedButtons(
-  embed: MessageEmbed,
+  embed: EmbedBuilder,
   queue: Queue,
   song: Song,
   message?: string
@@ -19,25 +20,28 @@ export async function embedButtons(
 
   const { client } = container;
   const tracks = await queue.tracks();
-  const row = new MessageActionRow().addComponents(
-    new MessageButton()
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
       .setCustomId('playPause')
       .setLabel('Play/Pause')
-      .setStyle('PRIMARY'),
-    new MessageButton().setCustomId('stop').setLabel('Stop').setStyle('DANGER'),
-    new MessageButton()
+      .setStyle(ButtonStyle.Primary),
+    new ButtonBuilder()
+      .setCustomId('stop')
+      .setLabel('Stop')
+      .setStyle(ButtonStyle.Danger),
+    new ButtonBuilder()
       .setCustomId('next')
       .setLabel('Next')
-      .setStyle('PRIMARY')
+      .setStyle(ButtonStyle.Primary)
       .setDisabled(!tracks.length ? true : false),
-    new MessageButton()
+    new ButtonBuilder()
       .setCustomId('volumeUp')
       .setLabel('Vol+')
-      .setStyle('PRIMARY'),
-    new MessageButton()
+      .setStyle(ButtonStyle.Primary),
+    new ButtonBuilder()
       .setCustomId('volumeDown')
       .setLabel('Vol-')
-      .setStyle('PRIMARY')
+      .setStyle(ButtonStyle.Primary)
   );
 
   const channel = await queue.getTextChannel();

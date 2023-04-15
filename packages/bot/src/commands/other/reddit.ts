@@ -1,14 +1,10 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
+import { Command, CommandOptions } from '@sapphire/framework';
 import {
   ColorResolvable,
-  CommandInteraction,
-  MessageActionRow,
-  MessageSelectMenu
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  ComponentType
 } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
@@ -20,7 +16,9 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RedditCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     await interaction.deferReply();
     const channel = interaction.channel;
     if (!channel) return await interaction.reply('Something went wrong :('); // type guard
@@ -28,8 +26,8 @@ export class RedditCommand extends Command {
     const sort = interaction.options.getString('sort', true);
 
     if (['controversial', 'top'].some(val => val === sort)) {
-      const row = new MessageActionRow().addComponents(
-        new MessageSelectMenu()
+      const row = new ActionRowBuilder().addComponents(
+        new StringSelectMenuBuilder()
           .setCustomId('top_or_controversial')
           .setPlaceholder('Please select an option')
           .addOptions(optionsArray)
@@ -37,11 +35,17 @@ export class RedditCommand extends Command {
 
       const menu = await channel.send({
         content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
-        components: [row]
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            //@ts-ignore
+            components: [row]
+          }
+        ]
       });
 
       const collector = menu.createMessageComponentCollector({
-        componentType: 'SELECT_MENU',
+        componentType: ComponentType.SelectMenu,
         time: 30000 // 30 sec
       });
 
@@ -55,19 +59,23 @@ export class RedditCommand extends Command {
             content: 'This element is not for you!',
             ephemeral: true
           });
+          return;
         } else {
           collector.stop();
           const timeFilter = i.values[0];
           this.fetchFromReddit(interaction, subreddit, sort, timeFilter);
+          return;
         }
       });
     } else {
       this.fetchFromReddit(interaction, subreddit, sort);
+      return;
     }
+    return;
   }
 
   private async fetchFromReddit(
-    interaction: CommandInteraction,
+    interaction: Command.ChatInputCommandInteraction,
     subreddit: string,
     sort: string,
     timeFilter = 'day'
@@ -82,7 +90,7 @@ export class RedditCommand extends Command {
 
     const paginatedEmbed = new PaginatedMessage();
     for (let i = 1; i <= data.children.length; i++) {
-      let color: ColorResolvable = '#FE9004';
+      let color: ColorResolvable = 'Orange';
       let redditPost = data.children[i - 1];
 
       if (redditPost.data.title.length > 255) {
@@ -95,7 +103,7 @@ export class RedditCommand extends Command {
           `[Read More...](https://www.reddit.com${redditPost.data.permalink})`;
       }
 
-      if (redditPost.data.over_18) color = '#CF00F'; // red - nsfw
+      if (redditPost.data.over_18) color = 'Red'; // red - nsfw
 
       paginatedEmbed.addPageEmbed(embed =>
         embed
@@ -136,53 +144,53 @@ export class RedditCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'subreddit',
-          type: 'STRING',
-          required: true,
-          description: 'Subreddit name'
-        },
-        {
-          name: 'sort',
-          type: 'STRING',
-          required: true,
-          description:
-            'What posts do you want to see? Select from best/hot/top/new/controversial/rising',
-          choices: [
-            {
-              name: 'Best',
-              value: 'best'
-            },
-            {
-              name: 'Hot',
-              value: 'hot'
-            },
-            {
-              name: 'New',
-              value: 'new'
-            },
-            {
-              name: 'Top',
-              value: 'top'
-            },
-            {
-              name: 'Controversial',
-              value: 'controversial'
-            },
-            {
-              name: 'Rising',
-              value: 'rising'
-            }
-          ]
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('subreddit')
+            .setDescription('Subreddit name')
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('sort')
+            .setDescription(
+              'What posts do you want to see? Select from best/hot/top/new/controversial/rising'
+            )
+            .setRequired(true)
+            .addChoices(
+              {
+                name: 'Best',
+                value: 'best'
+              },
+              {
+                name: 'Hot',
+                value: 'hot'
+              },
+              {
+                name: 'New',
+                value: 'new'
+              },
+              {
+                name: 'Top',
+                value: 'top'
+              },
+              {
+                name: 'Controversial',
+                value: 'controversial'
+              },
+              {
+                name: 'Rising',
+                value: 'rising'
+              }
+            )
+        )
+    );
   }
 }
 

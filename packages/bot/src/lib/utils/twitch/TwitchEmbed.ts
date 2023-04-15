@@ -1,5 +1,5 @@
 import type { TwitchStream } from './twitchAPI-types';
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 export class TwitchEmbed {
   stream: TwitchStream;
@@ -34,7 +34,7 @@ export class TwitchEmbed {
     this.viewers = viewers;
   }
 
-  public async TwitchEmbed(): Promise<MessageEmbed> {
+  public async TwitchEmbed(): Promise<EmbedBuilder> {
     const notGames = [
       'Software and Game Development',
       'Just Chatting',
@@ -48,12 +48,12 @@ export class TwitchEmbed {
       gameOrTopic = ':film_frames: Topic';
 
     if (this.ended) {
-      const offlineEmbed = new MessageEmbed({
+      const offlineEmbed = new EmbedBuilder({
         author: {
           name: `Twitch Notification - Stream Ended`,
           icon_url: this.logo
         },
-        color: '#6441A5',
+        color: 644115,
         footer: {
           text: `Stream Ended`,
           iconURL:
@@ -70,7 +70,7 @@ export class TwitchEmbed {
         )
         .setTimestamp();
     } else {
-      const onlineEmbed = new MessageEmbed({
+      const onlineEmbed = new EmbedBuilder({
         author: {
           name: `Twitch Notification - ${
             this.change ? 'Stream Update' : 'Stream Started'
@@ -78,11 +78,11 @@ export class TwitchEmbed {
           icon_url: this.logo,
           url: `https://twitch.tv/${this.userName}`
         },
-        color: '#6441A5',
+        color: 644115,
         url: `https://twitch.tv/${this.userName}`,
         footer: {
           text: this.change ? 'Stream Update' : 'Stream Started',
-          iconURL:
+          icon_url:
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
       });

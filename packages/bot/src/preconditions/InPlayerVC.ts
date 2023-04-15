@@ -1,11 +1,11 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import {
   Precondition,
-  PreconditionOptions,
-  PreconditionResult
+  type PreconditionOptions,
+  type PreconditionResult
 } from '@sapphire/framework';
 import type {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   GuildMember,
   VoiceBasedChannel
 } from 'discord.js';
@@ -16,7 +16,7 @@ import { container } from '@sapphire/framework';
 })
 export class inPlayerVoiceChannel extends Precondition {
   public override chatInputRun(
-    interaction: CommandInteraction
+    interaction: ChatInputCommandInteraction
   ): PreconditionResult {
     const member = interaction.member as GuildMember;
     // this precondition comes after a precondition that makes sure the user is in a voice channel

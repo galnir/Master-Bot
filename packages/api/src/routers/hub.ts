@@ -33,7 +33,7 @@ export const hubRouter = t.router({
             })
           }
         );
-        parent = await response.json();
+        parent = (await response.json()) as any;
       } catch (e) {
         console.log(e);
         throw new TRPCError({
@@ -59,7 +59,7 @@ export const hubRouter = t.router({
             })
           }
         );
-        hubChannel = await response.json();
+        hubChannel = (await response.json()) as any;
       } catch {
         throw new TRPCError({
           message: 'Could not create channel',

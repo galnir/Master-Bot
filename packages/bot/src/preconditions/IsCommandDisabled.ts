@@ -4,7 +4,7 @@ import {
   Precondition,
   PreconditionOptions
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { trpcNode } from '../trpc';
 
 @ApplyOptions<PreconditionOptions>({
@@ -12,7 +12,7 @@ import { trpcNode } from '../trpc';
 })
 export class IsCommandDisabled extends Precondition {
   public override async chatInputRun(
-    interaction: CommandInteraction
+    interaction: ChatInputCommandInteraction
   ): AsyncPreconditionResult {
     const commandID = interaction.commandId;
     const guildID = interaction.guildId as string;

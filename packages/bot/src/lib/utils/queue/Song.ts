@@ -32,8 +32,7 @@ export class Song implements TrackInfo {
         MetadataFilter.fixTrackSuffix,
         MetadataFilter.removeLive,
         MetadataFilter.youtube,
-        MetadataFilter.normalizeFeature,
-        MetadataFilter.removeVersion
+        MetadataFilter.normalizeFeature
       ]
     };
     const filter = MetadataFilter.createFilter(filterSet);

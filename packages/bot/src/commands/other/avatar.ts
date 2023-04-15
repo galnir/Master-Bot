@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
   name: 'avatar',
@@ -12,30 +8,31 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class AvatarCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const user = interaction.options.getUser('user', true);
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle(user.username)
-      .setImage(user.displayAvatarURL({ dynamic: true }))
-      .setColor('#0x00ae86');
+      .setImage(user.displayAvatarURL())
+      .setColor('Aqua');
 
     return await interaction.reply({ embeds: [embed] });
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          type: 'USER',
-          required: true,
-          name: 'user',
-          description: `Which user's avatar do you want to look at?`
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addUserOption(option =>
+          option
+            .setName('user')
+            .setDescription(`Which user's avatar do you want to look at?`)
+            .setRequired(true)
+        )
+    );
   }
 }

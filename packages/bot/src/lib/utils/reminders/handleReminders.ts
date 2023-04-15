@@ -3,13 +3,13 @@ import {
   PaginatedFieldMessageEmbed
 } from '@sapphire/discord.js-utilities';
 import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageEmbed,
-  Modal,
-  ModalActionRowComponent,
+  ActionRowBuilder,
+  EmbedBuilder,
+  ModalBuilder,
   ModalSubmitInteraction,
-  TextInputComponent
+  TextInputBuilder,
+  ChatInputCommandInteraction,
+  TextInputStyle
 } from 'discord.js';
 import { Time } from '@sapphire/time-utilities';
 import { trpcNode } from '../../../trpc';
@@ -142,7 +142,7 @@ export function isPast(dateTime: string) {
 }
 
 async function findTimeZone(
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
   timeQuery: string,
   date: string
 ) {
@@ -215,7 +215,7 @@ export function nextReminder(
 }
 
 export async function checkInputs(
-  interaction: CommandInteraction | ModalSubmitInteraction,
+  interaction: ChatInputCommandInteraction | ModalSubmitInteraction,
   event: string,
   time?: string,
   date?: string,
@@ -331,8 +331,8 @@ export async function checkInputs(
     }
   }
   if (failed) {
-    const errorEmbed = new MessageEmbed()
-      .setColor('BLURPLE')
+    const errorEmbed = new EmbedBuilder()
+      .setColor('Blurple')
       .setAuthor({
         name: `Reminder - Error Message`,
         iconURL: interaction.user.displayAvatarURL()
@@ -352,28 +352,24 @@ export async function checkInputs(
   return true;
 }
 
-export async function askForDateTime(interaction: CommandInteraction) {
-  const modal = new Modal()
+export async function askForDateTime(interaction: ChatInputCommandInteraction) {
+  const modal = new ModalBuilder()
     .setCustomId('Reminder-TimeZone' + interaction.id)
     .setTitle('Reminder - Save Time Zone');
-  const time = new TextInputComponent()
+  const time = new TextInputBuilder()
     .setCustomId('time' + interaction.id)
     .setLabel(`Enter your Current Time Ex. "14:30"`)
     .setPlaceholder('14:30')
-    .setStyle('SHORT')
+    .setStyle(TextInputStyle.Short)
     .setRequired(true);
-  const date = new TextInputComponent()
+  const date = new TextInputBuilder()
     .setCustomId('date' + interaction.id)
     .setLabel(`Enter your Current Date Ex. "MM/DD/YYYY"`)
     .setPlaceholder('12/23/2022')
-    .setStyle('SHORT')
+    .setStyle(TextInputStyle.Short)
     .setRequired(true);
-  const rowOne = new MessageActionRow<ModalActionRowComponent>().addComponents(
-    date
-  );
-  const rowTwo = new MessageActionRow<ModalActionRowComponent>().addComponents(
-    time
-  );
+  const rowOne = new ActionRowBuilder<TextInputBuilder>().addComponents(date);
+  const rowTwo = new ActionRowBuilder<TextInputBuilder>().addComponents(time);
 
   modal.addComponents(rowOne, rowTwo);
   await interaction.showModal(modal);

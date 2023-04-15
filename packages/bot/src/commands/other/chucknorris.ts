@@ -1,10 +1,6 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
 import Logger from '../../lib/utils/logger';
 
@@ -14,12 +10,14 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class ChuckNorrisCommand extends Command {
-  public override chatInputRun(interaction: CommandInteraction) {
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     axios
       .get('https://api.chucknorris.io/jokes/random')
       .then(async response => {
-        const embed = new MessageEmbed()
-          .setColor('#CD7232')
+        const embed = new EmbedBuilder()
+          .setColor('Orange')
           .setAuthor({
             name: 'Chuck Norris',
             url: 'https://chucknorris.io',
@@ -41,7 +39,7 @@ export class ChuckNorrisCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

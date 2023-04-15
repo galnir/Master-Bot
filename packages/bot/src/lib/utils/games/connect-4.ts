@@ -1,19 +1,20 @@
 import { createCanvas, Image } from '@napi-rs/canvas';
 import axios from 'axios';
 import {
-  CommandInteraction,
-  MessageAttachment,
-  MessageEmbed,
+  AttachmentBuilder,
+  EmbedBuilder,
   MessageReaction,
+  ChatInputCommandInteraction,
   User,
-  Message
+  Message,
+  Colors
 } from 'discord.js';
 import { playersInGame } from '../../../commands/other/games';
 import Logger from '../logger';
 
 export class Connect4Game {
   public async connect4(
-    interaction: CommandInteraction,
+    interaction: ChatInputCommandInteraction,
     playerMap: Map<string, User>
   ) {
     const player1 = interaction.user;
@@ -23,7 +24,7 @@ export class Connect4Game {
     });
 
     const player1Avatar = player1.displayAvatarURL({
-      format: 'jpg'
+      extension: 'jpg'
     });
     const player1Image = await axios.request({
       responseType: 'arraybuffer',
@@ -34,7 +35,7 @@ export class Connect4Game {
     player1Piece.src = Buffer.from(await player1Image.data);
 
     const player2Avatar = player2!.displayAvatarURL({
-      format: 'jpg'
+      extension: 'jpg'
     });
 
     const player2Image = await axios.request({
@@ -70,13 +71,11 @@ export class Connect4Game {
       let currentPlayer = player1.id;
       let boardImageURL: string | null = null;
 
-      let currentTurn = 0;
       await createBoard();
-      ++currentTurn;
 
-      const Embed = new MessageEmbed()
+      const Embed = new EmbedBuilder()
         .setThumbnail(player1Avatar)
-        .setColor('RED')
+        .setColor(Colors.Red)
         .setTitle(`Connect 4 - Player 1's Turn`)
         .setDescription(
           `Incase of invisible board click 🔄.
@@ -91,6 +90,8 @@ export class Connect4Game {
       await interaction.channel
         ?.send({ embeds: [Embed] })
         .then(async (message: Message) => {
+          const embed = new EmbedBuilder(message.embeds[0].data);
+
           try {
             await message.react('1️⃣');
             await message.react('2️⃣');
@@ -135,9 +136,9 @@ export class Connect4Game {
                 reaction.emoji.name === '🔄' &&
                 (user.id === player1.id || user.id === player2.id)
               ) {
-                message.embeds[0].setImage(boardImageURL!);
+                embed.setImage(boardImageURL!);
                 await message.edit({
-                  embeds: [message.embeds[0]]
+                  embeds: [embed]
                 });
               }
 
@@ -147,33 +148,33 @@ export class Connect4Game {
 
               // Column 1
               if (reaction.emoji.name === '1️⃣')
-                await playerMove(0, user, message.embeds[0]);
+                await playerMove(0, user, embed);
 
               // Column 2
               if (reaction.emoji.name === '2️⃣')
-                await playerMove(1, user, message.embeds[0]);
+                await playerMove(1, user, embed);
 
               // Column 3
               if (reaction.emoji.name === '3️⃣')
-                await playerMove(2, user, message.embeds[0]);
+                await playerMove(2, user, embed);
 
               // Column 4
               if (reaction.emoji.name === '4️⃣')
-                await playerMove(3, user, message.embeds[0]);
+                await playerMove(3, user, embed);
 
               // Column 5
               if (reaction.emoji.name === '5️⃣')
-                await playerMove(4, user, message.embeds[0]);
+                await playerMove(4, user, embed);
 
               // Column 6
               if (reaction.emoji.name === '6️⃣')
-                await playerMove(5, user, message.embeds[0]);
+                await playerMove(5, user, embed);
 
               // Column 7
               if (reaction.emoji.name === '7️⃣')
-                await playerMove(6, user, message.embeds[0]);
+                await playerMove(6, user, embed);
 
-              await message.edit({ embeds: [message.embeds[0]] });
+              await message.edit({ embeds: [embed] });
             }
           );
 
@@ -313,10 +314,9 @@ export class Connect4Game {
         return await interaction.channel
           ?.send({
             files: [
-              new MessageAttachment(
-                canvas.toBuffer('image/png'),
-                `connect4Game${player1.id}-${player2.id}${currentTurn}.png`
-              )
+              new AttachmentBuilder(canvas.toBuffer('image/png'), {
+                name: 'Connect4.png'
+              })
             ]
           })
           .then(async (result: Message) => {
@@ -336,7 +336,7 @@ export class Connect4Game {
       async function playerMove(
         index: number,
         user: User,
-        instance: MessageEmbed
+        instance: EmbedBuilder
       ) {
         if (currentPlayer === 'Game Over' || row[index].length === 0) {
           return;
@@ -350,7 +350,7 @@ export class Connect4Game {
             instance
               .setThumbnail(player2Avatar!)
               .setTitle(`Connect 4 - Player 2's Turn`)
-              .setColor('BLUE')
+              .setColor(Colors.Blue)
               .setTimestamp();
           } else {
             gameBoard[row[index].length][index] = 2;
@@ -358,11 +358,10 @@ export class Connect4Game {
             instance
               .setThumbnail(player1Avatar)
               .setTitle(`Connect 4 - Player 1's Turn`)
-              .setColor('RED')
+              .setColor(Colors.Red)
               .setTimestamp();
           }
           await createBoard();
-          ++currentTurn;
         }
 
         if (checkWinner(gameBoard) === 0) {
@@ -370,7 +369,7 @@ export class Connect4Game {
           if (!emptySpaces(gameBoard)) {
             instance
               .setTitle(`Connect 4 - Game Over`)
-              .setColor('GREY')
+              .setColor(Colors.Grey)
               .setThumbnail('');
 
             currentPlayer = 'Game Over';
@@ -386,9 +385,9 @@ export class Connect4Game {
             .setTimestamp();
 
           if (currentPlayer === player1.id) {
-            instance.setThumbnail(player2Avatar!).setColor('BLUE');
+            instance.setThumbnail(player2Avatar!).setColor(Colors.Blue);
           } else {
-            instance.setThumbnail(player1Avatar).setColor('RED');
+            instance.setThumbnail(player1Avatar).setColor(Colors.Red);
           }
           currentPlayer = 'Game Over';
           playerMap.forEach(player => playersInGame.delete(player.id));

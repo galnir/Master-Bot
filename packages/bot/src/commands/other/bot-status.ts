@@ -1,11 +1,7 @@
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { ApplyOptions } from '@sapphire/decorators';
-import {
-  ApplicationCommandRegistry,
-  Command,
-  CommandOptions
-} from '@sapphire/framework';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { Command, CommandOptions } from '@sapphire/framework';
+import { EmbedBuilder } from 'discord.js';
 import * as os from 'os';
 // @ts-ignore
 import pkg from '../../../package.json';
@@ -16,7 +12,9 @@ import pkg from '../../../package.json';
   preconditions: ['isCommandDisabled']
 })
 export class BotStatusCommand extends Command {
-  public override async chatInputRun(interaction: CommandInteraction) {
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     const ping = interaction.createdTimestamp - Date.now();
     const apiPing = Math.round(interaction.client.ws.ping);
 
@@ -129,10 +127,10 @@ export class BotStatusCommand extends Command {
     }
     const PaginatedEmbed = new PaginatedMessage();
 
-    const StatusEmbed = new MessageEmbed()
+    const StatusEmbed = new EmbedBuilder()
       .setThumbnail(interaction.client.user?.avatarURL()!)
       .setTitle(`${interaction.client.user?.username} - Status`)
-      .setColor('GREY');
+      .setColor('Grey');
 
     StatusEmbed.addFields(
       {
@@ -157,11 +155,11 @@ export class BotStatusCommand extends Command {
     PaginatedEmbed.addPageEmbed(StatusEmbed);
 
     if (isAdmin && !isOwner) {
-      const adminEmbed = new MessageEmbed();
+      const adminEmbed = new EmbedBuilder();
       adminEmbed
         .setThumbnail(interaction.client.user?.avatarURL()!)
         .setTitle(`Status of ${interaction.client.user?.username} - Info`)
-        .setColor('DARKER_GREY')
+        .setColor('DarkerGrey')
         .addFields(
           {
             name: `Memory Usage`,
@@ -181,11 +179,11 @@ export class BotStatusCommand extends Command {
     }
     // Show CPU Info to the Bot Maintainer Only
     if (isOwner) {
-      const adminEmbed = new MessageEmbed();
+      const adminEmbed = new EmbedBuilder();
       adminEmbed
         .setThumbnail(interaction.client.user?.avatarURL()!)
         .setTitle(`${interaction.client.user?.username} - Info`)
-        .setColor('DARKER_GREY')
+        .setColor('DarkerGrey')
         .addFields([
           {
             name: 'CPU Load',
@@ -220,7 +218,7 @@ export class BotStatusCommand extends Command {
   }
 
   public override registerApplicationCommands(
-    registry: ApplicationCommandRegistry
+    registry: Command.Registry
   ): void {
     registry.registerChatInputCommand({
       name: this.name,

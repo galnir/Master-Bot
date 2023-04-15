@@ -1,17 +1,17 @@
 import type { Queue } from '../queue/Queue';
-import type { AnyChannel, GuildMember } from 'discord.js';
+import { Channel, GuildMember, ChannelType } from 'discord.js';
 import Logger from '../logger';
 
 export async function manageStageChannel(
-  voiceChannel: AnyChannel,
+  voiceChannel: Channel,
   botUser: GuildMember,
   instance: Queue
 ) {
-  if (voiceChannel.type !== 'GUILD_STAGE_VOICE') return;
+  if (voiceChannel.type !== ChannelType.GuildStageVoice) return;
   // Stage Channel Permissions From Discord.js Doc's
   if (
     !botUser?.permissions.has(
-      ('MANAGE_CHANNELS' && 'MUTE_MEMBERS' && 'MOVE_MEMBERS') || 'ADMINISTRATOR'
+      ('ManageChannels' && 'MuteMembers' && 'MoveMembers') || 'ADMINISTRATOR'
     )
   )
     if (botUser.voice.suppress)
@@ -28,7 +28,7 @@ export async function manageStageChannel(
           instance.player.trackData?.title.slice(0, 114) ??
           tracks.at(0)?.title.slice(0, 114)
         }...`
-      : `🎶 ${instance.player.trackData?.title ?? tracks.at(0)?.title}`;
+      : `🎶 ${instance.player.trackData?.title ?? tracks.at(0)?.title ?? ''}`;
 
   if (!voiceChannel.stageInstance) {
     await voiceChannel
@@ -45,7 +45,11 @@ export async function manageStageChannel(
     await botUser?.voice.setSuppressed(false).catch((error: string) => {
       Logger.error('Failed to Set Suppressed to False. ' + error);
     });
-  if (voiceChannel.stageInstance?.topic.startsWith('🎶')) {
+
+  if (
+    voiceChannel.stageInstance?.topic.startsWith('🎶') &&
+    voiceChannel.stageInstance?.topic !== title
+  ) {
     await voiceChannel.stageInstance?.setTopic(title).catch(error => {
       Logger.error('Failed to Set Topic. ' + error);
     });
