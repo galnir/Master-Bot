@@ -41,7 +41,19 @@ export class TwitchEmbed {
       'Retro',
       'Art',
       'Crypto',
-      'Makers & Crafting'
+      'Makers & Crafting',
+      'Cooking',
+      'Music',
+      'Food & Drink',
+      'Special Events',
+      'Talk Shows & Podcasts',
+      'Pools, Hot Tubs, and Beaches',
+      'Animals, Aquariums, and Zoos',
+      'Fitness & Health',
+      'Sports',
+      'ASMR',
+      'Politics',
+      'Travel & Outdoors'
     ];
     let gameOrTopic = ':video_game: Game';
     if (notGames.includes(this.gameName ?? this.stream.game_name))
@@ -53,7 +65,6 @@ export class TwitchEmbed {
           name: `Twitch Notification - Stream Ended`,
           icon_url: this.logo
         },
-        color: 644115,
         footer: {
           text: `Stream Ended`,
           iconURL:
@@ -63,6 +74,7 @@ export class TwitchEmbed {
       return offlineEmbed
         .setThumbnail(this.logo)
         .setTitle(`${this.userName}'s stream has Ended`)
+        .setColor('#9146FF')
         .addFields(
           { name: 'Title', value: this.title ?? 'N/A' },
           { name: gameOrTopic, value: this.gameName ?? 'N/A', inline: true },
@@ -78,7 +90,6 @@ export class TwitchEmbed {
           icon_url: this.logo,
           url: `https://twitch.tv/${this.userName}`
         },
-        color: 644115,
         url: `https://twitch.tv/${this.userName}`,
         footer: {
           text: this.change ? 'Stream Update' : 'Stream Started',
@@ -97,6 +108,7 @@ export class TwitchEmbed {
       onlineEmbed
         .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
         .setTitle(title)
+        .setColor('#9146FF')
         .addFields(
           { name: 'Title', value: this.stream?.title ?? 'N/A' },
 
