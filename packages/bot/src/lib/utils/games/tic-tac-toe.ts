@@ -1,7 +1,6 @@
 import { createCanvas, Image } from '@napi-rs/canvas';
 import axios from 'axios';
 import {
-  CommandInteraction,
   AttachmentBuilder,
   EmbedBuilder,
   MessageReaction,
@@ -86,6 +85,7 @@ export class TicTacToeGame {
         ?.send({ embeds: [Embed] })
 
         .then(async message => {
+          const embed = new EmbedBuilder(message.embeds[0].data);
           try {
             await message.react('1️⃣');
             await message.react('2️⃣');
@@ -129,9 +129,9 @@ export class TicTacToeGame {
                 reaction.emoji.name === '🔄' &&
                 (user.id === player1.id || user.id === player2.id)
               ) {
-                message.embeds[0].setImage(boardImageURL!);
+                embed.setImage(boardImageURL!);
                 await message.edit({
-                  embeds: [message.embeds[0]]
+                  embeds: [embed]
                 });
               }
 
@@ -141,66 +141,36 @@ export class TicTacToeGame {
               // Column 1
               if (reaction.emoji.name === '1️⃣') {
                 columnChoice = 0;
-                await playerMove(
-                  rowChoice!,
-                  columnChoice,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice!, columnChoice, user, embed);
               }
               // Column 2
               if (reaction.emoji.name === '2️⃣') {
                 columnChoice = 1;
-                await playerMove(
-                  rowChoice!,
-                  columnChoice,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice!, columnChoice, user, embed);
               }
               // Column 3
               if (reaction.emoji.name === '3️⃣') {
                 columnChoice = 2;
-                await playerMove(
-                  rowChoice!,
-                  columnChoice,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice!, columnChoice, user, embed);
               }
               // Row A
               if (reaction.emoji.name === '🇦') {
                 rowChoice = 0;
-                await playerMove(
-                  rowChoice,
-                  columnChoice!,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice, columnChoice!, user, embed);
               }
               // Row B
               if (reaction.emoji.name === '🇧') {
                 rowChoice = 1;
-                await playerMove(
-                  rowChoice,
-                  columnChoice!,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice, columnChoice!, user, embed);
               }
               // Row C
               if (reaction.emoji.name === '🇨') {
                 rowChoice = 2;
-                await playerMove(
-                  rowChoice,
-                  columnChoice!,
-                  user,
-                  message.embeds[0]
-                );
+                await playerMove(rowChoice, columnChoice!, user, embed);
               }
 
               await message.edit({
-                embeds: [message.embeds[0]]
+                embeds: [embed]
               });
             }
           );
@@ -231,7 +201,7 @@ export class TicTacToeGame {
         ctx.fillStyle = 'black';
         ctx.fillRect(0, 0, boardWidth, boardHeight);
 
-        ctx.font = '100px Open Sans Light';
+        ctx.font = '100px Arial';
         ctx.fillStyle = 'grey';
         // Add Shadows to indicators and empty spaces
         ctx.shadowColor = 'white';
@@ -317,10 +287,9 @@ export class TicTacToeGame {
         return await interaction.channel
           ?.send({
             files: [
-              new AttachmentBuilder(
-                canvas.toBuffer('image/png'),
-                `TicTacToe-${player1.id}-${player2.id}${currentTurn}.png`
-              )
+              new AttachmentBuilder(canvas.toBuffer('image/png'), {
+                name: `TicTacToe-${player1.id}-${player2.id}${currentTurn}.png`
+              })
             ]
           })
 
@@ -341,9 +310,20 @@ export class TicTacToeGame {
         instance: EmbedBuilder
       ) {
         const rowsLetters = ['A', 'B', 'C'];
+
         if (currentPlayer === user.id) {
-          instance.fields[0].value = column !== null ? `${column + 1}` : 'None';
-          instance.fields[1].value = row !== null ? rowsLetters[row] : 'None';
+          instance.setFields(
+            {
+              name: 'Column',
+              value: `${column !== null ? `${column + 1}` : 'None'}`,
+              inline: true
+            },
+            {
+              name: 'Row',
+              value: `${row !== null ? rowsLetters[row] : 'None'}`,
+              inline: true
+            }
+          );
         }
         // Wait for both
         if (row === null || column === null) {
@@ -351,8 +331,10 @@ export class TicTacToeGame {
         }
 
         // Reset 'Column' & 'Row' for next turn
-        instance.fields[0].value = 'None';
-        instance.fields[1].value = 'None';
+        instance.setFields(
+          { name: 'Column', value: 'None', inline: true },
+          { name: 'Row', value: 'None', inline: true }
+        );
         columnChoice = null;
         rowChoice = null;
 

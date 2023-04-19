@@ -16,7 +16,7 @@ export class AboutCommand extends Command {
       .setDescription(
         'Um bot do Discord com comandos de barra, suporte a playlists, Spotify, quiz de música, playlists salvas, letras, gifs e muito mais.\n\n :white_small_square: [Commands](https://github.com/galnir/Master-Bot#commands)\n :white_small_square: [Contributors](https://github.com/galnir/Master-Bot#contributors-%EF%B8%8F)'
       )
-      .setColor('#0x00ae86');
+      .setColor('Aqua');
 
     return await interaction.reply({ embeds: [embed] });
   }

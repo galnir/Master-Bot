@@ -4,15 +4,15 @@ import {
   PreconditionOptions,
   PreconditionResult
 } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
 import { container } from '@sapphire/framework';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'playerIsPlaying'
 })
 export class PlayerIsPlaying extends Precondition {
   public override chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): PreconditionResult {
     const { client } = container;
     const player = client.music.players.get(interaction.guildId as string);

@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Listener, ListenerOptions } from '@sapphire/framework';
 import type { VoiceChannel, VoiceState } from 'discord.js';
 import { trpcNode } from '../../trpc';
+import { ChannelType } from 'discord.js';
 
 @ApplyOptions<ListenerOptions>({
   name: 'voiceStateUpdate'
@@ -33,25 +34,23 @@ export class VoiceStateUpdateListener extends Listener {
         const guild = newState.guild;
         const channels = guild.channels;
 
-        const channel = await channels.create(
-          `${newState.member.user.username}'s channel`,
-          {
-            type: 'GUILD_VOICE',
-            parent: guildDB?.hub,
-            permissionOverwrites: [
-              {
-                id: newState.member.id,
-                allow: [
-                  'MOVE_MEMBERS',
-                  'MUTE_MEMBERS',
-                  'DEAFEN_MEMBERS',
-                  'MANAGE_CHANNELS',
-                  'STREAM'
-                ]
-              }
-            ]
-          }
-        );
+        const channel = await channels.create({
+          name: `${newState.member.user.username}'s channel`,
+          type: ChannelType.GuildVoice,
+          parent: guildDB?.hub,
+          permissionOverwrites: [
+            {
+              id: newState.member.id,
+              allow: [
+                'MoveMembers',
+                'MuteMembers',
+                'DeafenMembers',
+                'ManageChannels',
+                'Stream'
+              ]
+            }
+          ]
+        });
 
         await trpcNode.hub.createTempChannel.mutate({
           guildId: newState.guild.id,

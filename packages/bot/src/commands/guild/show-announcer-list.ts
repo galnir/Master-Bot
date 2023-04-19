@@ -29,9 +29,15 @@ export class ShowAnnouncerListCommand extends Command {
     if (!guildDB || !guildDB.guild || guildDB.guild.notifyList.length === 0) {
       return await interaction.reply(':x: Nenhum streamer está na sua lista');
     }
+<<<<<<< HEAD
     const icon = interactionGuild.iconURL({ dynamic: true });
     const baseEmbed = new MessageEmbed().setColor('#6441A5').setAuthor({
       name: `${interactionGuild.name} - Twitch Alertas`,
+=======
+    const icon = interactionGuild.iconURL();
+    const baseEmbed = new EmbedBuilder().setColor('DarkPurple').setAuthor({
+      name: `${interactionGuild.name} - Twitch Alerts`,
+>>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
       iconURL: icon!
     });
 

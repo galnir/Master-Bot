@@ -29,7 +29,7 @@ const HeaderButton = ({
         </a>
       ) : (
         <Link href={linkTo} target={newWindow ? '_blank' : ''}>
-          <a className={linkStyles}>{children}</a>
+          <span className={linkStyles}>{children}</span>
         </Link>
       )}
     </div>

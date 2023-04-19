@@ -18,7 +18,7 @@ export class FortuneCommand extends Command {
       .then(async response => {
         const tip: string = response.data.fortune;
         const embed = new EmbedBuilder()
-          .setColor('#F4D190')
+          .setColor('Orange')
           .setAuthor({
             name: 'Fortune Cookie',
             url: 'https://yerkee.com',

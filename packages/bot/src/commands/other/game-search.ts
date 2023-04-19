@@ -59,7 +59,7 @@ export class GameSearchCommand extends Command {
             game.description_raw.slice(0, 2000) +
             '...'
         )
-        .setColor('#B5B5B5')
+        .setColor('Grey')
         .setThumbnail(game.background_image)
         .addFields(
           { name: 'Lançado', value: '> ' + firstPageTuple[0], inline: true },
@@ -122,8 +122,13 @@ export class GameSearchCommand extends Command {
 
     PaginatedEmbed.addPageEmbed(embed =>
       embed
+<<<<<<< HEAD
         .setTitle(`Informações do jogo: ${game.name}`)
         .setColor('#b5b5b5')
+=======
+        .setTitle(`Game Info: ${game.name}`)
+        .setColor('Grey')
+>>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
         .setThumbnail(game.background_image_additional ?? game.background_image)
         // Row 1
         .addFields(

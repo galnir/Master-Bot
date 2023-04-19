@@ -25,7 +25,10 @@ const GuildSelectBox = ({ img, name, isBotIn, id }: GuildSelectBoxProps) => {
         ) : (
           <a
             className="px-6 py-3 bg-blue-900 rounded-md hover:bg-blue-700"
-            href={env.NEXT_PUBLIC_INVITE_URL}
+            href={
+              env.NEXT_PUBLIC_INVITE_URL +
+              `&disable_guild_select=true&guild_id=${id}`
+            }
             target="_blank"
             rel="noreferrer"
           >

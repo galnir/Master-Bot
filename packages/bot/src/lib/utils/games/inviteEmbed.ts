@@ -60,21 +60,22 @@ export class GameInvite {
       .setTimestamp();
     return gameInvite;
   }
-  public gameInviteButtons(): ActionRowBuilder {
-    const gameInviteButtons = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Yes`)
-        .setLabel('Yes')
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-No`)
-        .setLabel('No')
-        .setStyle(ButtonStyle.Danger),
-      new ButtonBuilder()
-        .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Start`)
-        .setLabel('Start')
-        .setStyle(ButtonStyle.Primary)
-    );
+  public gameInviteButtons(): ActionRowBuilder<ButtonBuilder> {
+    const gameInviteButtons =
+      new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Yes`)
+          .setLabel('Yes')
+          .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+          .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-No`)
+          .setLabel('No')
+          .setStyle(ButtonStyle.Danger),
+        new ButtonBuilder()
+          .setCustomId(`${this.interaction.id}${this.players.at(0)?.id}-Start`)
+          .setLabel('Start')
+          .setStyle(ButtonStyle.Primary)
+      );
     return gameInviteButtons;
   }
 }

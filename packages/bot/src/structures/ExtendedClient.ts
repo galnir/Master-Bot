@@ -1,7 +1,7 @@
 import type { ClientTwitchExtension } from '../lib/utils/twitch/twitchAPI-types';
 import { TwitchAPI } from '../lib/utils/twitch/twitchAPI';
 import { SapphireClient } from '@sapphire/framework';
-import { Intents } from 'discord.js';
+import { GatewayDispatchEvents, IntentsBitField } from 'discord.js';
 import { QueueClient } from '../lib/utils/queue/QueueClient';
 import Redis from 'ioredis';
 import { deletePlayerEmbed } from '../lib/utils/music/buttonsCollector';
@@ -33,11 +33,11 @@ export class ExtendedClient extends SapphireClient {
   public constructor() {
     super({
       intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_VOICE_STATES
+        IntentsBitField.Flags.Guilds,
+        IntentsBitField.Flags.GuildMembers,
+        IntentsBitField.Flags.GuildMessages,
+        IntentsBitField.Flags.GuildMessageReactions,
+        IntentsBitField.Flags.GuildVoiceStates
       ],
       logger: { level: 100 }
     });
@@ -61,11 +61,11 @@ export class ExtendedClient extends SapphireClient {
       }
     });
 
-    this.ws.on('VOICE_SERVER_UPDATE', data => {
-      this.music.handleVoiceUpdate(data);
+    this.ws.on(GatewayDispatchEvents.VoiceServerUpdate, async data => {
+      await this.music.handleVoiceUpdate(data);
     });
 
-    this.ws.on('VOICE_STATE_UPDATE', async data => {
+    this.ws.on(GatewayDispatchEvents.VoiceStateUpdate, async data => {
       // handle if a mod right-clicks disconnect on the bot
       if (!data.channel_id && data.user_id == this.application?.id) {
         const queue = this.music.queues.get(data.guild_id);
@@ -73,7 +73,7 @@ export class ExtendedClient extends SapphireClient {
         await queue.clear();
         queue.destroyPlayer();
       }
-      this.music.handleVoiceUpdate(data);
+      await this.music.handleVoiceUpdate(data);
     });
 
     if (process.env.TWITCH_CLIENT_ID && process.env.TWITCH_CLIENT_SECRET) {

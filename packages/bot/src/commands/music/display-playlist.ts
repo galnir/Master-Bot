@@ -41,7 +41,7 @@ export class DisplayPlaylistCommand extends Command {
       );
     }
 
-    const baseEmbed = new EmbedBuilder().setColor('#9096e6').setAuthor({
+    const baseEmbed = new EmbedBuilder().setColor('Purple').setAuthor({
       name: interactionMember.username,
       iconURL: interactionMember.avatar || undefined
     });

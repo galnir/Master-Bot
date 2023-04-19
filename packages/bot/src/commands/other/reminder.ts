@@ -157,7 +157,7 @@ export class ReminderCommand extends Command {
       const remindersDB = allReminders.map(reminders => JSON.parse(reminders!));
 
       const baseEmbed = new EmbedBuilder()
-        .setColor('#9096e6')
+        .setColor('Purple')
         .setAuthor({
           name: `⏰ ${interactionUser.username} - Lista de lembretes`
         })

@@ -90,7 +90,7 @@ export class RedditCommand extends Command {
 
     const paginatedEmbed = new PaginatedMessage();
     for (let i = 1; i <= data.children.length; i++) {
-      let color: ColorResolvable = '#FE9004';
+      let color: ColorResolvable = 'Orange';
       let redditPost = data.children[i - 1];
 
       if (redditPost.data.title.length > 255) {
@@ -103,7 +103,7 @@ export class RedditCommand extends Command {
           `[Read More...](https://www.reddit.com${redditPost.data.permalink})`;
       }
 
-      if (redditPost.data.over_18) color = '#CF00F'; // red - nsfw
+      if (redditPost.data.over_18) color = 'Red'; // red - nsfw
 
       paginatedEmbed.addPageEmbed(embed =>
         embed

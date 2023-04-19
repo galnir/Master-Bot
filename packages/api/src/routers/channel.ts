@@ -26,7 +26,8 @@ export const channelRouter = t.router({
           }
         }
       );
-      const responseChannels: APIGuildChannel<any>[] = await response.json();
+      const responseChannels =
+        (await response.json()) as APIGuildChannel<any>[];
 
       const channels: APIGuildTextChannel<0>[] = responseChannels.filter(
         channel => channel.type === 0

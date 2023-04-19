@@ -21,7 +21,7 @@ export class MotivationCommand extends Command {
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 
         const embed = new EmbedBuilder()
-          .setColor('#FFD77A')
+          .setColor('Yellow')
           .setAuthor({
             name: 'Motivational Quote',
             url: 'https://type.fit',

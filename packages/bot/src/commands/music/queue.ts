@@ -21,7 +21,7 @@ export class QueueCommand extends Command {
   ) {
     const { client } = container;
     const queue = client.music.queues.get(interaction.guildId!);
-    const baseEmbed = new EmbedBuilder().setColor('#FF0000').setAuthor({
+    const baseEmbed = new EmbedBuilder().setColor('Red').setAuthor({
       name: `${interaction.user.username}`,
       iconURL: interaction.user.displayAvatarURL()
     });

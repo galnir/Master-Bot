@@ -18,7 +18,7 @@ export class TrumpCommand extends Command {
       .then(async response => {
         const quote: string = response.data.value;
         const embed = new EmbedBuilder()
-          .setColor('#BB7D61')
+          .setColor('Orange')
           .setAuthor({
             name: 'Donald Trump',
             url: 'https://api.tronalddump.io/random/quote',

@@ -4,15 +4,15 @@ import {
   PreconditionOptions,
   PreconditionResult
 } from '@sapphire/framework';
+import { ChatInputCommandInteraction } from 'discord.js';
 import ISO6391 from 'iso-639-1';
-import type { CommandInteraction } from 'discord.js';
 
 @ApplyOptions<PreconditionOptions>({
   name: 'validateLanguageCode'
 })
 export class ValidLanguageCode extends Precondition {
   public override chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
+    interaction: ChatInputCommandInteraction
   ): PreconditionResult {
     const targetLang = interaction.options.getString('target', true);
     const languageCode = ISO6391.getCode(targetLang);

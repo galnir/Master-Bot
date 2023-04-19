@@ -24,8 +24,13 @@ export class TranslateCommand extends Command {
     })
       .then(async (response: any) => {
         const embed = new EmbedBuilder()
+<<<<<<< HEAD
           .setColor('#770000')
           .setTitle('Google Tradutor')
+=======
+          .setColor('DarkRed')
+          .setTitle('Google Translate')
+>>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
           .setURL('https://translate.google.com/')
           .setDescription(response.text)
           .setFooter({

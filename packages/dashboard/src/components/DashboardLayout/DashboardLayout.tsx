@@ -39,17 +39,17 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex flex-col gap-8">
               <div className="hover:text-slate-300">
                 <Link href={`/dashboard/${query}/welcome`}>
-                  <a>Welcome Message</a>
+                  <span>Welcome Message</span>
                 </Link>
               </div>
               <div className="hover:text-slate-300">
                 <Link href={`/dashboard/${query}/commands`}>
-                  <a>Commands</a>
+                  <span>Commands</span>
                 </Link>
               </div>
               <div className="hover:text-slate-300">
                 <Link href={`/dashboard/${query}/temporary_channels`}>
-                  <a>Temporary Channels</a>
+                  <span>Temporary Channels</span>
                 </Link>
               </div>
             </div>

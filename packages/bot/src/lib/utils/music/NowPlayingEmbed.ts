@@ -89,7 +89,7 @@ export class NowPlayingEmbed {
       default: {
         sourceTxt = 'Somewhere';
         sourceIcon = 'https://cdn.discordapp.com/embed/avatars/1.png';
-        embedColor = 'DARK_RED';
+        embedColor = 'DarkRed';
         break;
       }
     }

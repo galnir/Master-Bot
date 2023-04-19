@@ -15,7 +15,7 @@ export class AvatarCommand extends Command {
     const embed = new EmbedBuilder()
       .setTitle(user.username)
       .setImage(user.displayAvatarURL())
-      .setColor('#0x00ae86');
+      .setColor('Aqua');
 
     return await interaction.reply({ embeds: [embed] });
   }

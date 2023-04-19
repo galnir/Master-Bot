@@ -53,7 +53,7 @@ export class TwitchEmbed {
           name: `Twitch Notification - Stream Acabou`,
           icon_url: this.logo
         },
-        color: '#6441A5',
+        color: 644115,
         footer: {
           text: `Stream Ended`,
           iconURL:
@@ -78,11 +78,16 @@ export class TwitchEmbed {
           icon_url: this.logo,
           url: `https://twitch.tv/${this.userName}`
         },
-        color: '#6441A5',
+        color: 644115,
         url: `https://twitch.tv/${this.userName}`,
         footer: {
+<<<<<<< HEAD
           text: this.change ? 'Stream Update' : 'Stream Iniciada',
           iconURL:
+=======
+          text: this.change ? 'Stream Update' : 'Stream Started',
+          icon_url:
+>>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
       });

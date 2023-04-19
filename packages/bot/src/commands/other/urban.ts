@@ -19,7 +19,7 @@ export class UrbanCommand extends Command {
       .then(async response => {
         const definition: string = response.data.list[0].definition;
         const embed = new EmbedBuilder()
-          .setColor('#BB7D61')
+          .setColor('DarkOrange')
           .setAuthor({
             name: 'Urban Dictionary',
             url: 'https://urbandictionary.com',

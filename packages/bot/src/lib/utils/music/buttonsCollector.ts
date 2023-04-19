@@ -19,11 +19,19 @@ export default async function buttonsCollector(message: Message, song: Song) {
   let timer: NodeJS.Timer;
 
   collector.on('collect', async (i: MessageComponentInteraction) => {
+<<<<<<< HEAD
     if (!message.member?.voice.channel?.members.has(i.user.id))
       return await i.reply({
         content: `:x: Disponível apenas para membros em ${message.member?.voice.channel} <-- Clique para participar`,
+=======
+    if (!message.member?.voice.channel?.members.has(i.user.id)) {
+      await i.reply({
+        content: `:x: Only available to members in ${message.member?.voice.channel} <-- Click To Join`,
+>>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
         ephemeral: true
       });
+      return;
+    }
 
     if (i.customId === 'playPause') {
       if (queue.paused) {
@@ -48,9 +56,10 @@ export default async function buttonsCollector(message: Message, song: Song) {
         queue.player.paused
       );
       collector.empty();
-      return await i.update({
+      await i.update({
         embeds: [await NowPlaying.NowPlayingEmbed()]
       });
+      return;
     }
     if (i.customId === 'stop') {
       clearTimeout(timer);
@@ -110,17 +119,21 @@ export default async function buttonsCollector(message: Message, song: Song) {
 }
 
 export async function deletePlayerEmbed(queue: Queue) {
-  const embedID = await queue.getEmbed();
-  if (embedID) {
-    const channel = await queue.getTextChannel();
-    await channel?.messages.fetch(embedID).then(async oldMessage => {
-      if (oldMessage)
-        await oldMessage
-          .delete()
-          .catch(error =>
-            Logger.error('Failed to Delete Old Message. ' + error)
-          );
-      await queue.deleteEmbed();
-    });
+  try {
+    const embedID = await queue.getEmbed();
+    if (embedID) {
+      const channel = await queue.getTextChannel();
+      await channel?.messages.fetch(embedID).then(async oldMessage => {
+        if (oldMessage)
+          await oldMessage
+            .delete()
+            .catch(error =>
+              Logger.error('Failed to Delete Old Message. ' + error)
+            );
+        await queue.deleteEmbed();
+      });
+    }
+  } catch (error) {
+    Logger.error('Failed to Delete Player Embed. ' + error);
   }
 }

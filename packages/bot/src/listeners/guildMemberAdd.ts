@@ -1,6 +1,6 @@
 //import type { Guild } from '@prisma/client';
 import { ApplyOptions } from '@sapphire/decorators';
-import { Listener, ListenerOptions } from '@sapphire/framework';
+import { Listener, type ListenerOptions } from '@sapphire/framework';
 import type { GuildMember, TextChannel } from 'discord.js';
 import { trpcNode } from '../trpc';
 
