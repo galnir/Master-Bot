@@ -7,7 +7,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'show-announcer-list',
-  description: 'Exibir a lista de notificações da  Guilds Twitch',
+  description: 'Display the Guilds Twitch notification list',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class ShowAnnouncerListCommand extends Command {
@@ -27,11 +27,11 @@ export class ShowAnnouncerListCommand extends Command {
     });
 
     if (!guildDB || !guildDB.guild || guildDB.guild.notifyList.length === 0) {
-      return await interaction.reply(':x: Nenhum streamer está na sua lista');
+      return await interaction.reply(':x: No streamers are in your list');
     }
-    const icon = interactionGuild.iconURL({ dynamic: true });
-    const baseEmbed = new MessageEmbed().setColor('#6441A5').setAuthor({
-      name: `${interactionGuild.name} - Twitch Alertas`,
+    const icon = interactionGuild.iconURL();
+    const baseEmbed = new EmbedBuilder().setColor('DarkPurple').setAuthor({
+      name: `${interactionGuild.name} - Twitch Alerts`,
       iconURL: icon!
     });
 
@@ -40,23 +40,6 @@ export class ShowAnnouncerListCommand extends Command {
       users = await client.twitch.api.getUsers({
         ids: guildDB.guild.notifyList,
         token: client.twitch.auth.access_token
-      })
-      .catch(error => {
-        if (error.status == 429) {
-          return interaction.reply({
-            content:
-              ':x: Limite de avaliação excedido. Tente novamente em alguns minutos.'
-          });
-        }
-        if (error.status == 500) {
-          return interaction.reply({
-            content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
-          });
-        } else {
-          return interaction.reply({
-            content: `:x: Alguma coisa deu errada.`
-          });
-        }
       });
     } catch (error: any) {
       if (error.status == 429) {
@@ -94,7 +77,7 @@ export class ShowAnnouncerListCommand extends Command {
       .setTemplate(baseEmbed)
       .setItems(myList)
       .formatItems(
-        (index: any) => `**${index.name}** Mandando para **#${index.channel}**`
+        (index: any) => `**${index.name}** Sending to **#${index.channel}**`
       )
       .setItemsPerPage(10)
       .make()

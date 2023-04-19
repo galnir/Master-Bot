@@ -7,7 +7,7 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'play',
-  description: 'Reproduza qualquer música ou playlist do YouTube, Spotify e muito mais!',
+  description: 'Play any song or playlist from YouTube, Spotify and more!',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -63,15 +63,15 @@ export class PlayCommand extends Command {
       const { playlist } = data;
 
       if (!playlist) {
-        return await interaction.followUp(`:x: Você não tem essa playlist!`);
+        return await interaction.followUp(`:x: You have no such playlist!`);
       }
       if (!playlist.songs.length) {
-        return await interaction.followUp(`:x: **${query}** está vazia!`);
+        return await interaction.followUp(`:x: **${query}** is empty!`);
       }
 
       const { songs } = playlist;
       tracks.push(...songs);
-      message = `Musicas adicionadas da playlist **${playlist}** na fila!`;
+      message = `Added songs from **${playlist}** to the queue!`;
     } else {
       const trackTuple = await searchSong(query, interaction.user);
       if (!trackTuple[1].length) {
@@ -105,45 +105,48 @@ export class PlayCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'query',
-          description: 'Que música ou playlist você gostaria de ouvir?',
-          type: 'STRING',
-          required: true
-        },
-        {
-          name: 'is-custom-playlist',
-          description: 'É uma playlist personalizada?',
-          type: 'STRING',
-          choices: [
-            {
-              name: 'Sim',
-              value: 'Yes'
-            },
-            {
-              name: 'Não',
-              value: 'No'
-            }
-          ]
-        },
-        {
-          name: 'shuffle-playlist',
-          description: 'Gostaria de embaralhar a playlist?',
-          type: 'STRING',
-          choices: [
-            {
-              name: 'Sim',
-              value: 'Yes'
-            },
-            {
-              name: 'Não',
-              value: 'No'
-            }
-          ]
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('query')
+            .setDescription(
+              'What song or playlist would you like to listen to?'
+            )
+            .setRequired(true)
+        )
+        .addStringOption(option =>
+          option
+            .setName('is-custom-playlist')
+            .setDescription('Is it a custom playlist?')
+            .addChoices(
+              {
+                name: 'Yes',
+                value: 'Yes'
+              },
+              {
+                name: 'No',
+                value: 'No'
+              }
+            )
+        )
+        .addStringOption(option =>
+          option
+            .setName('shuffle-playlist')
+            .setDescription('Would you like to shuffle the playlist?')
+            .addChoices(
+              {
+                name: 'Yes',
+                value: 'Yes'
+              },
+              {
+                name: 'No',
+                value: 'No'
+              }
+            )
+        )
+    );
   }
+}

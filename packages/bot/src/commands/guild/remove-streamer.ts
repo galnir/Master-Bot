@@ -6,8 +6,8 @@ import { trpcNode } from '../../trpc';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove-streamer',
-  description: 'Adicionar um alerta de Stream do seu streamer favorito da Twitch',
-  requiredUserPermissions: 'MODERATE_MEMBERS',
+  description: 'Add a Stream alert from your favorite Twitch streamer',
+  requiredUserPermissions: 'ModerateMembers',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RemoveStreamerCommand extends Command {
@@ -23,28 +23,6 @@ export class RemoveStreamerCommand extends Command {
       user = await client.twitch.api.getUser({
         login: streamerName,
         token: client.twitch.auth.access_token
-      })
-      .catch(async error => {
-        if (error.status == 400) {
-          return await interaction.reply({
-            content: `:x: "${streamerName}" foi inválido, tente novamente por favor.`
-          });
-        }
-        if (error.status == 429) {
-          return await interaction.reply({
-            content:
-              ':x: Limite de avaliação excedido. Tente novamente em alguns minutos.'
-          });
-        }
-        if (error.status == 500) {
-          return await interaction.reply({
-            content: `:x: Os serviços do Twitch estão indisponíveis no momento. Tente novamente mais tarde.`
-          });
-        } else {
-          return await interaction.reply({
-            content: `:x: Alguma coisa deu errada.`
-          });
-        }
       });
     } catch (error: any) {
       if (error.status == 400) {
@@ -70,11 +48,11 @@ export class RemoveStreamerCommand extends Command {
 
     if (!user)
       return await interaction.reply({
-        content: `:x: ${streamerName} não foi encontrado`
+        content: `:x: ${streamerName} was not Found`
       });
     if (!isTextBasedChannel(channelData as GuildChannel))
       return await interaction.reply({
-        content: `:x: Não é possível enviar mensagens para ${channelData.name}`
+        content: `:x: Cant sent messages to ${channelData.name}`
       });
 
     const guildDB = await trpcNode.guild.getGuild.query({
@@ -87,12 +65,12 @@ export class RemoveStreamerCommand extends Command {
 
     if (!guildDB.guild || !guildDB.guild.notifyList.includes(user.id))
       return await interaction.reply({
-        content: `:x: **${user.display_name}** não está na sua lista de Notificações`
+        content: `:x: **${user.display_name}** is not in your Notification list`
       });
 
     if (!notifyDB || !notifyDB.notification)
       return await interaction.reply({
-        content: `:x: **${user.display_name}** não foi encontrado no banco de dados`
+        content: `:x: **${user.display_name}** was not found in Database`
       });
 
     let found = false;
@@ -101,7 +79,7 @@ export class RemoveStreamerCommand extends Command {
     });
     if (found === false)
       return await interaction.reply({
-        content: `:x: **${user.display_name}** não está atribuído a **${channelData}**`
+        content: `:x: **${user.display_name}** is not assigned to **${channelData}**`
       });
 
     const filteredTwitchIds: string[] = guildDB.guild.notifyList.filter(
@@ -135,7 +113,7 @@ export class RemoveStreamerCommand extends Command {
     }
 
     await interaction.reply({
-      content: `**${user.display_name}** A Notificação de Live não será mais enviada para **#${channelData.name}**`
+      content: `**${user.display_name}** Stream Notification will no longer be sent to **#${channelData.name}**`
     });
 
     return;
@@ -148,21 +126,24 @@ export class RemoveStreamerCommand extends Command {
       return;
     }
 
-      options: [
-        {
-          name: 'streamer-name',
-          description: 'Qual é o nome do streamer do Twitch?',
-          type: 'STRING',
-          required: true
-        },
-        {
-          name: 'channel-name',
-          description:
-            'Qual é o nome do Canal do qual você gostaria que o Alerta fosse removido?',
-          type: 'CHANNEL',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addStringOption(option =>
+          option
+            .setName('streamer-name')
+            .setDescription('What is the name of the Twitch streamer?')
+            .setRequired(true)
+        )
+        .addChannelOption(option =>
+          option
+            .setName('channel-name')
+            .setDescription(
+              'What is the name of the Channel you would like the Alert to be removed from?'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }

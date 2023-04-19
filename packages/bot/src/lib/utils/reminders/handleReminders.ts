@@ -215,7 +215,7 @@ export function nextReminder(
 }
 
 export async function checkInputs(
-  interaction: git Command.ChatInputCommandInteraction | ModalSubmitInteraction,
+  interaction: ChatInputCommandInteraction | ModalSubmitInteraction,
   event: string,
   time?: string,
   date?: string,
