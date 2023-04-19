@@ -45,7 +45,6 @@ export class MoveCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -64,28 +63,5 @@ export class MoveCommand extends Command {
         }
       ]
     });
-=======
-    registry.registerChatInputCommand(builder =>
-      builder
-        .setName(this.name)
-        .setDescription(this.description)
-        .addIntegerOption(option =>
-          option
-            .setName('current-position')
-            .setDescription(
-              'What is the position of the song you want to move?'
-            )
-            .setRequired(true)
-        )
-        .addIntegerOption(option =>
-          option
-            .setName('new-position')
-            .setDescription(
-              'What is the position you want to move the song to?'
-            )
-            .setRequired(true)
-        )
-    );
->>>>>>> upgrade-to-v14
   }
 }

@@ -38,11 +38,7 @@
     "node-fetch": "^3.3.0",
     "string-progressbar": "^1.0.4",
     "tiny-typed-emitter": "^2.1.0",
-<<<<<<< HEAD
     "undici": "^5.19.1",
-=======
-    "undici": "^5.21.2",
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1"
   },

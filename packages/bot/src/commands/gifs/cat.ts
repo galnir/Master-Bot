@@ -9,13 +9,7 @@ import Logger from '../../lib/utils/logger';
   preconditions: ['isCommandDisabled']
 })
 export class CatCommand extends Command {
-<<<<<<< HEAD
   public override chatInputRun(interaction: CommandInteraction) {
-=======
-  public override chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
-  ) {
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
     if (!process.env.TENOR_API) return;
     axios
       .get(

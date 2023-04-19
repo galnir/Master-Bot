@@ -105,8 +105,6 @@ export class PlayCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
-    registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
       options: [
@@ -148,50 +146,4 @@ export class PlayCommand extends Command {
         }
       ]
     });
-=======
-    registry.registerChatInputCommand(builder =>
-      builder
-        .setName(this.name)
-        .setDescription(this.description)
-        .addStringOption(option =>
-          option
-            .setName('query')
-            .setDescription(
-              'What song or playlist would you like to listen to?'
-            )
-            .setRequired(true)
-        )
-        .addStringOption(option =>
-          option
-            .setName('is-custom-playlist')
-            .setDescription('Is it a custom playlist?')
-            .addChoices(
-              {
-                name: 'Yes',
-                value: 'Yes'
-              },
-              {
-                name: 'No',
-                value: 'No'
-              }
-            )
-        )
-        .addStringOption(option =>
-          option
-            .setName('shuffle-playlist')
-            .setDescription('Would you like to shuffle the playlist?')
-            .addChoices(
-              {
-                name: 'Yes',
-                value: 'Yes'
-              },
-              {
-                name: 'No',
-                value: 'No'
-              }
-            )
-        )
-    );
->>>>>>> upgrade-to-v14
   }
-}

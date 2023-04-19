@@ -55,13 +55,8 @@ export class SpeedRunCommand extends Command {
         gameNameArr.push(id.names.international);
       });
       let gameName = new EmbedBuilder()
-<<<<<<< HEAD
         .setColor('#3E8657')
         .setTitle(':mag: Resultados da pesquisa')
-=======
-        .setColor('Green')
-        .setTitle(':mag: Search Results')
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
         .setThumbnail(initial.data[0].assets['cover-medium'].uri)
         .addFields({
           name: ':x: Tente pesquisar novamente com as seguintes sugestões.',
@@ -93,13 +88,9 @@ export class SpeedRunCommand extends Command {
       return await interaction
         .reply({
           embeds: [
-<<<<<<< HEAD
             new EmbedBuilder()
               .setColor('#3E8657')
               .setDescription('Obtendo dados')
-=======
-            new EmbedBuilder().setColor('Green').setDescription('Getting Data')
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
           ],
           fetchReply: true
         })
@@ -154,13 +145,8 @@ export class SpeedRunCommand extends Command {
             .update({
               embeds: [
                 new EmbedBuilder()
-<<<<<<< HEAD
                   .setColor('#3E8657')
                   .setDescription('Obtendo dados')
-=======
-                  .setColor('Green')
-                  .setDescription('Getting Data')
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
               ],
               fetchReply: true
             })

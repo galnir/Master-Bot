@@ -35,7 +35,6 @@ export class RemoveCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-<<<<<<< HEAD
     registry.registerChatInputCommand({
       name: this.name,
       description: this.description,
@@ -49,20 +48,5 @@ export class RemoveCommand extends Command {
         }
       ]
     });
-=======
-    registry.registerChatInputCommand(builder =>
-      builder
-        .setName(this.name)
-        .setDescription(this.description)
-        .addIntegerOption(option =>
-          option
-            .setName('position')
-            .setDescription(
-              'What is the position of the song you want to remove from the queue?'
-            )
-            .setRequired(true)
-        )
-    );
->>>>>>> upgrade-to-v14
   }
 }
