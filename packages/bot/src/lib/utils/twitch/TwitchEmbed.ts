@@ -81,13 +81,8 @@ export class TwitchEmbed {
         color: 644115,
         url: `https://twitch.tv/${this.userName}`,
         footer: {
-<<<<<<< HEAD
           text: this.change ? 'Stream Update' : 'Stream Iniciada',
           iconURL:
-=======
-          text: this.change ? 'Stream Update' : 'Stream Started',
-          icon_url:
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
       });

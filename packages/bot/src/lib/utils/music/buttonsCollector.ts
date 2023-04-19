@@ -19,15 +19,9 @@ export default async function buttonsCollector(message: Message, song: Song) {
   let timer: NodeJS.Timer;
 
   collector.on('collect', async (i: MessageComponentInteraction) => {
-<<<<<<< HEAD
     if (!message.member?.voice.channel?.members.has(i.user.id))
       return await i.reply({
         content: `:x: Disponível apenas para membros em ${message.member?.voice.channel} <-- Clique para participar`,
-=======
-    if (!message.member?.voice.channel?.members.has(i.user.id)) {
-      await i.reply({
-        content: `:x: Only available to members in ${message.member?.voice.channel} <-- Click To Join`,
->>>>>>> 14027c00ef878ab946b07a9cd5fa65a4fcab0796
         ephemeral: true
       });
       return;
