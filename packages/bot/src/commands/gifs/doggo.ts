@@ -5,11 +5,13 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'doggo',
-  description: 'Responde com um gif de dog fofo!',
+  description: 'Replies with a cute doggo picture!',
   preconditions: ['isCommandDisabled']
 })
 export class DoggoCommand extends Command {
-  public override chatInputRun(interaction: CommandInteraction) {
+  public override chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
     if (!process.env.TENOR_API) return;
     axios
       .get(
@@ -23,7 +25,7 @@ export class DoggoCommand extends Command {
       .catch(async error => {
         Logger.error(error);
         return await interaction.reply(
-          'Algo deu errado ao tentar buscar um gif de doggo fofo :('
+          'Something went wrong when trying to fetch a cute doggo gif :('
         );
       });
   }

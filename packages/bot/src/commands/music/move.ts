@@ -34,7 +34,7 @@ export class MoveCommand extends Command {
       currentPosition == newPosition
     ) {
       return await interaction.reply(
-        ':x: Por favor, insira números de posição válidos!'
+        ':x: Please enter valid position numbers!'
       );
     }
 
@@ -45,23 +45,26 @@ export class MoveCommand extends Command {
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'current-position',
-          description: 'Qual é a posição da música que você quer mover?',
-          type: 'INTEGER',
-          required: true
-        },
-        {
-          name: 'new-position',
-          description: 'Qual é a posição para a qual você deseja mover a música?',
-          type: 'INTEGER',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addIntegerOption(option =>
+          option
+            .setName('current-position')
+            .setDescription(
+              'What is the position of the song you want to move?'
+            )
+            .setRequired(true)
+        )
+        .addIntegerOption(option =>
+          option
+            .setName('new-position')
+            .setDescription(
+              'What is the position you want to move the song to?'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }

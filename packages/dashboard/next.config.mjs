@@ -7,7 +7,7 @@
  * @param {T} config - A generic parameter that flows through to the return type
  * @constraint {{import('next').NextConfig}}
  */
-function defineNextConfig(config) {
+ function defineNextConfig(config) {
   return config;
 }
 

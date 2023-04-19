@@ -12,7 +12,7 @@ import Logger from '../../lib/utils/logger';
 
 @ApplyOptions<CommandOptions>({
   name: 'reddit',
-  description: 'Obtenha postagens do reddit especificando um subreddit',
+  description: 'Get posts from reddit by specifying a subreddit',
   preconditions: ['GuildOnly', 'isCommandDisabled']
 })
 export class RedditCommand extends Command {
@@ -29,7 +29,7 @@ export class RedditCommand extends Command {
       const row = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId('top_or_controversial')
-          .setPlaceholder('Selecione uma opção')
+          .setPlaceholder('Please select an option')
           .addOptions(optionsArray)
       );
 
@@ -56,7 +56,7 @@ export class RedditCommand extends Command {
       collector.on('collect', async i => {
         if (i.user.id !== interaction.user.id) {
           i.reply({
-            content: 'Este elemento não é para você!',
+            content: 'This element is not for you!',
             ephemeral: true
           });
           return;
@@ -135,9 +135,9 @@ export class RedditCommand extends Command {
       );
       const data = response.data.data;
       if (!data) {
-        reject(`**${subreddit}** é um subreddit privado!`);
+        reject(`**${subreddit}** is a private subreddit!`);
       } else if (!data.children.length) {
-        reject('Por favor, forneça um nome de subreddit válido!');
+        reject('Please provide a valid subreddit name!');
       }
       resolve(data);
     });
@@ -216,4 +216,3 @@ const optionsArray = [
     value: 'all'
   }
 ];
-x

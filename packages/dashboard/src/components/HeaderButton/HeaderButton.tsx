@@ -15,7 +15,7 @@ const HeaderButton = ({
   external
 }: HeaderButtonProps) => {
   const linkStyles =
-    'p-3 text-white bg-pink-600 rounded font-light hover:bg-pink-500';
+    'p-3 text-white bg-purple-600 rounded font-light hover:bg-purple-500';
   return (
     <div>
       {external ? (

@@ -24,7 +24,7 @@ import ReminderStore from '../../lib/utils/reminders/ReminderStore';
 
 @ApplyOptions<CommandOptions>({
   name: 'reminder',
-  description: 'Definir ou Exibir Lembretes Pessoais',
+  description: 'Set or View Personal Reminders',
   preconditions: ['timeZoneExists']
 })
 export class ReminderCommand extends Command {
@@ -47,7 +47,7 @@ export class ReminderCommand extends Command {
       if (!userDB.user || Number.isNaN(userDB?.user?.timeOffset)) {
         await interaction.reply({
           content:
-            ':x: Algo deu errado, por favor, tente novamente depois de usar o `/reminder save-timezone` comando.',
+            ':x: Something went wrong, Please retry after using the `/reminder save-timezone` command.',
           ephemeral: true
         });
         return;
@@ -75,7 +75,7 @@ export class ReminderCommand extends Command {
 
         if (isPast(isoStr)) {
           await interaction.reply({
-            content: `:x: Não consigo voltar no tempo`,
+            content: `:x: I can't go back in time`,
             ephemeral: true
           });
           return;
@@ -105,13 +105,13 @@ export class ReminderCommand extends Command {
                 if (!savedToDB) {
                   await message.delete();
                   await interaction.user.send({
-                    content: `❌ Você já tem um evento chamado **${newEvent}**`
+                    content: `❌ You already have an event named **${newEvent}**`
                   });
                 }
               })
               .catch(async () => {
                 await interaction.editReply(
-                  ':x: Não é possível enviar-lhe um DM, lembrete foi **Cancelado**.'
+                  ':x: Unable to send you a DM, reminder has been **Canceled**.'
                 );
               });
           });
@@ -146,7 +146,7 @@ export class ReminderCommand extends Command {
       const keyList: string[] = [];
       if (!rawKeys.length) {
         return await interaction.reply({
-          content: ":x: Você não tem nenhum lembrete.",
+          content: ":x: You don't have any reminders.",
           ephemeral: true
         });
       }
@@ -159,7 +159,7 @@ export class ReminderCommand extends Command {
       const baseEmbed = new EmbedBuilder()
         .setColor('Purple')
         .setAuthor({
-          name: `⏰ ${interactionUser.username} - Lista de lembretes`
+          name: `⏰ ${interactionUser.username} - Reminder List`
         })
         .setTimestamp();
 
@@ -210,16 +210,16 @@ export class ReminderCommand extends Command {
             const collector =
               interaction.channel?.createMessageComponentCollector();
             let currentPage = 0;
-            collector?.on('coletar', button => {
+            collector?.on('collect', button => {
               if (interaction.user.id != button.user.id) return;
 
-              if (button.customId == `${interaction.id}-anterior`) {
+              if (button.customId == `${interaction.id}-previous`) {
                 currentPage = currentPage - 1 < 0 ? 0 : currentPage - 1;
                 button.update({
                   embeds: embeds[currentPage]
                 });
               }
-              if (button.customId == `${interaction.id}-próximo`) {
+              if (button.customId == `${interaction.id}-next`) {
                 currentPage =
                   currentPage + 1 > totalPages ? totalPages : currentPage + 1;
                 button.update({
@@ -303,4 +303,3 @@ export class ReminderCommand extends Command {
     );
   }
 }
-x

@@ -4,7 +4,7 @@ import { container } from '@sapphire/framework';
 
 @ApplyOptions<CommandOptions>({
   name: 'remove',
-  description: 'Remover uma música da fila',
+  description: 'Remove a track from the queue',
   preconditions: [
     'GuildOnly',
     'isCommandDisabled',
@@ -23,30 +23,30 @@ export class RemoveCommand extends Command {
     const queue = client.music.queues.get(interaction.guildId!);
     const length = await queue.count();
     if (position < 1 || position > length) {
-      return interaction.reply(':x: Por favor, insira um número de posição válido!');
+      return interaction.reply(':x: Please enter a valid position number!');
     }
 
     await queue.removeAt(position - 1);
     return await interaction.reply({
-      content: `Música removida na posição ${position}`
+      content: `Removed track at position ${position}`
     });
   }
 
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description,
-      options: [
-        {
-          name: 'position',
-          description:
-            'Qual é a posição da música que você deseja remover da fila?',
-          type: 'INTEGER',
-          required: true
-        }
-      ]
-    });
+    registry.registerChatInputCommand(builder =>
+      builder
+        .setName(this.name)
+        .setDescription(this.description)
+        .addIntegerOption(option =>
+          option
+            .setName('position')
+            .setDescription(
+              'What is the position of the song you want to remove from the queue?'
+            )
+            .setRequired(true)
+        )
+    );
   }
 }
