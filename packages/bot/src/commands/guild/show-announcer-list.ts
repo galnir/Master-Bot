@@ -30,7 +30,7 @@ export class ShowAnnouncerListCommand extends Command {
       return await interaction.reply(':x: No streamers are in your list');
     }
     const icon = interactionGuild.iconURL();
-    const baseEmbed = new EmbedBuilder().setColor('#9146FF').setAuthor({
+    const baseEmbed = new EmbedBuilder().setColor('Purple').setAuthor({
       name: `${interactionGuild.name} - Twitch Alerts`,
       iconURL: icon!
     });

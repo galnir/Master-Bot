@@ -43,7 +43,7 @@ export class TwitchStatusCommand extends Command {
           iconURL:
             'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png' // Twitch Icon
         }
-      }).setColor('#9146FF');
+      }).setColor('Purple');
 
       if (stream[0]?.type == 'live') {
         const min = Math.ceil(100);

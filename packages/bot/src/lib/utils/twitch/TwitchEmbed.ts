@@ -74,7 +74,7 @@ export class TwitchEmbed {
       return offlineEmbed
         .setThumbnail(this.logo)
         .setTitle(`${this.userName}'s stream has Ended`)
-        .setColor('#9146FF')
+        .setColor('Purple')
         .addFields(
           { name: 'Title', value: this.title ?? 'N/A' },
           { name: gameOrTopic, value: this.gameName ?? 'N/A', inline: true },
@@ -108,7 +108,7 @@ export class TwitchEmbed {
       onlineEmbed
         .setThumbnail(this.gameArt.replace('-{width}x{height}', ''))
         .setTitle(title)
-        .setColor('#9146FF')
+        .setColor('Purple')
         .addFields(
           { name: 'Title', value: this.stream?.title ?? 'N/A' },
 
