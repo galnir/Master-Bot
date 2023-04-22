@@ -63,7 +63,7 @@ export class NowPlayingEmbed {
         sourceTxt = 'Twitch';
         sourceIcon =
           'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
-        embedColor = '#9146FF';
+        embedColor = 'Purple';
         const twitch = container.client.twitch;
         if (twitch.auth.access_token) {
           try {
