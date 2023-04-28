@@ -16,13 +16,6 @@ export class GptCommand extends Command {
   ) {
     
     const userMessage = interaction.options.getString('mensagem', true);
-    if (!userMessage) {
-      return interaction.reply(
-        {
-        content:'Por favor, forneça uma mensagem para o GPT', 
-        ephemeral: true 
-      });
-    }
 
     const configuration = new Configuration({
         apiKey: process.env.OPEN_API,
@@ -44,17 +37,32 @@ export class GptCommand extends Command {
         n: 1
     })
     const response = result.data.choices[0].message.content;
-    console.log(response);
-    if (response) {
-        return await interaction.channel?.send({
-        content:response
-      });
+
+    console.log(`PERGUNTA: ${userMessage}`);
+    console.log(`RESPOSTA: ${response}`);
+
+
+    const maxLength = 2000; // Define o limite máximo de caracteres
+    const responseLength = response.length;
+
+    if (responseLength > maxLength) {
+      const numChunks = Math.ceil(responseLength / maxLength); // Calcula o número de partes em que a resposta será dividida
+      const chunks = []; // Armazena as partes da resposta
+      for (let i = 0; i < numChunks; i++) {
+        const start = i * maxLength;
+        const end = (i + 1) * maxLength;
+
+        chunks.push(response.substring(start, end)); // Adiciona a parte atual à lista de partes
+      }
+
+      for (const chunk of chunks) {
+         await interaction.channel?.send({ content: chunk }); // Envia cada parte separadamente
+      }
+    } else {
+      const finalResponse = response.endsWith('\n') ? response : response + '\n'; // Garante que a mensagem termina com uma nova linha para evitar cortar uma palavra ao meio
+       await interaction.channel?.send({ content: finalResponse }); // Envia a resposta completa
     }
-    else {
-       return await interaction.channel?.send({
-        content:'Não foi possível obter uma resposta do GPT.',
-      });
-    }
+
 
   }
 
