@@ -38,34 +38,31 @@ export class GptCommand extends Command {
     })
     const response = result.data.choices[0].message.content;
 
-    console.log(`PERGUNTA: ${userMessage}`);
-    console.log(`RESPOSTA: ${response}`);
-
-
-    const maxLength = 2000; // Define o limite máximo de caracteres
+    console.log(`QUESTION: ${userMessage}`);
+    console.log(`ANSWER: ${response}`);
+    
+    const maxLength = 2000; // Sets the maximum character limit
     const responseLength = response.length;
-
+    
     if (responseLength > maxLength) {
-      const numChunks = Math.ceil(responseLength / maxLength); // Calcula o número de partes em que a resposta será dividida
-      const chunks = []; // Armazena as partes da resposta
+      const numChunks = Math.ceil(responseLength / maxLength); // Calculates the number of parts the response will be split into
+      const chunks = []; // Stores the parts of the response
       for (let i = 0; i < numChunks; i++) {
         const start = i * maxLength;
         const end = (i + 1) * maxLength;
-
-        chunks.push(response.substring(start, end)); // Adiciona a parte atual à lista de partes
+    
+        chunks.push(response.substring(start, end)); // Adds the current part to the list of parts
       }
-
+    
       for (const chunk of chunks) {
-         await interaction.channel?.send({ content: chunk }); // Envia cada parte separadamente
+        await interaction.channel?.send({ content: chunk }); // Sends each part separately
       }
     } else {
-      const finalResponse = response.endsWith('\n') ? response : response + '\n'; // Garante que a mensagem termina com uma nova linha para evitar cortar uma palavra ao meio
-       await interaction.channel?.send({ content: finalResponse }); // Envia a resposta completa
+      const finalResponse = response.endsWith('\n') ? response : response + '\n'; // Ensures the message ends with a newline to avoid cutting a word in half
+      await interaction.channel?.send({ content: finalResponse }); // Sends the complete response
     }
-
-
   }
-
+      
   public override registerApplicationCommands(
     registry: Command.Registry
   ): void {
