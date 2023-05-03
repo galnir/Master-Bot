@@ -9,37 +9,36 @@ const { Configuration, OpenAIApi } = require('openai');
   preconditions: ['isCommandDisabled']
 })
 export class GptCommand extends Command {
-
   public override async chatInputRun(
     interaction: Command.ChatInputCommandInteraction
   ) {
-
     const userMessage = interaction.options.getString('message', true);
-
+    await interaction.deferReply();
+    if (!process.env.OPEN_API!)
+      return interaction.editReply({ content: 'This command is unavailable.' });
     const configuration = new Configuration({
-        apiKey: process.env.OPEN_API,
-    })  
+      apiKey: process.env.OPEN_API
+    });
 
     const openai = new OpenAIApi(configuration);
 
-    const conversationLog  = [{ role: 'system', content: "You're a funny chatbot!"}];
-        
+    const conversationLog = [
+      { role: 'system', content: "You're a funny chatbot!" }
+    ];
+
     conversationLog.push({
-        role: 'user',
-        content: userMessage,
+      role: 'user',
+      content: userMessage
     });
 
     const result = await openai.createChatCompletion({
-        model: 'gpt-3.5-turbo',
-        messages: conversationLog,
-        temperature: 1,
-        n: 1
-    })
+      model: 'gpt-3.5-turbo',
+      messages: conversationLog,
+      temperature: 1,
+      n: 1
+    });
 
     const response = result.data.choices[0].message.content;
-
-    console.log(`QUESTION: ${userMessage}`);
-    console.log(`ANSWER: ${response}`);
 
     const maxLength = 2000; // Sets the maximum character limit
     const responseLength = response.length;
@@ -53,13 +52,21 @@ export class GptCommand extends Command {
 
         chunks.push(response.substring(start, end)); // Adds the current part to the list of parts
       }
-
+      let index = 0;
       for (const chunk of chunks) {
-        await interaction.channel?.send({ content: chunk }); // Sends each part separately
+        if (index === 0) {
+          await interaction.editReply({ content: chunk }); // Edit the deferred reply with the first chunk
+        } else {
+          await interaction.channel?.send({ content: chunk }); // Sends each part separately
+        }
+        index++;
       }
+      return;
     } else {
-      const finalResponse = response.endsWith('\n') ? response : response + '\n'; // Ensures the message ends with a newline to avoid cutting a word in half
-      await interaction.channel?.send({ content: finalResponse }); // Sends the complete response
+      const finalResponse = response.endsWith('\n')
+        ? response
+        : response + '\n'; // Ensures the message ends with a newline to avoid cutting a word in half
+      return interaction.editReply({ content: finalResponse }); // Sends the complete response
     }
   }
 
@@ -74,7 +81,7 @@ export class GptCommand extends Command {
           option
             .setName('message')
             .setDescription('The message to send to the GPT')
-            .setRequired(true) 
+            .setRequired(true)
         )
     );
   }
