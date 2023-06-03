@@ -2,7 +2,6 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import {
   ColorResolvable,
-  ActionRowBuilder,
   StringSelectMenuBuilder,
   ComponentType
 } from 'discord.js';
@@ -26,26 +25,24 @@ export class RedditCommand extends Command {
     const sort = interaction.options.getString('sort', true);
 
     if (['controversial', 'top'].some(val => val === sort)) {
-      const row = new ActionRowBuilder().addComponents(
-        new StringSelectMenuBuilder()
-          .setCustomId('top_or_controversial')
-          .setPlaceholder('Please select an option')
-          .addOptions(optionsArray)
-      );
+      const row = new StringSelectMenuBuilder()
+        .setCustomId('top_or_controversial')
+        .setPlaceholder('Please select an option')
+        .addOptions(optionsArray);
 
       const menu = await channel.send({
         content: `:loud_sound: Do you want to get the ${sort} posts from past hour/week/month/year or all?`,
         components: [
           {
             type: ComponentType.ActionRow,
-            //@ts-ignore
+
             components: [row]
           }
         ]
       });
 
       const collector = menu.createMessageComponentCollector({
-        componentType: ComponentType.SelectMenu,
+        componentType: ComponentType.StringSelect,
         time: 30000 // 30 sec
       });
 
