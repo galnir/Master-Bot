@@ -1,17 +1,19 @@
-import { t } from '../trpc';
-import { z } from 'zod';
-export const reminderRouter = t.router({
-  getAll: t.procedure.query(async ({ ctx }) => {
+import { z } from "zod";
+
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const reminderRouter = createTRPCRouter({
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const reminders = await ctx.prisma.reminder.findMany();
 
     return { reminders };
   }),
-  getReminder: t.procedure
+  getReminder: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        event: z.string()
-      })
+        event: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, event } = input;
@@ -19,39 +21,39 @@ export const reminderRouter = t.router({
       const reminder = await ctx.prisma.reminder.findFirst({
         where: {
           userId,
-          event
+          event,
         },
-        include: { user: true }
+        include: { user: true },
       });
 
       return { reminder };
     }),
-  getByUserId: t.procedure
+  getByUserId: publicProcedure
     .input(
       z.object({
-        userId: z.string()
-      })
+        userId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = input;
 
       const reminders = await ctx.prisma.reminder.findMany({
         where: {
-          userId
+          userId,
         },
         select: {
           event: true,
           dateTime: true,
-          description: true
+          description: true,
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: "asc",
+        },
       });
 
       return { reminders };
     }),
-  create: t.procedure
+  create: publicProcedure
     .input(
       z.object({
         userId: z.string(),
@@ -59,8 +61,8 @@ export const reminderRouter = t.router({
         description: z.nullable(z.string()),
         dateTime: z.string(),
         repeat: z.nullable(z.string()),
-        timeOffset: z.number()
-      })
+        timeOffset: z.number(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, event, description, dateTime, repeat, timeOffset } =
@@ -73,18 +75,18 @@ export const reminderRouter = t.router({
           dateTime,
           repeat,
           timeOffset,
-          user: { connect: { discordId: userId } }
-        }
+          user: { connect: { discordId: userId } },
+        },
       });
 
       return { reminder };
     }),
-  delete: t.procedure
+  delete: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        event: z.string()
-      })
+        event: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, event } = input;
@@ -92,10 +94,10 @@ export const reminderRouter = t.router({
       const reminder = await ctx.prisma.reminder.deleteMany({
         where: {
           userId,
-          event
-        }
+          event,
+        },
       });
 
       return { reminder };
-    })
+    }),
 });

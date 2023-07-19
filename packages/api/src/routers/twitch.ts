@@ -1,37 +1,38 @@
-import { t } from '../trpc';
-import { z } from 'zod';
+import { z } from "zod";
 
-export const twitchRouter = t.router({
-  getAll: t.procedure.query(async ({ ctx }) => {
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const twitchRouter = createTRPCRouter({
+  getAll: publicProcedure.query(async ({ ctx }) => {
     const notifications = await ctx.prisma.twitchNotify.findMany();
 
     return { notifications };
   }),
-  findUserById: t.procedure
+  findUserById: publicProcedure
     .input(
       z.object({
-        id: z.string()
-      })
+        id: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { id } = input;
 
       const notification = await ctx.prisma.twitchNotify.findFirst({
         where: {
-          twitchId: id
-        }
+          twitchId: id,
+        },
       });
 
       return { notification };
     }),
-  create: t.procedure
+  create: publicProcedure
     .input(
       z.object({
         userId: z.string(),
         userImage: z.string(),
         channelId: z.string(),
-        sendTo: z.array(z.string())
-      })
+        sendTo: z.array(z.string()),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, userImage, channelId, sendTo } = input;
@@ -40,66 +41,66 @@ export const twitchRouter = t.router({
           twitchId: userId,
           channelIds: [channelId],
           logo: userImage,
-          sent: false
+          sent: false,
         },
         update: { channelIds: sendTo },
-        where: { twitchId: userId }
+        where: { twitchId: userId },
       });
     }),
-  updateNotification: t.procedure
+  updateNotification: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        channelIds: z.array(z.string())
-      })
+        channelIds: z.array(z.string()),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, channelIds } = input;
 
       const notification = await ctx.prisma.twitchNotify.update({
         where: {
-          twitchId: userId
+          twitchId: userId,
         },
         data: {
-          channelIds
-        }
+          channelIds,
+        },
       });
 
       return { notification };
     }),
-  delete: t.procedure
+  delete: publicProcedure
     .input(
       z.object({
-        userId: z.string()
-      })
+        userId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId } = input;
 
       const notification = await ctx.prisma.twitchNotify.delete({
         where: {
-          twitchId: userId
-        }
+          twitchId: userId,
+        },
       });
 
       return { notification };
     }),
-  updateNotificationStatus: t.procedure
+  updateNotificationStatus: publicProcedure
     .input(
       z.object({
         userId: z.string(),
         live: z.boolean(),
-        sent: z.boolean()
-      })
+        sent: z.boolean(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { live, sent, userId } = input;
 
       const notification = await ctx.prisma.twitchNotify.update({
         where: { twitchId: userId },
-        data: { live, sent }
+        data: { live, sent },
       });
 
       return { notification };
-    })
+    }),
 });

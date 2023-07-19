@@ -1,127 +1,128 @@
-import { t } from '../trpc';
-import { z } from 'zod';
+import { z } from "zod";
 
-export const welcomeRouter = t.router({
-  getMessage: t.procedure
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const welcomeRouter = createTRPCRouter({
+  getMessage: publicProcedure
     .input(
       z.object({
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { guildId } = input;
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId
-        }
+          id: guildId,
+        },
       });
 
       return {
-        message: guild?.welcomeMessage
+        message: guild?.welcomeMessage,
       };
     }),
-  setMessage: t.procedure
+  setMessage: publicProcedure
     .input(
       z.object({
         message: z.string().min(4).max(100),
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { message, guildId } = input;
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId
+          id: guildId,
         },
         data: {
-          welcomeMessage: message
-        }
+          welcomeMessage: message,
+        },
       });
 
       return { guild };
     }),
-  setChannel: t.procedure
+  setChannel: publicProcedure
     .input(
       z.object({
         channelId: z.string(),
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { channelId, guildId } = input;
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId
+          id: guildId,
         },
         data: {
-          welcomeMessageChannel: channelId
-        }
-      });
-
-      return { guild };
-    }),
-  getChannel: t.procedure
-    .input(
-      z.object({
-        guildId: z.string()
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { guildId } = input;
-
-      const guild = await ctx.prisma.guild.findUnique({
-        where: {
-          id: guildId
+          welcomeMessageChannel: channelId,
         },
-        select: {
-          welcomeMessageChannel: true
-        }
       });
 
       return { guild };
     }),
-  getStatus: t.procedure
-    .input(
-      z.object({
-        guildId: z.string()
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { guildId } = input;
-
-      const guild = await ctx.prisma.guild.findUnique({
-        where: {
-          id: guildId
-        },
-        select: {
-          welcomeMessageEnabled: true
-        }
-      });
-
-      return { guild };
-    }),
-  toggle: t.procedure
+  getChannel: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
-        status: z.boolean()
-      })
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { guildId } = input;
+
+      const guild = await ctx.prisma.guild.findUnique({
+        where: {
+          id: guildId,
+        },
+        select: {
+          welcomeMessageChannel: true,
+        },
+      });
+
+      return { guild };
+    }),
+  getStatus: publicProcedure
+    .input(
+      z.object({
+        guildId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { guildId } = input;
+
+      const guild = await ctx.prisma.guild.findUnique({
+        where: {
+          id: guildId,
+        },
+        select: {
+          welcomeMessageEnabled: true,
+        },
+      });
+
+      return { guild };
+    }),
+  toggle: publicProcedure
+    .input(
+      z.object({
+        guildId: z.string(),
+        status: z.boolean(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { guildId, status } = input;
 
       const guild = await ctx.prisma.guild.update({
         where: {
-          id: guildId
+          id: guildId,
         },
         data: {
-          welcomeMessageEnabled: status
-        }
+          welcomeMessageEnabled: status,
+        },
       });
 
       return { guild };
-    })
+    }),
 });

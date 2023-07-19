@@ -1,13 +1,14 @@
-import { t } from '../trpc';
-import { z } from 'zod';
+import { z } from "zod";
 
-export const playlistRouter = t.router({
-  getPlaylist: t.procedure
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const playlistRouter = createTRPCRouter({
+  getPlaylist: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        name: z.string()
-      })
+        name: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { userId, name } = input;
@@ -15,44 +16,44 @@ export const playlistRouter = t.router({
       const playlist = await ctx.prisma.playlist.findFirst({
         where: {
           userId,
-          name
+          name,
         },
         include: {
-          songs: true
-        }
+          songs: true,
+        },
       });
 
       return { playlist };
     }),
-  getAll: t.procedure
+  getAll: publicProcedure
     .input(
       z.object({
-        userId: z.string()
-      })
+        userId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { userId } = input;
 
       const playlists = await ctx.prisma.playlist.findMany({
         where: {
-          userId
+          userId,
         },
         include: {
-          songs: true
+          songs: true,
         },
         orderBy: {
-          id: 'asc'
-        }
+          id: "asc",
+        },
       });
 
       return { playlists };
     }),
-  create: t.procedure
+  create: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        name: z.string()
-      })
+        name: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, name } = input;
@@ -62,20 +63,20 @@ export const playlistRouter = t.router({
           name,
           user: {
             connect: {
-              id: userId
-            }
-          }
-        }
+              id: userId,
+            },
+          },
+        },
       });
 
       return { playlist };
     }),
-  delete: t.procedure
+  delete: publicProcedure
     .input(
       z.object({
         userId: z.string(),
-        name: z.string()
-      })
+        name: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { userId, name } = input;
@@ -83,10 +84,10 @@ export const playlistRouter = t.router({
       const playlist = await ctx.prisma.playlist.deleteMany({
         where: {
           userId,
-          name
-        }
+          name,
+        },
       });
 
       return { playlist };
-    })
+    }),
 });

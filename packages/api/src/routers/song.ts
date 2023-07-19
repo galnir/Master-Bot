@@ -1,37 +1,38 @@
-import { t } from '../trpc';
-import { z } from 'zod';
+import { z } from "zod";
 
-export const songRouter = t.router({
-  createMany: t.procedure
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const songRouter = createTRPCRouter({
+  createMany: publicProcedure
     .input(
       z.object({
-        songs: z.array(z.any())
-      })
+        songs: z.array(z.any()),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { songs } = input;
 
       const songsCreated = await ctx.prisma.song.createMany({
-        data: songs
+        data: songs,
       });
 
       return { songsCreated };
     }),
-  delete: t.procedure
+  delete: publicProcedure
     .input(
       z.object({
-        id: z.number()
-      })
+        id: z.number(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
 
       const song = await ctx.prisma.song.delete({
         where: {
-          id: id
-        }
+          id: id,
+        },
       });
 
       return { song };
-    })
+    }),
 });

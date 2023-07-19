@@ -1,17 +1,18 @@
-import { t } from '../trpc';
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
-import { getFetch } from '@trpc/client';
+import { getFetch } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 const fetch = getFetch();
 
-export const hubRouter = t.router({
-  create: t.procedure
+export const hubRouter = createTRPCRouter({
+  create: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
-        name: z.string()
-      })
+        name: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { guildId, name } = input;
@@ -24,21 +25,21 @@ export const hubRouter = t.router({
           {
             headers: {
               Authorization: `Bot ${token}`,
-              'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
               name,
-              type: 4
-            })
-          }
+              type: 4,
+            }),
+          },
         );
         parent = (await response.json()) as any;
       } catch (e) {
         console.log(e);
         throw new TRPCError({
-          message: 'Could not create channel',
-          code: 'INTERNAL_SERVER_ERROR'
+          message: "Could not create channel",
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 
@@ -49,43 +50,43 @@ export const hubRouter = t.router({
           {
             headers: {
               Authorization: `Bot ${token}`,
-              'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
-            method: 'POST',
+            method: "POST",
             body: JSON.stringify({
-              name: 'Join To Create',
+              name: "Join To Create",
               type: 2,
-              parent_id: parent.id
-            })
-          }
+              parent_id: parent.id,
+            }),
+          },
         );
         hubChannel = (await response.json()) as any;
       } catch {
         throw new TRPCError({
-          message: 'Could not create channel',
-          code: 'INTERNAL_SERVER_ERROR'
+          message: "Could not create channel",
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 
       const updatedGuild = await ctx.prisma.guild.update({
         where: {
-          id: guildId
+          id: guildId,
         },
         data: {
           hub: parent.id,
-          hubChannel: hubChannel.id
-        }
+          hubChannel: hubChannel.id,
+        },
       });
 
       return {
-        guild: updatedGuild
+        guild: updatedGuild,
       };
     }),
-  delete: t.procedure
+  delete: publicProcedure
     .input(
       z.object({
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { guildId } = input;
@@ -94,18 +95,18 @@ export const hubRouter = t.router({
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId
+          id: guildId,
         },
         select: {
           hub: true,
-          hubChannel: true
-        }
+          hubChannel: true,
+        },
       });
 
       if (!guild) {
         throw new TRPCError({
-          message: 'Guild not found',
-          code: 'NOT_FOUND'
+          message: "Guild not found",
+          code: "NOT_FOUND",
         });
       }
 
@@ -113,41 +114,41 @@ export const hubRouter = t.router({
         Promise.all([
           fetch(`https://discordapp.com/api/channels/${guild.hubChannel}`, {
             headers: {
-              Authorization: `Bot ${token}`
+              Authorization: `Bot ${token}`,
             },
-            method: 'DELETE'
+            method: "DELETE",
           }),
           fetch(`https://discordapp.com/api/channels/${guild.hub}`, {
             headers: {
-              Authorization: `Bot ${token}`
+              Authorization: `Bot ${token}`,
             },
-            method: 'DELETE'
-          })
+            method: "DELETE",
+          }),
         ]).then(async () => {
           await ctx.prisma.guild.update({
             where: {
-              id: guildId
+              id: guildId,
             },
             data: {
               hub: null,
-              hubChannel: null
-            }
+              hubChannel: null,
+            },
           });
         });
       } catch (e) {
         console.log(e);
         throw new TRPCError({
-          message: 'Could not delete channel',
-          code: 'INTERNAL_SERVER_ERROR'
+          message: "Could not delete channel",
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
     }),
-  getTempChannel: t.procedure
+  getTempChannel: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
-        ownerId: z.string()
-      })
+        ownerId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { guildId, ownerId } = input;
@@ -155,19 +156,19 @@ export const hubRouter = t.router({
       const tempChannel = await ctx.prisma.tempChannel.findFirst({
         where: {
           guildId,
-          ownerId
-        }
+          ownerId,
+        },
       });
 
       return { tempChannel };
     }),
-  createTempChannel: t.procedure
+  createTempChannel: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
         ownerId: z.string(),
-        channelId: z.string()
-      })
+        channelId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { guildId, ownerId, channelId } = input;
@@ -176,27 +177,27 @@ export const hubRouter = t.router({
         data: {
           guildId,
           ownerId,
-          id: channelId
-        }
+          id: channelId,
+        },
       });
 
       return { tempChannel };
     }),
-  deleteTempChannel: t.procedure
+  deleteTempChannel: publicProcedure
     .input(
       z.object({
-        channelId: z.string()
-      })
+        channelId: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { channelId } = input;
 
       const tempChannel = await ctx.prisma.tempChannel.delete({
         where: {
-          id: channelId
-        }
+          id: channelId,
+        },
       });
 
       return { tempChannel };
-    })
+    }),
 });

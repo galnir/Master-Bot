@@ -1,17 +1,19 @@
-import { t } from '../trpc';
-import { z } from 'zod';
-import { TRPCError } from '@trpc/server';
-import {
+import { getFetch } from "@trpc/client";
+import { TRPCError } from "@trpc/server";
+import type {
+  APIApplicationCommandPermission,
   APIGuildChannel,
   APIRole,
   ChannelType,
-  APIApplicationCommandPermission
-} from 'discord-api-types/v10';
-import { getFetch } from '@trpc/client';
+} from "discord-api-types/v10";
+import { z } from "zod";
+
+import { env } from "../env.mjs";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 const fetch = getFetch();
 
-export type CommandType = {
+export interface CommandType {
   code: number;
   id: string;
   applicationId: string;
@@ -23,64 +25,64 @@ export type CommandType = {
   description: string;
   dm_permission: boolean;
   options: any[];
-};
+}
 
-export type CommandPermissionsResponseOkay = {
+export interface CommandPermissionsResponseOkay {
   id: string;
   application_id: string;
   guild_id: string;
   permissions: APIApplicationCommandPermission[];
-};
+}
 
-export type CommandPermissionsResponseNotOkay = {
+export interface CommandPermissionsResponseNotOkay {
   message: string;
   code: number;
-};
+}
 
-export const commandRouter = t.router({
-  getDisabledCommands: t.procedure
+export const commandRouter = createTRPCRouter({
+  getDisabledCommands: publicProcedure
     .input(
       z.object({
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { guildId } = input;
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId
+          id: guildId,
         },
         select: {
-          disabledCommands: true
-        }
+          disabledCommands: true,
+        },
       });
 
       if (!guild) {
         throw new TRPCError({
-          message: 'Guild not found',
-          code: 'NOT_FOUND'
+          message: "Guild not found",
+          code: "NOT_FOUND",
         });
       }
 
       return { disabledCommands: guild.disabledCommands };
     }),
-  getCommands: t.procedure
+  getCommands: publicProcedure
     .input(
       z.object({
-        guildId: z.string()
-      })
+        guildId: z.string(),
+      }),
     )
-    .query(async ({}) => {
+    .query(async () => {
       try {
-        const token = process.env.DISCORD_TOKEN;
+        const token = env.DISCORD_TOKEN;
         const response = await fetch(
-          `https://discordapp.com/api/applications/${process.env.DISCORD_CLIENT_ID}/commands`,
+          `https://discordapp.com/api/applications/${env.DISCORD_CLIENT_ID}/commands`,
           {
             headers: {
-              Authorization: `Bot ${token}`
-            }
-          }
+              Authorization: `Bot ${token}`,
+            },
+          },
         );
         const commands = (await response.json()) as CommandType[];
 
@@ -88,44 +90,43 @@ export const commandRouter = t.router({
       } catch (e) {
         console.error(e);
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Something went wrong when trying to fetch guilds'
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong when trying to fetch guilds",
         });
       }
     }),
-  getCommandAndGuildChannels: t.procedure
+  getCommandAndGuildChannels: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
-        commandId: z.string()
-      })
+        commandId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.session) {
         throw new TRPCError({
-          message: 'Not Authenticated',
-          code: 'UNAUTHORIZED'
+          message: "Not Authenticated",
+          code: "UNAUTHORIZED",
         });
       }
 
-      const token = process.env.DISCORD_TOKEN;
-      const clientID = process.env.DISCORD_CLIENT_ID;
+      const token = env.DISCORD_TOKEN;
+      const clientID = env.DISCORD_CLIENT_ID;
       const { guildId, commandId } = input;
 
       const account = await ctx.prisma.account.findFirst({
         where: {
-          // @ts-ignore
-          userId: ctx.session?.user?.id
+          userId: ctx.session?.user?.id,
         },
         select: {
           access_token: true,
           providerAccountId: true,
           user: {
             select: {
-              discordId: true
-            }
-          }
-        }
+              discordId: true,
+            },
+          },
+        },
       });
 
       try {
@@ -133,91 +134,90 @@ export const commandRouter = t.router({
           guildChannelsResponse,
           guildRolesResponse,
           commandResponse,
-          permissionsResponse
+          permissionsResponse,
         ] = await Promise.all([
           fetch(`https://discord.com/api/guilds/${guildId}/channels`, {
             headers: {
-              Authorization: `Bot ${token}`
-            }
+              Authorization: `Bot ${token}`,
+            },
           }).then((res: any) => res.json()) as Promise<unknown>,
           fetch(`https://discord.com/api/guilds/${guildId}/roles`, {
             headers: {
-              Authorization: `Bot ${token}`
-            }
+              Authorization: `Bot ${token}`,
+            },
           }).then((res: any) => res.json()) as Promise<unknown>,
           fetch(
             `https://discord.com/api/applications/${clientID}/commands/${commandId}`,
             {
               headers: {
-                Authorization: `Bot ${token}`
-              }
-            }
+                Authorization: `Bot ${token}`,
+              },
+            },
           ).then((res: any) => res.json()) as Promise<unknown>,
           fetch(
             `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
             {
               headers: {
-                Authorization: `Bearer ${account?.access_token}`
-              }
-            }
-          ).then((res: any) => res.json()) as Promise<any>
+                Authorization: `Bearer ${account?.access_token}`,
+              },
+            },
+          ).then((res: any) => res.json()),
         ]);
 
         const channels =
           guildChannelsResponse as APIGuildChannel<ChannelType>[];
         const roles = guildRolesResponse as APIRole[];
         const command = commandResponse as CommandType;
-        const permissions = permissionsResponse as any;
+        const permissions = permissionsResponse;
 
         return { channels, roles, command, permissions };
       } catch {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Something went wrong when trying to fetch guilds'
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong when trying to fetch guilds",
         });
       }
     }),
-  getCommandPermissions: t.procedure
+  getCommandPermissions: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
-        commandId: z.string()
-      })
+        commandId: z.string(),
+      }),
     )
     .query(async ({ ctx, input }) => {
-      const clientID = process.env.DISCORD_CLIENT_ID;
+      const clientID = env.DISCORD_CLIENT_ID;
       const { guildId, commandId } = input;
 
       if (!ctx.session) {
         throw new TRPCError({
-          message: 'Not Authenticated',
-          code: 'UNAUTHORIZED'
+          message: "Not Authenticated",
+          code: "UNAUTHORIZED",
         });
       }
 
       const account = await ctx.prisma.account.findFirst({
         where: {
-          // @ts-ignore
-          userId: ctx.session?.user?.id
+          userId: ctx.session?.user?.id,
         },
         select: {
           access_token: true,
           providerAccountId: true,
           user: {
             select: {
-              discordId: true
-            }
-          }
-        }
+              discordId: true,
+            },
+          },
+        },
       });
       try {
         const response = await fetch(
           `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
           {
             headers: {
-              Authorization: `Bearer ${account?.access_token}`
-            }
-          }
+              Authorization: `Bearer ${account?.access_token}`,
+            },
+          },
         );
         const command = await response.json();
         if (!command) throw new Error();
@@ -225,12 +225,12 @@ export const commandRouter = t.router({
         return { command };
       } catch {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Something went wrong when trying to fetch guilds'
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong when trying to fetch guilds",
         });
       }
     }),
-  editCommandPermissions: t.procedure
+  editCommandPermissions: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
@@ -239,55 +239,54 @@ export const commandRouter = t.router({
           z.object({
             id: z.string(),
             type: z.number(),
-            permission: z.boolean()
-          })
+            permission: z.boolean(),
+          }),
         ),
-        type: z.string()
-      })
+        type: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
-      const clientID = process.env.DISCORD_CLIENT_ID;
+      const clientID = env.DISCORD_CLIENT_ID;
       const { guildId, commandId, permissions, type } = input;
       if (!ctx.session) {
         throw new TRPCError({
-          message: 'Not Authenticated',
-          code: 'UNAUTHORIZED'
+          message: "Not Authenticated",
+          code: "UNAUTHORIZED",
         });
       }
 
       const account = await ctx.prisma.account.findFirst({
         where: {
-          // @ts-ignore
-          userId: ctx.session?.user?.id
+          userId: ctx.session?.user?.id,
         },
         select: {
           access_token: true,
           providerAccountId: true,
           user: {
             select: {
-              discordId: true
-            }
-          }
-        }
+              discordId: true,
+            },
+          },
+        },
       });
 
-      let everyone = {
+      const everyone = {
         id: guildId,
         type: 1,
-        permission: type === 'allow' ? true : false
+        permission: type === "allow" ? true : false,
       };
 
       try {
         const response = await fetch(
           `https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
           {
-            method: 'PUT',
+            method: "PUT",
             headers: {
               Authorization: `Bearer ${account?.access_token}`,
-              'Content-Type': 'application/json'
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ permissions: [everyone, ...permissions] })
-          }
+            body: JSON.stringify({ permissions: [everyone, ...permissions] }),
+          },
         );
         const command = await response.json();
         if (!command) throw new Error();
@@ -295,36 +294,36 @@ export const commandRouter = t.router({
         return { command };
       } catch {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Something went wrong when trying to fetch guilds'
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong when trying to fetch guilds",
         });
       }
     }),
 
-  toggleCommand: t.procedure
+  toggleCommand: publicProcedure
     .input(
       z.object({
         guildId: z.string(),
         commandId: z.string(),
-        status: z.boolean()
-      })
+        status: z.boolean(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const { guildId, commandId, status } = input;
 
       const guild = await ctx.prisma.guild.findUnique({
         where: {
-          id: guildId
+          id: guildId,
         },
         select: {
-          disabledCommands: true
-        }
+          disabledCommands: true,
+        },
       });
 
       if (!guild) {
         throw new TRPCError({
-          message: 'Guild not found',
-          code: 'NOT_FOUND'
+          message: "Guild not found",
+          code: "NOT_FOUND",
         });
       }
 
@@ -333,27 +332,27 @@ export const commandRouter = t.router({
       if (status) {
         updatedGuild = await ctx.prisma.guild.update({
           where: {
-            id: guildId
+            id: guildId,
           },
           data: {
             disabledCommands: {
-              set: [...guild?.disabledCommands, commandId]
-            }
-          }
+              set: [...guild?.disabledCommands, commandId],
+            },
+          },
         });
       } else {
         updatedGuild = await ctx.prisma.guild.update({
           where: {
-            id: guildId
+            id: guildId,
           },
           data: {
             disabledCommands: {
-              set: guild?.disabledCommands.filter(cid => cid !== commandId)
-            }
-          }
+              set: guild?.disabledCommands.filter((cid) => cid !== commandId),
+            },
+          },
         });
       }
 
       return { updatedGuild };
-    })
+    }),
 });
