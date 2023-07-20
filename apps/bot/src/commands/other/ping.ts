@@ -1,30 +1,22 @@
 import { ApplyOptions } from '@sapphire/decorators';
-import { Command, CommandOptions } from '@sapphire/framework';
+import { Command } from '@sapphire/framework';
 
-@ApplyOptions<CommandOptions>({
+@ApplyOptions<Command.Options>({
   name: 'ping',
-  description: 'Replies with Pong!',
-  preconditions: ['isCommandDisabled']
+  description: 'Replies with pong!'
 })
-export class PingCommand extends Command {
-  public override async chatInputRun(
-    interaction: Command.ChatInputCommandInteraction
-  ) {
-    const ping = interaction.createdTimestamp - Date.now();
-    const apiPing = Math.round(interaction.client.ws.ping);
-    return await interaction.reply(
-      `Pong! - Bot Latency: ${ping}ms - API Latency: ${apiPing}ms - Round Trip: ${
-        ping + apiPing
-      }ms`
+export class UserCommand extends Command {
+  public override registerApplicationCommands(registry: Command.Registry) {
+    registry.registerChatInputCommand(builder =>
+      builder //
+        .setName(this.name)
+        .setDescription(this.description)
     );
   }
 
-  public override registerApplicationCommands(
-    registry: Command.Registry
-  ): void {
-    registry.registerChatInputCommand({
-      name: this.name,
-      description: this.description
-    });
+  public override async chatInputRun(
+    interaction: Command.ChatInputCommandInteraction
+  ) {
+    return interaction.reply({ content: 'Pong!' });
   }
 }
