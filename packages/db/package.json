@@ -1,21 +1,21 @@
 {
-  "name": "@master-bot/db",
-  "version": "0.1.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "license": "ISC",
-  "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "db:generate": "pnpm with-env prisma generate",
-    "db:push": "pnpm with-env prisma db push --skip-generate",
-    "with-env": "dotenv -e ../../.env --"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.0.0"
-  },
-  "devDependencies": {
-    "dotenv-cli": "^7.2.1",
-    "prisma": "^5.0.0",
-    "typescript": "^5.1.6"
-  }
+	"name": "@master-bot/db",
+	"version": "0.1.0",
+	"main": "./index.ts",
+	"types": "./index.ts",
+	"license": "ISC",
+	"scripts": {
+		"clean": "rm -rf .turbo node_modules",
+		"db:generate": "pnpm with-env prisma generate",
+		"db:push": "pnpm with-env prisma db push --skip-generate",
+		"with-env": "dotenv -e ../../.env --"
+	},
+	"dependencies": {
+		"@prisma/client": "^5.0.0"
+	},
+	"devDependencies": {
+		"dotenv-cli": "^7.2.1",
+		"prisma": "^5.0.0",
+		"typescript": "^5.1.6"
+	}
 }

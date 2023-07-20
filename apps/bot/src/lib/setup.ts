@@ -2,8 +2,8 @@
 process.env.NODE_ENV ??= 'development';
 
 import {
-  ApplicationCommandRegistries,
-  RegisterBehavior
+	ApplicationCommandRegistries,
+	RegisterBehavior
 } from '@sapphire/framework';
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-editable-commands/register';
@@ -14,7 +14,7 @@ import { inspect } from 'util';
 
 // Set default behavior to bulk overwrite
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
-  RegisterBehavior.BulkOverwrite
+	RegisterBehavior.BulkOverwrite
 );
 
 // Set default inspection depth

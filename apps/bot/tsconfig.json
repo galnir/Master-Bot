@@ -1,19 +1,19 @@
 {
-  "extends": "@sapphire/ts-config",
-  "compilerOptions": {
-    "rootDir": "src",
-    "incremental": true,
-    "outDir": "dist",
-    "strict": true,
-    "tsBuildInfoFile": "dist/.tsbuildinfo",
-    "resolveJsonModule": true,
-    "noUnusedParameters": false,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "verbatimModuleSyntax": false,
-    "esModuleInterop": true,
-    "noImplicitAny": false
-  },
-  "include": ["src", "scripts", "src/env.ts"],
-  "exclude": ["node_modules"]
+	"extends": "@sapphire/ts-config",
+	"compilerOptions": {
+		"rootDir": "src",
+		"incremental": true,
+		"outDir": "dist",
+		"strict": true,
+		"tsBuildInfoFile": "dist/.tsbuildinfo",
+		"resolveJsonModule": true,
+		"noUnusedParameters": false,
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"verbatimModuleSyntax": false,
+		"esModuleInterop": true,
+		"noImplicitAny": false
+	},
+	"include": ["src", "scripts", "src/env.ts"],
+	"exclude": ["node_modules"]
 }

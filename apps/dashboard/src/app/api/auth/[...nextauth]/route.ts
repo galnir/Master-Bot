@@ -1,4 +1,4 @@
-export { GET, POST } from "@master-bot/auth";
+export { GET, POST } from '@master-bot/auth';
 
 // @note If you wanna enable edge runtime, either
 // - https://auth-docs-git-feat-nextjs-auth-authjs.vercel.app/guides/upgrade-to-v5#edge-compatibility

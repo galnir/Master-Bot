@@ -1,34 +1,34 @@
 {
-  "name": "@master-bot/api",
-  "version": "0.1.0",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "license": "ISC",
-  "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@master-bot/auth": "^0.1.0",
-    "@master-bot/db": "^0.1.0",
-    "@t3-oss/env-core": "^0.6.0",
-    "@trpc/client": "^10.34.0",
-    "@trpc/server": "^10.34.0",
-    "superjson": "1.9.1",
-    "zod": "^3.21.4"
-  },
-  "devDependencies": {
-    "@master-bot/eslint-config": "^0.2.0",
-    "dotenv": "^16.3.1",
-    "eslint": "^8.45.0",
-    "typescript": "^5.1.6"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@master-bot/eslint-config/base"
-    ]
-  }
+	"name": "@master-bot/api",
+	"version": "0.1.0",
+	"main": "./index.ts",
+	"types": "./index.ts",
+	"license": "ISC",
+	"scripts": {
+		"clean": "rm -rf .turbo node_modules",
+		"lint": "eslint .",
+		"lint:fix": "pnpm lint --fix",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@master-bot/auth": "^0.1.0",
+		"@master-bot/db": "^0.1.0",
+		"@t3-oss/env-core": "^0.6.0",
+		"@trpc/client": "^10.34.0",
+		"@trpc/server": "^10.34.0",
+		"superjson": "1.9.1",
+		"zod": "^3.21.4"
+	},
+	"devDependencies": {
+		"@master-bot/eslint-config": "^0.2.0",
+		"dotenv": "^16.3.1",
+		"eslint": "^8.45.0",
+		"typescript": "^5.1.6"
+	},
+	"eslintConfig": {
+		"root": true,
+		"extends": [
+			"@master-bot/eslint-config/base"
+		]
+	}
 }
