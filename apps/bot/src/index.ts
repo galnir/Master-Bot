@@ -1,4 +1,5 @@
 import { ExtendedClient } from './lib/structures/ExtendedClient';
+import { env } from './env';
 
 const client = new ExtendedClient();
 
@@ -8,9 +9,8 @@ client.on('ready', () => {
 
 const main = async () => {
 	try {
-		await client.login(process.env.DISCORD_TOKEN);
+		await client.login(env.DISCORD_TOKEN);
 	} catch (error) {
-		console.log('error is', error);
 		console.log('Bot errored out');
 		client.destroy();
 		process.exit(1);

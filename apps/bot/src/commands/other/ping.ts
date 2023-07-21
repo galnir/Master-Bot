@@ -5,7 +5,7 @@ import { Command } from '@sapphire/framework';
 	name: 'ping',
 	description: 'Replies with pong!'
 })
-export class UserCommand extends Command {
+export class PingCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {
 		registry.registerChatInputCommand(builder =>
 			builder //

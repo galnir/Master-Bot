@@ -5,7 +5,6 @@
 	"description": "a discord music bot with guild , gifs and misc commands",
 	"author": "Nir Gal",
 	"license": "ISC",
-	"type": "module",
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "pnpm with-env tsc",
