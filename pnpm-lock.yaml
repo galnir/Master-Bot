@@ -68,6 +68,9 @@ importers:
       '@trpc/client':
         specifier: ^10.34.0
         version: 10.34.0(@trpc/server@10.34.0)
+      '@trpc/server':
+        specifier: ^10.34.0
+        version: 10.34.0
       axios:
         specifier: ^1.4.0
         version: 1.4.0
@@ -107,6 +110,9 @@ importers:
       string-progressbar:
         specifier: ^1.0.4
         version: 1.0.4
+      superjson:
+        specifier: 1.9.1
+        version: 1.9.1
       tiny-typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
