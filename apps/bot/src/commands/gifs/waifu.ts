@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'waifu',
-	description: 'Replies with a random waifu gif!'
+	description: 'Replies with a random waifu gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class WaifuCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

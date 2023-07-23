@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'hug',
-	description: 'Replies with a random hug gif!'
+	description: 'Replies with a random hug gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class HugCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'amongus',
-	description: 'Replies with a random Among Us gif!'
+	description: 'Replies with a random Among Us gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class AmongUsCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

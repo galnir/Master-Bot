@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'gintama',
-	description: 'Replies with a random gintama gif!'
+	description: 'Replies with a random gintama gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class GintamaCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

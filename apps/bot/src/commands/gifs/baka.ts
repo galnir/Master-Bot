@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'baka',
-	description: 'Replies with a random baka gif!'
+	description: 'Replies with a random baka gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class BakaCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

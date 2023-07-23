@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'jojo',
-	description: 'Replies with a random jojo gif!'
+	description: 'Replies with a random jojo gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class JojoCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

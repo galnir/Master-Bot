@@ -4,7 +4,8 @@ import { env } from '../../env';
 
 @ApplyOptions<Command.Options>({
 	name: 'anime',
-	description: 'Replies with a random anime gif!'
+	description: 'Replies with a random anime gif!',
+	preconditions: ['isCommandDisabled']
 })
 export class AnimeCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {

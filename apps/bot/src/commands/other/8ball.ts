@@ -4,7 +4,8 @@ import { EmbedBuilder } from 'discord.js';
 
 @ApplyOptions<Command.Options>({
 	name: '8ball',
-	description: 'Get the answer to anything!'
+	description: 'Get the answer to anything!',
+	preconditions: ['isCommandDisabled']
 })
 export class EightBallCommand extends Command {
 	public override registerApplicationCommands(registry: Command.Registry) {
