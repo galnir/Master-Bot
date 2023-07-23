@@ -1,5 +1,5 @@
 {
-	"name": "create-t3-turbo",
+	"name": "master-bot-turbo",
 	"private": true,
 	"engines": {
 		"node": ">=v18.16.1"

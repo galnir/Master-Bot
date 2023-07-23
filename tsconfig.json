@@ -15,7 +15,8 @@
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
-		"noUncheckedIndexedAccess": true
+		"noUncheckedIndexedAccess": true,
+		"declaration": false // pnpm typescript bug - https://github.com/microsoft/TypeScript/issues/47663#issuecomment-1519138189
 	},
 	"include": ["prettier.config.mjs"]
 }

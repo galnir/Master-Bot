@@ -20,7 +20,9 @@ export const env = createEnv({
 		LAVA_HOST: z.string().optional(),
 		LAVA_PORT: z.string().optional(),
 		LAVA_PASS: z.string().optional(),
-		LAVA_SECURE: z.string().optional()
+		LAVA_SECURE: z.string().optional(),
+		SPOTIFY_CLIENT_ID: z.string().optional(),
+		SPOTIFY_CLIENT_SECRET: z.string().optional()
 	},
 	client: {},
 	/**
