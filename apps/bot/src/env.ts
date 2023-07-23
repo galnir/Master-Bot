@@ -10,7 +10,17 @@ export const env = createEnv({
 	server: {
 		DISCORD_TOKEN: z.string(),
 		TENOR_API: z.string(),
-		RAWG_API: z.string().optional()
+		RAWG_API: z.string().optional(),
+		// Redis
+		REDIS_HOST: z.string().optional(),
+		REDIS_PORT: z.string().optional(),
+		REDIS_PASSWORD: z.string().optional(),
+		REDIS_DB: z.string().optional(),
+		// Lavalink
+		LAVA_HOST: z.string().optional(),
+		LAVA_PORT: z.string().optional(),
+		LAVA_PASS: z.string().optional(),
+		LAVA_SECURE: z.string().optional()
 	},
 	client: {},
 	/**
