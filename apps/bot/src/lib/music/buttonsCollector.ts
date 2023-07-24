@@ -119,13 +119,16 @@ export async function deletePlayerEmbed(queue: Queue) {
 			await channel?.messages.fetch(embedID).then(async oldMessage => {
 				if (oldMessage)
 					await oldMessage.delete().catch(
-						error => {}
+						error => {
+							console.log(error);
+						}
 						// Logger.error('Failed to Delete Old Message. ' + error)
 					);
 				await queue.deleteEmbed();
 			});
 		}
 	} catch (error) {
+		console.log(error);
 		// Logger.error('Failed to Delete Player Embed. ' + error);
 	}
 }

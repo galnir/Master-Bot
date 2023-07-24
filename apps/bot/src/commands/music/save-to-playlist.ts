@@ -88,6 +88,7 @@ export class SaveToPlaylistCommand extends Command {
 
 			return await interaction.followUp(`Added tracks to **${playlistName}**`);
 		} catch (error) {
+			console.log(error);
 			// Logger.error(error);
 			return await interaction.followUp(':x: Something went wrong!');
 		}

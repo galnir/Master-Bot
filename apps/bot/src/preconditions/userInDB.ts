@@ -24,6 +24,7 @@ export class UserInDB extends Precondition {
 
 			if (!user) throw new Error();
 		} catch (error) {
+			console.log(error);
 			// Logger.error(error);
 			return this.error({ message: 'Something went wrong!' });
 		}

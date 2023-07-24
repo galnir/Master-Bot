@@ -52,6 +52,7 @@ export class DeletePlaylistCommand extends Command {
 
 			if (!playlist) throw new Error();
 		} catch (error) {
+			console.log(error);
 			// Logger.error(error);
 			return await interaction.reply(
 				':x: Something went wrong! Please try again later'

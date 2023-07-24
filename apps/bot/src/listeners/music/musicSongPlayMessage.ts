@@ -23,11 +23,15 @@ export class MusicSongPlayMessageListener extends Listener {
 			tracks.at(-1),
 			queue.paused
 		);
-		await manageStageChannel(
-			channel.guild.members.me?.voice.channel!,
-			channel.guild.members.me!,
-			queue
-		);
-		await embedButtons(await NowPlaying.NowPlayingEmbed(), queue, track);
+		try {
+			await manageStageChannel(
+				channel.guild.members.me?.voice.channel!,
+				channel.guild.members.me!,
+				queue
+			);
+			await embedButtons(await NowPlaying.NowPlayingEmbed(), queue, track);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 }

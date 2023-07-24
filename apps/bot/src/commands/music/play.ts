@@ -74,6 +74,9 @@ export class PlayCommand extends Command {
 		const query = interaction.options.getString('query', true);
 		const isCustomPlaylist =
 			interaction.options.getString('is-custom-playlist');
+
+		console.log('isCustomPlaylist', isCustomPlaylist);
+
 		const shufflePlaylist = interaction.options.getString('shuffle-playlist');
 
 		const interactionMember = interaction.member?.user;
@@ -86,10 +89,16 @@ export class PlayCommand extends Command {
 
 		const { music } = client;
 
-		// had a precondition make sure the user is infact in a voice channel
 		const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
 			interaction.user.id
-		)?.channel!;
+		)?.channel;
+
+		// edge case - someome initiated the command but left the voice channel
+		if (!voiceChannel) {
+			return interaction.followUp({
+				content: ':x: You need to be in a voice channel to use this command!'
+			});
+		}
 
 		let queue = music.queues.get(interaction.guildId!);
 		await queue.setTextChannelID(interaction.channel!.id);
@@ -122,6 +131,7 @@ export class PlayCommand extends Command {
 			message = `Added songs from **${playlist}** to the queue!`;
 		} else {
 			const trackTuple = await searchSong(query, interaction.user);
+			console.log('trackTuple', trackTuple);
 			if (!trackTuple[1].length) {
 				return await interaction.followUp({ content: trackTuple[0] as string }); // error
 			}
@@ -135,18 +145,17 @@ export class PlayCommand extends Command {
 		}
 
 		const current = await queue.getCurrentTrack();
-		if (!current) {
-			await queue.start();
-		} else {
+		if (current) {
 			client.emit(
 				'musicSongPlayMessage',
 				interaction.channel,
 				await queue.getCurrentTrack()
 			);
+			return;
 		}
 
-		const track = await queue.getCurrentTrack();
-		if (!track) return;
+		await queue.start();
+
 		return await interaction.followUp({ content: message });
 	}
 }

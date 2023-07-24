@@ -48,6 +48,7 @@ export class QueueStore extends Collection<string, Queue> {
 		this.redis = redis as any;
 		// Redis Errors
 		redis.on('error', err => {
+			console.log(err);
 			// Logger.error('Redis ' + err)
 		});
 

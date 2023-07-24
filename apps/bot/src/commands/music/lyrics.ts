@@ -73,6 +73,7 @@ export class LyricsCommand extends Command {
 			await interaction.followUp('Lyrics generated');
 			return paginatedLyrics.run(interaction);
 		} catch (e) {
+			console.log(e);
 			// Logger.error(e);
 			return interaction.followUp(
 				'Something when wrong when trying to fetch lyrics :('
