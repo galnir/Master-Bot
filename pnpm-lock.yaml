@@ -44,6 +44,9 @@ importers:
       '@napi-rs/canvas':
         specifier: ^0.1.41
         version: 0.1.41
+      '@prisma/client':
+        specifier: ^5.0.0
+        version: 5.0.0(prisma@5.0.0)
       '@sapphire/decorators':
         specifier: ^6.0.1
         version: 6.0.1
@@ -51,8 +54,8 @@ importers:
         specifier: ^7.0.0
         version: 7.0.0
       '@sapphire/framework':
-        specifier: ^4.5.0
-        version: 4.5.0
+        specifier: ^4.5.1
+        version: 4.5.1
       '@sapphire/plugin-hmr':
         specifier: ^2.0.1
         version: 2.0.1
@@ -144,6 +147,9 @@ importers:
       prettier:
         specifier: ^3.0.0
         version: 3.0.0
+      tslib:
+        specifier: ^2.6.0
+        version: 2.6.0
       typescript:
         specifier: ^5.1.6
         version: 5.1.6
@@ -250,6 +256,12 @@ importers:
       '@trpc/server':
         specifier: ^10.34.0
         version: 10.34.0
+      axios:
+        specifier: ^1.4.0
+        version: 1.4.0
+      discord-api-types:
+        specifier: ^0.37.50
+        version: 0.37.50
       superjson:
         specifier: 1.9.1
         version: 1.9.1
@@ -368,6 +380,9 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(prisma@5.0.0)
     devDependencies:
+      '@types/node':
+        specifier: ^20.4.4
+        version: 20.4.4
       dotenv-cli:
         specifier: ^7.2.1
         version: 7.2.1
@@ -1134,24 +1149,34 @@ packages:
       tslib: 2.6.0
     dev: false
 
+  /@sapphire/discord.js-utilities@7.0.1:
+    resolution: {integrity: sha512-v7NoU1AT9QR4P8FyvvaNGSYpWRo7/uABxnkTn3cXWkUVKHtv2BBz1O3nhklk5LhqDtD5lRtjLji4j6JXcA704g==}
+    engines: {node: '>=16.6.0', npm: '>=7.0.0'}
+    dependencies:
+      '@sapphire/discord-utilities': 3.0.4
+      '@sapphire/duration': 1.1.0
+      '@sapphire/utilities': 3.13.0
+      tslib: 2.6.0
+    dev: false
+
   /@sapphire/duration@1.1.0:
     resolution: {integrity: sha512-ATb2pWPLcSgG7bzvT6MglUcDexFSufr2FLXUmhipWGFtZbvDhkopGBIuHyzoGy7LZvL8UY5T6pRLNdFv5pl/Lg==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: false
 
-  /@sapphire/framework@4.5.0:
-    resolution: {integrity: sha512-qx00jS2K6cMpI9D5kqCfkeYsM6d/qpEN/3bIiWWpii63S44tIp/2vnt8YFobYZRvdeDkK5XRYrpCy2JgEpkzbQ==}
+  /@sapphire/framework@4.5.1:
+    resolution: {integrity: sha512-73XOzQiIsZjq+GU4hlS8ffYk0afQXA0pQ/RXWADh2ua9yR36XEdtzFRQqQyPQjk2mP2ebtx6CfxQj/8LV9fDFw==}
     engines: {node: '>=16.6.0', npm: '>=7.0.0'}
     dependencies:
       '@discordjs/builders': 1.6.3
       '@sapphire/discord-utilities': 3.0.4
-      '@sapphire/discord.js-utilities': 7.0.0
+      '@sapphire/discord.js-utilities': 7.0.1
       '@sapphire/lexure': 1.1.5
       '@sapphire/pieces': 3.7.0
       '@sapphire/ratelimits': 2.4.6
       '@sapphire/result': 2.6.4
       '@sapphire/stopwatch': 1.5.0
-      '@sapphire/utilities': 3.12.0
+      '@sapphire/utilities': 3.13.0
     dev: false
 
   /@sapphire/lexure@1.1.5:
@@ -1410,7 +1435,7 @@ packages:
   /@types/ioredis@4.28.10:
     resolution: {integrity: sha512-69LyhUgrXdgcNDv7ogs1qXZomnfOEnSmrmMFqKgt1XMJxmoOSG/u3wYy13yACIfKuMJ8IhKgHafDO3sx19zVQQ==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.4
     dev: true
 
   /@types/json-schema@7.0.12:
@@ -1432,10 +1457,10 @@ packages:
 
   /@types/node@20.4.1:
     resolution: {integrity: sha512-JIzsAvJeA/5iY6Y/OxZbv1lUcc8dNSE77lb2gnBH+/PJ3lFR1Ccvgwl5JWnHAkNHcRsT0TbpVOsiMKZ1F/yyJg==}
+    dev: true
 
   /@types/node@20.4.4:
     resolution: {integrity: sha512-CukZhumInROvLq3+b5gLev+vgpsIqC2D0deQr/yS1WnxvmYLlJXZpaQrQiseMY+6xusl79E04UjWoqyr+t1/Ew==}
-    dev: false
 
   /@types/prop-types@15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
@@ -1475,7 +1500,7 @@ packages:
   /@types/ws@8.5.5:
     resolution: {integrity: sha512-lwhs8hktwxSjf9UaZ9tG5M03PGogvFaH8gUgLNbN9HKIg0dvv6q+gkSuJ8HN4/VbyxkuLzCjlN7GquQ0gUJfIg==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.4
     dev: false
 
   /@typescript-eslint/eslint-plugin@6.0.0(@typescript-eslint/parser@6.0.0)(eslint@8.45.0)(typescript@5.1.6):

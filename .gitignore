@@ -5,6 +5,9 @@
 .env
 .env*.local
 
+# Turbo
+.turbo
+
 # Testing
 /coverage
 

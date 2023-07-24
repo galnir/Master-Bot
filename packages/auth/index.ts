@@ -25,6 +25,7 @@ export const {
 	auth,
 	CSRF_experimental
 } = NextAuth({
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	adapter: PrismaAdapter(prisma),
 	providers: [
