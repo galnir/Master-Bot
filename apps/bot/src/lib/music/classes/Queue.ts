@@ -139,17 +139,13 @@ export class Queue {
 
 	// Start the queue
 	public async start(replaying = false): Promise<boolean> {
-		console.log('here in queue start');
 		const np = await this.nowPlaying();
 		if (!np) return this.next();
 
 		try {
-			console.log('here in queue start try');
 			this.player.setVolume(await this.getVolume());
-			console.log('np.song', np.song);
 			await this.player.play(np.song as Song);
 		} catch (err) {
-			console.log('here in queue start catch');
 			console.log(err);
 			// Logger.error(err);
 			await this.leave();

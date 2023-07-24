@@ -5,6 +5,7 @@ import {
 	ApplicationCommandRegistries,
 	RegisterBehavior
 } from '@sapphire/framework';
+import { ActivityType } from 'discord.js';
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
 	RegisterBehavior.Overwrite
@@ -23,7 +24,12 @@ if (env.SPOTIFY_CLIENT_ID && env.SPOTIFY_CLIENT_SECRET) {
 const client = new ExtendedClient();
 
 client.on('ready', () => {
-	console.log('Bot is ready!');
+	client.music.connect(client.user!.id);
+	client.user?.setActivity('/', {
+		type: ActivityType.Watching
+	});
+
+	client.user?.setStatus('online');
 });
 
 client.on('chatInputCommandError', err => {

@@ -75,8 +75,6 @@ export class PlayCommand extends Command {
 		const isCustomPlaylist =
 			interaction.options.getString('is-custom-playlist');
 
-		console.log('isCustomPlaylist', isCustomPlaylist);
-
 		const shufflePlaylist = interaction.options.getString('shuffle-playlist');
 
 		const interactionMember = interaction.member?.user;
@@ -131,7 +129,6 @@ export class PlayCommand extends Command {
 			message = `Added songs from **${playlist}** to the queue!`;
 		} else {
 			const trackTuple = await searchSong(query, interaction.user);
-			console.log('trackTuple', trackTuple);
 			if (!trackTuple[1].length) {
 				return await interaction.followUp({ content: trackTuple[0] as string }); // error
 			}
