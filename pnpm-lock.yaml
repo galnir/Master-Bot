@@ -647,7 +647,7 @@ packages:
       '@discordjs/formatters': 0.3.1
       '@discordjs/util': 0.3.1
       '@sapphire/shapeshift': 3.9.2
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
       fast-deep-equal: 3.1.3
       ts-mixer: 6.0.3
       tslib: 2.6.0
@@ -662,7 +662,7 @@ packages:
     resolution: {integrity: sha512-M7X4IGiSeh4znwcRGcs+49B5tBkNDn4k5bmhxJDAUhRxRHTiFAOTVUNQ6yAKySu5jZTnCbSvTYHW3w0rAzV1MA==}
     engines: {node: '>=16.9.0'}
     dependencies:
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
     dev: false
 
   /@discordjs/rest@1.7.1:
@@ -673,7 +673,7 @@ packages:
       '@discordjs/util': 0.3.1
       '@sapphire/async-queue': 1.5.0
       '@sapphire/snowflake': 3.5.1
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
       file-type: 18.5.0
       tslib: 2.6.0
       undici: 5.22.1
@@ -694,7 +694,7 @@ packages:
       '@sapphire/async-queue': 1.5.0
       '@types/ws': 8.5.5
       '@vladfrangu/async_event_emitter': 2.2.2
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
       tslib: 2.6.0
       ws: 8.13.0
     transitivePeerDependencies:
@@ -711,8 +711,8 @@ packages:
       eslint: 8.45.0
       eslint-visitor-keys: 3.4.1
 
-  /@eslint-community/regexpp@4.5.1:
-    resolution: {integrity: sha512-Z5ba73P98O1KUYCCJTUeVpja9RcGoMdncZ6T49FCUl2lN38JtCJ+3WgIDBv0AuY4WChU5PmtJmOCTlN6FZTFKQ==}
+  /@eslint-community/regexpp@4.6.0:
+    resolution: {integrity: sha512-uiPeRISaglZnaZk8vwrjQZ1CxogZeY/4IYft6gBOTqu1WhVXWmCmZMWxUv2Q/pxSvPdp1JPaO62kLOcOkMqWrw==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
   /@eslint/eslintrc@2.1.0:
@@ -1103,11 +1103,11 @@ packages:
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: false
 
-  /@sapphire/cron@1.1.0:
-    resolution: {integrity: sha512-ANyxI4eVpYNDjTXlzwcv/8dd8H9R2k9a0MUGrgIfF8y9FWcvpJM6xrKRs11K0PtDfKsR0C0sjfXdCTUHYcI9OQ==}
+  /@sapphire/cron@1.1.1:
+    resolution: {integrity: sha512-SBQepfBkwCzYBqMfYB+lrfx7AK6zVdT4lK7X4Q0SthxYS82MYw6qAiRUd24bzhaXc33KBk7g7Uljbxu98qDDJw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@sapphire/utilities': 3.12.0
+      '@sapphire/utilities': 3.13.0
     dev: false
 
   /@sapphire/decorators@6.0.1:
@@ -1117,18 +1117,18 @@ packages:
       tslib: 2.6.0
     dev: false
 
-  /@sapphire/discord-utilities@3.0.3:
-    resolution: {integrity: sha512-1FN1JKU0jaMc1iq7u0SJ0G7QALZ2IC/Z8Pn0Q7ekjbYeB4AE7xyuBG09dZS5C1Dap0/gkThU2yUAsgn9esh4dQ==}
+  /@sapphire/discord-utilities@3.0.4:
+    resolution: {integrity: sha512-9PPGUWaEJJl37+l+zRFV5JQNWeL5eyBZcAf+5Zhwkxub9HsEesFQrcPlLMFc5MmwhrFIEs144ZAHeB4wv3sCog==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dependencies:
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
     dev: false
 
   /@sapphire/discord.js-utilities@7.0.0:
     resolution: {integrity: sha512-9+nW2qQiIZdaAVWwRzlmM/5vqYNx9M27AXV9ogNg9SwBkmLz2lPB0PY8Y4XBoRCrR8PM7B/mOEW3AMb5yMqLdg==}
     engines: {node: '>=16.6.0', npm: '>=7.0.0'}
     dependencies:
-      '@sapphire/discord-utilities': 3.0.3
+      '@sapphire/discord-utilities': 3.0.4
       '@sapphire/duration': 1.1.0
       '@sapphire/utilities': 3.12.0
       tslib: 2.6.0
@@ -1144,10 +1144,10 @@ packages:
     engines: {node: '>=16.6.0', npm: '>=7.0.0'}
     dependencies:
       '@discordjs/builders': 1.6.3
-      '@sapphire/discord-utilities': 3.0.3
+      '@sapphire/discord-utilities': 3.0.4
       '@sapphire/discord.js-utilities': 7.0.0
       '@sapphire/lexure': 1.1.5
-      '@sapphire/pieces': 3.6.3
+      '@sapphire/pieces': 3.7.0
       '@sapphire/ratelimits': 2.4.6
       '@sapphire/result': 2.6.4
       '@sapphire/stopwatch': 1.5.0
@@ -1161,12 +1161,12 @@ packages:
       '@sapphire/result': 2.6.4
     dev: false
 
-  /@sapphire/pieces@3.6.3:
-    resolution: {integrity: sha512-mOwp94pfHON3avzihU4X5fiiIZDAtiCsWULiDm3Vie1Osv0X2LRkVKBsSrs7hcYDJfU+puJEQIhVAj6ep7ZUOw==}
+  /@sapphire/pieces@3.7.0:
+    resolution: {integrity: sha512-DgkcvTja63rDPP4uByH2Ky3eNaYp+Yc1WoFaOsme5w5Nptruwj49sktY6KEbdBrxz23l3ofcxaqnfT/8RROJug==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dependencies:
       '@discordjs/collection': 1.5.1
-      '@sapphire/utilities': 3.12.0
+      '@sapphire/utilities': 3.13.0
       tslib: 2.6.0
     dev: false
 
@@ -1212,7 +1212,7 @@ packages:
     resolution: {integrity: sha512-aZ3Ues3lZhc7Gee8nreoDwDK9SlCJusYSqGcb6fwYUfuNEJT9hwjjHqM6k6RW9dJ0xb/PfQs5dgRkhFRKAZ7iw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@sapphire/cron': 1.1.0
+      '@sapphire/cron': 1.1.1
       '@sapphire/duration': 1.1.0
       '@sapphire/timer-manager': 1.0.0
       '@sapphire/timestamp': 1.0.1
@@ -1238,6 +1238,11 @@ packages:
 
   /@sapphire/utilities@3.12.0:
     resolution: {integrity: sha512-y1JP4FdPBkZjJGJcb5Zx0ok64mtpGvz0TLOC49HTwYsfBQL8tsTct93yoYdEEMWSZFmOF1ZvV8L6jIJ1CW8bJw==}
+    engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
+    dev: false
+
+  /@sapphire/utilities@3.13.0:
+    resolution: {integrity: sha512-BD5ycPjZX5dXxrAb90dJTY8ukpPVBXgU17gA5ghK2memS4hwAzFYpvK+R+6zh4d6HYIKVuqrVhGXjvZenAa/Aw==}
     engines: {node: '>=v14.0.0', npm: '>=7.0.0'}
     dev: false
 
@@ -1302,7 +1307,7 @@ packages:
       '@tanstack/react-query': 4.29.23(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.12.4
+      superjson: 1.13.1
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
@@ -1418,7 +1423,7 @@ packages:
   /@types/keyv@3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.4
     dev: false
 
   /@types/node@18.16.19:
@@ -1427,6 +1432,10 @@ packages:
 
   /@types/node@20.4.1:
     resolution: {integrity: sha512-JIzsAvJeA/5iY6Y/OxZbv1lUcc8dNSE77lb2gnBH+/PJ3lFR1Ccvgwl5JWnHAkNHcRsT0TbpVOsiMKZ1F/yyJg==}
+
+  /@types/node@20.4.4:
+    resolution: {integrity: sha512-CukZhumInROvLq3+b5gLev+vgpsIqC2D0deQr/yS1WnxvmYLlJXZpaQrQiseMY+6xusl79E04UjWoqyr+t1/Ew==}
+    dev: false
 
   /@types/prop-types@15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
@@ -1449,7 +1458,7 @@ packages:
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 20.4.1
+      '@types/node': 20.4.4
     dev: false
 
   /@types/scheduler@0.16.3:
@@ -1480,7 +1489,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@eslint-community/regexpp': 4.5.1
+      '@eslint-community/regexpp': 4.6.0
       '@typescript-eslint/parser': 6.0.0(eslint@8.45.0)(typescript@5.1.6)
       '@typescript-eslint/scope-manager': 6.0.0
       '@typescript-eslint/type-utils': 6.0.0(eslint@8.45.0)(typescript@5.1.6)
@@ -1680,7 +1689,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       get-intrinsic: 1.2.1
       is-string: 1.0.7
     dev: false
@@ -1695,7 +1704,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       es-shim-unscopables: 1.0.0
     dev: false
 
@@ -1705,7 +1714,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       es-shim-unscopables: 1.0.0
     dev: false
 
@@ -1714,9 +1723,21 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       es-shim-unscopables: 1.0.0
       get-intrinsic: 1.2.1
+    dev: false
+
+  /arraybuffer.prototype.slice@1.0.1:
+    resolution: {integrity: sha512-09x0ZWFEjj4WD8PDbykUwo3t9arLn8NIzmmYEJFpYekOAQjpkGSyrQhNoRTcwwcFRu+ycWF78QZ63oWTqSjBcw==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      array-buffer-byte-length: 1.0.0
+      call-bind: 1.0.2
+      define-properties: 1.2.0
+      get-intrinsic: 1.2.1
+      is-array-buffer: 3.0.2
+      is-shared-array-buffer: 1.0.2
     dev: false
 
   /ast-types-flow@0.0.7:
@@ -1735,7 +1756,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.9
-      caniuse-lite: 1.0.30001516
+      caniuse-lite: 1.0.30001517
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -1809,8 +1830,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001516
-      electron-to-chromium: 1.4.461
+      caniuse-lite: 1.0.30001517
+      electron-to-chromium: 1.4.468
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.9)
 
@@ -1854,8 +1875,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001516:
-    resolution: {integrity: sha512-Wmec9pCBY8CWbmI4HsjBeQLqDTqV91nFVR83DnZpYyRnPI1wePDsTg0bGLPC5VU/3OIZV1fmxEea1b+tFKe86g==}
+  /caniuse-lite@1.0.30001517:
+    resolution: {integrity: sha512-Vdhm5S11DaFVLlyiKu4hiUTkpZu+y1KA/rZZqVQfOD5YdDT/eQKlkt7NaE0WGOFgX32diqt9MiP9CAiFeRklaA==}
 
   /chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -2120,8 +2141,8 @@ packages:
     dependencies:
       path-type: 4.0.0
 
-  /discord-api-types@0.37.48:
-    resolution: {integrity: sha512-vu2NQJD7SZRjpKDC2DPNsxTz34KS53OrotA+LGRW6mcyT55Hjqu66aRrouzjYhea7tllL9I7rvWVX7bg3aT2AQ==}
+  /discord-api-types@0.37.50:
+    resolution: {integrity: sha512-X4CDiMnDbA3s3RaUXWXmgAIbY1uxab3fqe3qwzg5XutR3wjqi7M3IkgQbsIBzpqBN2YWr/Qdv7JrFRqSgb4TFg==}
     dev: false
 
   /discord.js@14.11.0:
@@ -2136,7 +2157,7 @@ packages:
       '@discordjs/ws': 0.8.3
       '@sapphire/snowflake': 3.5.1
       '@types/ws': 8.5.5
-      discord-api-types: 0.37.48
+      discord-api-types: 0.37.50
       fast-deep-equal: 3.1.3
       lodash.snakecase: 4.1.1
       tslib: 2.6.0
@@ -2220,8 +2241,8 @@ packages:
     resolution: {integrity: sha512-1A8za6ws41LQgv9HrE/66jyC5yuSjQ3L/KOpFtoBilsAK2iA2wuS5rTt1OCzIvtS2V7nVmedsUU+DGRcjBmOYA==}
     dev: false
 
-  /electron-to-chromium@1.4.461:
-    resolution: {integrity: sha512-1JkvV2sgEGTDXjdsaQCeSwYYuhLRphRpc+g6EHTFELJXEiznLt3/0pZ9JuAOQ5p2rI3YxKTbivtvajirIfhrEQ==}
+  /electron-to-chromium@1.4.468:
+    resolution: {integrity: sha512-6M1qyhaJOt7rQtNti1lBA0GwclPH+oKCmsra/hkcWs5INLxfXXD/dtdnaKUYQu/pjOBP/8Osoe4mAcNvvzoFag==}
 
   /emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
@@ -2244,11 +2265,12 @@ packages:
       is-arrayish: 0.2.1
     dev: false
 
-  /es-abstract@1.21.3:
-    resolution: {integrity: sha512-ZU4miiY1j3sGPFLJ34VJXEqhpmL+HGByCinGHv4HC+Fxl2fI2Z4yR6tl0mORnDr6PA8eihWo4LmSWDbvhALckg==}
+  /es-abstract@1.22.1:
+    resolution: {integrity: sha512-ioRRcXMO6OFyRpyzV3kE1IIBd4WG5/kltnzdxSCqoP8CMGs/Li+M1uF5o7lOkZVFjDs+NLesthnF66Pg/0q0Lw==}
     engines: {node: '>= 0.4'}
     dependencies:
       array-buffer-byte-length: 1.0.0
+      arraybuffer.prototype.slice: 1.0.1
       available-typed-arrays: 1.0.5
       call-bind: 1.0.2
       es-set-tostringtag: 2.0.1
@@ -2269,20 +2291,23 @@ packages:
       is-regex: 1.1.4
       is-shared-array-buffer: 1.0.2
       is-string: 1.0.7
-      is-typed-array: 1.1.10
+      is-typed-array: 1.1.12
       is-weakref: 1.0.2
       object-inspect: 1.12.3
       object-keys: 1.1.1
       object.assign: 4.1.4
       regexp.prototype.flags: 1.5.0
+      safe-array-concat: 1.0.0
       safe-regex-test: 1.0.0
       string.prototype.trim: 1.2.7
       string.prototype.trimend: 1.0.6
       string.prototype.trimstart: 1.0.6
+      typed-array-buffer: 1.0.0
+      typed-array-byte-length: 1.0.0
       typed-array-byte-offset: 1.0.0
       typed-array-length: 1.0.4
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.10
+      which-typed-array: 1.1.11
     dev: false
 
   /es-set-tostringtag@2.0.1:
@@ -2503,7 +2528,7 @@ packages:
     hasBin: true
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.45.0)
-      '@eslint-community/regexpp': 4.5.1
+      '@eslint-community/regexpp': 4.6.0
       '@eslint/eslintrc': 2.1.0
       '@eslint/js': 8.44.0
       '@humanwhocodes/config-array': 0.11.10
@@ -2583,8 +2608,8 @@ packages:
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
-  /fast-glob@3.3.0:
-    resolution: {integrity: sha512-ChDuvbOypPuNjO8yIDf36x7BlZX1smcUMTTcyoIjycexOxd6DFsKsg21qVBzEmr3G7fUKIRy2/psii+CIUt7FA==}
+  /fast-glob@3.3.1:
+    resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
     engines: {node: '>=8.6.0'}
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -2722,7 +2747,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       functions-have-names: 1.2.3
     dev: false
 
@@ -2847,7 +2872,7 @@ packages:
     dependencies:
       array-union: 2.1.0
       dir-glob: 3.0.1
-      fast-glob: 3.3.0
+      fast-glob: 3.3.1
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 3.0.0
@@ -3014,7 +3039,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       get-intrinsic: 1.2.1
-      is-typed-array: 1.1.10
+      is-typed-array: 1.1.12
     dev: false
 
   /is-arrayish@0.2.1:
@@ -3116,15 +3141,11 @@ packages:
       has-symbols: 1.0.3
     dev: false
 
-  /is-typed-array@1.1.10:
-    resolution: {integrity: sha512-PJqgEHiWZvMpaFZ3uTc8kHPM4+4ADTlDniuQL7cU/UDA0Ql7F70yGfHph3cLNe+c9toaigv+DFzTJKhc2CtO6A==}
+  /is-typed-array@1.1.12:
+    resolution: {integrity: sha512-Z14TF2JNG8Lss5/HMqt0//T9JeHXttXy5pH/DBU4vi98ozO2btxzq9MwYDZYnKwU8nRsz/+GVFVRDq3DkVuSPg==}
     engines: {node: '>= 0.4'}
     dependencies:
-      available-typed-arrays: 1.0.5
-      call-bind: 1.0.2
-      for-each: 0.3.3
-      gopd: 1.0.1
-      has-tostringtag: 1.0.0
+      which-typed-array: 1.1.11
     dev: false
 
   /is-weakref@1.0.2:
@@ -3136,6 +3157,10 @@ packages:
   /is-what@4.1.15:
     resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
     engines: {node: '>=12.13'}
+    dev: false
+
+  /isarray@2.0.5:
+    resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
     dev: false
 
   /isexe@2.0.0:
@@ -3462,7 +3487,7 @@ packages:
       '@next/env': 13.4.10
       '@swc/helpers': 0.5.1
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001516
+      caniuse-lite: 1.0.30001517
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -3588,7 +3613,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /object.fromentries@2.0.6:
@@ -3597,14 +3622,14 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /object.hasown@1.1.2:
     resolution: {integrity: sha512-B5UIT3J1W+WuWIU55h0mjlwaqxiE5vYENJXIXZ4VFe05pNYrkKuK0U/6aFcb0pKywYJh7IhfoqUfKVmrJJHZHw==}
     dependencies:
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /object.values@1.1.6:
@@ -3613,7 +3638,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /once@1.4.0:
@@ -4155,6 +4180,16 @@ packages:
     dependencies:
       queue-microtask: 1.2.3
 
+  /safe-array-concat@1.0.0:
+    resolution: {integrity: sha512-9dVEFruWIsnie89yym+xWTAYASdpw3CJV7Li/6zBewGf9z2i1j31rP6jnY0pHEO4QZh6N0K11bFjWmdR8UGdPQ==}
+    engines: {node: '>=0.4'}
+    dependencies:
+      call-bind: 1.0.2
+      get-intrinsic: 1.2.1
+      has-symbols: 1.0.3
+      isarray: 2.0.5
+    dev: false
+
   /safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
     dev: false
@@ -4294,7 +4329,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
       get-intrinsic: 1.2.1
       has-symbols: 1.0.3
       internal-slot: 1.0.5
@@ -4308,7 +4343,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /string.prototype.trim@1.2.7:
@@ -4317,7 +4352,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /string.prototype.trimend@1.0.6:
@@ -4325,7 +4360,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /string.prototype.trimstart@1.0.6:
@@ -4333,7 +4368,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.2.0
-      es-abstract: 1.21.3
+      es-abstract: 1.22.1
     dev: false
 
   /string_decoder@1.3.0:
@@ -4388,8 +4423,8 @@ packages:
       react: 18.2.0
     dev: false
 
-  /sucrase@3.33.0:
-    resolution: {integrity: sha512-ARGC7vbufOHfpvyGcZZXFaXCMZ9A4fffOGC5ucOW7+WHDGlAe8LJdf3Jts1sWhDeiI1RSWrKy5Hodl+JWGdW2A==}
+  /sucrase@3.34.0:
+    resolution: {integrity: sha512-70/LQEZ07TEcxiU2dz51FKaE6hCTWC6vr7FOk3Gr0U60C3shtAN+H+BFr9XlYe5xqf3RA8nrc+VIwzCfnxuXJw==}
     engines: {node: '>=8'}
     hasBin: true
     dependencies:
@@ -4402,8 +4437,8 @@ packages:
       ts-interface-checker: 0.1.13
     dev: true
 
-  /superjson@1.12.4:
-    resolution: {integrity: sha512-vkpPQAxdCg9SLfPv5GPC5fnGrui/WryktoN9O5+Zif/14QIMjw+RITf/5LbBh+9QpBFb3KNvJth+puz2H8o6GQ==}
+  /superjson@1.13.1:
+    resolution: {integrity: sha512-AVH2eknm9DEd3qvxM4Sq+LTCkSXE2ssfh1t11MHMXyYXFQyQ1HLgVvV+guLTsaQnJU3gnaVo34TohHPulY/wLg==}
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.5
@@ -4443,7 +4478,7 @@ packages:
       chokidar: 3.5.3
       didyoumean: 1.2.2
       dlv: 1.1.3
-      fast-glob: 3.3.0
+      fast-glob: 3.3.1
       glob-parent: 6.0.2
       is-glob: 4.0.3
       jiti: 1.19.1
@@ -4459,7 +4494,7 @@ packages:
       postcss-nested: 6.0.1(postcss@8.4.26)
       postcss-selector-parser: 6.0.13
       resolve: 1.22.2
-      sucrase: 3.33.0
+      sucrase: 3.34.0
     transitivePeerDependencies:
       - ts-node
     dev: true
@@ -4607,6 +4642,25 @@ packages:
     resolution: {integrity: sha512-Ne+eE4r0/iWnpAxD852z3A+N0Bt5RN//NjJwRd2VFHEmrywxf5vsZlh4R6lixl6B+wz/8d+maTSAkN1FIkI3LQ==}
     engines: {node: '>=10'}
 
+  /typed-array-buffer@1.0.0:
+    resolution: {integrity: sha512-Y8KTSIglk9OZEr8zywiIHG/kmQ7KWyjseXs1CbSo8vC42w7hg2HgYTxSWwP0+is7bWDc1H+Fo026CpHFwm8tkw==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      call-bind: 1.0.2
+      get-intrinsic: 1.2.1
+      is-typed-array: 1.1.12
+    dev: false
+
+  /typed-array-byte-length@1.0.0:
+    resolution: {integrity: sha512-Or/+kvLxNpeQ9DtSydonMxCx+9ZXOswtwJn17SNLvhptaXYDJvkFFP5zbfU/uLmvnBJlI4yrnXRxpdWH/M5tNA==}
+    engines: {node: '>= 0.4'}
+    dependencies:
+      call-bind: 1.0.2
+      for-each: 0.3.3
+      has-proto: 1.0.1
+      is-typed-array: 1.1.12
+    dev: false
+
   /typed-array-byte-offset@1.0.0:
     resolution: {integrity: sha512-RD97prjEt9EL8YgAgpOkf3O4IF9lhJFr9g0htQkm0rchFp/Vx7LW5Q8fSXXub7BXAODyUQohRMyOc3faCPd0hg==}
     engines: {node: '>= 0.4'}
@@ -4615,7 +4669,7 @@ packages:
       call-bind: 1.0.2
       for-each: 0.3.3
       has-proto: 1.0.1
-      is-typed-array: 1.1.10
+      is-typed-array: 1.1.12
     dev: false
 
   /typed-array-length@1.0.4:
@@ -4623,7 +4677,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       for-each: 0.3.3
-      is-typed-array: 1.1.10
+      is-typed-array: 1.1.12
     dev: false
 
   /typescript@5.1.6:
@@ -4721,8 +4775,8 @@ packages:
       is-symbol: 1.0.4
     dev: false
 
-  /which-typed-array@1.1.10:
-    resolution: {integrity: sha512-uxoA5vLUfRPdjCuJ1h5LlYdmTLbYfums398v3WLkM+i/Wltl2/XyZpQWKbN++ck5L64SR/grOHqtXCUKmlZPNA==}
+  /which-typed-array@1.1.11:
+    resolution: {integrity: sha512-qe9UWWpkeG5yzZ0tNYxDmd7vo58HDBc39mZ0xWWpolAGADdFOzkfamWLDxkOWcvHQKVmdTyQdLD4NOfjLWTKew==}
     engines: {node: '>= 0.4'}
     dependencies:
       available-typed-arrays: 1.0.5
@@ -4730,7 +4784,6 @@ packages:
       for-each: 0.3.3
       gopd: 1.0.1
       has-tostringtag: 1.0.0
-      is-typed-array: 1.1.10
     dev: false
 
   /which@1.3.1:
