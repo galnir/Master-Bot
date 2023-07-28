@@ -16,6 +16,7 @@
 		"@master-bot/api": "^0.1.0",
 		"@master-bot/auth": "^0.1.0",
 		"@master-bot/db": "^0.1.0",
+		"@radix-ui/react-slot": "^1.0.2",
 		"@t3-oss/env-nextjs": "^0.6.0",
 		"@tanstack/react-query": "^4.29.23",
 		"@tanstack/react-query-devtools": "^4.29.23",
@@ -24,10 +25,15 @@
 		"@trpc/next": "^10.34.0",
 		"@trpc/react-query": "^10.34.0",
 		"@trpc/server": "^10.34.0",
+		"class-variance-authority": "^0.7.0",
+		"clsx": "^2.0.0",
+		"lucide-react": "^0.263.1",
 		"next": "^13.4.10",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
 		"superjson": "1.9.1",
+		"tailwind-merge": "^1.14.0",
+		"tailwindcss-animate": "^1.0.6",
 		"zod": "^3.21.4"
 	},
 	"devDependencies": {
