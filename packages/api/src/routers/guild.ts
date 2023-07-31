@@ -2,9 +2,9 @@ import { getFetch } from '@trpc/client';
 import { TRPCError } from '@trpc/server';
 import type { APIGuild, APIRole } from 'discord-api-types/v10';
 import { z } from 'zod';
-
-import { createTRPCRouter, publicProcedure } from '../trpc';
-import axiosInstance from '../utils/axiosWithRefresh';
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
+import { discordApi } from '../utils/axiosWithRefresh';
+import { env } from '../env.mjs';
 
 const fetch = getFetch();
 
@@ -26,21 +26,15 @@ export const guildRouter = createTRPCRouter({
 
 			return { guild };
 		}),
-	getGuildFromAPI: publicProcedure
+	getGuildFromAPI: protectedProcedure
 		.input(
 			z.object({
 				guildId: z.string()
 			})
 		)
-		.query(async ({ ctx, input }) => {
-			const token = process.env.DISCORD_BOT_TOKEN;
+		.query(async ({ input }) => {
+			const token = env.DISCORD_TOKEN;
 			const { guildId } = input;
-			if (!ctx.session) {
-				throw new TRPCError({
-					message: 'Not Authenticated',
-					code: 'UNAUTHORIZED'
-				});
-			}
 
 			try {
 				const response = await fetch(
@@ -79,7 +73,6 @@ export const guildRouter = createTRPCRouter({
 
 			const user = await ctx.prisma.user.findUnique({
 				where: {
-					// @ts-ignore
 					id: ctx.session?.user?.id
 				}
 			});
@@ -231,22 +224,14 @@ export const guildRouter = createTRPCRouter({
 
 			return { guild };
 		}),
-	getAll: publicProcedure.query(async ({ ctx }) => {
-		if (!ctx.session || !ctx.session.user) {
-			throw new TRPCError({
-				message: 'Not Authenticated',
-				code: 'UNAUTHORIZED'
-			});
-		}
-
+	getAll: protectedProcedure.query(async ({ ctx }) => {
 		const account = await ctx.prisma.account.findFirst({
 			where: {
-				// @ts-ignore
 				userId: ctx.session?.user?.id
 			}
 		});
 
-		if (!account || !account.access_token) {
+		if (!account?.access_token) {
 			throw new TRPCError({
 				code: 'NOT_FOUND',
 				message: 'Account not found'
@@ -260,17 +245,13 @@ export const guildRouter = createTRPCRouter({
 				}
 			});
 
-			const response = await axiosInstance.get(
-				'https://discord.com/api/users/@me/guilds',
-				{
-					headers: {
-						Authorization: `Bearer ${account.access_token}`,
-						// @ts-ignore
-						'X-User-Id': ctx.session.user.id,
-						'X-Refresh-Token': account.refresh_token
-					}
+			const response = await discordApi.get('/users/@me/guilds', {
+				headers: {
+					Authorization: `Bearer ${account.access_token}`,
+					'X-User-Id': ctx.session.user.id,
+					'X-Refresh-Token': account.refresh_token
 				}
-			);
+			});
 
 			const apiGuilds = response.data as APIGuild[];
 

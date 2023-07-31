@@ -1,49 +1,84 @@
-import { Suspense } from 'react';
-
 import { auth } from '@master-bot/auth';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Server } from 'lucide-react';
 
 import { SignIn, SignOut } from '~/components/auth';
+import { Button } from '~/components/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger
+} from '~/components/ui/dropdown';
 
-export default function HomePage() {
-	return (
-		<main className="flex h-screen flex-col items-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-			<div className="container mt-12 flex flex-col items-center justify-center gap-4 px-4 py-8">
-				<h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-					Create <span className="text-pink-400">T3</span> Turbo
-				</h1>
-				<AuthShowcase />
-
-				<Suspense fallback={<span>Loading...</span>}>
-					<h1>Hello</h1>
-				</Suspense>
-			</div>
-		</main>
-	);
-}
-
-async function AuthShowcase() {
+export default async function HomePage() {
 	const session = await auth();
 
-	if (!session) {
-		return (
-			<SignIn
-				provider="discord"
-				className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-			>
-				Sign in with Discord
-			</SignIn>
-		);
-	}
-
 	return (
-		<div className="flex flex-col items-center justify-center gap-4">
-			<p className="text-center text-2xl text-white">
-				{session && <span>Logged in as {session.user.name}</span>}
-			</p>
+		<div className="bg-slate-900 h-screen">
+			<header className="p-40 py-10 flex justify-between">
+				<div>
+					<h1 className="font-bold text-transparent w-max text-6xl bg-clip-text bg-gradient-to-r from-red-600 to-amber-500">
+						<span>Master Bot</span>
+					</h1>
+				</div>
+				<div className="flex items-center justify-between gap-5">
+					<a
+						href="https://github.com/galnir/Master-Bot"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<Button variant="secondary">Code</Button>
+					</a>
 
-			<SignOut className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20">
-				Sign out
-			</SignOut>
+					{session ? (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<div className="flex items-center gap-3 hover:cursor-pointer">
+									<Image
+										src={`https://cdn.discordapp.com/avatars/${session.user.discordId}/${session.user.image}.webp?size=512`}
+										className="h-8 w-8 rounded-full"
+										width={32}
+										height={32}
+										alt="user avatar"
+									/>
+									<h1 className="text-white">{session.user.name}</h1>
+								</div>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className="w-56" sideOffset={12}>
+								<DropdownMenuGroup>
+									<DropdownMenuItem>
+										<Link
+											href="/dashboard"
+											className="w-full h-full flex items-center"
+										>
+											<Server />
+											<span className="ml-2">My Servers</span>
+										</Link>
+									</DropdownMenuItem>
+									<DropdownMenuSeparator className="bg-gray-400" />
+									<DropdownMenuItem>
+										<div className="w-56">
+											<SignOut className="w-full text-left">Sign out</SignOut>
+										</div>
+									</DropdownMenuItem>
+								</DropdownMenuGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					) : (
+						<SignIn
+							provider="discord"
+							className="rounded-full bg-blue-600 px-10 py-3 font-semibold text-white no-underline transition hover:bg-blue-700"
+						>
+							Sign in with Discord
+						</SignIn>
+					)}
+				</div>
+			</header>
+			<main></main>
 		</div>
 	);
 }

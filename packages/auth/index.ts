@@ -16,9 +16,19 @@ declare module 'next-auth' {
 	interface Session {
 		user: {
 			id: string;
+			discordId: string;
 		} & DefaultSessionType['user'];
 	}
 }
+
+const perms = [
+	'identify',
+	'guilds',
+	'email',
+	'applications.commands.permissions.update'
+];
+
+const scope = perms.join(' ');
 
 export const {
 	handlers: { GET, POST },
@@ -31,7 +41,12 @@ export const {
 	providers: [
 		Discord({
 			clientId: env.DISCORD_CLIENT_ID,
-			clientSecret: env.DISCORD_CLIENT_SECRET
+			clientSecret: env.DISCORD_CLIENT_SECRET,
+			authorization: {
+				params: {
+					scope
+				}
+			}
 		})
 	],
 	callbacks: {

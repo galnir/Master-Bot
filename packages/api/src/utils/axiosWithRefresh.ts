@@ -4,81 +4,22 @@ import { prisma } from '@master-bot/db';
 
 import { env } from '../env.mjs';
 
-const axiosInstance = axios.create();
+const baseURL = 'https://discord.com/api/v10'; // Update to the appropriate Discord API version
 
-// Refresh access token if expired and retry the request
-axiosInstance.interceptors.response.use(undefined, async error => {
-	// console.log('error is', error);
-	if (error.response && error.response.status === 401) {
-		const clientId = env.DISCORD_CLIENT_ID;
-		const clientSecret = env.DISCORD_CLIENT_SECRET;
-
-		if (!clientId || !clientSecret) {
-			return Promise.reject(error);
-		}
-
-		const originalRequest = error.config;
-		const refreshToken = originalRequest.headers['X-Refresh-Token'];
-		const userId = originalRequest.headers['X-User-Id'];
-
-		// Remove the custom headers
-		delete originalRequest.headers['X-Refresh-Token'];
-		delete originalRequest.headers['X-User-Id'];
-
-		// Check if we've already tried to refresh the token for this request
-		if (!originalRequest._retry) {
-			originalRequest._retry = true;
-
-			// Refresh the access token using your refreshAccessToken function
-			const newTokens = await refreshAccessToken(
-				clientId,
-				clientSecret,
-				refreshToken
-			);
-
-			if (newTokens) {
-				// Update the access token and refresh token in your database
-				await prisma.user.update({
-					where: {
-						id: userId
-					},
-					data: {}
-				});
-
-				// Update the access token in the original request's headers
-				originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-
-				// Retry the original request with the new access token
-				return axiosInstance(originalRequest);
-			}
-		}
-	}
-
-	// If the error isn't due to an expired token, pass it along
-	return Promise.reject(error);
+const discordApi = axios.create({
+	baseURL
 });
 
-async function refreshAccessToken(
-	clientId: string,
-	clientSecret: string,
-	refreshToken: string
-) {
+async function refreshAccessToken(refreshToken: string, userId: string) {
 	try {
-		const response = await axios.post(
-			'https://discord.com/api/oauth2/token',
-			null,
-			{
-				params: {
-					client_id: clientId,
-					client_secret: clientSecret,
-					grant_type: 'refresh_token',
-					refresh_token: refreshToken
-				},
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
+		const response = await discordApi.post('/oauth2/token', null, {
+			params: {
+				client_id: env.DISCORD_CLIENT_ID,
+				client_secret: env.DISCORD_CLIENT_SECRET,
+				grant_type: 'refresh_token',
+				refresh_token: refreshToken
 			}
-		);
+		});
 
 		const {
 			access_token,
@@ -86,7 +27,17 @@ async function refreshAccessToken(
 			expires_in
 		} = response.data;
 
-		// Update the access and refresh tokens in your database
+		// Update the access and refresh tokens in the database
+		await prisma.account.update({
+			where: {
+				userId
+			},
+			data: {
+				access_token,
+				refresh_token: newRefreshToken,
+				expires_at: expires_in
+			}
+		});
 
 		return {
 			accessToken: access_token,
@@ -99,4 +50,75 @@ async function refreshAccessToken(
 	}
 }
 
-export default axiosInstance;
+async function updateUserTokens(
+	newTokens: {
+		accessToken: string;
+		refreshToken: string;
+		expiresIn: number;
+	},
+	userId: string
+) {
+	try {
+		const updatedAccount = await prisma.account.update({
+			where: {
+				userId
+			},
+			data: {
+				access_token: newTokens.accessToken,
+				refresh_token: newTokens.refreshToken,
+				expires_at: newTokens.expiresIn
+			}
+		});
+
+		return updatedAccount;
+	} catch (error) {
+		console.error('Error updating user tokens:', error);
+		return null;
+	}
+}
+
+discordApi.interceptors.response.use(
+	response => {
+		// if response is ok return it
+		return response;
+	},
+	async error => {
+		const originalRequest = error.config;
+
+		// if error is 401, token is expired or 50025
+		if (error.response.status >= 401 && !originalRequest._retry) {
+			originalRequest._retry = true;
+
+			const { 'X-User-Id': userId, 'X-Refresh-Token': refreshToken } =
+				originalRequest.headers;
+
+			if (typeof userId !== 'string' || typeof refreshToken !== 'string') {
+				throw error;
+			}
+
+			const newTokens = await refreshAccessToken(refreshToken, userId);
+
+			if (!newTokens?.accessToken) {
+				throw error;
+			}
+
+			// Save the new access token and refresh token to the DB
+			try {
+				await updateUserTokens(newTokens, userId);
+			} catch {
+				throw error;
+			}
+
+			// Set the new access token in the header and retry the original request
+			originalRequest.headers[
+				'Authorization'
+			] = `Bearer ${newTokens.accessToken}`;
+
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+			return discordApi(originalRequest);
+		}
+		return Promise.reject(error);
+	}
+);
+
+export { discordApi };

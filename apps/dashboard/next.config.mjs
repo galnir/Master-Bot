@@ -9,7 +9,10 @@ const config = {
 	transpilePackages: ['@master-bot/api', '@master-bot/auth', '@master-bot/db'],
 	/** We already do linting and typechecking as separate tasks in CI */
 	eslint: { ignoreDuringBuilds: true },
-	typescript: { ignoreBuildErrors: true }
+	typescript: { ignoreBuildErrors: true },
+	images: {
+		domains: ['cdn.discordapp.com']
+	}
 };
 
 export default config;

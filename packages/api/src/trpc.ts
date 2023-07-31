@@ -6,12 +6,13 @@
  * tl;dr - this is where all the tRPC server stuff is created and plugged in.
  * The pieces you will need to use are documented accordingly near the end
  */
-import { auth } from '@master-bot/auth';
-import type { Session } from '@master-bot/auth';
-import { prisma } from '@master-bot/db';
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
+
+import { auth } from '@master-bot/auth';
+import type { Session } from '@master-bot/auth';
+import { prisma } from '@master-bot/db';
 
 /**
  * 1. CONTEXT
@@ -47,9 +48,14 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = async () => {
-	// Get the session from the server using the unstable_getServerSession wrapper function
-	const session = await auth();
+export const createTRPCContext = async (opts: {
+	req?: Request;
+	auth?: Session;
+}) => {
+	const session = opts.auth ?? (await auth());
+	const source = opts.req?.headers.get('x-trpc-source') ?? 'unknown';
+
+	console.log('>>> tRPC Request from', source, 'by', session?.user);
 
 	return createInnerTRPCContext({
 		session

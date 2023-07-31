@@ -31,7 +31,8 @@ const config = {
 		],
 		'@typescript-eslint/no-unsafe-member-access': 'off',
 		'@typescript-eslint/no-explicit-any': 'off',
-		'import/consistent-type-specifier-style': ['error', 'prefer-top-level']
+		'@typescript-eslint/no-unsafe-assignment': 'off',
+		'@typescript-eslint/dot-notation': 'off'
 	},
 	ignorePatterns: [
 		'**/.eslintrc.cjs',
