@@ -13,12 +13,13 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from '~/components/ui/dropdown';
+import { ModeToggle } from '~/components/theme-toggle';
 
 export default async function HomePage() {
 	const session = await auth();
 
 	return (
-		<div className="bg-slate-900 h-screen">
+		<div>
 			<header className="p-40 py-10 flex justify-between">
 				<div>
 					<h1 className="font-bold text-transparent w-max text-6xl bg-clip-text bg-gradient-to-r from-red-600 to-amber-500">
@@ -31,7 +32,7 @@ export default async function HomePage() {
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						<Button variant="secondary">Code</Button>
+						<Button>Code on Github</Button>
 					</a>
 
 					{session ? (
@@ -76,6 +77,7 @@ export default async function HomePage() {
 							Sign in with Discord
 						</SignIn>
 					)}
+					<ModeToggle />
 				</div>
 			</header>
 			<main></main>

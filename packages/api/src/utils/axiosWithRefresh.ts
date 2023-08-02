@@ -4,11 +4,9 @@ import { prisma } from '@master-bot/db';
 
 import { env } from '../env.mjs';
 
-const baseURL = 'https://discord.com/api/v10'; // Update to the appropriate Discord API version
+// const baseURL = 'https://discord.com/api/v10'; // Update to the appropriate Discord API version
 
-const discordApi = axios.create({
-	baseURL
-});
+const discordApi = axios.create();
 
 async function refreshAccessToken(refreshToken: string, userId: string) {
 	try {

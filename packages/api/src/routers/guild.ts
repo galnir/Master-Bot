@@ -4,9 +4,25 @@ import type { APIGuild, APIRole } from 'discord-api-types/v10';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 import { discordApi } from '../utils/axiosWithRefresh';
-import { env } from '../env.mjs';
 
 const fetch = getFetch();
+
+function getUserGuilds(
+	access_token: string,
+	refresh_token: string,
+	user_id: string
+) {
+	return discordApi.get('https://discord.com/api/v10/users/@me/guilds', {
+		headers: {
+			Authorization: `Bearer ${access_token}`,
+			// set user agent
+			'User-Agent':
+				'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
+			'X-User-Id': user_id,
+			'X-Refresh-Token': refresh_token
+		}
+	});
+}
 
 export const guildRouter = createTRPCRouter({
 	getGuild: publicProcedure
@@ -25,66 +41,6 @@ export const guildRouter = createTRPCRouter({
 			});
 
 			return { guild };
-		}),
-	getGuildFromAPI: protectedProcedure
-		.input(
-			z.object({
-				guildId: z.string()
-			})
-		)
-		.query(async ({ input }) => {
-			const token = env.DISCORD_TOKEN;
-			const { guildId } = input;
-
-			try {
-				const response = await fetch(
-					`https://discord.com/api/guilds/${guildId}`,
-					{
-						headers: {
-							Authorization: `Bot ${token}`
-						}
-					}
-				);
-
-				const guild = (await response.json()) as APIGuild;
-
-				return { guild };
-			} catch {
-				throw new TRPCError({
-					message: 'Not Found',
-					code: 'NOT_FOUND'
-				});
-			}
-		}),
-	getGuildAndUser: publicProcedure
-		.input(
-			z.object({
-				id: z.string()
-			})
-		)
-		.query(async ({ ctx, input }) => {
-			const { id } = input;
-
-			const guild = await ctx.prisma.guild.findUnique({
-				where: {
-					id
-				}
-			});
-
-			const user = await ctx.prisma.user.findUnique({
-				where: {
-					id: ctx.session?.user?.id
-				}
-			});
-
-			if (guild?.ownerId !== user?.discordId) {
-				throw new TRPCError({
-					message: 'UNAUTHORIZED',
-					code: 'UNAUTHORIZED'
-				});
-			}
-
-			return { guild, user };
 		}),
 	create: publicProcedure
 		.input(
@@ -112,33 +68,6 @@ export const guildRouter = createTRPCRouter({
 
 			return { guild };
 		}),
-	createViaTwitchNotification: publicProcedure
-		.input(
-			z.object({
-				guildId: z.string(),
-				userId: z.string(),
-				ownerId: z.string(),
-				name: z.string(),
-				notifyList: z.array(z.string())
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { guildId, userId, ownerId, name, notifyList } = input;
-			await ctx.prisma.guild.upsert({
-				create: {
-					id: guildId,
-					notifyList: [userId],
-					volume: 100,
-					ownerId: ownerId,
-					name: name
-				},
-				select: { notifyList: true },
-				update: {
-					notifyList
-				},
-				where: { id: guildId }
-			});
-		}),
 	delete: publicProcedure
 		.input(
 			z.object({
@@ -155,134 +84,6 @@ export const guildRouter = createTRPCRouter({
 			});
 
 			return { guild };
-		}),
-	updateWelcomeMessage: publicProcedure
-		.input(
-			z.object({
-				guildId: z.string(),
-				welcomeMessage: z.string().nullable(),
-				welcomeMessageEnabled: z.boolean().nullable()
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { guildId, welcomeMessage, welcomeMessageEnabled } = input;
-
-			const guild = await ctx.prisma.guild.update({
-				where: {
-					id: guildId
-				},
-				data: {
-					// undefined means do nothing, null will set the value to null
-					welcomeMessage: welcomeMessage ? welcomeMessage : undefined,
-					welcomeMessageEnabled: welcomeMessageEnabled
-						? welcomeMessageEnabled
-						: undefined
-				}
-			});
-
-			return { guild };
-		}),
-	toggleWelcomeMessage: publicProcedure
-		.input(
-			z.object({
-				status: z.boolean(),
-				guildId: z.string()
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { status, guildId } = input;
-
-			const guild = await ctx.prisma.guild.update({
-				where: {
-					id: guildId
-				},
-				data: {
-					welcomeMessageEnabled: status
-				}
-			});
-
-			return { guild };
-		}),
-	updateWelcomeMessageChannel: publicProcedure
-		.input(
-			z.object({
-				guildId: z.string(),
-				channelId: z.string()
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { guildId, channelId } = input;
-
-			const guild = await ctx.prisma.guild.update({
-				where: {
-					id: guildId
-				},
-				data: {
-					welcomeMessageChannel: channelId
-				}
-			});
-
-			return { guild };
-		}),
-	getAll: protectedProcedure.query(async ({ ctx }) => {
-		const account = await ctx.prisma.account.findFirst({
-			where: {
-				userId: ctx.session?.user?.id
-			}
-		});
-
-		if (!account?.access_token) {
-			throw new TRPCError({
-				code: 'NOT_FOUND',
-				message: 'Account not found'
-			});
-		}
-
-		try {
-			const dbGuilds = await ctx.prisma.guild.findMany({
-				where: {
-					ownerId: account.providerAccountId
-				}
-			});
-
-			const response = await discordApi.get('/users/@me/guilds', {
-				headers: {
-					Authorization: `Bearer ${account.access_token}`,
-					'X-User-Id': ctx.session.user.id,
-					'X-Refresh-Token': account.refresh_token
-				}
-			});
-
-			const apiGuilds = response.data as APIGuild[];
-
-			const apiGuildsOwns = apiGuilds.filter(guild => guild.owner);
-
-			return {
-				apiGuilds: apiGuildsOwns,
-				dbGuilds
-			};
-		} catch (e) {
-			console.error(e);
-			throw new TRPCError({
-				code: 'INTERNAL_SERVER_ERROR',
-				message: 'Something went wrong when trying to fetch guilds'
-			});
-		}
-	}),
-	updateTwitchNotifications: publicProcedure
-		.input(
-			z.object({
-				guildId: z.string(),
-				notifyList: z.array(z.string())
-			})
-		)
-		.mutation(async ({ ctx, input }) => {
-			const { guildId, notifyList } = input;
-
-			await ctx.prisma.guild.update({
-				where: { id: guildId },
-				data: { notifyList }
-			});
 		}),
 	updateVolume: publicProcedure
 		.input(
@@ -328,5 +129,50 @@ export const guildRouter = createTRPCRouter({
 			const roles = (await response.json()) as APIRole[];
 
 			return { roles };
-		})
+		}),
+	getAll: protectedProcedure.query(async ({ ctx }) => {
+		const account = await ctx.prisma.account.findFirst({
+			where: {
+				userId: ctx.session?.user?.id
+			}
+		});
+
+		if (!account?.access_token || !account?.refresh_token) {
+			throw new TRPCError({
+				code: 'NOT_FOUND',
+				message: 'Account not found'
+			});
+		}
+
+		try {
+			const dbGuilds = await ctx.prisma.guild.findMany({
+				where: {
+					ownerId: account.providerAccountId
+				}
+			});
+
+			const response = await getUserGuilds(
+				account.access_token,
+				account.refresh_token,
+				account.userId
+			);
+
+			// get the guilds from response data
+			const apiGuilds = response.data as APIGuild[];
+
+			const apiGuildsOwns = apiGuilds.filter(guild => guild.owner);
+
+			return {
+				apiGuilds: apiGuildsOwns,
+				dbGuilds,
+				apiGuildsIds: apiGuildsOwns.map(guild => guild.id),
+				dbGuildsIds: dbGuilds.map(guild => guild.id)
+			};
+		} catch (error) {
+			throw new TRPCError({
+				code: 'INTERNAL_SERVER_ERROR',
+				message: 'Something went wrong when trying to fetch guilds from DB'
+			});
+		}
+	})
 });

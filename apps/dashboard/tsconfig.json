@@ -8,6 +8,6 @@
 		"plugins": [{ "name": "next" }],
 		"strict": true
 	},
-	"exclude": [],
-	"include": ["next-env.d.ts", "src", "*.ts", "*.mjs", ".next/types/**/*.ts"]
+	"include": ["next-env.d.ts", "src", "*.ts", "*.mjs", ".next/types/**/*.ts"],
+	"exclude": ["node_modules"]
 }

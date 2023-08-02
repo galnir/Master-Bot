@@ -1,4 +1,6 @@
-import Discord from '@auth/core/providers/discord';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import Discord, { type DiscordProfile } from '@auth/core/providers/discord';
 import type { DefaultSession as DefaultSessionType } from '@auth/core/types';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@master-bot/db';
@@ -21,23 +23,23 @@ declare module 'next-auth' {
 	}
 }
 
-const perms = [
-	'identify',
-	'guilds',
-	'email',
-	'applications.commands.permissions.update'
-];
-
-const scope = perms.join(' ');
+const scope = ['identify', 'guilds', 'email'].join(' ');
 
 export const {
 	handlers: { GET, POST },
 	auth,
 	CSRF_experimental
 } = NextAuth({
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	adapter: PrismaAdapter(prisma),
+	adapter: {
+		...PrismaAdapter(prisma),
+		createUser: async data => {
+			return await prisma.user.upsert({
+				where: { discordId: data.discordId },
+				update: data,
+				create: data
+			});
+		}
+	},
 	providers: [
 		Discord({
 			clientId: env.DISCORD_CLIENT_ID,
@@ -46,6 +48,15 @@ export const {
 				params: {
 					scope
 				}
+			},
+			profile(profile: DiscordProfile) {
+				return {
+					id: profile.id,
+					name: profile.username,
+					email: profile.email,
+					image: profile.avatar,
+					discordId: profile.id
+				};
 			}
 		})
 	],
@@ -54,7 +65,8 @@ export const {
 			...session,
 			user: {
 				...session.user,
-				id: user.id
+				id: user.id,
+				discordId: user.discordId
 			}
 		})
 
