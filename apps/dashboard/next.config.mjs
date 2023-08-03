@@ -14,7 +14,7 @@ const config = {
 		domains: ['cdn.discordapp.com']
 	},
 	experimental: {
-		typedRoutes: true
+		serverActions: true
 	}
 };
 
