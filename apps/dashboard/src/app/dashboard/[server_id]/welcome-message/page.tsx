@@ -1,5 +1,5 @@
 import { prisma } from '@master-bot/db';
-import ToggleSwitch from './switch';
+import WelcomeMessageToggle from './switch';
 import { setWelcomeMessage } from './actions';
 import { Button } from '~/components/ui/button';
 import WelcomeMessageChannelSet from './set-channel';
@@ -34,7 +34,7 @@ export default async function WelcomeMessagePage({
 					) : (
 						<p className="text-red-500">Disabled</p>
 					)}
-					<ToggleSwitch
+					<WelcomeMessageToggle
 						welcomeMessageEnabled={guild.welcomeMessageEnabled}
 						serverId={params.server_id}
 					/>
@@ -46,6 +46,7 @@ export default async function WelcomeMessagePage({
 							<textarea
 								name="message"
 								placeholder="welcome message"
+								defaultValue={guild.welcomeMessage ?? ''}
 								className="block mb-2 -ml-1 w-full bg-black outline-none overflow-auto my-2 resize-none p-4 text-white rounded-lg border border-gray-800 focus:ring-blue-600 focus:border-blue-600"
 							/>
 							<Button type="submit">Submit</Button>
