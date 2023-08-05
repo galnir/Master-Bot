@@ -6,6 +6,7 @@ import '~/styles/globals.css';
 import { TRPCReactProvider } from './providers';
 import { headers } from 'next/headers';
 import { ThemeProvider } from '~/components/theme-provider';
+import { Toaster } from '~/components/ui/toaster';
 
 const fontSans = Inter({
 	subsets: ['latin'],
@@ -28,7 +29,8 @@ export default function Layout(props: { children: React.ReactNode }) {
 			>
 				<TRPCReactProvider headers={headers()}>
 					<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-						{props.children}
+						<>{props.children}</>
+						<Toaster />
 					</ThemeProvider>
 				</TRPCReactProvider>
 			</body>

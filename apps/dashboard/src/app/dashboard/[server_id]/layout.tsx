@@ -37,7 +37,9 @@ export default async function Layout({
 				<header className="flex justify-end px-6 py-4">
 					<HeaderButtons />
 				</header>
-				<main className="bg-slate-800 flex-1 p-8">{children}</main>
+				<main className="dark:bg-slate-800 bg-slate-300 flex-1 p-8">
+					{children}
+				</main>
 			</section>
 		</div>
 	);
