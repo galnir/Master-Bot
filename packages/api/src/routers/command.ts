@@ -336,7 +336,7 @@ export const commandRouter = createTRPCRouter({
 					},
 					data: {
 						disabledCommands: {
-							set: [...guild?.disabledCommands, commandId]
+							set: [...guild.disabledCommands, commandId]
 						}
 					}
 				});

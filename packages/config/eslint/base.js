@@ -34,7 +34,9 @@ const config = {
 		'@typescript-eslint/no-unsafe-assignment': 'off',
 		'@typescript-eslint/dot-notation': 'off',
 		'@typescript-eslint/no-misused-promises': 'off',
-		'@typescript-eslint/ban-ts-comment': 'off'
+		'@typescript-eslint/ban-ts-comment': 'off',
+		'@typescript-eslint/no-unsafe-return': 'off',
+		'@typescript-eslint/no-unsafe-call': 'off'
 	},
 	ignorePatterns: [
 		'**/.eslintrc.cjs',
