@@ -2,6 +2,7 @@ import { env } from '~/env.mjs';
 import { prisma } from '@master-bot/db';
 import type { APIApplicationCommand } from 'discord-api-types/v10';
 import CommandToggleSwitch from './toggle-command';
+import Link from 'next/link';
 
 async function getApplicationCommands() {
 	// get all commands
@@ -49,7 +50,11 @@ export default async function CommandsPage({
 								} border-b flex justify-between items-center dark:border-slate-400 border-slate-700 px-2 py-1`}
 							>
 								<div className="flex flex-col gap-1">
-									<h3 className="text-lg">{command.name}</h3>
+									<Link
+										href={`/dashboard/${params.server_id}/commands/${command.id}`}
+									>
+										<h3 className="text-lg">{command.name}</h3>
+									</Link>
 									<p className="text-sm">{command.description}</p>
 								</div>
 								<div>
