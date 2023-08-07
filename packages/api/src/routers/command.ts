@@ -10,6 +10,7 @@ import { z } from 'zod';
 
 import { env } from '../env.mjs';
 import { createTRPCRouter, publicProcedure } from '../trpc';
+import { discordApi } from '../utils/axiosWithRefresh';
 
 const fetch = getFetch();
 
@@ -154,14 +155,24 @@ export const commandRouter = createTRPCRouter({
 							}
 						}
 					).then((res: any) => res.json()) as Promise<unknown>,
-					fetch(
-						`https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
-						{
-							headers: {
-								Authorization: `Bearer ${account?.access_token}`
+					discordApi
+						.get(
+							`https://discord.com/api/v10/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
+							{
+								headers: {
+									Authorization: `Bearer ${account?.access_token}`
+								}
 							}
-						}
-					).then((res: any) => res.json())
+						)
+						.then((res: any) => res.data)
+					// fetch(
+					// 	`https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
+					// 	{
+					// 		headers: {
+					// 			Authorization: `Bearer ${account?.access_token}`
+					// 		}
+					// 	}
+					// ).then((res: any) => res.json())
 				]);
 
 				const channels =
