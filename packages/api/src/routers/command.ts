@@ -165,14 +165,6 @@ export const commandRouter = createTRPCRouter({
 							}
 						)
 						.then((res: any) => res.data)
-					// fetch(
-					// 	`https://discord.com/api/applications/${clientID}/guilds/${guildId}/commands/${commandId}/permissions`,
-					// 	{
-					// 		headers: {
-					// 			Authorization: `Bearer ${account?.access_token}`
-					// 		}
-					// 	}
-					// ).then((res: any) => res.json())
 				]);
 
 				const channels =
