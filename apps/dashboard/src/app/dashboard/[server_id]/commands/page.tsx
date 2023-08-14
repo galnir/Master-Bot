@@ -46,7 +46,9 @@ export default async function CommandsPage({
 							<div
 								key={command.id}
 								className={`${
-									isCommandEnabled ? 'bg-slate-700' : 'bg-slate-800'
+									isCommandEnabled
+										? 'dark:bg-slate-700 bg-slate-400'
+										: 'dark:bg-slate-800 bg-slate-500'
 								} border-b flex justify-between items-center dark:border-slate-400 border-slate-700 px-2 py-1`}
 							>
 								<div className="flex flex-col gap-1">

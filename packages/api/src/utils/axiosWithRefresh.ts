@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 
 import { prisma } from '@master-bot/db';
 
@@ -10,14 +10,29 @@ const discordApi = axios.create();
 
 async function refreshAccessToken(refreshToken: string, userId: string) {
 	try {
-		const response = await discordApi.post('/oauth2/token', null, {
-			params: {
-				client_id: env.DISCORD_CLIENT_ID,
-				client_secret: env.DISCORD_CLIENT_SECRET,
-				grant_type: 'refresh_token',
-				refresh_token: refreshToken
-			}
+		const params = new URLSearchParams({
+			client_id: env.DISCORD_CLIENT_ID,
+			client_secret: env.DISCORD_CLIENT_SECRET,
+			grant_type: 'refresh_token',
+			refresh_token: refreshToken
 		});
+
+		let response;
+
+		try {
+			response = await discordApi.post(
+				'https://discord.com/api/v10/oauth2/token',
+				params,
+				{
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				}
+			);
+		} catch (error) {
+			console.error('error in refreshing token', error);
+			throw error;
+		}
 
 		const {
 			access_token,
@@ -80,42 +95,42 @@ discordApi.interceptors.response.use(
 		// if response is ok return it
 		return response;
 	},
-	async error => {
-		const originalRequest = error.config;
+	async (error: Error | AxiosError) => {
+		if (axios.isAxiosError(error)) {
+			const originalRequest = error.config;
 
-		// if error is 401, token is expired or 50025
-		if (error.response.status >= 401 && !originalRequest._retry) {
-			originalRequest._retry = true;
+			if (error.code === 'ERR_BAD_REQUEST') {
+				const { 'X-User-Id': userId, 'X-Refresh-Token': refreshToken } =
+					originalRequest!.headers;
 
-			const { 'X-User-Id': userId, 'X-Refresh-Token': refreshToken } =
-				originalRequest.headers;
+				if (typeof userId !== 'string' || typeof refreshToken !== 'string') {
+					throw error;
+				}
 
-			if (typeof userId !== 'string' || typeof refreshToken !== 'string') {
-				throw error;
+				const newTokens = await refreshAccessToken(refreshToken, userId);
+
+				if (!newTokens?.accessToken) {
+					throw error;
+				}
+
+				// Save the new access token and refresh token to the DB
+				try {
+					await updateUserTokens(newTokens, userId);
+				} catch {
+					throw error;
+				}
+
+				// Set the new access token in the header and retry the original request
+				originalRequest!.headers[
+					'Authorization'
+				] = `Bearer ${newTokens.accessToken}`;
+
+				return discordApi(originalRequest!);
 			}
-
-			const newTokens = await refreshAccessToken(refreshToken, userId);
-
-			if (!newTokens?.accessToken) {
-				throw error;
-			}
-
-			// Save the new access token and refresh token to the DB
-			try {
-				await updateUserTokens(newTokens, userId);
-			} catch {
-				throw error;
-			}
-
-			// Set the new access token in the header and retry the original request
-			originalRequest.headers[
-				'Authorization'
-			] = `Bearer ${newTokens.accessToken}`;
-
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			return discordApi(originalRequest);
+			return Promise.reject(error);
+		} else {
+			return Promise.reject(error);
 		}
-		return Promise.reject(error);
 	}
 );
 
