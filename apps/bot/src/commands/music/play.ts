@@ -4,6 +4,7 @@ import { container } from '@sapphire/framework';
 import searchSong from '../../lib/music/searchSong';
 import type { Song } from '../../lib/music/classes/Song';
 import { trpcNode } from '../../trpc';
+import { GuildMember } from 'discord.js';
 
 @ApplyOptions<CommandOptions>({
 	name: 'play',
@@ -87,9 +88,7 @@ export class PlayCommand extends Command {
 
 		const { music } = client;
 
-		const voiceChannel = interaction.guild?.voiceStates?.cache?.get(
-			interaction.user.id
-		)?.channel;
+		const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
 		// edge case - someome initiated the command but left the voice channel
 		if (!voiceChannel) {
@@ -151,7 +150,7 @@ export class PlayCommand extends Command {
 			return;
 		}
 
-		await queue.start();
+		queue.start();
 
 		return await interaction.followUp({ content: message });
 	}
