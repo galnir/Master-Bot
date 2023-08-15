@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import Discord, { type DiscordProfile } from '@auth/core/providers/discord';
 import type { DefaultSession as DefaultSessionType } from '@auth/core/types';
