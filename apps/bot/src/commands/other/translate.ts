@@ -3,7 +3,7 @@ import { Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
 import { EmbedBuilder } from 'discord.js';
 import translate from 'google-translate-api-x';
-
+import Logger from '../../lib/logger';
 @ApplyOptions<CommandOptions>({
 	name: 'translate',
 	description:
@@ -59,7 +59,7 @@ export class TranslateCommand extends Command {
 				return await interaction.reply({ embeds: [embed] });
 			})
 			.catch(async error => {
-				// Logger.error(error);
+				Logger.error(error);
 				return await interaction.reply(
 					':x: Something went wrong when trying to translate the text'
 				);

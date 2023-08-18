@@ -4,6 +4,7 @@ import { EmbedBuilder } from 'discord.js';
 import { container } from '@sapphire/framework';
 import { GeniusLyrics } from 'genius-discord-lyrics';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
+import Logger from '../../lib/logger';
 
 const genius = new GeniusLyrics(process.env.GENIUS_API || '');
 
@@ -73,8 +74,7 @@ export class LyricsCommand extends Command {
 			await interaction.followUp('Lyrics generated');
 			return paginatedLyrics.run(interaction);
 		} catch (e) {
-			console.log(e);
-			// Logger.error(e);
+			Logger.error(e);
 			return interaction.followUp(
 				'Something when wrong when trying to fetch lyrics :('
 			);

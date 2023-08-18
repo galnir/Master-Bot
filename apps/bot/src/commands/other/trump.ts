@@ -2,7 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
-
+import Logger from '../../lib/logger';
 @ApplyOptions<CommandOptions>({
 	name: 'trump',
 	description: 'Replies with a random Trump quote',
@@ -41,7 +41,7 @@ export class TrumpCommand extends Command {
 				return interaction.reply({ embeds: [embed] });
 			})
 			.catch(async error => {
-				// Logger.error(error);
+				Logger.error(error);
 				return interaction.reply({
 					content: 'Something went wrong when fetching a Trump quote :('
 				});

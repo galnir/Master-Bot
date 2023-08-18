@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import { EmbedBuilder } from 'discord.js';
 import axios from 'axios';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'urban',
@@ -49,7 +50,7 @@ export class UrbanCommand extends Command {
 				return interaction.reply({ embeds: [embed] });
 			})
 			.catch(async error => {
-				// Logger.error(error);
+				Logger.error(error);
 				return interaction.reply({
 					content: 'Failed to deliver definition :sob:'
 				});

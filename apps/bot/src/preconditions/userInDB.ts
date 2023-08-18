@@ -6,6 +6,7 @@ import {
 } from '@sapphire/framework';
 import type { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { trpcNode } from '../trpc';
+import Logger from '../lib/logger';
 
 @ApplyOptions<PreconditionOptions>({
 	name: 'userInDB'
@@ -24,8 +25,7 @@ export class UserInDB extends Precondition {
 
 			if (!user) throw new Error();
 		} catch (error) {
-			console.log(error);
-			// Logger.error(error);
+			Logger.error(error);
 			return this.error({ message: 'Something went wrong!' });
 		}
 

@@ -3,6 +3,7 @@ import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import { Command, CommandOptions } from '@sapphire/framework';
 import axios from 'axios';
 import { EmbedBuilder, Colors, ButtonStyle, ComponentType } from 'discord.js';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'speedrun',
@@ -63,7 +64,7 @@ export class SpeedRunCommand extends Command {
 				`https://www.speedrun.com/api/v1/games/${gameID}/records?miscellaneous=no&scope=full-game&top=10&embed=game,category,players,platforms,regions`
 			);
 		} catch (error) {
-			// Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
+			Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
 			return interaction.reply({
 				content: 'Something went wrong, please try again later'
 			});
@@ -281,7 +282,7 @@ export class SpeedRunCommand extends Command {
 
 			return PaginatedEmbed;
 		} catch (error: any) {
-			// Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
+			Logger.error(`${this.name} Command - ${JSON.stringify(error)}`);
 			return new PaginatedMessage().addPageEmbed(
 				new EmbedBuilder()
 					.setColor(Colors.Red)

@@ -15,6 +15,7 @@ import { Time } from '@sapphire/time-utilities';
 import { isNullish } from '@sapphire/utilities';
 import { deletePlayerEmbed } from '../buttonsCollector';
 import { trpcNode } from '../../../trpc';
+import Logger from '../../logger';
 
 export enum LoopType {
 	None,
@@ -146,8 +147,7 @@ export class Queue {
 			this.player.setVolume(await this.getVolume());
 			await this.player.play(np.song as Song);
 		} catch (err) {
-			console.log(err);
-			// Logger.error(err);
+			Logger.error(err);
 			await this.leave();
 		}
 

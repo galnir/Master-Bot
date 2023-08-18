@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'tv-show-search',
@@ -107,7 +108,7 @@ export class TVShowSearchCommand extends Command {
 				}
 				resolve(data);
 			} catch (e) {
-				// Logger.error(e);
+				Logger.error(e);
 				reject(
 					'There was a problem getting data from the API, make sure you entered a valid TV show name'
 				);

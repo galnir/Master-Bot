@@ -4,6 +4,7 @@ import { container } from '@sapphire/framework';
 import type { Queue } from './classes/Queue';
 import { NowPlayingEmbed } from './nowPlayingEmbed';
 import type { Song } from './classes/Song';
+import Logger from '../logger';
 
 export default async function buttonsCollector(message: Message, song: Song) {
 	const { client } = container;
@@ -118,17 +119,13 @@ export async function deletePlayerEmbed(queue: Queue) {
 			const channel = await queue.getTextChannel();
 			await channel?.messages.fetch(embedID).then(async oldMessage => {
 				if (oldMessage)
-					await oldMessage.delete().catch(
-						error => {
-							console.log(error);
-						}
-						// Logger.error('Failed to Delete Old Message. ' + error)
-					);
+					await oldMessage.delete().catch(error => {
+						Logger.error('Failed to Delete Old Message. ' + error);
+					});
 				await queue.deleteEmbed();
 			});
 		}
 	} catch (error) {
-		console.log(error);
-		// Logger.error('Failed to Delete Player Embed. ' + error);
+		Logger.error('Failed to Delete Player Embed. ' + error);
 	}
 }

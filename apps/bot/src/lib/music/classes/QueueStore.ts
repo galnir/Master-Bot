@@ -4,6 +4,7 @@ import type { Redis, RedisKey } from 'ioredis';
 import { join, resolve } from 'path';
 import { Queue } from './Queue';
 import type { QueueClient } from './QueueClient';
+import Logger from '../../logger';
 
 interface RedisCommand {
 	name: string;
@@ -48,8 +49,7 @@ export class QueueStore extends Collection<string, Queue> {
 		this.redis = redis as any;
 		// Redis Errors
 		redis.on('error', err => {
-			console.log(err);
-			// Logger.error('Redis ' + err)
+			Logger.error('Redis ' + err);
 		});
 
 		for (const command of commands) {

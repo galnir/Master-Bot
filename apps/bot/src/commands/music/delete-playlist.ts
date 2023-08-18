@@ -1,6 +1,7 @@
 import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import { trpcNode } from '../../trpc';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'delete-playlist',
@@ -53,7 +54,7 @@ export class DeletePlaylistCommand extends Command {
 			if (!playlist) throw new Error();
 		} catch (error) {
 			console.log(error);
-			// Logger.error(error);
+			Logger.error(error);
 			return await interaction.reply(
 				':x: Something went wrong! Please try again later'
 			);

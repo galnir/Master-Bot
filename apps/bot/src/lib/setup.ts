@@ -4,7 +4,6 @@ import {
 } from '@sapphire/framework';
 import '@sapphire/plugin-api/register';
 import '@sapphire/plugin-editable-commands/register';
-import '@sapphire/plugin-logger/register';
 import '@sapphire/plugin-subcommands/register';
 import * as colorette from 'colorette';
 import { inspect } from 'util';

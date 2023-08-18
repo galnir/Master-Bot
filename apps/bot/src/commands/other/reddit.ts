@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 import { PaginatedMessage } from '@sapphire/discord.js-utilities';
 import axios from 'axios';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'reddit',
@@ -96,7 +97,7 @@ export class RedditCommand extends Command {
 			});
 
 			collector.on('end', () => {
-				if (menu) menu.delete(); // .catch(Logger.error);
+				if (menu) menu.delete().catch(Logger.error);
 			});
 
 			collector.on('collect', async i => {

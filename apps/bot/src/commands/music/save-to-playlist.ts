@@ -2,6 +2,7 @@ import { ApplyOptions } from '@sapphire/decorators';
 import { Command, CommandOptions } from '@sapphire/framework';
 import searchSong from '../../lib/music/searchSong';
 import { trpcNode } from '../../trpc';
+import Logger from '../../lib/logger';
 
 @ApplyOptions<CommandOptions>({
 	name: 'save-to-playlist',
@@ -88,8 +89,7 @@ export class SaveToPlaylistCommand extends Command {
 
 			return await interaction.followUp(`Added tracks to **${playlistName}**`);
 		} catch (error) {
-			console.log(error);
-			// Logger.error(error);
+			Logger.error(error);
 			return await interaction.followUp(':x: Something went wrong!');
 		}
 	}
