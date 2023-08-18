@@ -1,0 +1,7 @@
+packages:
+  - apps/dashboard
+  - apps/bot
+  - packages/api
+  - packages/auth
+  - packages/db
+  - packages/config/*

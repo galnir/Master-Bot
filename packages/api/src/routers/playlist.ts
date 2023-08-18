@@ -1,92 +1,93 @@
-import { t } from '../trpc';
 import { z } from 'zod';
 
-export const playlistRouter = t.router({
-  getPlaylist: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        name: z.string()
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId, name } = input;
+import { createTRPCRouter, publicProcedure } from '../trpc';
 
-      const playlist = await ctx.prisma.playlist.findFirst({
-        where: {
-          userId,
-          name
-        },
-        include: {
-          songs: true
-        }
-      });
+export const playlistRouter = createTRPCRouter({
+	getPlaylist: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				name: z.string()
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const { userId, name } = input;
 
-      return { playlist };
-    }),
-  getAll: t.procedure
-    .input(
-      z.object({
-        userId: z.string()
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const { userId } = input;
+			const playlist = await ctx.prisma.playlist.findFirst({
+				where: {
+					userId,
+					name
+				},
+				include: {
+					songs: true
+				}
+			});
 
-      const playlists = await ctx.prisma.playlist.findMany({
-        where: {
-          userId
-        },
-        include: {
-          songs: true
-        },
-        orderBy: {
-          id: 'asc'
-        }
-      });
+			return { playlist };
+		}),
+	getAll: publicProcedure
+		.input(
+			z.object({
+				userId: z.string()
+			})
+		)
+		.query(async ({ ctx, input }) => {
+			const { userId } = input;
 
-      return { playlists };
-    }),
-  create: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        name: z.string()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, name } = input;
+			const playlists = await ctx.prisma.playlist.findMany({
+				where: {
+					userId
+				},
+				include: {
+					songs: true
+				},
+				orderBy: {
+					id: 'asc'
+				}
+			});
 
-      const playlist = await ctx.prisma.playlist.create({
-        data: {
-          name,
-          user: {
-            connect: {
-              id: userId
-            }
-          }
-        }
-      });
+			return { playlists };
+		}),
+	create: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				name: z.string()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId, name } = input;
 
-      return { playlist };
-    }),
-  delete: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        name: z.string()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, name } = input;
+			const playlist = await ctx.prisma.playlist.create({
+				data: {
+					name,
+					user: {
+						connect: {
+							id: userId
+						}
+					}
+				}
+			});
 
-      const playlist = await ctx.prisma.playlist.deleteMany({
-        where: {
-          userId,
-          name
-        }
-      });
+			return { playlist };
+		}),
+	delete: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				name: z.string()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId, name } = input;
 
-      return { playlist };
-    })
+			const playlist = await ctx.prisma.playlist.deleteMany({
+				where: {
+					userId,
+					name
+				}
+			});
+
+			return { playlist };
+		})
 });

@@ -1,15 +1,14 @@
-import { t } from '../trpc';
-
-import { userRouter } from './user';
+import { createTRPCRouter } from '../trpc';
+import { channelRouter } from './channel';
+import { commandRouter } from './command';
 import { guildRouter } from './guild';
+import { hubRouter } from './hub';
 import { playlistRouter } from './playlist';
+import { reminderRouter } from './reminder';
 import { songRouter } from './song';
 import { twitchRouter } from './twitch';
-import { channelRouter } from './channel';
+import { userRouter } from './user';
 import { welcomeRouter } from './welcome';
-import { commandRouter } from './command';
-import { hubRouter } from './hub';
-import { reminderRouter } from './reminder';
 
 /**
  * Create your application's root router
@@ -18,17 +17,17 @@ import { reminderRouter } from './reminder';
  * @link https://trpc.io/docs/router
  */
 
-export const appRouter = t.router({
-  user: userRouter,
-  guild: guildRouter,
-  playlist: playlistRouter,
-  song: songRouter,
-  twitch: twitchRouter,
-  channel: channelRouter,
-  welcome: welcomeRouter,
-  command: commandRouter,
-  hub: hubRouter,
-  reminder: reminderRouter
+export const appRouter = createTRPCRouter({
+	user: userRouter,
+	guild: guildRouter,
+	playlist: playlistRouter,
+	song: songRouter,
+	twitch: twitchRouter,
+	channel: channelRouter,
+	welcome: welcomeRouter,
+	command: commandRouter,
+	hub: hubRouter,
+	reminder: reminderRouter
 });
 
 export type AppRouter = typeof appRouter;

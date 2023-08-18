@@ -55,15 +55,12 @@ Note: if you are not hosting postgres on Heroku you do not need the SHADOW_DB_UR
 ```env
 # DB URL
 DATABASE_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
-SHADOW_DB_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
 
 # Bot Token
 DISCORD_TOKEN=""
 
-# Next Auth
-
 NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
-NEXTAUTH_URL=http://domian:3000
+NEXTAUTH_URL=
 NEXTAUTH_URL_INTERNAL=http://localhost:3000
 NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
 
@@ -126,11 +123,15 @@ You can leave this as long as the values match your application.yml.
 
 Create an application in each platform's developer portal and paste the relevant values.
 
+#### Pnpm
+Install pnpm:
+`npm install -g pnpm` or on Windows `iwr https://get.pnpm.io/install.ps1 -useb | iex`  or on Mac using Homebrew `brew install pnpm`
+
 # Running the bot
 
-1. If you followed everything right, hit `npm i` in the root folder. When it finishes make sure prisma didn't error.
-2. Open a separate terminal in the root folder and run 'java -jar Lavalink.jar'.
-3. Wait a few seconds and hit `npm run dev`.
+1. If you followed everything right, hit `pnpm i` in the root folder. When it finishes make sure prisma didn't error.
+2. Open a separate terminal in the root folder and run 'java -jar Lavalink.jar' (must be running all the time).
+3. Wait a few seconds and run `pnpm dev` in the root folder in another terminal window.
 4. If everything works, your bot and dashboard should be running.
 5. Enjoy!
 

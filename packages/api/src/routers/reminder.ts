@@ -1,101 +1,103 @@
-import { t } from '../trpc';
 import { z } from 'zod';
-export const reminderRouter = t.router({
-  getAll: t.procedure.query(async ({ ctx }) => {
-    const reminders = await ctx.prisma.reminder.findMany();
 
-    return { reminders };
-  }),
-  getReminder: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        event: z.string()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, event } = input;
+import { createTRPCRouter, publicProcedure } from '../trpc';
 
-      const reminder = await ctx.prisma.reminder.findFirst({
-        where: {
-          userId,
-          event
-        },
-        include: { user: true }
-      });
+export const reminderRouter = createTRPCRouter({
+	getAll: publicProcedure.query(async ({ ctx }) => {
+		const reminders = await ctx.prisma.reminder.findMany();
 
-      return { reminder };
-    }),
-  getByUserId: t.procedure
-    .input(
-      z.object({
-        userId: z.string()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId } = input;
+		return { reminders };
+	}),
+	getReminder: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				event: z.string()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId, event } = input;
 
-      const reminders = await ctx.prisma.reminder.findMany({
-        where: {
-          userId
-        },
-        select: {
-          event: true,
-          dateTime: true,
-          description: true
-        },
-        orderBy: {
-          id: 'asc'
-        }
-      });
+			const reminder = await ctx.prisma.reminder.findFirst({
+				where: {
+					userId,
+					event
+				},
+				include: { user: true }
+			});
 
-      return { reminders };
-    }),
-  create: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        event: z.string(),
-        description: z.nullable(z.string()),
-        dateTime: z.string(),
-        repeat: z.nullable(z.string()),
-        timeOffset: z.number()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, event, description, dateTime, repeat, timeOffset } =
-        input;
+			return { reminder };
+		}),
+	getByUserId: publicProcedure
+		.input(
+			z.object({
+				userId: z.string()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId } = input;
 
-      const reminder = await ctx.prisma.reminder.create({
-        data: {
-          event,
-          description,
-          dateTime,
-          repeat,
-          timeOffset,
-          user: { connect: { discordId: userId } }
-        }
-      });
+			const reminders = await ctx.prisma.reminder.findMany({
+				where: {
+					userId
+				},
+				select: {
+					event: true,
+					dateTime: true,
+					description: true
+				},
+				orderBy: {
+					id: 'asc'
+				}
+			});
 
-      return { reminder };
-    }),
-  delete: t.procedure
-    .input(
-      z.object({
-        userId: z.string(),
-        event: z.string()
-      })
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { userId, event } = input;
+			return { reminders };
+		}),
+	create: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				event: z.string(),
+				description: z.nullable(z.string()),
+				dateTime: z.string(),
+				repeat: z.nullable(z.string()),
+				timeOffset: z.number()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId, event, description, dateTime, repeat, timeOffset } =
+				input;
 
-      const reminder = await ctx.prisma.reminder.deleteMany({
-        where: {
-          userId,
-          event
-        }
-      });
+			const reminder = await ctx.prisma.reminder.create({
+				data: {
+					event,
+					description,
+					dateTime,
+					repeat,
+					timeOffset,
+					user: { connect: { discordId: userId } }
+				}
+			});
 
-      return { reminder };
-    })
+			return { reminder };
+		}),
+	delete: publicProcedure
+		.input(
+			z.object({
+				userId: z.string(),
+				event: z.string()
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { userId, event } = input;
+
+			const reminder = await ctx.prisma.reminder.deleteMany({
+				where: {
+					userId,
+					event
+				}
+			});
+
+			return { reminder };
+		})
 });
