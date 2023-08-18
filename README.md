@@ -1,217 +1,260 @@
-# create-t3-turbo
+# A Discord Music Bot written in TypeScript using Sapphire, discord.js, Next.js and React
 
-<img width="1758" alt="turbo2" src="https://user-images.githubusercontent.com/51714798/213819392-33e50db9-3e38-4c51-9a22-03abe5e48f3d.png">
+[![image](https://img.shields.io/badge/language-typescript-blue)](https://www.typescriptlang.org)
+[![image](https://img.shields.io/badge/node-%3E%3D%2016.0.0-blue)](https://nodejs.org/)
 
-> Note: Due to high demand, this repo now uses the app directory with some new experimental things. If you want to use the more traditional pages/ router, [check out the repo before the update](https://github.com/t3-oss/create-t3-turbo/tree/414aff131ca124573e721f3779df3edb64989fd4).
+## System dependencies
 
-## Installation
+- [Node.js LTS or latest](https://nodejs.org/en/download/)
+- [Java 13](https://www.azul.com/downloads/?package=jdk#download-openjdk) (other versions have some issues with Lavalink)
 
-There are two ways of initializing an app using `create-t3-turbo` starter. You can either use this repository as a template or use Turbo's CLI to init your project:
+## Setup bot
 
-```bash
-npx create-turbo@latest -e https://github.com/t3-oss/create-t3-turbo
+Create an [application.yml](https://github.com/freyacodes/lavalink/blob/master/LavalinkServer/application.yml.example) file root folder.
+
+Download the latest Lavalink jar from [here](https://github.com/Cog-Creators/Lavalink-Jars/releases) and also place it in the root folder.
+
+### PostgreSQL
+
+#### Linux
+
+Either from the official site or follow the tutorial for your [distro](https://www.digitalocean.com/community/tutorial_collections/how-to-install-and-use-postgresql).
+
+#### MacOS
+
+Get [brew](https://brew.sh), then enter 'brew install postgresql'.
+
+#### Windows
+
+Getting Postgres and Prisma to work together on Windows is not worth the hassle. Create an account on [heroku](https://dashboard.heroku.com/apps) and follow these steps:
+
+1. Open the dashboard and click on 'New' > 'Create new app', give it a name and select the closest region to you then click on 'Create app'.
+2. Go to 'Resources' tab, under 'Add-ons' search for 'Heroku Postgres' and select it. Click 'Submit Order Form' and then do the same step again (create another postgres instance).
+3. Click on each 'Heroku Postgres' addon you created, go to 'Settings' tab > Database Credentials > View Credentials and copy the each one's URI to either `DATABASE_URL` or `SHADOW_DB_URL` in the .env file you will be creating in the settings section.
+4. Done!
+
+### Redis
+
+#### MacOS
+
+`brew install redis`.
+
+#### Windows
+
+Download from [here](https://redis.io/download/).
+
+#### Linux
+
+Follow the instructions [here](https://redis.io/docs/getting-started/installation/install-redis-on-linux/).
+
+### Settings (env)
+
+Create a `.env` file in the root directory and copy the contents of .env.example to it.
+Note: if you are not hosting postgres on Heroku you do not need the SHADOW_DB_URL variable.
+
+```env
+# DB URL
+DATABASE_URL="postgresql://john:doe@localhost:5432/master-bot?schema=public"
+
+# Bot Token
+DISCORD_TOKEN=""
+
+NEXTAUTH_SECRET="somesupersecrettwelvelengthword"
+NEXTAUTH_URL=
+NEXTAUTH_URL_INTERNAL=http://localhost:3000
+NEXT_PUBLIC_INVITE_URL="https://discord.com/api/oauth2/authorize?client_id=yourclientid&permissions=8&scope=bot"
+
+# Next Auth Discord Provider
+DISCORD_CLIENT_ID=""
+DISCORD_CLIENT_SECRET=""
+
+# Lavalink
+LAVA_HOST="0.0.0.0"
+LAVA_PASS="youshallnotpass"
+LAVA_PORT=2333
+LAVA_SECURE=false
+
+# Spotify
+SPOTIFY_CLIENT_ID=""
+SPOTIFY_CLIENT_SECRET=""
+
+# Twitch
+TWITCH_CLIENT_ID=""
+TWITCH_CLIENT_SECRET=""
+
+# Other APIs
+TENOR_API=""
+NEWS_API=""
+GENIUS_API=""
+RAWG_API=""
+
 ```
 
-## About
+#### Gif features
 
-Ever wondered how to migrate your T3 application into a monorepo? Stop right here! This is the perfect starter repo to get you running with the perfect stack!
+If you have no use in the gif commands, leave everything under 'Other APIs' empty. Same applies for Twitch, everything else is needed.
 
-It uses [Turborepo](https://turborepo.org/) and contains:
+#### DB URL
+
+Change 'john' to your pc username and 'doe' to some password, or set the name and password you created when you installed Postgres.
+
+#### Bot Token
+
+Generate a token in your Discord developer portal.
+
+#### Next Auth
+
+You can leave everything as is, just change 'yourclientid' in NEXT_PUBLIC_INVITE_URL to your Discord bot id and then change 'domain' in NEXTAUTH_URL to your domain or public ip. You can find your public ip by going to [www.whatismyip.com](https://www.whatismyip.com/).
+
+#### Next Auth Discord Provider
+
+Go to the OAuth2 tab in the developer portal, copy the Client ID to DISCORD_CLIENT_ID and generate a secret to place in DISCORD_CLIENT_SECRET. Also, set the following URLs under 'Redirects':
+
+- http://localhost:3000/api/auth/callback/discord
+- http://domain:3000/api/auth/callback/discord
+
+Make sure to change 'domain' in http://domain:3000/api/auth/callback/discord to your domain or public ip.
 
-```
-.github
-  └─ workflows
-        └─ CI with pnpm cache setup
-.vscode
-  └─ Recommended extensions and settings for VSCode users
-apps
-  ├─ expo
-  |   ├─ Expo SDK 48
-  |   ├─ React Native using React 18
-  |   ├─ Navigation using Expo Router
-  |   ├─ Tailwind using Nativewind
-  |   └─ Typesafe API calls using tRPC
-  └─ next.js
-      ├─ Next.js 13
-      ├─ React 18
-      ├─ Tailwind CSS
-      └─ E2E Typesafe API Server & Client
-packages
-  ├─ api
-  |   └─ tRPC v10 router definition
-  ├─ auth
-  |   └─ Authentication using next-auth. **NOTE: Only for Next.js app, not Expo**
-  ├─ config
-  |   └─ Shared Tailwind & Eslint configs
-  └─ db
-      └─ Typesafe db calls using Prisma
-```
+#### Lavalink
 
-> In this template, we use `@master-bot` as a placeholder for package names. As a user, you might want to replace it with your own organization or project name. You can use find-and-replace to change all the instances of `@master-bot/` to something like `@my-company/` / `@project-name/`.
+You can leave this as long as the values match your application.yml.
 
-## FAQ
+#### Spotify and Twitch
 
-### Can you include Solito?
+Create an application in each platform's developer portal and paste the relevant values.
 
-No. Solito will not be included in this repo. It is a great tool if you want to share code between your Next.js and Expo app. However, the main purpose of this repo is not the integration between Next.js and Expo - it's the codesplitting of your T3 App into a monorepo, the Expo app is just a bonus example of how you can utilize the monorepo with multiple apps but can just as well be any app such as Vite, Electron, etc.
+#### Pnpm
+Install pnpm:
+`npm install -g pnpm` or on Windows `iwr https://get.pnpm.io/install.ps1 -useb | iex`  or on Mac using Homebrew `brew install pnpm`
 
-Integrating Solito into this repo isn't hard, and there are a few [offical templates](https://github.com/nandorojo/solito/tree/master/example-monorepos) by the creators of Solito that you can use as a reference.
+# Running the bot
 
-### What auth solution should I use instead of Next-Auth.js for Expo?
+1. If you followed everything right, hit `pnpm i` in the root folder. When it finishes make sure prisma didn't error.
+2. Open a separate terminal in the root folder and run 'java -jar Lavalink.jar' (must be running all the time).
+3. Wait a few seconds and run `pnpm dev` in the root folder in another terminal window.
+4. If everything works, your bot and dashboard should be running.
+5. Enjoy!
 
-I've left this kind of open for you to decide. Some options are [Clerk](https://clerk.dev), [Supabase Auth](https://supabase.com/docs/guides/auth), [Firebase Auth](https://firebase.google.com/docs/auth/) or [Auth0](https://auth0.com/docs). Note that if you're dropping the Expo app for something more "browser-like", you can still use Next-Auth.js for those. [See an example in a Plasmo Chrome Extension here](https://github.com/t3-oss/create-t3-turbo/tree/chrome/apps/chrome).
+# Commands
 
-The Clerk.dev team even made an [official template repository](https://github.com/clerkinc/t3-turbo-and-clerk) integrating Clerk.dev with this repo.
+A full list of commands for use with Master Bot
 
-During Launch Week 7, Supabase [announced their fork](https://supabase.com/blog/launch-week-7-community-highlights#t3-turbo-x-supabase) of this repo integrating it with their newly announced auth improvements. You can check it out [here](https://github.com/supabase-community/create-t3-turbo).
+## Music
 
-### Does this pattern leak backend code to my client applications?
+| Command               | Description                                                                                                               | Usage                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| /play                 | Play any song or playlist from youtube, you can do it by searching for a song by name or song url or playlist url         | /play darude sandstorm                                |
+| /pause                | Pause the current playing song                                                                                            | /pause                                                |
+| /resume               | Resume the current paused song                                                                                            | /resume                                               |
+| /leave                | Leaves voice channel if in one                                                                                            | /leave                                                |
+| /remove               | Remove a specific song from queue by its number in queue                                                                  | /remove 4                                             |
+| /queue                | Display the song queue                                                                                                    | /queue                                                |
+| /shuffle              | Shuffle the song queue                                                                                                    | /shuffle                                              |
+| /skip                 | Skip the current playing song                                                                                             | /skip                                                 |
+| /skipall              | Skip all songs in queue                                                                                                   | /skipall                                              |
+| /skipto               | Skip to a specific song in the queue, provide the song number as an argument                                              | /skipto 5                                             |
+| /volume               | Adjust song volume                                                                                                        | /volume 80                                            |
+| /music-trivia         | Engage in a music trivia with your friends. You can add more songs to the trivia pool in resources/music/musictrivia.json | /music-trivia                                         |
+| /loop                 | Loop the currently playing song or queue                                                                                  | /loop                                                 |
+| /lyrics               | Get lyrics of any song or the lyrics of the currently playing song                                                        | /lyrics song-name                                     |
+| /now-playing          | Display the current playing song with a playback bar                                                                      | /now-playing                                          |
+| /move                 | Move song to a desired position in queue                                                                                  | /move 8 1                                             |
+| /queue-history        | Display the queue history                                                                                                 | /queue-history                                        |
+| /create-playlist      | Create a custom playlist                                                                                                  | /create-playlist 'playlistname'                       |
+| /save-to-playlist     | Add a song or playlist to a custom playlist                                                                               | /save-to-playlist 'playlistname' 'yt or spotify url'  |
+| /remove-from-playlist | Remove a track from a custom playlist                                                                                     | /remove-from-playlist 'playlistname' 'track location' |
+| /my-playlists         | Display your custom playlists                                                                                             | /my-playlists                                         |
+| /display-playlist     | Display a custom playlist                                                                                                 | /display-playlist 'playlistname'                      |
+| /delete-playlist      | remove a custom playlist                                                                                                  | /delete-playlist 'playlistname'                       |
 
-No, it does not. The `api` package should only be a production dependency in the Next.js application where it's served. The Expo app, and all other apps you may add in the future, should only add the `api` package as a dev dependency. This lets you have full typesafety in your client applications, while keeping your backend code safe.
+## Gifs
 
-If you need to share runtime code between the client and server, such as input validation schemas, you can create a separate `shared` package for this and import on both sides.
+| Command    | Description                | Usage      |
+| ---------- | -------------------------- | ---------- |
+| /gif       | Get a random gif           | /gif       |
+| /jojo      | Get a random jojo gif      | /jojo      |
+| /gintama   | Get a random gintama gif   | /gintama   |
+| /anime     | Get a random anime gif     | /anime     |
+| /baka      | Get a random baka gif      | /baka      |
+| /cat       | Get a cute cat picture     | /cat       |
+| /doggo     | Get a cute dog picture     | /doggo     |
+| /hug       | Get a random hug gif       | /hug       |
+| /slap      | Get a random slap gif      | /slap      |
+| /pat       | Get a random pat gif       | /pat       |
+| /triggered | Get a random triggered gif | /triggered |
+| /amongus   | Get a random Among Us gif  | /amongus   |
 
-## Quick Start
+## Other
 
-To get it running, follow the steps below:
+| Command           | Description                                                                                                                                                        | Usage                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------- |
+| /fortune          | Get a fortune cookie tip                                                                                                                                           | /fortune                                |
+| /insult           | Generate an evil insult                                                                                                                                            | /insult                                 |
+| /chucknorris      | Get a satirical fact about Chuck Norris                                                                                                                            | /chucknorris                            |
+| /motivation       | Get a random motivational quote                                                                                                                                    | /motivation                             |
+| /random           | Generate a random number between two provided numbers                                                                                                              | /random 0 100                           |
+| /8ball            | Get the answer to anything!                                                                                                                                        | /8ball Is this bot awesome?             |
+| /rps              | Rock Paper Scissors                                                                                                                                                | /rps                                    |
+| /bored            | Generate a random activity!                                                                                                                                        | /bored                                  |
+| /advice           | Get some advice!                                                                                                                                                   | /advice                                 |
+| /game-search      | Search for game information.                                                                                                                                       | /game-search super-metroid              |
+| /kanye            | Get a random Kanye quote                                                                                                                                           | /kanye                                  |
+| /world-news       | Latest headlines from reuters, you can change the news source to whatever news source you want, just change the source in line 13 in world-news.js or ynet-news.js | /world-news                             |
+| /translate        | Translate to any language using Google translate.(only supported languages)                                                                                        | /translate english ありがとう           |
+| /about            | Info about me and the repo                                                                                                                                         | /about                                  |
+| /urban dictionary | Get definitions from urban dictionary                                                                                                                              | /urban javascript                       |
+| /activity         | Generate an invite link to your voice channel's activity                                                                                                           | /activity voicechannel Chill            |
+| /twitch-status    | Check the status of a Twitch steamer                                                                                                                               | /twitch-status streamer: bacon_fixation |
 
-### Setup dependencies
+## Resources
 
-```diff
-# Install dependencies
-pnpm i
+[Getting a Tenor API key](https://developers.google.com/tenor/guides/quickstart)
 
-# In packages/db/prisma update schema.prisma provider to use sqlite
-# or use your own database provider
-- provider = "postgresql"
-+ provider = "sqlite"
+[Getting a NewsAPI API key](https://newsapi.org/)
 
-# Configure environment variables.
-# There is an `.env.example` in the root directory you can use for reference
-cp .env.example .env
+[Getting a Genius API key](https://genius.com/api-clients/new)
 
-# Push the Prisma schema to your database
-pnpm db:push
-```
+[Getting a rawg API key](https://rawg.io/apidocs)
 
-### Configure Expo `dev`-script
+[Getting a Twitch API key](https://github.com/Bacon-Fixation/Master-Bot/wiki/Getting-Your-Twitch-API-Info)
 
-#### Use iOS Simulator
+[Installing Node.js on Debian](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-debian-9)
 
-1. Make sure you have XCode and XCommand Line Tools installed [as shown on expo docs](https://docs.expo.dev/workflow/ios-simulator/).
-   > **NOTE:** If you just installed XCode, or if you have updated it, you need to open the simulator manually once. Run `npx expo start` in the root dir, and then enter `I` to launch Expo Go. After the manual launch, you can run `pnpm dev` in the root directory.
+[Installing Node.js on Windows](https://treehouse.github.io/installation-guides/windows/node-windows.html)
 
-```diff
-+  "dev": "expo start --ios",
-```
+[Installing on a Raspberry Pi](https://github.com/galnir/Master-Bot/wiki/Running-the-bot-on-a-Raspberry-Pi)
 
-3. Run `pnpm dev` at the project root folder.
+[Using a Repl.it LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-Up-LavaLink-with-a-Replit-server)
 
-> **TIP:** It might be easier to run each app in separate terminal windows so you get the logs from each app separately. This is also required if you want your terminals to be interactive, e.g. to access the Expo QR code. You can run `pnpm --filter expo dev` and `pnpm --filter dashboard dev` to run each app in a separate terminal window.
+[Using a public LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-Up-LavaLink-with-a-public-LavaLink-Server)
 
-#### For Android
+[Using an Internal LavaLink server](https://github.com/galnir/Master-Bot/wiki/Setting-up-LavaLink-with-an-Internal-LavaLink-server)
 
-1. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator/).
-2. Change the `dev` script at `apps/expo/package.json` to open the Android emulator.
+## Contributing
 
-```diff
-+  "dev": "expo start --android",
-```
+Fork it and submit a pull request!
+Anyone is welcome to suggest new features and improve code quality!
 
-3. Run `pnpm dev` at the project root folder.
+## Contributors ❤️
 
-## Deployment
+**⭐ [Bacon Fixation](https://github.com/Bacon-Fixation) ⭐ - Countless contributions**
 
-### Next.js
+[ModoSN](https://github.com/ModoSN) - 'resolve-ip', 'rps', '8ball', 'bored', 'trump', 'advice', 'kanye', 'urban dictionary' commands and visual updates
 
-#### Prerequisites
+[PhantomNimbi](https://github.com/PhantomNimbi) - bring back gif commands, lavalink config tweaks
 
-_We do not recommend deploying a SQLite database on serverless environments since the data wouldn't be persisted. I provisioned a quick Postgresql database on [Railway](https://railway.app), but you can of course use any other database provider. Make sure the prisma schema is updated to use the correct database._
+[Natemo6348](https://github.com/Natemo6348) - 'mute', 'unmute'
 
-**Please note that the Next.js application with tRPC must be deployed in order for the Expo app to communicate with the server in a production environment.**
+[kfirmeg](https://github.com/kfirmeg) - play command flags, dockerization, docker wiki
 
-#### Deploy to Vercel
+[rafaeldamasceno](https://github.com/rafaeldamasceno) - 'music-trivia' and Dockerfile improvements, minor tweaks
 
-Let's deploy the Next.js application to [Vercel](https://vercel.com/). If you have ever deployed a Turborepo app there, the steps are quite straightforward. You can also read the [official Turborepo guide](https://vercel.com/docs/concepts/monorepos/turborepo) on deploying to Vercel.
+[navidmafi](https://github.com/navidmafi) - 'LeaveTimeOut' and 'MaxResponseTime' options, update issue template, fix leave command
 
-1. Create a new project on Vercel, select the `apps/dashboard` folder as the root directory and apply the following build settings:
+[Kyoyo](https://github.com/NotKyoyo) - added back 'now-playing'
 
-<img width="927" alt="Vercel deployment settings" src="https://user-images.githubusercontent.com/11340449/201974887-b6403a32-5570-4ce6-b146-c486c0dbd244.png">
+[MontejoJorge](https://github.com/MontejoJorge) - added back 'remind'
 
-> The install command filters out the expo package and saves a few second (and cache size) of dependency installation. The build command makes us build the application using Turbo.
+[malokdev](https://github.com/malokdev) - 'uptime' command
 
-2. Add your `DATABASE_URL` environment variable.
-
-3. Done! Your app should successfully deploy. Assign your domain and use that instead of `localhost` for the `url` in the Expo app so that your Expo app can communicate with your backend when you are not in development.
-
-### Expo
-
-Deploying your Expo application works slightly differently compared to Next.js on the web. Instead of "deploying" your app online, you need to submit production builds of your app to the app stores, like [Apple App Store](https://www.apple.com/app-store/) and [Google Play](https://play.google.com/store/apps). You can read the full [Distributing your app](https://docs.expo.dev/distribution/introduction/), including best practices, in the Expo docs.
-
-1. Make sure to modify the `getBaseUrl` function to point to your backend's production URL:
-
-https://github.com/t3-oss/create-t3-turbo/blob/656965aff7db271e5e080242c4a3ce4dad5d25f8/apps/expo/src/utils/api.tsx#L20-L37
-
-2. Let's start by setting up [EAS Build](https://docs.expo.dev/build/introduction/), which is short for Expo Application Services. The build service helps you create builds of your app, without requiring a full native development setup. The commands below are a summary of [Creating your first build](https://docs.expo.dev/build/setup/).
-
-   ```bash
-   // Install the EAS CLI
-   $ pnpm add -g eas-cli
-
-   // Log in with your Expo account
-   $ eas login
-
-   // Configure your Expo app
-   $ cd apps/expo
-   $ eas build:configure
-   ```
-
-3. After the initial setup, you can create your first build. You can build for Android and iOS platforms and use different [**eas.json** build profiles](https://docs.expo.dev/build-reference/eas-json/) to create production builds or development, or test builds. Let's make a production build for iOS.
-
-   ```
-   $ eas build --platform ios --profile production
-   ```
-
-   > If you don't specify the `--profile` flag, EAS uses the `production` profile by default.
-
-4. Now that you have your first production build, you can submit this to the stores. [EAS Submit](https://docs.expo.dev/submit/introduction/) can help you send the build to the stores.
-
-   ```
-   $ eas submit --platform ios --latest
-   ```
-
-   > You can also combine build and submit in a single command, using `eas build ... --auto-submit`.
-
-5. Before you can get your app in the hands of your users, you'll have to provide additional information to the app stores. This includes screenshots, app information, privacy policies, etc. _While still in preview_, [EAS Metadata](https://docs.expo.dev/eas/metadata/) can help you with most of this information.
-
-6. Once everything is approved, your users can finally enjoy your app. Let's say you spotted a small typo; you'll have to create a new build, submit it to the stores, and wait for approval before you can resolve this issue. In these cases, you can use EAS Update to quickly send a small bugfix to your users without going through this long process. Let's start by setting up EAS Update.
-
-   The steps below summarize the [Getting started with EAS Update](https://docs.expo.dev/eas-update/getting-started/#configure-your-project) guide.
-
-   ```bash
-   // Add the `expo-updates` library to your Expo app
-   $ cd apps/expo
-   $ pnpm expo install expo-updates
-
-   // Configure EAS Update
-   $ eas update:configure
-   ```
-
-7. Before we can send out updates to your app, you have to create a new build and submit it to the app stores. For every change that includes native APIs, you have to rebuild the app and submit the update to the app stores. See steps 2 and 3.
-
-8. Now that everything is ready for updates, let's create a new update for `production` builds. With the `--auto` flag, EAS Update uses your current git branch name and commit message for this update. See [How EAS Update works](https://docs.expo.dev/eas-update/how-eas-update-works/#publishing-an-update) for more information.
-
-   ```bash
-   $ cd apps/expo
-   $ eas update --auto
-   ```
-
-   > Your OTA (Over The Air) updates must always follow the app store's rules. You can't change your app's primary functionality without getting app store approval. But this is a fast way to update your app for minor changes and bug fixes.
-
-9. Done! Now that you have created your production build, submitted it to the stores, and installed EAS Update, you are ready for anything!
-
-## References
-
-The stack originates from [create-t3-app](https://github.com/t3-oss/create-t3-app).
-
-A [blog post](https://jumr.dev/blog/t3-turbo) where I wrote how to migrate a T3 app into this.
+[chimaerra](https://github.com/chimaerra) - minor command tweaks
