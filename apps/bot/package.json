@@ -9,7 +9,7 @@
 	"scripts": {
 		"build": "pnpm with-env tsc",
 		"watch": "tsc --watch",
-		"copy-scripts": "pnpx ncp ./scripts ./dist/",
+		"copy-scripts": "pnpm exec ncp ./scripts ./dist/",
 		"dev": "pnpm build && pnpm copy-scripts && run-p watch start",
 		"start": "pnpm with-env node dist/index.js",
 		"with-env": "dotenv -e ../../.env --"
