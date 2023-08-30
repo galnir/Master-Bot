@@ -30,12 +30,15 @@ services:
       - redis
       - postgres
     volumes:
-      - ./logs:/Master-Bot/packages/bot/logs
+      - ./logs:/Master-Bot/apps/bot/logs
   lavalink:
     restart: always
-    image: fredboat/lavalink:3.7.8-alpine
+    image: fredboat/lavalink:3-alpine
     healthcheck:
       test: 'echo lavalink'
+      interval: 10s
+      timeout: 10s
+      retries: 3
     volumes:
       - ./application.yml:/opt/Lavalink/application.yml
   postgres:
@@ -59,7 +62,7 @@ services:
   redis:
     env_file:
       - docker.env
-    image: redis:alpine
+    image: redis:7-alpine
     restart: always
     environment:
       - ALLOW_EMPTY_PASSWORD=yes

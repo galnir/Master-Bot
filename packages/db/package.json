@@ -9,6 +9,7 @@
 		"db:generate": "pnpm with-env prisma generate",
 		"db:push": "pnpm with-env prisma db push --skip-generate",
 		"db:reset": "pnpm with-env prisma db push --force-reset",
+		"dev": "pnpm with-env prisma studio",
 		"with-env": "dotenv -e ../../.env --"
 	},
 	"dependencies": {
