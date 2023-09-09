@@ -18,7 +18,8 @@
 		"lint": "turbo lint && manypkg check",
 		"lint:fix": "turbo lint:fix && manypkg fix",
 		"type-check": "turbo type-check",
-		"postinstall": "pnpm db:push"
+		"postinstall": "pnpm db:push",
+		"docker-compose": "docker compose --env-file docker.env up -d --build"
 	},
 	"dependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.1.0",
