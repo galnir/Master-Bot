@@ -1,0 +1,85 @@
+version: '3'
+services:
+  master-bot:
+    platform: 'linux/amd64'
+    env_file:
+      - docker.env
+    restart: always
+    build: .
+    ports:
+      - '3000:3000' # Dashboard
+      # - "5555:5555" # Prisma Studio Port  - uncomment to open
+    command: >
+      sh -c "pnpm run db:push && pnpm run -r start"
+    depends_on:
+      lavalink:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Password is required and must match '.env' file
+      POSTGRES_DB_NAME: ${POSTGRES_DB_NAME} # Must match '.env' file
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST} # Must match '.env' file
+      REDIS_HOST: ${REDIS_HOST} # Must match service name
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+    links:
+      - lavalink
+      - redis
+      - postgres
+    volumes:
+      - ./logs:/Master-Bot/apps/bot/logs
+  lavalink:
+    restart: always
+    image: fredboat/lavalink:3-alpine
+    healthcheck:
+      test: 'echo lavalink'
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./application.yml:/opt/Lavalink/application.yml
+  postgres:
+    env_file:
+      - docker.env
+    image: postgres:15-alpine
+    restart: always
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+  redis:
+    env_file:
+      - docker.env
+    image: redis:7-alpine
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB=${REDIS_DB}
+    command: redis-server --save 20 1 --loglevel warning
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - redis:/data
+volumes:
+  postgres:
+    driver: local
+  redis:
+    driver: local
