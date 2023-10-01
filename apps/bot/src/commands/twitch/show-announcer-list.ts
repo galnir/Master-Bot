@@ -93,14 +93,8 @@ export class ShowAnnouncerListCommand extends Command {
 			return;
 		}
 
-		registry.registerChatInputCommand(
-			builder => builder.setName(this.name).setDescription(this.description)
-			// .addUserOption(option =>
-			// 	option
-			// 		.setName(this.name)
-			// 		.setDescription(this.description)
-			// 		.setRequired(true)
-			// )
+		registry.registerChatInputCommand(builder =>
+			builder.setName(this.name).setDescription(this.description)
 		);
 	}
 }
