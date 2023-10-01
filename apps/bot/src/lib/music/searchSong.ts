@@ -11,7 +11,7 @@ export default async function searchSong(
 	let tracks: Song[] = [];
 	let response;
 	let displayMessage = '';
-	const { avatar, defaultAvatarURL, id, username } = user;
+	const { avatar, defaultAvatarURL, id, displayName } = user;
 
 	if (client.music.spotify.isSpotifyUrl(query)) {
 		const item = await client.music.spotify.load(query);
@@ -23,7 +23,7 @@ export default async function searchSong(
 						avatar,
 						defaultAvatarURL,
 						id,
-						name: username
+						name: displayName
 					})
 				];
 				displayMessage = `Queued track [**${item.name}**](${query}).`;
@@ -36,7 +36,7 @@ export default async function searchSong(
 							avatar,
 							defaultAvatarURL,
 							id,
-							name: username
+							name: displayName
 						})
 					)
 				);
@@ -51,7 +51,7 @@ export default async function searchSong(
 							avatar,
 							defaultAvatarURL,
 							id,
-							name: username
+							name: displayName
 						})
 					)
 				);
@@ -83,7 +83,7 @@ export default async function searchSong(
 							avatar,
 							defaultAvatarURL,
 							id,
-							name: username
+							name: displayName
 						})
 					)
 				);
@@ -97,7 +97,7 @@ export default async function searchSong(
 						avatar,
 						defaultAvatarURL,
 						id,
-						name: username
+						name: displayName
 					})
 				];
 				displayMessage = `Queued [**${track.info.title}**](${track.info.uri})`;

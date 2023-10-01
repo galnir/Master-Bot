@@ -1,4 +1,4 @@
-// import { container } from '@sapphire/framework';
+import { container } from '@sapphire/framework';
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 import progressbar from 'string-progressbar';
 import type { Song } from './classes/Song';
@@ -58,25 +58,30 @@ export class NowPlayingEmbed {
 				embedColor = '#F26F23';
 				break;
 			}
-
-			// case 'twitch': {
-			// 	sourceTxt = 'Twitch';
-			// 	sourceIcon =
-			// 		'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
-			// 	embedColor = 'Purple';
-			// 	const twitch = container.client.twitch;
-			// 	if (twitch.auth.access_token) {
-			// 		try {
-			// 			streamData = await twitch.api.getStream({
-			// 				login: this.track.author.toLowerCase(),
-			// 				token: twitch.auth.access_token
-			// 			});
-			// 		} catch {
-			// 			streamData = undefined;
-			// 		}
-			// 	}
-			// 	break;
-			// }
+			case 'vimeo': {
+				sourceTxt = 'Vimeo';
+				sourceIcon = 'https://i.imgur.com/npxyTWi.png';
+				embedColor = '#1AB7EA';
+				break;
+			}
+			case 'twitch': {
+				sourceTxt = 'Twitch';
+				sourceIcon =
+					'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png';
+				embedColor = '#6441A5';
+				const twitch = container.client.twitch;
+				if (twitch.auth.access_token) {
+					try {
+						streamData = await container.client.twitch.api.getStream({
+							login: this.track.author.toLowerCase(),
+							token: twitch.auth.access_token
+						});
+					} catch {
+						streamData = undefined;
+					}
+				}
+				break;
+			}
 
 			case 'youtube': {
 				sourceTxt = 'YouTube';
