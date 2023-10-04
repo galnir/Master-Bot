@@ -27,17 +27,6 @@ export class TwitchStatusCommand extends Command {
 				token: client.twitch.auth.access_token,
 				user_ids: [user.id]
 			});
-			const notGames = [
-				'Software and Game Development',
-				'Just Chatting',
-				'Retro',
-				'Art',
-				'Crypto',
-				'Makers & Crafting'
-			];
-			let gameOrTopic = ':video_game: Game';
-			if (notGames.includes(stream[0].game_name ?? stream[0].game_name))
-				gameOrTopic = ':film_frames: Topic';
 
 			let baseEmbed = new EmbedBuilder({
 				author: {
@@ -64,7 +53,17 @@ export class TwitchStatusCommand extends Command {
 					token: client.twitch.auth.access_token,
 					id: stream[0].game_id
 				});
-
+				const notGames = [
+					'Software and Game Development',
+					'Just Chatting',
+					'Retro',
+					'Art',
+					'Crypto',
+					'Makers & Crafting'
+				];
+				let gameOrTopic = ':video_game: Game';
+				if (notGames.includes(stream[0].game_name ?? stream[0].game_name))
+					gameOrTopic = ':film_frames: Topic';
 				baseEmbed
 					.setThumbnail(game.box_art_url.replace('-{width}x{height}', ''))
 					.setTitle(`Looks like ${user.display_name} is Online!!!`)
