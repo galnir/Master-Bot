@@ -75,8 +75,8 @@ importers:
         specifier: ^10.37.1
         version: 10.37.1
       axios:
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.6.0
+        version: 1.6.0
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
@@ -299,8 +299,8 @@ importers:
         specifier: ^10.37.1
         version: 10.37.1
       axios:
-        specifier: ^1.4.0
-        version: 1.4.0
+        specifier: ^1.6.0
+        version: 1.6.0
       discord-api-types:
         specifier: ^0.37.51
         version: 0.37.51
@@ -453,8 +453,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.18
     dev: false
 
-  /@auth/core@0.0.0-manual.59d8da33:
-    resolution: {integrity: sha512-ZTaUedTobGEvQPhEeJLmnsdGbztG10T0rK8TA4wH87Eb8oBHInI//3zRngX6T9hEcZ+/OJnIANw0JrGDqUDREA==}
+  /@auth/core@0.0.0-manual.e9863699:
+    resolution: {integrity: sha512-/hVzGuFw7nAZimliD8kpuKnNjvkRu+jpaVhYB/FaIXLNJFNwhbO2MgXBnr5tvLIHgRJnR5C9UN5RNpQXiFHuSA==}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -507,7 +507,7 @@ packages:
       next: ^13.4.6
       react: ^18.2.0
     dependencies:
-      '@auth/core': 0.0.0-manual.59d8da33
+      '@auth/core': 0.0.0-manual.e9863699
       next: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
@@ -2540,8 +2540,8 @@ packages:
       - debug
     dev: false
 
-  /axios@1.4.0:
-    resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
+  /axios@1.6.0:
+    resolution: {integrity: sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==}
     dependencies:
       follow-redirects: 1.15.2
       form-data: 4.0.0
@@ -4294,7 +4294,7 @@ packages:
       nodemailer:
         optional: true
     dependencies:
-      '@auth/core': 0.0.0-manual.59d8da33
+      '@auth/core': 0.0.0-manual.e9863699
       '@auth/nextjs': 0.0.0-manual.179c08d4(next@13.4.12)(react@18.2.0)
       next: 13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0

@@ -16,7 +16,7 @@
 		"@t3-oss/env-core": "^0.6.0",
 		"@trpc/client": "^10.37.1",
 		"@trpc/server": "^10.37.1",
-		"axios": "^1.4.0",
+		"axios": "^1.6.0",
 		"discord-api-types": "^0.37.51",
 		"superjson": "1.13.1",
 		"zod": "^3.21.4"
