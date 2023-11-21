@@ -19,7 +19,7 @@
 		"axios": "^1.4.0",
 		"discord-api-types": "^0.37.51",
 		"superjson": "1.13.1",
-		"zod": "^3.21.4"
+		"zod": "^3.22.3"
 	},
 	"devDependencies": {
 		"@master-bot/eslint-config": "^0.2.0",
