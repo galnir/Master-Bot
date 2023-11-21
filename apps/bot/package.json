@@ -33,7 +33,7 @@
 		"@t3-oss/env-core": "^0.6.0",
 		"@trpc/client": "^10.37.1",
 		"@trpc/server": "^10.37.1",
-		"axios": "^1.4.0",
+		"axios": "^1.6.0",
 		"colorette": "^2.0.20",
 		"discord.js": "^14.12.1",
 		"genius-discord-lyrics": "1.0.5",
