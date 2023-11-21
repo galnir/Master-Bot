@@ -40,7 +40,7 @@
 		"superjson": "1.13.1",
 		"tailwind-merge": "^1.14.0",
 		"tailwindcss-animate": "^1.0.6",
-		"zod": "^3.21.4"
+		"zod": "^3.22.3"
 	},
 	"devDependencies": {
 		"@master-bot/eslint-config": "^0.2.0",
