@@ -22,11 +22,11 @@
 		"docker-compose": "docker compose --env-file docker.env up -d --build"
 	},
 	"dependencies": {
-		"@ianvs/prettier-plugin-sort-imports": "^4.1.0",
+		"@ianvs/prettier-plugin-sort-imports": "^4.1.1",
 		"@manypkg/cli": "^0.21.0",
-		"prettier": "^3.0.1",
-		"prettier-plugin-tailwindcss": "^0.4.1",
-		"turbo": "^1.10.12",
-		"typescript": "^5.1.6"
+		"prettier": "^3.1.0",
+		"prettier-plugin-tailwindcss": "^0.5.7",
+		"turbo": "^1.10.16",
+		"typescript": "^5.3.2"
 	}
 }
