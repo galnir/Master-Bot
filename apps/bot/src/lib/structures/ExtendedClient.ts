@@ -7,7 +7,7 @@ import { deletePlayerEmbed } from '../music/buttonsCollector';
 
 export class ExtendedClient extends SapphireClient {
 	readonly music: QueueClient;
-	leaveTimers: { [key: string]: NodeJS.Timer };
+	leaveTimers: { [key: string]: NodeJS.Timeout };
 	public constructor() {
 		super({
 			intents: [
@@ -65,7 +65,7 @@ export class ExtendedClient extends SapphireClient {
 declare module '@sapphire/framework' {
 	interface SapphireClient {
 		readonly music: QueueClient;
-		leaveTimers: { [key: string]: NodeJS.Timer };
+		leaveTimers: { [key: string]: NodeJS.Timeout };
 	}
 }
 

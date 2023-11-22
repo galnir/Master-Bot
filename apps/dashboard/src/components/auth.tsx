@@ -1,6 +1,5 @@
 import type { ComponentProps } from 'react';
 import type { OAuthProviders } from '@master-bot/auth';
-import { CSRF_experimental } from '@master-bot/auth';
 
 export function SignIn({
 	provider,
@@ -9,7 +8,6 @@ export function SignIn({
 	return (
 		<form action={`/api/auth/signin/${provider}`} method="post">
 			<button {...props} />
-			<CSRF_experimental />
 		</form>
 	);
 }
@@ -18,7 +16,6 @@ export function SignOut(props: ComponentProps<'button'>) {
 	return (
 		<form action="/api/auth/signout" method="post">
 			<button {...props} />
-			<CSRF_experimental />
 		</form>
 	);
 }
