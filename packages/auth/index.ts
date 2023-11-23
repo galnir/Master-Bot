@@ -26,8 +26,7 @@ const scope = ['identify', 'guilds', 'email'].join(' ');
 
 export const {
 	handlers: { GET, POST },
-	auth,
-	CSRF_experimental
+	auth
 } = NextAuth({
 	adapter: {
 		...PrismaAdapter(prisma),

@@ -16,7 +16,7 @@ import Logger from '../logger';
 
 export class ExtendedClient extends SapphireClient {
 	readonly music: QueueClient;
-	leaveTimers: { [key: string]: NodeJS.Timer };
+	leaveTimers: { [key: string]: NodeJS.Timeout };
 	twitch: ClientTwitchExtension = {
 		api: new TwitchAPI(
 			process.env.TWITCH_CLIENT_ID,
@@ -120,7 +120,7 @@ export type MessageChannel = TextChannel | ThreadChannel | NewsChannel | null;
 declare module '@sapphire/framework' {
 	interface SapphireClient {
 		readonly music: QueueClient;
-		leaveTimers: { [key: string]: NodeJS.Timer };
+		leaveTimers: { [key: string]: NodeJS.Timeout };
 		twitch: ClientTwitchExtension;
 	}
 }
