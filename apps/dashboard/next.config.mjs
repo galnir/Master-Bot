@@ -12,9 +12,6 @@ const config = {
 	typescript: { ignoreBuildErrors: true },
 	images: {
 		domains: ['cdn.discordapp.com']
-	},
-	experimental: {
-		serverActions: true
 	}
 };
 

@@ -16,7 +16,7 @@ export default async function buttonsCollector(message: Message, song: Song) {
 	if (!channel) return;
 
 	const maxLimit = Time.Minute * 30;
-	let timer: NodeJS.Timer;
+	let timer;
 
 	collector.on('collect', async (i: MessageComponentInteraction) => {
 		if (!message.member?.voice.channel?.members.has(i.user.id)) {
