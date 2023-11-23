@@ -60,12 +60,15 @@ export class Song implements TrackInfo {
 			this.isSeekable = !decoded.isStream;
 			this.sourceName = decoded.source;
 		}
-
 		// Thumbnails
 		switch (this.sourceName) {
 			case 'soundcloud': {
 				this.thumbnail =
 					'https://a-v2.sndcdn.com/assets/images/sc-icons/fluid-b4e7a64b8b.png'; // SoundCloud Logo
+				break;
+			}
+			case 'vimeo': {
+				this.thumbnail = 'https://i.imgur.com/npxyTWi.png'; // Vimeo Logo
 				break;
 			}
 

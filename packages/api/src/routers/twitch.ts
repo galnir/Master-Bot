@@ -85,6 +85,48 @@ export const twitchRouter = createTRPCRouter({
 
 			return { notification };
 		}),
+	createViaTwitchNotification: publicProcedure
+		.input(
+			z.object({
+				guildId: z.string(),
+				userId: z.string(),
+				ownerId: z.string(),
+				name: z.string(),
+				notifyList: z.array(z.string())
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { guildId, userId, ownerId, name, notifyList } = input;
+			await ctx.prisma.guild.upsert({
+				create: {
+					id: guildId,
+					notifyList: [userId],
+					volume: 100,
+					ownerId: ownerId,
+					name: name
+				},
+				select: { notifyList: true },
+				update: {
+					notifyList
+				},
+				where: { id: guildId }
+			});
+		}),
+	updateTwitchNotifications: publicProcedure
+		.input(
+			z.object({
+				guildId: z.string(),
+				notifyList: z.array(z.string())
+			})
+		)
+		.mutation(async ({ ctx, input }) => {
+			const { guildId, notifyList } = input;
+
+			await ctx.prisma.guild.update({
+				where: { id: guildId },
+				data: { notifyList }
+			});
+		}),
 	updateNotificationStatus: publicProcedure
 		.input(
 			z.object({

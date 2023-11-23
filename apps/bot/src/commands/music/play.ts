@@ -90,7 +90,7 @@ export class PlayCommand extends Command {
 
 		const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
-		// edge case - someome initiated the command but left the voice channel
+		// edge case - someone initiated the command but left the voice channel
 		if (!voiceChannel) {
 			return interaction.followUp({
 				content: ':x: You need to be in a voice channel to use this command!'

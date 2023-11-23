@@ -6,6 +6,9 @@ import {
 	RegisterBehavior
 } from '@sapphire/framework';
 import { ActivityType } from 'discord.js';
+import Logger from './lib/logger';
+import { notify } from './lib/twitch/notifyChannels';
+import { trpcNode } from './trpc';
 
 ApplicationCommandRegistries.setDefaultBehaviorWhenNotIdentical(
 	RegisterBehavior.Overwrite
@@ -23,13 +26,44 @@ if (env.SPOTIFY_CLIENT_ID && env.SPOTIFY_CLIENT_SECRET) {
 
 const client = new ExtendedClient();
 
-client.on('ready', () => {
+client.on('ready', async () => {
 	client.music.connect(client.user!.id);
 	client.user?.setActivity('/', {
 		type: ActivityType.Watching
 	});
 
 	client.user?.setStatus('online');
+	const token = client.twitch.auth.access_token;
+	if (!token) return;
+
+	// happens to be the first DB call at start up
+	try {
+		const notifyDB = await trpcNode.twitch.getAll.query();
+
+		const query: string[] = [];
+		for (const user of notifyDB.notifications) {
+			query.push(user.twitchId);
+			client.twitch.notifyList[user.twitchId] = {
+				sendTo: user.channelIds,
+				logo: user.logo,
+				live: user.live,
+				messageSent: user.sent,
+				messageHandler: {}
+			};
+		}
+		await notify(query).then(() =>
+			setInterval(async () => {
+				const newQuery: string[] = [];
+				// pickup newly added entries
+				for (const key in client.twitch.notifyList) {
+					newQuery.push(key);
+				}
+				await notify(newQuery);
+			}, 60 * 1000)
+		);
+	} catch (err) {
+		Logger.error('Prisma ' + err);
+	}
 });
 
 client.on('chatInputCommandError', err => {
